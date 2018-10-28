@@ -1,0 +1,305 @@
+{
+    "classpath": {
+        "20": "target/classes/:target/tests/", 
+        "41": "target/classes/:target/test-classes/", 
+        "66": "target/classes/:target/tests/"
+    }, 
+    "complianceLevel": {
+        "1": {
+            "source": 6, 
+            "target": 6
+        }, 
+        "10": {
+            "source": 6, 
+            "target": 6
+        }, 
+        "11": {
+            "source": 6, 
+            "target": 6
+        }, 
+        "12": {
+            "source": 6, 
+            "target": 6
+        }, 
+        "13": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "14": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "15": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "16": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "17": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "18": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "19": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "2": {
+            "source": 6, 
+            "target": 6
+        }, 
+        "20": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "21": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "22": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "23": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "24": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "25": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "26": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "27": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "28": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "29": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "3": {
+            "source": 6, 
+            "target": 6
+        }, 
+        "30": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "31": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "32": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "33": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "34": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "35": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "36": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "37": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "38": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "39": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "4": {
+            "source": 6, 
+            "target": 6
+        }, 
+        "40": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "41": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "42": {
+            "source": 3, 
+            "target": 2
+        }, 
+        "43": {
+            "source": 3, 
+            "target": 2
+        }, 
+        "44": {
+            "source": 3, 
+            "target": 2
+        }, 
+        "45": {
+            "source": 3, 
+            "target": 2
+        }, 
+        "46": {
+            "source": 3, 
+            "target": 2
+        }, 
+        "47": {
+            "source": 3, 
+            "target": 1
+        }, 
+        "48": {
+            "source": 7, 
+            "target": 7
+        }, 
+        "49": {
+            "source": 7, 
+            "target": 7
+        }, 
+        "5": {
+            "source": 6, 
+            "target": 6
+        }, 
+        "50": {
+            "source": 7, 
+            "target": 7
+        }, 
+        "51": {
+            "source": 7, 
+            "target": 7
+        }, 
+        "52": {
+            "source": 7, 
+            "target": 7
+        }, 
+        "53": {
+            "source": 7, 
+            "target": 7
+        }, 
+        "54": {
+            "source": 7, 
+            "target": 7
+        }, 
+        "55": {
+            "source": 7, 
+            "target": 7
+        }, 
+        "56": {
+            "source": 7, 
+            "target": 7
+        }, 
+        "57": {
+            "source": 7, 
+            "target": 7
+        }, 
+        "58": {
+            "source": 7, 
+            "target": 7
+        }, 
+        "59": {
+            "source": 7, 
+            "target": 7
+        }, 
+        "6": {
+            "source": 6, 
+            "target": 6
+        }, 
+        "60": {
+            "source": 3, 
+            "target": 1
+        }, 
+        "61": {
+            "source": 3, 
+            "target": 1
+        }, 
+        "62": {
+            "source": 3, 
+            "target": 1
+        }, 
+        "63": {
+            "source": 3, 
+            "target": 1
+        }, 
+        "64": {
+            "source": 3, 
+            "target": 1
+        }, 
+        "65": {
+            "source": 3, 
+            "target": 1
+        }, 
+        "7": {
+            "source": 6, 
+            "target": 6
+        }, 
+        "8": {
+            "source": 6, 
+            "target": 6
+        }, 
+        "9": {
+            "source": 6, 
+            "target": 6
+        }
+    }, 
+    "libs": [
+        "asm.jar", 
+        "cglib.jar", 
+        "commons-io.jar", 
+        "easymock.jar"
+    ], 
+    "project": "Lang",
+    "nbBugs": 65, 
+    "package": "org.apache.commons", 
+    "src": {
+        "20": {
+            "binjava": "target/classes/", 
+            "bintest": "target/tests/", 
+            "srcjava": "src/main/java/", 
+            "srctest": "src/test/java/"
+        }, 
+        "35": {
+            "binjava": "target/classes/", 
+            "bintest": "target/test-classes/", 
+            "srcjava": "src/main/java/", 
+            "srctest": "src/test/java/"
+        }, 
+        "41": {
+            "binjava": "target/classes/", 
+            "bintest": "target/test-classes/", 
+            "srcjava": "src/java/", 
+            "srctest": "src/test/"
+        }, 
+        "66": {
+            "binjava": "target/classes/", 
+            "bintest": "target/tests/", 
+            "srcjava": "src/java/", 
+            "srctest": "src/test/"
+        }
+    }, 
+    "url": "https://github.com/apache/commons-lang"
+}

@@ -1,0 +1,6 @@
+{
+	"name": "Astor",
+	"version": "0.0.2",
+	"jar": "astor.jar",
+	"main": "fr.inria.main.evolution.AstorMain"
+}

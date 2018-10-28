@@ -1,0 +1,452 @@
+{ 
+    "classpath": {
+        "106": "target/classes/:target/test-classes/"
+    }, 
+    "complianceLevel": {
+        "1": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "10": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "100": {
+            "source": 7, 
+            "target": 7
+        }, 
+        "101": {
+            "source": 7, 
+            "target": 7
+        }, 
+        "102": {
+            "source": 7, 
+            "target": 7
+        }, 
+        "103": {
+            "source": 7, 
+            "target": 7
+        }, 
+        "104": {
+            "source": 7, 
+            "target": 7
+        }, 
+        "105": {
+            "source": 3, 
+            "target": 3
+        }, 
+        "106": {
+            "source": 3, 
+            "target": 3
+        }, 
+        "11": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "12": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "13": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "14": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "15": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "16": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "17": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "18": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "19": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "2": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "20": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "21": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "22": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "23": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "24": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "25": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "26": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "27": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "28": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "29": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "3": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "30": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "31": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "32": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "33": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "34": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "35": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "36": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "37": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "38": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "39": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "4": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "40": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "41": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "42": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "43": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "44": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "45": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "46": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "47": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "48": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "49": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "5": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "50": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "51": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "52": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "53": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "54": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "55": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "56": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "57": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "58": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "59": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "6": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "60": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "61": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "62": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "63": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "64": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "65": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "66": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "67": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "68": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "69": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "7": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "70": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "71": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "72": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "73": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "74": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "75": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "76": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "77": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "78": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "79": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "8": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "80": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "81": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "82": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "83": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "84": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "85": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "86": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "87": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "88": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "89": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "9": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "90": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "91": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "92": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "93": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "94": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "95": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "96": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "97": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "98": {
+            "source": 5, 
+            "target": 5
+        }, 
+        "99": {
+            "source": 5, 
+            "target": 5
+        }
+    }, 
+    "libs": [
+        "commons-discovery-0.5.jar"
+    ], 
+    "project": "Math",
+    "nbBugs": 106, 
+    "package": "org.apache.commons", 
+    "src": {
+        "106": {
+            "binjava": "target/classes/", 
+            "bintest": "target/test-classes/", 
+            "srcjava": "src/java/", 
+            "srctest": "src/test/"
+        }, 
+        "84": {
+            "binjava": "target/classes/", 
+            "bintest": "target/test-classes/", 
+            "srcjava": "src/main/java/", 
+            "srctest": "src/test/java/"
+        }
+    }, 
+    "url": "https://github.com/apache/commons-math"
+}

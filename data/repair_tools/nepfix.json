@@ -1,0 +1,6 @@
+{
+	"name": "NPEFix",
+	"version": "0d47b5eb49a9994e28d533d7d1c56a421847cfa0",
+	"jar": "npefix.jar",
+	"main": "fr.inria.spirals.npefix.main.run.MainRun"
+}
