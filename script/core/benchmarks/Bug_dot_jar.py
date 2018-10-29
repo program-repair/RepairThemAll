@@ -1,11 +1,7 @@
 import os
-import json
-import collections
 import subprocess
 import shutil
 
-
-from config import DATA_PATH
 from config import REPAIR_ROOT
 
 from core.Benchmark import Benchmark
@@ -18,6 +14,13 @@ class Bug_dot_jar(Benchmark):
 		self.path = os.path.join(REPAIR_ROOT, "benchmarks", "Bug-dot-jar")
 		self.bugs = None
 		self.get_bugs()
+
+	def get_bug(self, bug_id):
+		separator = "-"
+		if "_" in bug_id:
+			separator = "_"
+		(project, user, revision) = bug_id.split(separator)
+		return Bug(self, project, "%s_%s" % (user, revision))
 
 	def get_bugs(self):
 		if self.bugs is not None:
@@ -41,7 +44,7 @@ class Bug_dot_jar(Benchmark):
 		return self.bugs
 
 	def checkout(self, bug, working_directory):
-		user, revison = bug.bug_id.split("_")
+		user, revision = bug.bug_id.split("_")
 		bug_path = os.path.join(self.path, "dataset", bug.project, user, revision)
 		shutil.copy(bug_path, working_directory)
 		pass
@@ -55,7 +58,6 @@ class Bug_dot_jar(Benchmark):
 		cmd = "cd %s; mvn test;" % (working_directory)
 		subprocess.call(cmd, shell=True)
 		pass
-
 
 	def failing_tests(self, bug):
 		tests = []

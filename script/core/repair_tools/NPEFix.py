@@ -58,12 +58,11 @@ time java %s -cp %s %s \\
 			if not os.path.exists(os.path.dirname(logPath)):
 				os.makedirs(os.path.dirname(logPath))
 			log = file(logPath, 'w')
-			print cmd
+			print(cmd)
 			subprocess.call(cmd, shell=True, stdout=log)
 			with open(logPath) as data_file:
 				return data_file.read()
 		finally:
-			cmd = "rm -rf %s;" % (bug_path);
+			cmd = "rm -rf %s;" % (bug_path)
 			subprocess.call(cmd, shell=True)
 		pass
-		

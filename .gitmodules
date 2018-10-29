@@ -10,3 +10,6 @@
 [submodule "benchmarks/IntroclassJava"]
 	path = benchmarks/IntroclassJava
 	url = git@github.com:Spirals-Team/IntroClassJava.git
+[submodule "benchmarks/bears"]
+	path = benchmarks/bears
+	url = git@github.com:fermadeiral/bears-benchmark.git

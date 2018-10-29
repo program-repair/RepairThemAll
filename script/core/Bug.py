@@ -1,7 +1,6 @@
 import json
 import os
 
-from config import WORKING_DIRECTORY
 
 class Bug(object):
 
