@@ -41,7 +41,7 @@ class Bears(Benchmark):
             for b in data:
                 (organization, project) = b["repository"]["url"].replace("https://github.com/", "").split("/")
                 self.bugs += [Bug(self, "%s-%s" % (organization, project),
-                                  "%s_%s" % (b['builds']['buggyBuild'], b['builds']['fixerBuild']))]
+                                  "%s-%s" % (b['builds']['buggyBuild']['id'], b['builds']['fixerBuild']['id']))]
         return self.bugs
 
     def checkout(self, bug, working_directory):

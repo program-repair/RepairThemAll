@@ -17,7 +17,6 @@ def initParser():
     bug_parser = argparse.ArgumentParser(add_help=False)
     bug_parser.add_argument("--benchmark", "-b", required=True, default="defects4j",
                             help="The benchmark to repair [defects4j, introclassjava, bugs.jar, Bears, QuixBugs]")
-    bug_parser.add_argument("--id", "-i", required=True, help="The bug id")
 
     subparsers = parser.add_subparsers()
 
@@ -55,5 +54,6 @@ if __name__ == "__main__":
     elif args.benchmark.lower() == "bears":
         args.benchmark = Bears()
 
-    args.bug = args.benchmark.get_bug(args.id)
-    args.func(args)
+    for bug in args.benchmark.get_bugs():
+        args.bug = bug
+        args.func(args)
