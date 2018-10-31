@@ -1,32 +1,31 @@
 import os
+import shutil
 import subprocess
 
+from config import WORKING_DIRECTORY, REPAIR_ROOT, JAVA7_HOME, JAVA8_HOME, JAVA_ARGS, OUTPUT_PATH
 from core.RepairTool import RepairTool
 
-from config import WORKING_DIRECTORY
-from config import Z3_PATH
-from config import JAVA7_HOME
-from config import JAVA8_HOME
-from config import JAVA_ARGS
-from config import OUTPUT_PATH
 
 class Astor(RepairTool):
-	"""Nopol"""
-	def __init__(self, scope, name="Astor", seed=0, mode="jgenprog", maxgen="1000000", population="1", parameters="x:x"):
-		super(Astor, self).__init__(name, "astor")
-		self.seed = seed
-		self.mode = mode
-		self.maxgen = maxgen
-		self.scope = scope
-		self.population = population
-		self.parameters = parameters
-		
+    """Astor"""
 
-	def repair(self, bug):
-		bug_path = os.path.join(WORKING_DIRECTORY, "%s_%s_%s_%s" % (self.name, bug.benchmark.name, bug.project, bug.bug_id))
-		self.init_bug(bug, bug_path)
-		try:
-			cmd = """cd %s;
+    def __init__(self, scope, name="Astor", seed=0, mode="jgenprog", maxgen="1000000", population="1",
+                 parameters="x:x"):
+        super(Astor, self).__init__(name, "astor")
+        self.seed = seed
+        self.mode = mode
+        self.maxgen = maxgen
+        self.scope = scope
+        self.population = population
+        self.parameters = parameters
+
+    def repair(self, bug):
+        bug_path = os.path.join(WORKING_DIRECTORY,
+                                "%s_%s_%s_%s" % (self.name, bug.benchmark.name, bug.project, bug.bug_id))
+        self.init_bug(bug, bug_path)
+        try:
+            classpath = bug.classpath()
+            cmd = """cd %s;
 export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8;
 TZ="America/New_York"; export TZ;
 export PATH="%s:$PATH";
@@ -39,6 +38,7 @@ time java %s -cp %s %s \\
 	-jvm4testexecution %s \\
 	-jvm4evosuitetestexecution %s \\
 	-maxgen %s \\
+	-stopfirst true \\
 	-seed %s \\
 	-scope %s \\
 	-population %s \\
@@ -52,36 +52,45 @@ time java %s -cp %s %s \\
 	echo "\\n\\nNode: `hostname`\\n";
 	echo "\\n\\nDate: `date`\\n";
 """ % (bug_path,
-	JAVA8_HOME,
-	JAVA8_HOME,
-	JAVA_ARGS, 
-	self.jar,
-	self.main,
-	self.mode,
-	bug.project,
-	":".join(bug.failing_tests()),
-	JAVA7_HOME,
-	JAVA8_HOME,
-	self.maxgen,
-	self.seed,
-	self.scope,
-	self.population,
-	str(bug.compliance_level()),
-	":".join(bug.source_folders()),
-	":".join(bug.test_folders()),
-	":".join(bug.source_folders()),
-	":".join(bug.test_folders()),
-	self.parameters,
-	bug.classpath())
-			logPath = os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name, str(self.seed), "stdout.log.full")
-			if not os.path.exists(os.path.dirname(logPath)):
-				os.makedirs(os.path.dirname(logPath))
-			log = file(logPath, 'w')
-			print(cmd)
-			subprocess.call(cmd, shell=True, stdout=log, stderr=subprocess.STDOUT)
-			with open(logPath) as data_file:
-				return data_file.read()
-		finally:
-			cmd = "rm -rf %s;" % (bug_path)
-			subprocess.call(cmd, shell=True)
-		pass
+       JAVA8_HOME,
+       JAVA8_HOME,
+       JAVA_ARGS,
+       os.path.join(REPAIR_ROOT, "libs", "jtestex7.jar") + ":" + self.jar,
+       self.main,
+       self.mode,
+       "%s-%s" % (bug.project, bug.bug_id),
+       ":".join(bug.failing_tests()),
+       JAVA7_HOME,
+       JAVA8_HOME,
+       self.maxgen,
+       self.seed,
+       self.scope,
+       self.population,
+       str(bug.compliance_level()),
+       ":".join(bug.source_folders()),
+       ":".join(bug.test_folders()),
+       ":".join(bug.bin_folders()),
+       ":".join(bug.test_bin_folders()),
+       self.parameters,
+       classpath)
+            logPath = os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
+                                   str(self.seed), "stdout.log.full")
+            if not os.path.exists(os.path.dirname(logPath)):
+                os.makedirs(os.path.dirname(logPath))
+            log = file(logPath, 'w')
+            print(cmd)
+            subprocess.call(cmd, shell=True, stdout=log, stderr=subprocess.STDOUT)
+            with open(logPath) as data_file:
+                return data_file.read()
+        finally:
+            path_results = os.path.join(bug_path, "output_astor", "AstorMain-%s-%s" % (bug.project, bug.bug_id),
+                                        "astor_output.json")
+            if os.path.exists(path_results):
+                shutil.copy(path_results,
+                            os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
+                                         str(self.seed), "result.json"))
+                with open(path_results) as fd:
+                    print(fd.read())
+            cmd = "rm -rf %s;" % (bug_path)
+            subprocess.call(cmd, shell=True)
+        pass

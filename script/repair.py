@@ -1,22 +1,22 @@
 import argparse
 
 from cli.repair_tools.astor import astor_args
-from cli.repair_tools.npefix import npefix_args
-from cli.repair_tools.nopol import nopol_args
 from cli.repair_tools.dynamoth import dynamoth_args
-
+from cli.repair_tools.nopol import nopol_args
+from cli.repair_tools.npefix import npefix_args
 from core.Bug import Bug
+from core.benchmarks.Bears import Bears
+from core.benchmarks.BugDotJar import BugDotJar
 from core.benchmarks.Defects4J import Defects4J
 from core.benchmarks.IntroClassJava import IntroClassJava
-from core.benchmarks.Bug_dot_jar import Bug_dot_jar
-from core.benchmarks.Bears import Bears
 
 
 def initParser():
     parser = argparse.ArgumentParser(prog="repair", description='Repair Defects4J\'s bugs')
 
     bug_parser = argparse.ArgumentParser(add_help=False)
-    bug_parser.add_argument("--benchmark", "-b", required=True, default="defects4j", help="The benchmark to repair [defects4j, introclassjava, bugs.jar]")
+    bug_parser.add_argument("--benchmark", "-b", required=True, default="defects4j",
+                            help="The benchmark to repair [defects4j, introclassjava, bugs.jar]")
     bug_parser.add_argument("--id", "-i", required=True, help="The bug id")
 
     subparsers = parser.add_subparsers()
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     elif args.benchmark.lower() == "introclassjava":
         args.benchmark = IntroClassJava()
     elif args.benchmark.lower() == "bugs.jar":
-        args.benchmark = Bug_dot_jar()
+        args.benchmark = BugDotJar()
     elif args.benchmark.lower() == "bears":
         args.benchmark = Bears()
 

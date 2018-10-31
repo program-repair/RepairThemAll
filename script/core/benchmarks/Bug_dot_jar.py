@@ -1,82 +1,83 @@
 import os
-import subprocess
 import shutil
+import subprocess
 
 from config import REPAIR_ROOT
-
 from core.Benchmark import Benchmark
 from core.Bug import Bug
 
-class Bug_dot_jar(Benchmark):
-	"""Bug_dot_jar Benchmark"""
-	def __init__(self):
-		super(Bug_dot_jar, self).__init__("Bug_dot_jar")
-		self.path = os.path.join(REPAIR_ROOT, "benchmarks", "Bug-dot-jar")
-		self.bugs = None
-		self.get_bugs()
 
-	def get_bug(self, bug_id):
-		separator = "-"
-		if "_" in bug_id:
-			separator = "_"
-		(project, user, revision) = bug_id.split(separator)
-		return Bug(self, project, "%s_%s" % (user, revision))
+class BugDotJar(Benchmark):
+    """Bug_dot_jar Benchmark"""
 
-	def get_bugs(self):
-		if self.bugs is not None:
-			return self.bugs
-		self.bugs = []
-		dataset_path = os.path.join(self.path, "dataset")
-		for project in os.listdir(dataset_path):
-			project_path = os.path.join(dataset_path, project)
-			if os.path.isfile(project_path):
-				continue
-			for user in os.listdir(project_path):
-				user_path = os.path.join(project_path, user)
-				if os.path.isfile(user_path):
-					continue
-				for revision in os.listdir(user_path):
-					revision_path = os.path.join(user_path, revision)
-					if os.path.isfile(revision_path):
-						continue
-					bug = Bug(self, project, "%s_%s" % (user, revision))
-					self.bugs += [bug]
-		return self.bugs
+    def __init__(self):
+        super(BugDotJar, self).__init__("Bug_dot_jar")
+        self.path = os.path.join(REPAIR_ROOT, "benchmarks", "Bug-dot-jar")
+        self.bugs = None
+        self.get_bugs()
 
-	def checkout(self, bug, working_directory):
-		user, revision = bug.bug_id.split("_")
-		bug_path = os.path.join(self.path, "dataset", bug.project, user, revision)
-		shutil.copy(bug_path, working_directory)
-		pass
+    def get_bug(self, bug_id):
+        separator = "-"
+        if "_" in bug_id:
+            separator = "_"
+        (project, user, revision) = bug_id.split(separator)
+        return Bug(self, project, "%s_%s" % (user, revision))
 
-	def compile(self, bug, working_directory):
-		cmd = "cd %s; mvn test -Dmaven.test.skip=true;" % (working_directory)
-		subprocess.call(cmd, shell=True)
-		pass
+    def get_bugs(self):
+        if self.bugs is not None:
+            return self.bugs
+        self.bugs = []
+        dataset_path = os.path.join(self.path, "dataset")
+        for project in os.listdir(dataset_path):
+            project_path = os.path.join(dataset_path, project)
+            if os.path.isfile(project_path):
+                continue
+            for user in os.listdir(project_path):
+                user_path = os.path.join(project_path, user)
+                if os.path.isfile(user_path):
+                    continue
+                for revision in os.listdir(user_path):
+                    revision_path = os.path.join(user_path, revision)
+                    if os.path.isfile(revision_path):
+                        continue
+                    bug = Bug(self, project, "%s_%s" % (user, revision))
+                    self.bugs += [bug]
+        return self.bugs
 
-	def run_test(self, bug, working_directory):
-		cmd = "cd %s; mvn test;" % (working_directory)
-		subprocess.call(cmd, shell=True)
-		pass
+    def checkout(self, bug, working_directory):
+        user, revision = bug.bug_id.split("_")
+        bug_path = os.path.join(self.path, "dataset", bug.project, user, revision)
+        shutil.copy(bug_path, working_directory)
+        pass
 
-	def failing_tests(self, bug):
-		tests = []
-		return tests
+    def compile(self, bug, working_directory):
+        cmd = "cd %s; mvn test -Dmaven.test.skip=true;" % (working_directory)
+        subprocess.call(cmd, shell=True)
+        pass
 
-	def source_folders(self, bug):
-		return [os.path.join("src", "main", "java")]
+    def run_test(self, bug, working_directory):
+        cmd = "cd %s; mvn test;" % (working_directory)
+        subprocess.call(cmd, shell=True)
+        pass
 
-	def test_folders(self, bug):
-		return [os.path.join("src", "test", "java")]
+    def failing_tests(self, bug):
+        tests = []
+        return tests
 
-	def bin_folders(self, bug):
-		return [os.path.join("target", "classes")]
+    def source_folders(self, bug):
+        return [os.path.join("src", "main", "java")]
 
-	def test_bin_folders(self, bug):
-		return [os.path.join("target", "test-classes")]
+    def test_folders(self, bug):
+        return [os.path.join("src", "test", "java")]
 
-	def classpath(self, bug):
-		return ""
+    def bin_folders(self, bug):
+        return [os.path.join("target", "classes")]
 
-	def compliance_level(self, bug):
-		return 7
+    def test_bin_folders(self, bug):
+        return [os.path.join("target", "test-classes")]
+
+    def classpath(self, bug):
+        return ""
+
+    def compliance_level(self, bug):
+        return 7

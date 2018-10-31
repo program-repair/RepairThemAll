@@ -1,12 +1,11 @@
-import os
-import json
 import collections
-import subprocess
+import json
+import os
 import re
+import subprocess
 
 from config import DATA_PATH
 from config import REPAIR_ROOT
-
 from core.Benchmark import Benchmark
 from core.Bug import Bug
 

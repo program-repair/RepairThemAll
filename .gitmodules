@@ -13,3 +13,6 @@
 [submodule "benchmarks/bears"]
 	path = benchmarks/bears
 	url = git@github.com:fermadeiral/bears-benchmark.git
+[submodule "benchmarks/QuixBugs"]
+	path = benchmarks/QuixBugs
+	url = git@github.com:jkoppel/QuixBugs.git

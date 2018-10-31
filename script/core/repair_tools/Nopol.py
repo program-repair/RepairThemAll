@@ -1,14 +1,13 @@
 import os
-import subprocess
 import shutil
+import subprocess
 
-from core.RepairTool import RepairTool
-
-from config import WORKING_DIRECTORY
-from config import Z3_PATH
 from config import JAVA8_HOME
 from config import JAVA_ARGS
 from config import OUTPUT_PATH
+from config import WORKING_DIRECTORY
+from config import Z3_PATH
+from core.RepairTool import RepairTool
 
 
 class Nopol(RepairTool):
@@ -45,7 +44,7 @@ time java %s -cp %s:%s/../lib/tools.jar %s \\
 	--solver-path %s \\
 	--complianceLevel %s \\
 	--source %s \\
-	--classpath %s;
+	--classpath "%s";
 	echo "\\n\\nNode: `hostname`\\n";
 	echo "\\n\\nDate: `date`\\n";
 """ % (bug_path,
@@ -77,8 +76,9 @@ time java %s -cp %s:%s/../lib/tools.jar %s \\
         finally:
             path_results = os.path.join(bug_path, "output.json")
             if os.path.exists(path_results):
-                shutil.copy(path_results, os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
-                                               str(self.seed), "result.json"))
+                shutil.copy(path_results,
+                            os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
+                                         str(self.seed), "result.json"))
                 with open(path_results) as fd:
                     print(fd.read())
             cmd = "rm -rf %s;" % (bug_path)
