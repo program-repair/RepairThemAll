@@ -6,6 +6,7 @@ from config import REPAIR_ROOT, DATA_PATH
 from core.Benchmark import Benchmark
 from core.Bug import Bug
 
+FNULL = open(os.devnull, 'w')
 
 class Bears(Benchmark):
     """Bears Benchmark"""
@@ -45,10 +46,11 @@ class Bears(Benchmark):
         return self.bugs
 
     def checkout(self, bug, working_directory):
+        print("Checkout %s-%s" % (bug.project, bug.bug_id))
         branch_id = "%s-%s" % (bug.project, bug.bug_id)
 
         cmd = "cd " + self.path + "; git checkout " + branch_id
-        subprocess.check_output(cmd, shell=True)
+        subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
         cmd = "cd " + self.path + "; git log --format=format:%H --grep='Changes in the tests'"
         bug_commit = subprocess.check_output(cmd, shell=True)
@@ -63,21 +65,23 @@ cp -r . %s""" % (
             bug_commit,
             working_directory,
         )
-        subprocess.call(cmd, shell=True)
+        subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
     def compile(self, bug, working_directory):
+        print("Compile %s-%s" % (bug.project, bug.bug_id))
         cmd = """cd %s;
 mvn compile -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true; mvn test-compile -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true;
 """ % (working_directory)
-        subprocess.call(cmd, shell=True)
+        subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
     def run_test(self, bug, working_directory):
+        print("Run test on %s-%s" % (bug.project, bug.bug_id))
         cmd = """cd %s;
 mvn package -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true
 """ % (working_directory)
-        subprocess.call(cmd, shell=True)
+        subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
     def failing_tests(self, bug):
@@ -103,7 +107,7 @@ mvn package -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=t
             return self.sources[bug.project.lower()]['sources']
 
         cmd = "cd " + self.path + "; git checkout " + branch_id
-        subprocess.check_output(cmd, shell=True)
+        subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         for (root, dirnames, _) in os.walk(self.path):
             path_project = root.replace(self.path, "")
             if len(path_project) > 0 and path_project[0] == "/":
@@ -127,7 +131,7 @@ mvn package -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=t
         branch_id = "%s-%s" % (bug.project, bug.bug_id)
 
         cmd = "cd " + self.path + "; git checkout " + branch_id
-        subprocess.check_output(cmd, shell=True)
+        subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         for (root, dirnames, _) in os.walk(self.path):
             path_project = root.replace(self.path, "")
             if len(path_project) > 0 and path_project[0] == "/":
@@ -160,31 +164,44 @@ mvn package -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=t
             classpath += os.path.join(workdir, f)
 
         m2_repository = os.path.expanduser("~/.m2/repository")
-        if bug.project.lower() in self.sources:
-            deps = self.sources[bug.project.lower()]['dependencies']
-            for dep in deps:
-                path = os.path.join(m2_repository, dep['group_id'].replace(".", "/"), dep['artifact_id'],
-                                    dep['version'], dep['jar'])
-                if os.path.exists(path):
-                    if classpath != "":
-                        classpath += ":"
-                    classpath += path
-            return classpath
-
         branch_id = "%s-%s" % (bug.project, bug.bug_id)
 
         cmd = "cd " + self.path + "; git checkout " + branch_id
-        subprocess.check_output(cmd, shell=True)
+        subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
-        with open(os.path.join(self.path, "classpath.info")) as fd:
-            libraries = fd.read().split(":")
-            for lib in libraries:
-                if ".m2" in lib:
-                    path = os.path.join(m2_repository, lib[lib.index(".m2") + 4:])
-                    if os.path.exists(path):
-                        if classpath != "":
-                            classpath += ":"
-                        classpath += path
+        dependencies = []
+        for (root, _, files) in os.walk(self.path):
+            for f in files:
+                if f == "classpath.info":
+                    with open(os.path.join(root, f)) as fd:
+                        classpath_info = fd.read()
+                        for lib in classpath_info.split(":"):
+                            if ".m2" not in lib:
+                                continue
+                            lib = lib[lib.index(".m2") + 4:]
+                            tmp = lib.split("/")
+                            jar = tmp[-1]
+                            version = tmp[-2]
+                            artifact_id = tmp[-3]
+                            group_id = ".".join(tmp[:-3])
+
+                            dependencies += [{
+                                "group_id": group_id,
+                                "artifact_id": artifact_id,
+                                "version": version,
+                                "jar": jar
+                            }]
+                    break
+
+        for dep in dependencies:
+            path = os.path.join(m2_repository, dep['group_id'].replace(".", "/"), dep['artifact_id'],
+                                dep['version'], dep['jar'])
+            if os.path.exists(path):
+                if classpath != "":
+                    classpath += ":"
+                classpath += path
+            else:
+                print("[Error] Dep %s is not found" % (path.replace(m2_repository, "")))
         return classpath
 
     def compliance_level(self, bug):

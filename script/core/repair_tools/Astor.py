@@ -61,7 +61,7 @@ time java %s -cp %s %s \\
        self.mode,
        "%s-%s" % (bug.project, bug.bug_id),
        ":".join(bug.failing_tests()),
-       JAVA7_HOME,
+       JAVA8_HOME,
        JAVA8_HOME,
        self.maxgen,
        self.seed,

@@ -6165,7 +6165,8 @@
       "target/classes"
     ], 
     "sources": [
-      "src/main"
+      "src/main",
+      "target/generated-sources"
     ], 
     "test-target": [
       "target/test-classes"
