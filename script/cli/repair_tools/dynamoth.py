@@ -1,9 +1,9 @@
-from core.repair_tools.DynaMoth import DynaMoth
+from core.repair_tools.Nopol import Nopol
 
 
 def run(args):
     bug = args.bug
-    tool = DynaMoth(seed=args.seed, statement_type=args.statement_type)
+    tool = Nopol(name="DynaMoth", seed=args.seed, statement_type=args.statement_type, synthesis="dynamoth")
 
     result = tool.repair(bug)
     pass

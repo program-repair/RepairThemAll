@@ -13,10 +13,10 @@ from core.RepairTool import RepairTool
 class Nopol(RepairTool):
     """Nopol"""
 
-    def __init__(self, name="Nopol", mode="repair", oracle="angelic", statement_type="pre_then_cond", seed=7):
+    def __init__(self, name="Nopol", mode="repair", oracle="angelic", statement_type="pre_then_cond", seed=7, synthesis="smt"):
         super(Nopol, self).__init__(name, "nopol")
         self.solver = self.data["solver"]
-        self.synthesis = "smt"
+        self.synthesis = synthesis
         self.flocal = "gzoltar"
         self.mode = mode
         self.oracle = oracle
