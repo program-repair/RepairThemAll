@@ -12,6 +12,13 @@
 | QuixBugs       |         40 |     40 |
 | **Total**      |        100 |   1992 |
 
+## Tools
+
+1. Nopol
+2. DynaMoth
+3. NPEFix
+4. Astor
+
 ## Usage
 
 There are two scripts: `script/repair.py` and `script/repair-all.py`, the first script is used to repair one specific bug, the second is used to run the repair of all the bugs of a specific benchmark.
