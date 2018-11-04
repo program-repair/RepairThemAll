@@ -9,6 +9,8 @@ from core.benchmarks.Bears import Bears
 from core.benchmarks.BugDotJar import BugDotJar
 from core.benchmarks.Defects4J import Defects4J
 from core.benchmarks.IntroClassJava import IntroClassJava
+from runner.RepairTask import RepairTask
+from runner.runner import get_runner
 
 
 def initParser():
@@ -54,6 +56,14 @@ if __name__ == "__main__":
     elif args.benchmark.lower() == "bears":
         args.benchmark = Bears()
 
+    tasks = []
+    projects = []
     for bug in args.benchmark.get_bugs():
         args.bug = bug
-        args.func(args)
+        if bug.project in projects or "FasterXML" in bug.project or "INRIA" in bug.project:
+            continue
+
+        tool = args.func(args)
+        tasks += [RepairTask(tool, args.benchmark, bug)]
+
+    get_runner(tasks).execute()

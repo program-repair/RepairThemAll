@@ -1,5 +1,6 @@
 import os
 import shutil
+import json
 import subprocess
 
 from config import JAVA8_HOME
@@ -23,7 +24,8 @@ class Nopol(RepairTool):
         self.statement_type = statement_type
         self.seed = seed
 
-    def repair(self, bug):
+    def repair(self, repair_task):
+        bug = repair_task.bug
         bug_path = os.path.join(WORKING_DIRECTORY,
                                 "%s_%s_%s_%s" % (self.name, bug.benchmark.name, bug.project, bug.bug_id))
         self.init_bug(bug, bug_path)
@@ -76,11 +78,17 @@ time java %s -cp %s:%s/../lib/tools.jar %s \\
         finally:
             path_results = os.path.join(bug_path, "output.json")
             if os.path.exists(path_results):
+                repair_task.status = "FINISHED"
                 shutil.copy(path_results,
                             os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
                                          str(self.seed), "result.json"))
                 with open(path_results) as fd:
-                    print(fd.read())
+                    repair_task.results = json.load(fd)
+                    if len(repair_task.results['patches']) > 0:
+                        repair_task.status = "PATCHED"
+
+            else:
+                repair_task.status = "ERROR"
             cmd = "rm -rf %s;" % (bug_path)
             subprocess.call(cmd, shell=True)
         pass

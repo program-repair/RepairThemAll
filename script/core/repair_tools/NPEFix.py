@@ -16,7 +16,8 @@ class NPEFix(RepairTool):
         super(NPEFix, self).__init__(name, "npefix")
         self.mode = "normal"
 
-    def repair(self, bug):
+    def repair(self, repair_task):
+        bug = repair_task.bug
         bug_path = os.path.join(WORKING_DIRECTORY,
                                 "%s_%s_%s_%s" % (self.name, bug.benchmark.name, bug.project, bug.bug_id))
         self.init_bug(bug, bug_path)
@@ -66,6 +67,7 @@ time java %s -cp %s %s \\
             with open(logPath) as data_file:
                 return data_file.read()
         finally:
+            repair_task.status = "FINISHED"
             cmd = "rm -rf %s;" % (bug_path)
             subprocess.call(cmd, shell=True)
         pass
