@@ -21,6 +21,9 @@ class Astor(RepairTool):
         self.parameters = parameters
 
     def repair(self, repair_task):
+        """"
+        :type repair_task: RepairTask
+        """
         bug = repair_task.bug
         bug_path = os.path.join(WORKING_DIRECTORY,
                                 "%s_%s_%s_%s" % (self.name, bug.benchmark.name, bug.project, bug.bug_id))

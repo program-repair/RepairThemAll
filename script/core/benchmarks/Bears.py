@@ -8,6 +8,7 @@ from core.Bug import Bug
 
 FNULL = open(os.devnull, 'w')
 
+
 class Bears(Benchmark):
     """Bears Benchmark"""
 

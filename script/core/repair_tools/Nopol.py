@@ -9,7 +9,7 @@ from config import OUTPUT_PATH
 from config import WORKING_DIRECTORY
 from config import Z3_PATH
 from core.RepairTool import RepairTool
-
+from runner.RepairTask import RepairTask
 
 class Nopol(RepairTool):
     """Nopol"""
@@ -25,6 +25,9 @@ class Nopol(RepairTool):
         self.seed = seed
 
     def repair(self, repair_task):
+        """"
+        :type repair_task: RepairTask
+        """
         bug = repair_task.bug
         bug_path = os.path.join(WORKING_DIRECTORY,
                                 "%s_%s_%s_%s" % (self.name, bug.benchmark.name, bug.project, bug.bug_id))

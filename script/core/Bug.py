@@ -1,11 +1,19 @@
 import json
 import os
 
+from core.Benchmark import Benchmark
+
 
 class Bug(object):
     """A bug"""
 
     def __init__(self, benchmark, project, bug_id):
+        """
+        :param benchmark:
+        :type benchmark: Benchmark
+        :param project:
+        :param bug_id:
+        """
         self.project = project
         self.bug_id = bug_id
         self.benchmark = benchmark
