@@ -39,12 +39,14 @@ class Grid5kRunner(Runner):
                     result_path = os.path.join(OUTPUT_PATH, task.benchmark.name, task.bug.project,
                                                str(task.bug.bug_id),
                                                task.tool.name,
-                                               str(task.tool.seed))
+                                               str(task.tool.seed), "results.json")
                     if os.path.exists(result_path):
                         with open(result_path) as fd:
                             task.results = json.load(fd)
                             if len(task.results['patches']) > 0:
                                 task.status = "PATCHED"
+                            else:
+                                task.status = "DONE"
                     else:
                         task.status = "ERROR"
 
