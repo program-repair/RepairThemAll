@@ -60,10 +60,8 @@ if __name__ == "__main__":
     projects = []
     for bug in args.benchmark.get_bugs():
         args.bug = bug
-        if bug.project in projects or "FasterXML" in bug.project or "INRIA" in bug.project:
-            continue
 
         tool = args.func(args)
-        tasks += [RepairTask(tool, args.benchmark, bug)]
+        tasks.append(RepairTask(tool, args.benchmark, bug))
 
     get_runner(tasks).execute()
