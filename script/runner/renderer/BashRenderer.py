@@ -77,7 +77,7 @@ class BashRenderer(object):
 
         output = ""
 
-        output += "%d Running, %d Finished, %d Patched, %d Error\n" % (len(self.runner.running), len(self.runner.finished), len(self.get_patched_tasks()), len(self.get_errored_tasks()))
+        output += "%d Running, %d Waithing, %d Finished, %d Patched, %d Error\n" % (len(self.runner.running), len(self.runner.waiting), len(self.runner.finished), len(self.get_patched_tasks()), len(self.get_errored_tasks()))
 
         output += "Running: \n"
         line_number = 1
