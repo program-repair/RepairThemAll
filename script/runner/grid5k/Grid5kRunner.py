@@ -38,7 +38,7 @@ class Grid5kRunner(Runner):
             for job_id in jobs:
                 if jobs[job_id]['state'] is "Running":
                     running_ids.append(job_id)
-                elif jobs[job_id]['state'] is "Waiting":
+                else:
                     waiting_ids.append(job_id)
 
             for task in self.running:
@@ -80,7 +80,7 @@ class Grid5kRunner(Runner):
             task.benchmark.name,
             "%s-%s" % (task.bug.project, task.bug.bug_id)
         )
-        node_cmd = "python %s" % node_cmd_args
+        node_cmd = "sudo-g5k apt-get install -y maven; python %s" % node_cmd_args
 
         cmd = "oarsub -l nodes=1,walltime=%s -O %s -E %s \"%s\"" % (
             "2:00",
