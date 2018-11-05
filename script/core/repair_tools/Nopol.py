@@ -69,14 +69,14 @@ time java %s -cp %s:%s/../lib/tools.jar %s \\
        str(bug.compliance_level()),
        ":".join(bug.source_folders()),
        bug.classpath())
-            logPath = os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
+            log_path = os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
                                    str(self.seed), "stdout.log.full")
-            if not os.path.exists(os.path.dirname(logPath)):
-                os.makedirs(os.path.dirname(logPath))
-            log = file(logPath, 'w')
+            if not os.path.exists(os.path.dirname(log_path)):
+                os.makedirs(os.path.dirname(log_path))
+            log = file(log_path, 'w')
             log.write(cmd)
             subprocess.call(cmd, shell=True, stdout=log, stderr=subprocess.STDOUT)
-            with open(logPath) as data_file:
+            with open(log_path) as data_file:
                 return data_file.read()
         finally:
             path_results = os.path.join(bug_path, "output.json")

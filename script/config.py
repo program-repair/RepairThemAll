@@ -14,3 +14,6 @@ JAVA8_HOME = expanduser("/usr/lib/jvm/java-1.8.0-openjdk-amd64/bin/")
 JAVA_ARGS = "-Xmx4048m"
 
 LOCAL_THREAD = 2
+GRID5K_MAX_NODE = 50
+
+TOOL_TIMEOUT = "180"
