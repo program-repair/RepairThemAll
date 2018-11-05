@@ -30,6 +30,14 @@ class Astor(RepairTool):
         self.init_bug(bug, bug_path)
         try:
             classpath = bug.classpath()
+            bin_folders = bug.bin_folders()
+            for folder in bin_folders:
+                if not os.path.exists(os.path.join(bug_path, folder)):
+                    bin_folders.remove(folder)
+            test_bin_folders = bug.test_bin_folders()
+            for folder in test_bin_folders:
+                if not os.path.exists(os.path.join(bug_path, folder)):
+                    test_bin_folders.remove(folder)
             cmd = """cd %s;
 export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8;
 TZ="America/New_York"; export TZ;
@@ -75,8 +83,8 @@ time java %s -cp %s %s \\
        str(bug.compliance_level()),
        ":".join(bug.source_folders()),
        ":".join(bug.test_folders()),
-       ":".join(bug.bin_folders()),
-       ":".join(bug.test_bin_folders()),
+       ":".join(bin_folders),
+       ":".join(test_bin_folders),
        self.parameters,
        classpath)
             logPath = os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
