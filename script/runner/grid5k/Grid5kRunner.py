@@ -98,7 +98,7 @@ class Grid5kRunner(Runner):
 
     def execute(self):
         renderer = BashRenderer(self)
-        to_tun = [].join(self.tasks)
+        to_tun = self.tasks[:]
         while len(to_tun) > 0 and len(self.running) > 0:
             if len(to_tun) > 0 and len(self.running) + len(self.waiting) < GRID5K_MAX_NODE:
                 self.start_task(to_tun.pop())
