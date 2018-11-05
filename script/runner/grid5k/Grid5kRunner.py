@@ -36,7 +36,7 @@ class Grid5kRunner(Runner):
             running_ids = []
             waiting_ids = []
             for job_id in jobs:
-                if jobs[job_id]['state'] is "Running":
+                if jobs[job_id]['state'] == "Running":
                     running_ids.append(job_id)
                 else:
                     waiting_ids.append(job_id)
@@ -44,12 +44,16 @@ class Grid5kRunner(Runner):
             for task in self.running:
                 if task.id not in running_ids:
                     self.finished.append(task)
+                    task.end_date = time.time()
+                    task.status = "Done"
                     self.running.remove(task)
 
             for task in self.waiting:
                 if task.id not in waiting_ids:
                     self.waiting.remove(task)
                 if task.id in running_ids:
+                    task.status = "STARTED"
+                    task.starting_date = time.time()
                     self.running.append(task)
 
         except subprocess.CalledProcessError:
