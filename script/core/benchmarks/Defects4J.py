@@ -14,7 +14,7 @@ class Defects4J(Benchmark):
     """Defects4j Benchmark"""
 
     def __init__(self):
-        super(Defects4J, self).__init__("Defects4j")
+        super(Defects4J, self).__init__("Defects4J")
         self.path = os.path.join(REPAIR_ROOT, "benchmarks", "defects4j")
         self.project_data = {}
         self.bugs = None
