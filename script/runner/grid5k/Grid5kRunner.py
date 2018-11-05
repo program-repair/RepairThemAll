@@ -44,6 +44,7 @@ class Grid5kRunner(Runner):
             for task in self.running:
                 if task.id not in running_ids:
                     self.finished.append(task)
+                    self.running.remove(task)
                     task.end_date = time.time()
                     task.status = "DONE"
                     result_path = os.path.join(OUTPUT_PATH, task.benchmark.name, task.bug.project,
@@ -52,14 +53,13 @@ class Grid5kRunner(Runner):
                                                  str(task.tool.seed))
                     if os.path.exists(result_path):
                         with open(result_path) as fd:
-                            json.load(fd)
                             task.results = json.load(fd)
                             if len(task.results['patches']) > 0:
                                 task.status = "PATCHED"
                     else:
                         task.status = "ERROR"
 
-                    self.running.remove(task)
+
 
             for task in self.waiting:
                 if task.id not in waiting_ids:
