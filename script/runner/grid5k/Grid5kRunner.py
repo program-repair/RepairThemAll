@@ -39,7 +39,7 @@ class Grid5kRunner(Runner):
                     result_path = os.path.join(OUTPUT_PATH, task.benchmark.name, task.bug.project,
                                                str(task.bug.bug_id),
                                                task.tool.name,
-                                               str(task.tool.seed), "results.json")
+                                               str(task.tool.seed), "result.json")
                     if os.path.exists(result_path):
                         with open(result_path) as fd:
                             task.results = json.load(fd)
