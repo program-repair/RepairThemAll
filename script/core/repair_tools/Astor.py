@@ -93,6 +93,8 @@ time java %s -cp %s %s \\
                 os.makedirs(os.path.dirname(logPath))
             log = file(logPath, 'w')
             log.write(cmd)
+            log.flush()
+
             subprocess.call(cmd, shell=True, stdout=log, stderr=subprocess.STDOUT)
             with open(logPath) as data_file:
                 return data_file.read()

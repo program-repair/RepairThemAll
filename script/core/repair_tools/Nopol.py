@@ -75,6 +75,7 @@ time java %s -cp %s:%s/../lib/tools.jar %s \\
                 os.makedirs(os.path.dirname(log_path))
             log = file(log_path, 'w')
             log.write(cmd)
+            log.flush()
             subprocess.call(cmd, shell=True, stdout=log, stderr=subprocess.STDOUT)
             with open(log_path) as data_file:
                 return data_file.read()
