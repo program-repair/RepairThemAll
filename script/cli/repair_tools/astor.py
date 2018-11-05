@@ -2,7 +2,7 @@ from core.repair_tools.Astor import Astor
 
 
 def init(args):
-    return Astor(scope=args.scope, seed=args.seed)
+    return Astor(name="jGenProg", scope=args.scope, seed=args.seed)
 
 
 def astor_args(parser):

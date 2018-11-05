@@ -22,7 +22,7 @@ def initParser():
 
     subparsers = parser.add_subparsers()
 
-    astor_parser = subparsers.add_parser('astor', help='Repair the bug with Astor', parents=[bug_parser])
+    astor_parser = subparsers.add_parser('jGenProg', help='Repair the bug with Astor', parents=[bug_parser])
     astor_args(astor_parser)
 
     npefix_parser = subparsers.add_parser('npefix', help='Repair the bug with NPEFix', parents=[bug_parser])

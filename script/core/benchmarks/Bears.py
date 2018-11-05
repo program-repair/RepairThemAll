@@ -47,7 +47,6 @@ class Bears(Benchmark):
         return self.bugs
 
     def checkout(self, bug, working_directory):
-        print("Checkout %s-%s" % (bug.project, bug.bug_id))
         branch_id = "%s-%s" % (bug.project, bug.bug_id)
 
         cmd = "cd " + self.path + "; git checkout " + branch_id
@@ -70,7 +69,6 @@ cp -r . %s""" % (
         pass
 
     def compile(self, bug, working_directory):
-        print("Compile %s-%s" % (bug.project, bug.bug_id))
         cmd = """cd %s;
 mvn compile -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true; mvn test-compile -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true;
 """ % (working_directory)
@@ -78,7 +76,6 @@ mvn compile -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=t
         pass
 
     def run_test(self, bug, working_directory):
-        print("Run test on %s-%s" % (bug.project, bug.bug_id))
         cmd = """cd %s;
 mvn package -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true
 """ % (working_directory)
