@@ -51,7 +51,7 @@ time java %s -cp %s %s \\
 	-jvm4testexecution %s \\
 	-jvm4evosuitetestexecution %s \\
 	-maxgen %s \\
-	-maxtime 10 \\
+	-maxtime 120 \\
 	-stopfirst true \\
 	-seed %s \\
 	-scope %s \\

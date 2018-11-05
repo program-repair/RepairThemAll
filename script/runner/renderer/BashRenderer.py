@@ -92,8 +92,14 @@ class BashRenderer(object):
             if starting_date is None:
                 starting_date = time.time()
             execution_time = datetime.timedelta(seconds=int(time.time() - starting_date))
-            output += "%d. %s %s %s %s\n" % (line_number, task.tool.name, task.bug, task.status, execution_time)
+            output += "%d. %s %s %s\n" % (line_number, task.tool.name, task.bug, execution_time)
             line_number += 1
+
+        output += "Patched bug: \n"
+        patch_number = 1
+        for task in self.get_patched_tasks():
+            output += "%d. %s %s\n" % (patch_number, task.tool.name, task.bug)
+            patch_number += 1
 
         output_length = len(output.split("\n"))
         if output_length < height:
@@ -111,7 +117,6 @@ class BashRenderer(object):
 
     def render_final_result(self):
         (width, height) = get_terminal_size()
-        clean_terminal()
 
         output = ""
 
