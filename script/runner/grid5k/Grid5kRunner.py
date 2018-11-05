@@ -18,14 +18,6 @@ class Grid5kRunner(Runner):
         """
         super(Grid5kRunner, self).__init__(tasks)
 
-    def repair_done(self, task):
-        if task.status is "STARTED":
-            task.status = "DONE"
-        task.end_date = time.time()
-        self.finished += [task]
-        self.running.remove(task)
-        pass
-
     def get_running(self):
         cmd = 'oarstat --json -u `whoami`'
 
@@ -43,10 +35,7 @@ class Grid5kRunner(Runner):
 
             for task in self.running:
                 if task.id not in running_ids:
-                    self.finished.append(task)
-                    self.running.remove(task)
                     task.end_date = time.time()
-                    task.status = "DONE"
                     result_path = os.path.join(OUTPUT_PATH, task.benchmark.name, task.bug.project,
                                                str(task.bug.bug_id),
                                                task.tool.name,
@@ -58,6 +47,9 @@ class Grid5kRunner(Runner):
                                 task.status = "PATCHED"
                     else:
                         task.status = "ERROR"
+
+                    self.finished.append(task)
+                    self.running.remove(task)
 
             for task in self.waiting:
                 if task.id not in waiting_ids:
