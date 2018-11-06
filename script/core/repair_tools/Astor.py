@@ -30,12 +30,12 @@ class Astor(RepairTool):
         self.init_bug(bug, bug_path)
         try:
             classpath = bug.classpath()
-            bin_folders = bug.bin_folders()
-            for folder in bin_folders:
+            bin_folders = bug.bin_folders()[:]
+            for folder in bug.bin_folders():
                 if not os.path.exists(os.path.join(bug_path, folder)):
                     bin_folders.remove(folder)
-            test_bin_folders = bug.test_bin_folders()
-            for folder in test_bin_folders:
+            test_bin_folders = bug.test_bin_folders()[:]
+            for folder in bug.test_bin_folders():
                 if not os.path.exists(os.path.join(bug_path, folder)):
                     test_bin_folders.remove(folder)
             cmd = """cd %s;

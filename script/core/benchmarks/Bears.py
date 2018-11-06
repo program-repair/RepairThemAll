@@ -70,7 +70,8 @@ cp -r . %s""" % (
 
     def compile(self, bug, working_directory):
         cmd = """cd %s;
-mvn compile -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true; mvn test-compile -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true;
+mvn compile -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true; 
+mvn test -DskipTests -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true;
 """ % (working_directory)
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
@@ -155,11 +156,6 @@ mvn package -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=t
         classpath = ""
 
         workdir = ""
-        project_bin = self.bin_folders(bug) + self.test_bin_folders(bug)
-        for f in project_bin:
-            if classpath != "":
-                classpath += ":"
-            classpath += os.path.join(workdir, f)
 
         m2_repository = os.path.expanduser("~/.m2/repository")
         branch_id = "%s-%s" % (bug.project, bug.bug_id)
