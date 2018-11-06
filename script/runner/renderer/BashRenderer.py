@@ -128,7 +128,4 @@ class BashRenderer(object):
             output += "%d. %s %s\n" % (patch_number, task.tool.name, task.bug)
             patch_number += 1
         output_length = len(output.split("\n"))
-        if output_length < height:
-            for i in range(1, height - output_length):
-                output += "\n"
         print(output)
