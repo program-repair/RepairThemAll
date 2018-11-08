@@ -11,6 +11,7 @@ from config import Z3_PATH
 from core.RepairTool import RepairTool
 from runner.RepairTask import RepairTask
 
+
 class Nopol(RepairTool):
     """Nopol"""
 

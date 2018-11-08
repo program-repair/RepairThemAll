@@ -28,10 +28,10 @@ def initParser():
     npefix_parser = subparsers.add_parser('npefix', help='Repair the bug with NPEFix', parents=[bug_parser])
     npefix_args(npefix_parser)
 
-    nopol_parser = subparsers.add_parser('nopol', help='Repair the bug with Nopol', parents=[bug_parser])
+    nopol_parser = subparsers.add_parser('Nopol', help='Repair the bug with Nopol', parents=[bug_parser])
     nopol_args(nopol_parser)
 
-    dynamoth_parser = subparsers.add_parser('dynamoth', help='Repair the bug with Dynamoth', parents=[bug_parser])
+    dynamoth_parser = subparsers.add_parser('DynaMoth', help='Repair the bug with DynaMoth', parents=[bug_parser])
     dynamoth_args(dynamoth_parser)
 
     return parser.parse_args()
