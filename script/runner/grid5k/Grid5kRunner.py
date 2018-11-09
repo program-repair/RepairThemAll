@@ -92,7 +92,7 @@ class Grid5kRunner(Runner):
         node_cmd = "sudo-g5k apt-get install maven -y -qq > /dev/null; python %s" % node_cmd_args
 
         cmd = "oarsub -l nodes=1,walltime=%s -O %s -E %s \"%s\"" % (
-            "2:00",
+            "2:15",
             stdout_log,
             stderr_log,
             node_cmd)
