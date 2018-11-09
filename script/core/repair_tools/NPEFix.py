@@ -60,15 +60,15 @@ time java %s -cp %s %s \\
        str(bug.compliance_level()),
        bug.source_folders(),
        bug.classpath())
-            logPath = os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
-                                   str(self.seed), "stdout.log.full")
-            if not os.path.exists(os.path.dirname(logPath)):
-                os.makedirs(os.path.dirname(logPath))
-            log = file(logPath, 'w')
+            log_path = os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
+                                   str(self.seed), "repair.log")
+            if not os.path.exists(os.path.dirname(log_path)):
+                os.makedirs(os.path.dirname(log_path))
+            log = file(log_path, 'w')
             log.write(cmd)
             log.flush()
             subprocess.call(cmd, shell=True, stdout=log)
-            with open(logPath) as data_file:
+            with open(log_path) as data_file:
                 return data_file.read()
         finally:
             repair_task.status = "FINISHED"

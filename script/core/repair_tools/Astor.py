@@ -87,16 +87,16 @@ time java %s -cp %s %s \\
        ":".join(test_bin_folders),
        self.parameters,
        classpath)
-            logPath = os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
-                                   str(self.seed), "stdout.log.full")
-            if not os.path.exists(os.path.dirname(logPath)):
-                os.makedirs(os.path.dirname(logPath))
-            log = file(logPath, 'w')
+            log_path = os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
+                                   str(self.seed), "repair.log")
+            if not os.path.exists(os.path.dirname(log_path)):
+                os.makedirs(os.path.dirname(log_path))
+            log = file(log_path, 'w')
             log.write(cmd)
             log.flush()
 
             subprocess.call(cmd, shell=True, stdout=log, stderr=subprocess.STDOUT)
-            with open(logPath) as data_file:
+            with open(log_path) as data_file:
                 return data_file.read()
         finally:
             path_results = os.path.join(bug_path, "output_astor", "AstorMain-%s-%s" % (bug.project, bug.bug_id),
@@ -108,7 +108,7 @@ time java %s -cp %s %s \\
                                          str(self.seed), "result.json"))
                 with open(path_results) as fd:
                     repair_task.results = json.load(fd)
-                    if len(repair_task.results['patches']) > 0:
+                    if 'patches' in repair_task.results and len(repair_task.results['patches']) > 0:
                         repair_task.status = "PATCHED"
             else:
                 repair_task.status = "ERROR"

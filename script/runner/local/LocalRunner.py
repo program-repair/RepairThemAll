@@ -4,7 +4,7 @@ import time
 
 from runner.RepairTask import RepairTask
 from runner.Runner import Runner
-from runner.renderer.BashRenderer import BashRenderer
+from runner.renderer.renderer import get_renderer
 from config import LOCAL_THREAD
 
 
@@ -86,7 +86,7 @@ class LocalRunner(Runner):
 
     def execute(self):
         worker = RunnerWorker(self, self.repair_done)
-        renderer = BashRenderer(self)
+        renderer = get_renderer(self)
         worker.start()
 
         while worker.is_alive():

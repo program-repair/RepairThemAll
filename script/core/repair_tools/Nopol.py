@@ -34,6 +34,8 @@ class Nopol(RepairTool):
                                 "%s_%s_%s_%s" % (self.name, bug.benchmark.name, bug.project, bug.bug_id))
         self.init_bug(bug, bug_path)
         try:
+            classpath = ":".join(bug.bin_folders() + bug.test_bin_folders())
+            classpath += ":" + bug.classpath()
             cmd = """cd %s;
 export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8;
 TZ="America/New_York"; export TZ;
@@ -69,9 +71,9 @@ time java %s -cp %s:%s/../lib/tools.jar %s \\
        os.path.join(Z3_PATH, "z3"),
        str(bug.compliance_level()),
        ":".join(bug.source_folders()),
-       bug.classpath())
+       classpath)
             log_path = os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
-                                   str(self.seed), "stdout.log.full")
+                                   str(self.seed), "repair.log")
             if not os.path.exists(os.path.dirname(log_path)):
                 os.makedirs(os.path.dirname(log_path))
             log = file(log_path, 'w')
@@ -89,9 +91,8 @@ time java %s -cp %s:%s/../lib/tools.jar %s \\
                                          str(self.seed), "result.json"))
                 with open(path_results) as fd:
                     repair_task.results = json.load(fd)
-                    if len(repair_task.results['patches']) > 0:
+                    if 'patches' in repair_task.results and len(repair_task.results['patches']) > 0:
                         repair_task.status = "PATCHED"
-
             else:
                 repair_task.status = "ERROR"
             cmd = "rm -rf %s;" % (bug_path)

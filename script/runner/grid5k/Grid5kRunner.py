@@ -6,7 +6,7 @@ import re
 
 from runner.RepairTask import RepairTask
 from runner.Runner import Runner
-from runner.renderer.BashRenderer import BashRenderer
+from runner.renderer.renderer import get_renderer
 from config import REPAIR_ROOT, OUTPUT_PATH, GRID5K_MAX_NODE
 
 
@@ -89,7 +89,7 @@ class Grid5kRunner(Runner):
             task.benchmark.name,
             "%s-%s" % (task.bug.project, task.bug.bug_id)
         )
-        node_cmd = "sudo-g5k apt-get install -y maven; python %s" % node_cmd_args
+        node_cmd = "sudo-g5k apt-get install maven -y -qq > /dev/null; python %s" % node_cmd_args
 
         cmd = "oarsub -l nodes=1,walltime=%s -O %s -E %s \"%s\"" % (
             "2:00",
@@ -106,7 +106,7 @@ class Grid5kRunner(Runner):
             self.waiting.append(task)
 
     def execute(self):
-        renderer = BashRenderer(self)
+        renderer = get_renderer(self)
         to_run = self.tasks[:]
         while len(to_run) > 0 or len(self.running) > 0 or len(self.waiting) > 0:
             if len(to_run) > 0 and len(self.running) + len(self.waiting) < GRID5K_MAX_NODE:

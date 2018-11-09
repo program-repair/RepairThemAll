@@ -4,6 +4,7 @@ import datetime
 import time
 
 from runner.Runner import Runner
+from EmptyRenderer import EmptyRenderer
 
 
 def get_terminal_size():
@@ -44,18 +45,17 @@ def clean_terminal():
         sys.stdout.write("\033[K")
 
 
-class BashRenderer(object):
+class BashRenderer(EmptyRenderer):
     def __init__(self, runner):
         """
         :param runner:
         :type runner: Runner
         """
-        self.runner = runner
+        super(BashRenderer, self).__init__(runner)
 
         (width, height) = get_terminal_size()
         for i in range(1, height + 1):
             print("")
-        pass
 
     def get_errored_tasks(self):
         output = []
@@ -116,8 +116,6 @@ class BashRenderer(object):
         print(output)
 
     def render_final_result(self):
-        (width, height) = get_terminal_size()
-
         output = ""
 
         output += "%d Finished, %d Patched, %d Error\n\n" % (len(self.runner.finished), len(self.get_patched_tasks()), len(self.get_errored_tasks()))
@@ -127,5 +125,4 @@ class BashRenderer(object):
         for task in self.get_patched_tasks():
             output += "%d. %s %s\n" % (patch_number, task.tool.name, task.bug)
             patch_number += 1
-        output_length = len(output.split("\n"))
         print(output)
