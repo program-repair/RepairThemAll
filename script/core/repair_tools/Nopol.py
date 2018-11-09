@@ -66,7 +66,7 @@ time java %s -cp %s:%s/../lib/tools.jar %s \\
        self.synthesis,
        self.flocal,
        self.solver,
-       Z3_PATH,
+       os.path.join(Z3_PATH, "z3"),
        str(bug.compliance_level()),
        ":".join(bug.source_folders()),
        bug.classpath())
