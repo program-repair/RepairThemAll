@@ -3,7 +3,7 @@ import json
 import time
 import random
 
-from config import WORKING_DIRECTORY
+from config import WORKING_DIRECTORY, REPAIR_ROOT
 from config import DATA_PATH
 from config import REPAIR_TOOL_FOLDER
 
@@ -11,7 +11,7 @@ LOCK_FILE = "LOCK_BUGS_INIT"
 
 
 def is_lock():
-    return os.path.exists(os.path.join(WORKING_DIRECTORY, LOCK_FILE))
+    return os.path.exists(os.path.join(REPAIR_ROOT, LOCK_FILE))
 
 
 def wait_lock():
@@ -20,13 +20,13 @@ def wait_lock():
 
 
 def lock():
-    f = open(os.path.join(WORKING_DIRECTORY, LOCK_FILE), "w+")
+    f = open(os.path.join(REPAIR_ROOT, LOCK_FILE), "w+")
     f.close()
     pass
 
 
 def unclock():
-    os.remove(os.path.join(WORKING_DIRECTORY, LOCK_FILE))
+    os.remove(os.path.join(REPAIR_ROOT, LOCK_FILE))
 
 
 class RepairTool(object):
