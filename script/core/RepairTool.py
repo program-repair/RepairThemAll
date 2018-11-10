@@ -16,7 +16,7 @@ def is_lock():
 
 def wait_lock():
     while is_lock():
-        time.sleep(random.randrange(1, 5)/10)
+        time.sleep(random.randrange(1, 5))
 
 
 def lock():
@@ -25,8 +25,10 @@ def lock():
     pass
 
 
-def unclock():
-    os.remove(os.path.join(REPAIR_ROOT, LOCK_FILE))
+def unlock():
+    path = os.path.join(REPAIR_ROOT, LOCK_FILE)
+    if os.path.exists(path):
+        os.remove(path)
 
 
 class RepairTool(object):
@@ -54,7 +56,7 @@ class RepairTool(object):
             bug.compile()
             # bug.run_test()
         finally:
-            unclock()
+            unlock()
         pass
 
     def get_info(self, bug, bug_path):
