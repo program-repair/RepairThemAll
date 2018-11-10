@@ -114,5 +114,5 @@ time java %s -cp %s %s \\
             else:
                 repair_task.status = "ERROR"
             cmd = "rm -rf %s;" % (bug_path)
-            #subprocess.call(cmd, shell=True)
+            subprocess.call(cmd, shell=True)
         pass
