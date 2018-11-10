@@ -76,7 +76,7 @@ class BugDotJar(Benchmark):
     def test_bin_folders(self, bug):
         return [os.path.join("target", "test-classes")]
 
-    def classpath(self, bug):
+    def classpath(self, repair_task):
         return ""
 
     def compliance_level(self, bug):

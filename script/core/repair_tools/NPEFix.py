@@ -23,6 +23,7 @@ class NPEFix(RepairTool):
         bug = repair_task.bug
         bug_path = os.path.join(WORKING_DIRECTORY,
                                 "%s_%s_%s_%s" % (self.name, bug.benchmark.name, bug.project, bug.bug_id))
+        repair_task.working_directory = bug_path
         self.init_bug(bug, bug_path)
         try:
             cmd = """cd %s;
@@ -59,7 +60,7 @@ time java %s -cp %s %s \\
        Z3_PATH,
        str(bug.compliance_level()),
        bug.source_folders(),
-       bug.classpath())
+       bug.classpath(repair_task))
             log_path = os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
                                    str(self.seed), "repair.log")
             if not os.path.exists(os.path.dirname(log_path)):

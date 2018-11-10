@@ -132,9 +132,10 @@ defects4j info -p %s -b %s;
                 source = src['bintest']
         return [source]
 
-    def classpath(self, bug):
+    def classpath(self, repair_task):
+        bug = repair_task.bug
         classpath = ""
-        workdir = ""
+        workdir = repair_task.working_directory
         for index, cp in self.project_data[bug.project]["classpath"].iteritems():
             if bug.bug_id <= int(index):
                 for c in cp.split(":"):

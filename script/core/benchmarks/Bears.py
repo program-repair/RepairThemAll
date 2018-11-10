@@ -70,7 +70,7 @@ cp -r . %s""" % (
 
     def compile(self, bug, working_directory):
         cmd = """cd %s;
-mvn compile -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true; 
+mvn install -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true; 
 mvn test -DskipTests -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true;
 mvn dependency:build-classpath -Dmdep.outputFile="classpath.info";
 """ % (working_directory)
@@ -153,19 +153,14 @@ mvn package -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=t
         # TODO
         return ["target/test-classes"]
 
-    def classpath(self, bug):
+    def classpath(self, repair_task):
         classpath = ""
-
-        workdir = ""
+        workdir = repair_task.working_directory
 
         m2_repository = os.path.expanduser("~/.m2/repository")
-        branch_id = "%s-%s" % (bug.project, bug.bug_id)
-
-        cmd = "cd " + self.path + "; git checkout " + branch_id
-        subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
         dependencies = []
-        for (root, _, files) in os.walk(self.path):
+        for (root, _, files) in os.walk(workdir):
             for f in files:
                 if f == "classpath.info":
                     with open(os.path.join(root, f)) as fd:
@@ -173,7 +168,7 @@ mvn package -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=t
                         for lib in classpath_info.split(":"):
                             if ".m2" not in lib:
                                 continue
-                            lib = lib[lib.index(".m2") + 4:]
+                            lib = lib[lib.index(".m2") + 4:].replace("repository/", "")
                             tmp = lib.split("/")
                             jar = tmp[-1]
                             version = tmp[-2]

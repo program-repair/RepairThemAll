@@ -27,9 +27,10 @@ class Astor(RepairTool):
         bug = repair_task.bug
         bug_path = os.path.join(WORKING_DIRECTORY,
                                 "%s_%s_%s_%s" % (self.name, bug.benchmark.name, bug.project, bug.bug_id))
+        repair_task.working_directory = bug_path
         self.init_bug(bug, bug_path)
         try:
-            classpath = bug.classpath()
+            classpath = bug.classpath(repair_task)
             bin_folders = bug.bin_folders()[:]
             for folder in bug.bin_folders():
                 if not os.path.exists(os.path.join(bug_path, folder)):
@@ -113,5 +114,5 @@ time java %s -cp %s %s \\
             else:
                 repair_task.status = "ERROR"
             cmd = "rm -rf %s;" % (bug_path)
-            subprocess.call(cmd, shell=True)
+            #subprocess.call(cmd, shell=True)
         pass

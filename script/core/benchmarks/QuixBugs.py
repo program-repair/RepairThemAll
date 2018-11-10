@@ -64,8 +64,8 @@ class QuixBugs(Benchmark):
     def test_bin_folders(self, bug):
         return [os.path.join("target", "test-classes")]
 
-    def classpath(self, bug):
-        return ":".join(self.bin_folders(bug) + self.test_bin_folders(bug))
+    def classpath(self, repair_task):
+        return ""
 
     def compliance_level(self, bug):
         return 7
