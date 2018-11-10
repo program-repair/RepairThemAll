@@ -186,7 +186,6 @@ mvn package -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=t
                                 "version": version,
                                 "jar": jar
                             }]
-                    break
 
         for dep in dependencies:
             path = os.path.join(m2_repository, dep['group_id'].replace(".", "/"), dep['artifact_id'],
