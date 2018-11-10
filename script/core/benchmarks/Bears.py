@@ -49,7 +49,7 @@ class Bears(Benchmark):
     def checkout(self, bug, working_directory):
         branch_id = "%s-%s" % (bug.project, bug.bug_id)
 
-        cmd = "cd " + self.path + "; git checkout " + branch_id
+        cmd = "cd " + self.path + "; git reset .; git checkout -- .; ggit clean -x -d --force; git checkout master; git checkout " + branch_id
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
         cmd = "cd " + self.path + "; git log --format=format:%H --grep='Changes in the tests'"
