@@ -16,7 +16,9 @@ def is_lock():
 
 def wait_lock():
     while is_lock():
-        time.sleep(random.randrange(1, 5))
+        secs = random.randrange(2, 8)
+        print("IS LOCK WAIT FOR %d" % secs)
+        time.sleep(secs)
 
 
 def lock():
@@ -49,15 +51,18 @@ class RepairTool(object):
             self.jar = os.path.join(REPAIR_TOOL_FOLDER, self.data["jar"])
 
     def init_bug(self, bug, bug_path):
-        wait_lock()
-        lock()
+        print("START INIT BUG %s" % str(bug))
         try:
+            wait_lock()
+            print("LOCK BUG %s" % str(bug))
+            lock()
+            print("CHECKOUT BUG %s" % str(bug))
             bug.checkout(bug_path)
-            bug.compile()
-            # bug.run_test()
         finally:
             unlock()
-        pass
+            print("UNLOCK BUG %s %s" % (str(bug), is_lock()))
+        bug.compile()
+        # bug.run_test()
 
     def get_info(self, bug, bug_path):
         pass
