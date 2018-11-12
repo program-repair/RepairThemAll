@@ -29,29 +29,34 @@ class Grid5kRunner(Runner):
             waiting_ids = []
             for job_id in jobs:
                 if jobs[job_id]['state'] == "Running":
-                    running_ids.append(job_id)
+                    running_ids.append(int(job_id))
                 else:
-                    waiting_ids.append(job_id)
+                    waiting_ids.append(int(job_id))
 
             for task in self.running:
                 if task.id not in running_ids:
+                    self.running.remove(task)
                     task.end_date = time.time()
                     result_path = os.path.join(OUTPUT_PATH, task.benchmark.name, task.bug.project,
                                                str(task.bug.bug_id),
                                                task.tool.name,
                                                str(task.tool.seed), "result.json")
                     if os.path.exists(result_path):
-                        with open(result_path) as fd:
-                            task.results = json.load(fd)
-                            if len(task.results['patches']) > 0:
-                                task.status = "PATCHED"
-                            else:
-                                task.status = "DONE"
+                        try:
+                            with open(result_path) as fd:
+                                task.results = json.load(fd)
+                                if 'patches' in task.results and len(task.results['patches']) > 0:
+                                    task.status = "PATCHED"
+                                else:
+                                    task.status = "DONE"
+                        except Exception:
+                            task.status = "ERROR"
+                            pass
+
                     else:
                         task.status = "ERROR"
 
                     self.finished.append(task)
-                    self.running.remove(task)
 
             for task in self.waiting:
                 if task.id not in waiting_ids:
@@ -101,7 +106,7 @@ class Grid5kRunner(Runner):
         cmd_output = subprocess.check_output(cmd, shell=True, stdin=None, stderr=devnull)
         m = re.search('OAR_JOB_ID=([0-9]+)', cmd_output)
         if m:
-            task.id = m.group(1)
+            task.id = int(m.group(1))
             task.status = "WAITING"
             self.waiting.append(task)
 
