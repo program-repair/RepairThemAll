@@ -88,11 +88,14 @@ class Grid5kRunner(Runner):
         if not os.path.exists(log_root_path):
             os.makedirs(log_root_path)
 
+        bug_id = task.bug.project
+        if task.bug.bug_id != "" and task.bug.bug_id is not None:
+            bug_id = "%s-%s" % % (task.bug.project, task.bug.bug_id)
         node_cmd_args = "%s %s --benchmark %s --id %s" % (
             os.path.join(REPAIR_ROOT, 'script', 'repair.py'),
             task.tool.name,
             task.benchmark.name,
-            "%s-%s" % (task.bug.project, task.bug.bug_id)
+            bug_id
         )
         node_cmd = "sudo-g5k apt-get install maven -y -qq > /dev/null; python %s" % node_cmd_args
 
