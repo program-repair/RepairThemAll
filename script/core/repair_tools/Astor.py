@@ -10,15 +10,23 @@ from core.RepairTool import RepairTool
 class Astor(RepairTool):
     """Astor"""
 
-    def __init__(self, scope, name="Astor", seed=0, mode="jgenprog", maxgen="1000000", population="1",
-                 parameters="x:x"):
+    def __init__(self, scope, name="Astor",
+                 seed=0,
+                 mode="jgenprog",
+                 maxgen="1000000",
+                 max_time=120,
+                 population="1",
+                 parameters="x:x",
+                 stopfirst=True):
         super(Astor, self).__init__(name, "astor")
         self.seed = seed
         self.mode = mode
         self.maxgen = maxgen
+        self.max_time = max_time
         self.scope = scope
         self.population = population
         self.parameters = parameters
+        self.stopfirst = stopfirst
 
     def repair(self, repair_task):
         """"
@@ -29,8 +37,14 @@ class Astor(RepairTool):
                                 "%s_%s_%s_%s" % (self.name, bug.benchmark.name, bug.project, bug.bug_id))
         repair_task.working_directory = bug_path
         self.init_bug(bug, bug_path)
+
+        jvm4testexecution = JAVA7_HOME
+        if bug.compliance_level() > 7:
+            jvm4testexecution = JAVA8_HOME
         try:
             classpath = bug.classpath(repair_task)
+            if classpath == "":
+                classpath = '""'
             bin_folders = bug.bin_folders()[:]
             for folder in bug.bin_folders():
                 if not os.path.exists(os.path.join(bug_path, folder)):
@@ -52,8 +66,8 @@ time java %s -cp %s %s \\
 	-jvm4testexecution %s \\
 	-jvm4evosuitetestexecution %s \\
 	-maxgen %s \\
-	-maxtime 120 \\
-	-stopfirst true \\
+	-maxtime %d \\
+	-stopfirst %s \\
 	-seed %s \\
 	-scope %s \\
 	-population %s \\
@@ -75,9 +89,11 @@ time java %s -cp %s %s \\
        self.mode,
        "%s-%s" % (bug.project, bug.bug_id),
        ":".join(bug.failing_tests()),
-       JAVA8_HOME,
-       JAVA8_HOME,
+       jvm4testexecution,
+       jvm4testexecution,
        self.maxgen,
+       self.max_time,
+       "true" if self.stopfirst else "false",
        self.seed,
        self.scope,
        self.population,
@@ -106,9 +122,15 @@ time java %s -cp %s %s \\
                 repair_task.status = "FINISHED"
                 shutil.copy(path_results,
                             os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
-                                         str(self.seed), "result.json"))
+                                         str(self.seed), "detailed-result.json"))
                 with open(path_results) as fd:
                     repair_task.results = json.load(fd)
+                    result = {
+                        "patches": repair_task.results["patches"]
+                    }
+                    with open(os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
+                                         str(self.seed), "result.json"), "w+") as fd2:
+                        json.dump(result, fd2, indent=2)
                     if 'patches' in repair_task.results and len(repair_task.results['patches']) > 0:
                         repair_task.status = "PATCHED"
             else:

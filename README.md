@@ -17,11 +17,13 @@
 1. Nopol
 2. DynaMoth
 3. NPEFix
-4. Astor
+4. jGenProg
+5. jKali
+6. jMutRepair
 
 ## Usage
 
-There are two scripts: `script/repair.py` and `script/repair-all.py`, the first script is used to repair one specific bug, the second is used to run the repair of all the bugs of a specific benchmark.
+There are two scripts: `script/repair.py`, the first script is used to repair one specific bug, the second is used to run the repair of all the bugs of a specific benchmark.
 
 General usage:
 

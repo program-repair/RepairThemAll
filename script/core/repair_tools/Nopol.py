@@ -89,10 +89,16 @@ time java %s -cp %s:%s/../lib/tools.jar %s \\
                 repair_task.status = "FINISHED"
                 shutil.copy(path_results,
                             os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
-                                         str(self.seed), "result.json"))
+                                         str(self.seed), "detailed-result.json"))
                 with open(path_results) as fd:
                     repair_task.results = json.load(fd)
-                    if 'patches' in repair_task.results and len(repair_task.results['patches']) > 0:
+                    result = {'patches': []}
+                    if 'patch' in repair_task.results:
+                        result['patches'] = repair_task.results["patch"]
+                    with open(os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
+                                         str(self.seed), "result.json"), "w") as fd2:
+                        json.dump(result, fd2, indent=2)
+                    if len(result['patches']) > 0:
                         repair_task.status = "PATCHED"
             else:
                 repair_task.status = "ERROR"

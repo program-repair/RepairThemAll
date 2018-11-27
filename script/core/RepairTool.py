@@ -2,6 +2,7 @@ import os
 import json
 import time
 import random
+import shutil
 
 from config import WORKING_DIRECTORY, REPAIR_ROOT
 from config import DATA_PATH
@@ -17,7 +18,6 @@ def is_lock():
 def wait_lock():
     while is_lock():
         secs = random.randrange(2, 8)
-        print("IS LOCK WAIT FOR %d" % secs)
         time.sleep(secs)
 
 
@@ -51,16 +51,14 @@ class RepairTool(object):
             self.jar = os.path.join(REPAIR_TOOL_FOLDER, self.data["jar"])
 
     def init_bug(self, bug, bug_path):
-        print("START INIT BUG %s" % str(bug))
+        if os.path.exists(bug_path):
+            shutil.rmtree(bug_path)
         try:
             wait_lock()
-            print("LOCK BUG %s" % str(bug))
             lock()
-            print("CHECKOUT BUG %s" % str(bug))
             bug.checkout(bug_path)
         finally:
             unlock()
-            print("UNLOCK BUG %s %s" % (str(bug), is_lock()))
         bug.compile()
         # bug.run_test()
 

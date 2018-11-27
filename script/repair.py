@@ -7,7 +7,7 @@ try:
 except:
     pass
 
-from cli.repair_tools.astor import astor_args
+from cli.repair_tools.astor import *
 from cli.repair_tools.dynamoth import dynamoth_args
 from cli.repair_tools.nopol import nopol_args
 from cli.repair_tools.npefix import npefix_args
@@ -15,6 +15,7 @@ from core.benchmarks.Bears import Bears
 from core.benchmarks.BugDotJar import BugDotJar
 from core.benchmarks.Defects4J import Defects4J
 from core.benchmarks.IntroClassJava import IntroClassJava
+from core.benchmarks.QuixBugs import QuixBugs
 from runner.RepairTask import RepairTask
 from runner.runner import get_runner
 
@@ -28,6 +29,8 @@ def create_benchmark(benchmark):
         return BugDotJar()
     elif benchmark.lower() == "bears":
         return Bears()
+    elif benchmark.lower() == "quixbugs":
+        return QuixBugs()
     return None
 
 
@@ -41,18 +44,24 @@ def completion_bug_id(prefix, parsed_args, **kwargs):
     return results
 
 
-def initParser():
+def init_parser():
     parser = argparse.ArgumentParser(prog="repair", description='Repair bugs')
 
     bug_parser = argparse.ArgumentParser(add_help=False)
     bug_parser.add_argument("--benchmark", "-b", required=True, default="defects4j",
                             help="The benchmark to repair", choices=('Defects4J', 'IntroClassJava', 'Bugs.jar', 'Bears', 'QuixBugs'))
-    bug_parser.add_argument("--id", "-i", required=True, help="The bug id").completer = completion_bug_id
+    bug_parser.add_argument("--id", "-i", help="The bug id").completer = completion_bug_id
 
     subparsers = parser.add_subparsers()
 
-    astor_parser = subparsers.add_parser('jGenProg', help='Repair the bug with Astor', parents=[bug_parser])
-    astor_args(astor_parser)
+    jgenprog_parser = subparsers.add_parser('jGenProg', help='Repair the bug with jGenProg', parents=[bug_parser])
+    jgenprog_args(jgenprog_parser)
+
+    jkali_parser = subparsers.add_parser('jKali', help='Repair the bug with jKali', parents=[bug_parser])
+    jkali_args(jkali_parser)
+
+    jMutRepair_parser = subparsers.add_parser('jMutRepair', help='Repair the bug with jMutRepair', parents=[bug_parser])
+    jMutRepair_args(jMutRepair_parser)
 
     npefix_parser = subparsers.add_parser('npefix', help='Repair the bug with NPEFix', parents=[bug_parser])
     npefix_args(npefix_parser)
@@ -72,12 +81,20 @@ def initParser():
 
 
 if __name__ == "__main__":
-    args = initParser()
+    args = init_parser()
 
     if "benchmark" in args:
         args.benchmark = create_benchmark(args.benchmark)
-        args.bug = args.benchmark.get_bug(args.id)
 
-    if "func" in args:
-        tool = args.func(args)
-        get_runner([RepairTask(tool, args.benchmark, args.bug)]).execute()
+        tasks = []
+        bugs = args.benchmark.get_bugs()
+        if args.id is not None:
+            bugs = [args.benchmark.get_bug(args.id)]
+
+        for bug in bugs:
+            args.bug = bug
+
+            tool = args.func(args)
+            tasks.append(RepairTask(tool, args.benchmark, bug))
+
+        get_runner(tasks).execute()

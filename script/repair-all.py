@@ -57,7 +57,6 @@ if __name__ == "__main__":
         args.benchmark = Bears()
 
     tasks = []
-    projects = []
     for bug in args.benchmark.get_bugs():
         args.bug = bug
 

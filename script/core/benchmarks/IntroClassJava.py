@@ -6,6 +6,7 @@ from config import REPAIR_ROOT
 from core.Benchmark import Benchmark
 from core.Bug import Bug
 
+FNULL = open(os.devnull, 'w')
 
 class IntroClassJava(Benchmark):
     """IntroClassJava Benchmark"""
@@ -37,24 +38,46 @@ class IntroClassJava(Benchmark):
                     self.bugs += [bug]
         return self.bugs
 
+    def get_bug(self, bug_id):
+        separator = "-"
+        if "_" in bug_id:
+            separator = "_"
+        elif "/" in bug_id:
+            separator = "/"
+        (project, user, revision) = bug_id.split(separator)
+
+        for bug in self.get_bugs():
+            if project != bug.project:
+                continue
+            (bug_user, bug_revision) = bug.bug_id.split("_")
+            if user in bug_user and int(revision) == int(bug_revision):
+                return bug
+        return None
+
     def checkout(self, bug, working_directory):
-        user, revison = bug.bug_id.split("_")
+        user, revision = bug.bug_id.split("_")
         bug_path = os.path.join(self.path, "dataset", bug.project, user, revision)
-        shutil.copy(bug_path, working_directory)
+        shutil.copytree(bug_path, working_directory)
         pass
 
     def compile(self, bug, working_directory):
-        cmd = "cd %s; mvn test -Dmaven.test.skip=true;" % (working_directory)
-        subprocess.call(cmd, shell=True)
+        cmd = "cd %s; mvn test -DskipTests;" % (working_directory)
+        subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
     def run_test(self, bug, working_directory):
         cmd = "cd %s; mvn test;" % (working_directory)
-        subprocess.call(cmd, shell=True)
+        subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
     def failing_tests(self, bug):
-        tests = []
+        (bug_user, bug_revision) = bug.bug_id.split("_")
+        bug_user = bug_user[:8]
+        tests = [
+            "introclassJava.%s_%s_%sBlackboxTest" % (bug.project.lower(), bug_user, bug_revision),
+            "introclassJava.%s_%s_%sWhiteboxTest" % (bug.project.lower(), bug_user, bug_revision)
+        ]
+
         return tests
 
     def source_folders(self, bug):
@@ -70,7 +93,11 @@ class IntroClassJava(Benchmark):
         return [os.path.join("target", "test-classes")]
 
     def classpath(self, repair_task):
-        return ""
+        classpath = []
+        m2_repository = os.path.expanduser("~/.m2/repository")
+        classpath.append(os.path.join(m2_repository, "junit", "junit", "4.11", "junit-4.11.jar"))
+        classpath.append(os.path.join(m2_repository, "org", "hamcrest", "hamcrest-core", "1.3", "hamcrest-core-1.3.jar"))
+        return ":".join(classpath)
 
     def compliance_level(self, bug):
         return 7
