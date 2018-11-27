@@ -1,18 +1,19 @@
 from core.repair_tools.Astor import Astor
 
 
-def init(args, mode):
-    return Astor(mode=mode,
-                 maxgen=args.maxgen,
-                 max_time=args.maxtime,
-                 population=args.population,
-                 scope=args.scope,
-                 parameters=args.parameters,
-                 seed=args.seed)
+def init(args, name, mode):
+    return Astor(name=name,
+                    mode=mode,
+                    maxgen=args.maxgen,
+                    max_time=args.maxtime,
+                    population=args.population,
+                    scope=args.scope,
+                    parameters=args.parameters,
+                    seed=args.seed)
 
 
 def jgenprog_init(args):
-    return init(args, "jgenprog")
+    return init(args, "jGenProg", "jgenprog")
 
 
 def jgenprog_args(parser):
@@ -20,7 +21,7 @@ def jgenprog_args(parser):
     astor_args(parser)
 
 def jkali_init(args):
-    return init(args, "jkali")
+    return init(args, "jkali", "jkali")
 
 
 def jkali_args(parser):
@@ -28,7 +29,7 @@ def jkali_args(parser):
     astor_args(parser)
 
 def jMutRepair_init(args):
-    return init(args, "jMutRepair")
+    return init(args, "jMutRepair", "jMutRepair")
 
 
 def jMutRepair_args(parser):

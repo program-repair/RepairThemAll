@@ -11,6 +11,7 @@ from cli.repair_tools.astor import *
 from cli.repair_tools.dynamoth import dynamoth_args
 from cli.repair_tools.nopol import nopol_args
 from cli.repair_tools.npefix import npefix_args
+from cli.repair_tools.arja import *
 from core.benchmarks.Bears import Bears
 from core.benchmarks.BugDotJar import BugDotJar
 from core.benchmarks.Defects4J import Defects4J
@@ -71,6 +72,18 @@ def init_parser():
 
     dynamoth_parser = subparsers.add_parser('DynaMoth', help='Repair the bug with Dynamoth', parents=[bug_parser])
     dynamoth_args(dynamoth_parser)
+
+    arja_parser = subparsers.add_parser('Arja', help='Repair the bug with Arja', parents=[bug_parser])
+    arja_args(arja_parser)
+
+    rsrepair_parser = subparsers.add_parser('RSRepair', help='Repair the bug with RSRepair', parents=[bug_parser])
+    rsrepair_args(rsrepair_parser)
+
+    genprog_parser = subparsers.add_parser('GenProg', help='Repair the bug with GenProg (from Arja)', parents=[bug_parser])
+    genprog_args(genprog_parser)
+
+    kali_parser = subparsers.add_parser('Kali', help='Repair the bug with Kali (from Arja)', parents=[bug_parser])
+    kali_args(kali_parser)
 
     try:
         argcomplete.autocomplete(parser)

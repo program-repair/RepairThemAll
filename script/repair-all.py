@@ -1,66 +1,58 @@
-import argparse
+import os
 
-from cli.repair_tools.astor import astor_args
-from cli.repair_tools.dynamoth import dynamoth_args
-from cli.repair_tools.nopol import nopol_args
-from cli.repair_tools.npefix import npefix_args
-from core.Bug import Bug
-from core.benchmarks.Bears import Bears
-from core.benchmarks.BugDotJar import BugDotJar
-from core.benchmarks.Defects4J import Defects4J
-from core.benchmarks.IntroClassJava import IntroClassJava
-from runner.RepairTask import RepairTask
-from runner.runner import get_runner
+bug_path = "/tmp/RSRepair_QuixBugs_DEPTH_FIRST_SEARCH_"
 
+result = {
+                "patches": []
+            }
 
-def initParser():
-    parser = argparse.ArgumentParser(prog="repair", description='Repair Defects4J\'s bugs')
+output_folder = None
+for d in os.listdir(bug_path):
+    if "patches_" in d:
+        output_folder = d
+        break
 
-    bug_parser = argparse.ArgumentParser(add_help=False)
-    bug_parser.add_argument("--benchmark", "-b", required=True, default="defects4j",
-                            help="The benchmark to repair [defects4j, introclassjava, bugs.jar, Bears, QuixBugs]")
+path_results = os.path.join(bug_path, output_folder)
+if os.path.exists(path_results):
+    for f in os.listdir(path_results):
+        path_f = os.path.join(path_results, f)
+        if not os.path.isfile(path_f) or ".txt" not in f:
+            continue
+        with open(path_f) as fd:
+            str_patches = fd.read().split(
+                "**************************************************")
+            edits = []
+            for str_patch in str_patches:
+                splitted_patch = str_patch.strip().split("\n")
+                info_line = splitted_patch[0].split(" ")
+                if info_line[0] == "Evaluations:" or "EstimatedTime:" == info_line[0]:
+                    continue
 
-    subparsers = parser.add_subparsers()
+                is_kali = "." in info_line[-1]
+                if not is_kali:
+                    edit = {
+                        "type": info_line[1],
+                        "path": " ".join(info_line[2:-1]).replace("%s/" % bug_path, ""),
+                        "line": int(info_line[-1])
+                    }
+                    content = "%s\n" % splitted_patch[2]
+                    for line in splitted_patch[3:]:
+                        if line == "Seed:":
+                            edit["faulty"] = content.strip()
+                            content = ""
+                        else:
+                            content += "%s\n" % line
+                    edit["seed"] = content.strip()
+                else:
+                    edit = {
+                        "type": "%s %s" % (info_line[0], info_line[1]),
+                        "path": " ".join(info_line[2:-2]).replace("%s/" % bug_path, ""),
+                        "line": int(info_line[-2]),
+                        "faulty": "\n".join(splitted_patch[1:])
+                    }
 
-    astor_parser = subparsers.add_parser('jGenProg', help='Repair the bug with Astor', parents=[bug_parser])
-    astor_args(astor_parser)
-
-    npefix_parser = subparsers.add_parser('npefix', help='Repair the bug with NPEFix', parents=[bug_parser])
-    npefix_args(npefix_parser)
-
-    nopol_parser = subparsers.add_parser('Nopol', help='Repair the bug with Nopol', parents=[bug_parser])
-    nopol_args(nopol_parser)
-
-    dynamoth_parser = subparsers.add_parser('DynaMoth', help='Repair the bug with DynaMoth', parents=[bug_parser])
-    dynamoth_args(dynamoth_parser)
-
-    return parser.parse_args()
-
-
-def get_bug(args):
-    project = args.project
-    if project[0].lower() == project[0]:
-        project = project[0].upper() + project[1:]
-    id = int(args.id)
-    return Bug(args.benchmark, project, id)
-
-
-if __name__ == "__main__":
-    args = initParser()
-    if args.benchmark.lower() == "defects4j":
-        args.benchmark = Defects4J()
-    elif args.benchmark.lower() == "introclassjava":
-        args.benchmark = IntroClassJava()
-    elif args.benchmark.lower() == "bugs.jar":
-        args.benchmark = BugDotJar()
-    elif args.benchmark.lower() == "bears":
-        args.benchmark = Bears()
-
-    tasks = []
-    for bug in args.benchmark.get_bugs():
-        args.bug = bug
-
-        tool = args.func(args)
-        tasks.append(RepairTask(tool, args.benchmark, bug))
-
-    get_runner(tasks).execute()
+                edits.append(edit)
+            result["patches"].append({
+                "edits": edits
+            })
+    print result

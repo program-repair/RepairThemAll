@@ -1,0 +1,6 @@
+{
+	"name": "Arja",
+	"version": "0.0.2",
+	"jar": "arja.jar",
+	"main": "us.msu.cse.repair.Main"
+}
