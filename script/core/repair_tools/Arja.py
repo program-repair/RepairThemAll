@@ -49,7 +49,7 @@ export PATH="%s:$PATH";
 export JAVA_HOME="%s";
 time java %s -cp %s %s \\
 	%s \\
-	-DexternalProjRoot /home/tdurieux/git/arja/external \\
+	-DexternalProjRoot %s \\
 	-DsrcJavaDir %s \\
 	-DbinJavaDir %s \\
 	-DbinTestDir %s \\
@@ -63,6 +63,7 @@ time java %s -cp %s %s \\
         os.path.join(REPAIR_ROOT, "libs", "jmetal.jar") + ":" + self.jar,
         self.main,
         self.mode,
+        os.path.join(REPAIR_ROOT, "libs", "arja_external"),
         ":".join(sources),
         ":".join(bin_folders),
         ":".join(test_bin_folders),
