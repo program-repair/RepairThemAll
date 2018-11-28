@@ -3,6 +3,7 @@ import json
 import os
 import re
 import subprocess
+from sets import Set
 
 from config import DATA_PATH
 from config import REPAIR_ROOT
@@ -87,12 +88,12 @@ defects4j info -p %s -b %s;
 """ % (self._get_benchmark_path(), bug.project, bug.bug_id)
         info = subprocess.check_output(cmd, shell=True)
 
-        tests = []
+        tests = Set()
         reg = re.compile('- (.*)::(.*)')
         m = reg.findall(info)
         for i in m:
-            tests += [i[0]]
-        return tests
+            tests.add(i[0])
+        return list(tests)
 
     def source_folders(self, bug):
         sources = self.project_data[bug.project]["src"]
@@ -107,7 +108,7 @@ defects4j info -p %s -b %s;
 
     def test_folders(self, bug):
         sources = self.project_data[bug.project]["src"]
-        collections.OrderedDict(sorted(sources.items(), key=lambda t: int(t[0])))
+        sources = collections.OrderedDict(sorted(sources.items(), key=lambda t: int(t[0])))
 
         source = None
         for index, src in sources.iteritems():
@@ -118,7 +119,7 @@ defects4j info -p %s -b %s;
 
     def bin_folders(self, bug):
         sources = self.project_data[bug.project]["src"]
-        collections.OrderedDict(sorted(sources.items(), key=lambda t: int(t[0])))
+        sources = collections.OrderedDict(sorted(sources.items(), key=lambda t: int(t[0])))
         source = None
         for index, src in sources.iteritems():
             if bug.bug_id <= int(index):
@@ -128,7 +129,7 @@ defects4j info -p %s -b %s;
 
     def test_bin_folders(self, bug):
         sources = self.project_data[bug.project]["src"]
-        collections.OrderedDict(sorted(sources.items(), key=lambda t: int(t[0])))
+        sources = collections.OrderedDict(sorted(sources.items(), key=lambda t: int(t[0])))
 
         source = None
         for index, src in sources.iteritems():
