@@ -124,7 +124,7 @@ class Grid5kRunner(Runner):
         for param in parameters:
             if param["parameter"] == "i" or param["parameter"] == "id":
                 continue
-            node_cmd_args += " %s %s%s" % (param["separator"], param["parameter"], param["value"])
+            node_cmd_args += " %s%s%s" % (param["separator"], param["parameter"], param["value"])
 
         node_cmd = "sudo-g5k apt-get install maven -y -qq > /dev/null; python %s" % node_cmd_args
 
@@ -134,7 +134,6 @@ class Grid5kRunner(Runner):
             stderr_log,
             node_cmd)
         devnull = open('/dev/null', 'w')
-
         cmd_output = subprocess.check_output(cmd, shell=True, stdin=None, stderr=devnull)
         m = re.search('OAR_JOB_ID=([0-9]+)', cmd_output)
         if m:
