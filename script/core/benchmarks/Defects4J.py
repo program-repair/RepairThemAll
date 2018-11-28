@@ -148,7 +148,7 @@ defects4j info -p %s -b %s;
                         classpath += ":"
                     classpath += os.path.join(workdir, c)
                 break
-        libs_path = os.path.join(self.path, "framework", "projects", "lib")
+        libs_path = os.path.join(self.path, "framework", "projects", bug.project, "lib")
         for lib in self.project_data[bug.project]["libs"]:
             if os.path.exists(os.path.join(libs_path, lib)):
                 classpath += ":" + os.path.join(libs_path, lib)
