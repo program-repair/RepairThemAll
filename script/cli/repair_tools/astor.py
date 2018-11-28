@@ -21,7 +21,7 @@ def jgenprog_args(parser):
     astor_args(parser)
 
 def jkali_init(args):
-    return init(args, "jkali", "jkali")
+    return init(args, "jKali", "jkali")
 
 
 def jkali_args(parser):
