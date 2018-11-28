@@ -51,7 +51,7 @@ def init_parser():
     bug_parser = argparse.ArgumentParser(add_help=False)
     bug_parser.add_argument("--benchmark", "-b", required=True, default="defects4j",
                             help="The benchmark to repair", choices=('Defects4J', 'IntroClassJava', 'Bugs.jar', 'Bears', 'QuixBugs'))
-    bug_parser.add_argument("--id", "-i", help="The bug id").completer = completion_bug_id
+    bug_parser.add_argument("--id", "-i", nargs='+', help="The bug id").completer = completion_bug_id
 
     subparsers = parser.add_subparsers()
 
@@ -102,7 +102,9 @@ if __name__ == "__main__":
         tasks = []
         bugs = args.benchmark.get_bugs()
         if args.id is not None:
-            bugs = [args.benchmark.get_bug(args.id)]
+            bugs = []
+            for bug_id in args.id:
+                bugs.append(args.benchmark.get_bug(bug_id))
 
         for bug in bugs:
             args.bug = bug
