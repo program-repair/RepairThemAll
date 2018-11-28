@@ -3,6 +3,7 @@ import subprocess
 import json
 import os
 import re
+import sys
 
 from runner.RepairTask import RepairTask
 from runner.Runner import Runner
@@ -95,12 +96,36 @@ class Grid5kRunner(Runner):
         bug_id = task.bug.project
         if task.bug.bug_id != "" and task.bug.bug_id is not None:
             bug_id = "%s_%s" % (task.bug.project, task.bug.bug_id)
-        node_cmd_args = "%s %s --benchmark %s --id %s" % (
+
+        parameters = []
+        current_parameter = None
+        for a in sys.argv:
+            if a[0] == '-':
+                if current_parameter is not None:
+                    parameters.append(current_parameter)
+                param = a[1:]
+                if param[0] == '-':
+                    param = param[1:]
+                current_parameter = {
+                    "separator": '-' if len(param) == 1 else '--',
+                    "parameter": param,
+                    "value": ""
+                }
+            elif current_parameter is not None:
+                current_parameter['value'] += " " + a
+        if current_parameter is not None:
+            parameters.append(current_parameter)
+
+        node_cmd_args = "%s %s --id %s" % (
             os.path.join(REPAIR_ROOT, 'script', 'repair.py'),
             task.tool.name,
-            task.benchmark.name,
             bug_id
         )
+        for param in parameters:
+            if param["parameter"] == "i" or param["parameter"] == "id":
+                continue
+            node_cmd_args += " %s %s%s" % (param["separator"], param["parameter"], param["value"])
+
         node_cmd = "sudo-g5k apt-get install maven -y -qq > /dev/null; python %s" % node_cmd_args
 
         cmd = "oarsub -l nodes=1,walltime=%s -O %s -E %s \"%s\"" % (
