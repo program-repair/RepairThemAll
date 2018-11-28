@@ -2,6 +2,7 @@ import json
 import os
 import shutil
 import subprocess
+import datetime
 
 from config import WORKING_DIRECTORY, REPAIR_ROOT, JAVA7_HOME, JAVA8_HOME, JAVA_ARGS, OUTPUT_PATH
 from core.RepairTool import RepairTool
@@ -37,6 +38,8 @@ class Astor(RepairTool):
                                 "%s_%s_%s_%s" % (self.name, bug.benchmark.name, bug.project, bug.bug_id))
         repair_task.working_directory = bug_path
         self.init_bug(bug, bug_path)
+
+        repair_begin = datetime.datetime.now().__str__()
 
         jvm4testexecution = JAVA7_HOME
         if bug.compliance_level() > 7:
@@ -126,6 +129,8 @@ time java %s -cp %s %s \\
                 with open(path_results) as fd:
                     repair_task.results = json.load(fd)
                     result = {
+                        "repair_begin": repair_begin,
+                        "repair_end": datetime.datetime.now().__str__(),
                         "patches": repair_task.results["patches"]
                     }
                     with open(os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,

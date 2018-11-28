@@ -1,5 +1,6 @@
 import os
 import subprocess
+import datetime
 
 from config import JAVA8_HOME
 from config import JAVA_ARGS
@@ -25,6 +26,7 @@ class NPEFix(RepairTool):
                                 "%s_%s_%s_%s" % (self.name, bug.benchmark.name, bug.project, bug.bug_id))
         repair_task.working_directory = bug_path
         self.init_bug(bug, bug_path)
+        repair_begin = datetime.datetime.now().__str__()
         try:
             cmd = """cd %s;
 export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8;
@@ -72,6 +74,11 @@ time java %s -cp %s %s \\
             with open(log_path) as data_file:
                 return data_file.read()
         finally:
+            result = {
+                "repair_begin": repair_begin,
+                "repair_end": datetime.datetime.now().__str__(),
+                "patches": []
+            }
             repair_task.status = "FINISHED"
             cmd = "rm -rf %s;" % (bug_path)
             subprocess.call(cmd, shell=True)

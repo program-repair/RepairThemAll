@@ -1,6 +1,6 @@
 import json
 import os
-import shutil
+import datetime
 import subprocess
 
 from config import WORKING_DIRECTORY, REPAIR_ROOT, JAVA8_HOME, JAVA_ARGS, OUTPUT_PATH
@@ -35,6 +35,7 @@ class Arja(RepairTool):
         repair_task.working_directory = bug_path
         self.init_bug(bug, bug_path)
 
+        repair_begin = datetime.datetime.now().__str__()
         try:
             classpath = bug.classpath(repair_task)
             if classpath == "":
@@ -81,6 +82,8 @@ time java %s -cp %s %s \\
                 return data_file.read()
         finally:
             result = {
+                "repair_begin": repair_begin,
+                "repair_end": datetime.datetime.now().__str__(),
                 "patches": []
             }
             repair_task.status = "FINISHED"

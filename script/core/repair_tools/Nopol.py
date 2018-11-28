@@ -2,6 +2,7 @@ import os
 import shutil
 import json
 import subprocess
+import datetime
 
 from config import JAVA8_HOME
 from config import JAVA_ARGS
@@ -34,6 +35,7 @@ class Nopol(RepairTool):
                                 "%s_%s_%s_%s" % (self.name, bug.benchmark.name, bug.project, bug.bug_id))
         repair_task.working_directory = bug_path
         self.init_bug(bug, bug_path)
+        repair_begin = datetime.datetime.now().__str__()
         try:
             classpath = ":".join(bug.bin_folders() + bug.test_bin_folders())
             classpath += ":" + bug.classpath(repair_task)
@@ -92,7 +94,11 @@ time java %s -cp %s:%s/../lib/tools.jar %s \\
                                          str(self.seed), "detailed-result.json"))
                 with open(path_results) as fd:
                     repair_task.results = json.load(fd)
-                    result = {'patches': []}
+                    result = {
+                        "repair_begin": repair_begin,
+                        "repair_end": datetime.datetime.now().__str__(),
+                        'patches': []
+                    }
                     if 'patch' in repair_task.results:
                         result['patches'] = repair_task.results["patch"]
                     with open(os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
