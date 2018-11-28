@@ -153,6 +153,8 @@ defects4j info -p %s -b %s;
         for lib in self.project_data[bug.project]["libs"]:
             if os.path.exists(os.path.join(libs_path, lib)):
                 classpath += ":" + os.path.join(libs_path, lib)
+            elif os.path.exists(os.path.join(workdir, "lib", lib)):
+                classpath += ":" + os.path.join(workdir, "lib", lib)
         return classpath
 
     def compliance_level(self, bug):

@@ -39,6 +39,7 @@ class Nopol(RepairTool):
         try:
             classpath = ":".join(bug.bin_folders() + bug.test_bin_folders())
             classpath += ":" + bug.classpath(repair_task)
+            classpath += ":" + self.jar
             cmd = """cd %s;
 export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8;
 TZ="America/New_York"; export TZ;
