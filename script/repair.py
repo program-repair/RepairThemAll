@@ -64,7 +64,7 @@ def init_parser():
     jMutRepair_parser = subparsers.add_parser('jMutRepair', help='Repair the bug with jMutRepair', parents=[bug_parser])
     jMutRepair_args(jMutRepair_parser)
 
-    npefix_parser = subparsers.add_parser('npefix', help='Repair the bug with NPEFix', parents=[bug_parser])
+    npefix_parser = subparsers.add_parser('NPEFix', help='Repair the bug with NPEFix', parents=[bug_parser])
     npefix_args(npefix_parser)
 
     nopol_parser = subparsers.add_parser('Nopol', help='Repair the bug with Nopol', parents=[bug_parser])
