@@ -9,6 +9,8 @@ from config import REPAIR_ROOT
 from core.Benchmark import Benchmark
 from core.Bug import Bug
 
+FNULL = open(os.devnull, 'w')
+
 
 class Defects4J(Benchmark):
     """Defects4j Benchmark"""
@@ -58,7 +60,7 @@ defects4j checkout -p %s -v %sb -w %s;
        bug.project,
        bug.bug_id,
        working_directory)
-        subprocess.call(cmd, shell=True)
+        subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
     def compile(self, bug, working_directory):
@@ -67,7 +69,7 @@ cd %s;
 defects4j compile;
 """ % (self._get_benchmark_path(),
        working_directory)
-        subprocess.call(cmd, shell=True)
+        subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
     def run_test(self, bug, working_directory):
@@ -76,7 +78,7 @@ cd %s;
 defects4j test;
 """ % (self._get_benchmark_path(),
        working_directory)
-        subprocess.call(cmd, shell=True)
+        subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
     def failing_tests(self, bug):
@@ -100,6 +102,7 @@ defects4j info -p %s -b %s;
         for index, src in sources.iteritems():
             if bug.bug_id <= int(index):
                 source = src['srcjava']
+                break
         return [source]
 
     def test_folders(self, bug):
@@ -110,16 +113,17 @@ defects4j info -p %s -b %s;
         for index, src in sources.iteritems():
             if bug.bug_id <= int(index):
                 source = src['srctest']
+                break
         return [source]
 
     def bin_folders(self, bug):
         sources = self.project_data[bug.project]["src"]
         collections.OrderedDict(sorted(sources.items(), key=lambda t: int(t[0])))
-
         source = None
         for index, src in sources.iteritems():
             if bug.bug_id <= int(index):
                 source = src['binjava']
+                break
         return [source]
 
     def test_bin_folders(self, bug):
@@ -130,6 +134,7 @@ defects4j info -p %s -b %s;
         for index, src in sources.iteritems():
             if bug.bug_id <= int(index):
                 source = src['bintest']
+                break
         return [source]
 
     def classpath(self, repair_task):

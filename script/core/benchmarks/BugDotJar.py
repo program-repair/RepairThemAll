@@ -7,6 +7,8 @@ from core.Benchmark import Benchmark
 from core.Bug import Bug
 
 
+FNULL = open(os.devnull, 'w')
+
 class BugDotJar(Benchmark):
     """Bug_dot_jar Benchmark"""
 
@@ -51,13 +53,13 @@ class BugDotJar(Benchmark):
         pass
 
     def compile(self, bug, working_directory):
-        cmd = "cd %s; mvn test -Dmaven.test.skip=true;" % (working_directory)
-        subprocess.call(cmd, shell=True)
+        cmd = "cd %s; mvn test -DskipTests;" % (working_directory)
+        subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
     def run_test(self, bug, working_directory):
         cmd = "cd %s; mvn test;" % (working_directory)
-        subprocess.call(cmd, shell=True)
+        subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
     def failing_tests(self, bug):

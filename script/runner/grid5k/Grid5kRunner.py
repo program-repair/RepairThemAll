@@ -87,6 +87,10 @@ class Grid5kRunner(Runner):
 
         if not os.path.exists(log_root_path):
             os.makedirs(log_root_path)
+        elif os.path.exists(stderr_log):
+            os.remove(stderr_log)
+        if os.path.exists(stdout_log):
+            os.remove(stdout_log)
 
         bug_id = task.bug.project
         if task.bug.bug_id != "" and task.bug.bug_id is not None:
