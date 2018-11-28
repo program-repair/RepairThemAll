@@ -133,11 +133,11 @@ time java %s -cp %s %s \\
                         result["patches"].append({
                             "edits": edits
                         })
-                with open(os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
-                                       str(self.seed), "result.json"), "w+") as fd2:
-                    json.dump(result, fd2, indent=2)
-                if len(result['patches']) > 0:
-                    repair_task.status = "PATCHED"
+            with open(os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
+                                   str(self.seed), "result.json"), "w+") as fd2:
+                json.dump(result, fd2, indent=2)
+            if len(result['patches']) > 0:
+                repair_task.status = "PATCHED"
             cmd = "rm -rf %s;" % (bug_path)
             subprocess.call(cmd, shell=True)
 
