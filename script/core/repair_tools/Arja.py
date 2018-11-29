@@ -3,7 +3,7 @@ import os
 import datetime
 import subprocess
 
-from config import WORKING_DIRECTORY, REPAIR_ROOT, JAVA8_HOME, JAVA_ARGS, OUTPUT_PATH
+from config import WORKING_DIRECTORY, REPAIR_ROOT, JAVA7_HOME, JAVA8_HOME, JAVA_ARGS, OUTPUT_PATH
 from core.RepairTool import RepairTool
 
 
@@ -42,6 +42,9 @@ class Arja(RepairTool):
             bin_folders = to_absolute(bug_path, bug.bin_folders())
             test_bin_folders = to_absolute(bug_path, bug.test_bin_folders())
             sources = to_absolute(bug_path, bug.source_folders())
+            java_version = JAVA7_HOME
+            if bug.compliance_level() > 7:
+                java_version = JAVA8_HOME
             cmd = """cd %s;
 export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8;
 TZ="America/New_York"; export TZ;
@@ -57,17 +60,17 @@ time java %s -cp %s %s \\
 	echo "\\n\\nNode: `hostname`\\n";
 	echo "\\n\\nDate: `date`\\n";
 """ % (bug_path,
-        JAVA8_HOME,
-        JAVA8_HOME,
-        JAVA_ARGS,
-        os.path.join(REPAIR_ROOT, "libs", "jmetal.jar") + ":" + self.jar,
-        self.main,
-        self.mode,
-        os.path.join(REPAIR_ROOT, "libs", "arja_external"),
-        ":".join(sources),
-        ":".join(bin_folders),
-        ":".join(test_bin_folders),
-        classpath)
+       java_version,
+       java_version,
+       JAVA_ARGS,
+       os.path.join(REPAIR_ROOT, "libs", "jmetal.jar") + ":" + self.jar,
+       self.main,
+       self.mode,
+       os.path.join(REPAIR_ROOT, "libs", "arja_external"),
+       ":".join(sources),
+       ":".join(bin_folders),
+       ":".join(test_bin_folders),
+       classpath)
             log_path = os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
                                     str(self.seed), "repair.log")
             if not os.path.exists(os.path.dirname(log_path)):
