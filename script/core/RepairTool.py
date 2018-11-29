@@ -55,6 +55,7 @@ class RepairTool(object):
     def init_bug(self, bug, bug_path):
         if os.path.exists(bug_path):
             self.repair_begin = datetime.datetime.now().__str__()
+            bug.working_directory = bug_path
             return
             shutil.rmtree(bug_path)
         try:

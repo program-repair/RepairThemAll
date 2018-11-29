@@ -107,26 +107,20 @@ mvn package -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=t
 
     def source_folders(self, bug):
         folders = []
-        branch_id = "%s-%s" % (bug.project, bug.bug_id)
 
         if bug.project.lower() in self.sources:
             return self.sources[bug.project.lower()]['sources']
 
-        cmd = "cd " + self.path + "; git checkout " + branch_id
-        subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
-        for (root, dirnames, _) in os.walk(self.path):
-            path_project = root.replace(self.path, "")
-            if len(path_project) > 0 and path_project[0] == "/":
-                path_project = path_project[1:]
+        for (root, dirnames, _) in os.walk(bug.working_directory):
             for d in dirnames:
                 if d == "src" or d == "source":
                     if os.path.exists(os.path.join(root, d, "main")):
                         if os.path.exists(os.path.join(root, d, "java")):
-                            folders += [os.path.join(path_project, d, "java")]
+                            folders += [os.path.join(root, d, "java")]
                         else:
-                            folders += [os.path.join(path_project, d, "main")]
+                            folders += [os.path.join(root, d, "main")]
                     else:
-                        folders += [os.path.join(path_project, d)]
+                        folders += [os.path.join(root, d)]
         return folders
 
     def test_folders(self, bug):
@@ -134,17 +128,11 @@ mvn package -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=t
             return self.sources[bug.project.lower()]['tests']
 
         folders = []
-        branch_id = "%s-%s" % (bug.project, bug.bug_id)
 
-        cmd = "cd " + self.path + "; git checkout " + branch_id
-        subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
-        for (root, dirnames, _) in os.walk(self.path):
-            path_project = root.replace(self.path, "")
-            if len(path_project) > 0 and path_project[0] == "/":
-                path_project = path_project[1:]
+        for (root, dirnames, _) in os.walk(bug.working_directory):
             for d in dirnames:
                 if d == "test":
-                    folders += [os.path.join(path_project, d)]
+                    folders += [os.path.join(root, d)]
         return folders
 
     def bin_folders(self, bug):

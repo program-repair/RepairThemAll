@@ -17,6 +17,7 @@ class Bug(object):
         self.project = project
         self.bug_id = bug_id
         self.benchmark = benchmark
+        self.working_directory = None
 
     def _get_project_data(self):
         if self.project_data is not None:

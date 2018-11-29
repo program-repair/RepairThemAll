@@ -140,7 +140,8 @@ defects4j info -p %s -b %s;
 
     def classpath(self, repair_task):
         bug = repair_task.bug
-        classpath = ""
+        classpath = os.path.join(self.path, "framework", "projects", "lib", "junit-4.11.jar")
+        classpath += ":" + os.path.join(self.path, "framework", "projects", "lib", "cobertura-2.0.3.jar")
         workdir = repair_task.working_directory
         for index, cp in self.project_data[bug.project]["classpath"].iteritems():
             if bug.bug_id <= int(index):
