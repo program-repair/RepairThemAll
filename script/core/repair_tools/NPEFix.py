@@ -30,6 +30,8 @@ class NPEFix(RepairTool):
         self.init_bug(bug, bug_path)
 
         try:
+            classpath = ":".join(bug.bin_folders() + bug.test_bin_folders())
+            classpath += ":" + bug.classpath(repair_task)
             cmd = """cd %s;
 export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8;
 TZ="America/New_York"; export TZ;
@@ -54,7 +56,7 @@ time java %s -cp %s %s \\
         self.iteration,
         str(bug.compliance_level()),
         ":".join(bug.source_folders()),
-        bug.classpath(repair_task))
+        classpath)
             log_path = os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
                                     str(self.seed), "repair.log")
             if not os.path.exists(os.path.dirname(log_path)):
@@ -103,5 +105,5 @@ time java %s -cp %s %s \\
             with open(os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name, str(self.seed), "result.json"), "w+") as fd2:
                 json.dump(result, fd2, indent=2)
             cmd = "rm -rf %s;" % (bug_path)
-            subprocess.call(cmd, shell=True)
+            #subprocess.call(cmd, shell=True)
         pass

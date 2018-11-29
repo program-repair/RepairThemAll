@@ -23,12 +23,18 @@ class Bears(Benchmark):
             self.sources = json.load(fd)
 
     def get_bug(self, bug_id):
+        bug_id = bug_id.replace("_", "-")
         separator = "-"
         splitted = bug_id.split(separator)
         patched = splitted[-1]
         buggy = splitted[-2]
         project = "-".join(splitted[:-2])
-        return Bug(self, project, "%s-%s" % (buggy, patched))
+
+        for bug in self.get_bugs():
+            if bug.project.lower() == project.lower():
+                if bug.bug_id.lower() == ("%s-%s" % (buggy, patched)):
+                    return bug
+        return None
 
     def get_data_path(self):
         return os.path.join(DATA_PATH, "benchmarks", "bears")
