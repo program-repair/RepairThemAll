@@ -3,6 +3,7 @@ import json
 import time
 import random
 import shutil
+import datetime
 
 from config import WORKING_DIRECTORY, REPAIR_ROOT
 from config import DATA_PATH
@@ -40,6 +41,7 @@ class RepairTool(object):
         self.jar = None
         self.name = name
         self.config_name = config_name
+        self.repair_begin = None
         self.parseData()
         pass
 
@@ -52,6 +54,8 @@ class RepairTool(object):
 
     def init_bug(self, bug, bug_path):
         if os.path.exists(bug_path):
+            self.repair_begin = datetime.datetime.now().__str__()
+            return
             shutil.rmtree(bug_path)
         try:
             wait_lock()
@@ -60,6 +64,7 @@ class RepairTool(object):
         finally:
             unlock()
         bug.compile()
+        self.repair_begin = datetime.datetime.now().__str__()
         # bug.run_test()
 
     def get_info(self, bug, bug_path):

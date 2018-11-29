@@ -1,6 +1,8 @@
 import os
 import subprocess
 import datetime
+import json
+import shutil
 
 from config import JAVA8_HOME
 from config import JAVA_ARGS
@@ -26,7 +28,7 @@ class NPEFix(RepairTool):
                                 "%s_%s_%s_%s" % (self.name, bug.benchmark.name, bug.project, bug.bug_id))
         repair_task.working_directory = bug_path
         self.init_bug(bug, bug_path)
-        repair_begin = datetime.datetime.now().__str__()
+
         try:
             cmd = """cd %s;
 export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8;
@@ -43,16 +45,16 @@ time java %s -cp %s %s \\
 	echo "\\n\\nNode: `hostname`\\n";
 	echo "\\n\\nDate: `date`\\n";
 """ % (bug_path,
-       JAVA8_HOME,
-       JAVA8_HOME,
-       JAVA_ARGS,
-       self.jar,
-       self.main,
-       ":".join(bug.failing_tests()),
-       self.iteration,
-       str(bug.compliance_level()),
-       ":".join(bug.source_folders()),
-       bug.classpath(repair_task))
+        JAVA8_HOME,
+        JAVA8_HOME,
+        JAVA_ARGS,
+        self.jar,
+        self.main,
+        ":".join(bug.failing_tests()),
+        self.iteration,
+        str(bug.compliance_level()),
+        ":".join(bug.source_folders()),
+        bug.classpath(repair_task))
             log_path = os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
                                     str(self.seed), "repair.log")
             if not os.path.exists(os.path.dirname(log_path)):
@@ -65,11 +67,41 @@ time java %s -cp %s %s \\
                 return data_file.read()
         finally:
             result = {
-                "repair_begin": repair_begin,
+                "repair_begin": self.repair_begin,
                 "repair_end": datetime.datetime.now().__str__(),
                 "patches": []
             }
             repair_task.status = "FINISHED"
+            output_file = None
+            for d in os.listdir(bug_path):
+                if "patches_" in d:
+                    output_file = d
+                    break
+
+            path_output = os.path.join(bug_path, output_file) if output_file is not None else None
+            if path_output is not None and os.path.exists(path_output):
+                shutil.copy(path_output,
+                            os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
+                                         str(self.seed), "detailed-result.json"))
+                with open(path_output) as fd:
+                    data = json.load(fd)
+                    if 'executions' in data:
+                        executions = data['executions']
+                        for execution in executions:
+                            if not execution['result']['success'] or 'decisions' not in execution:
+                                continue
+                            result['patches'].append({
+                                'diff': execution['diff'],
+                                'locations': execution['locations']
+                            })
+                pass
+            else:
+                repair_task.status = "ERROR"
+            repair_task.results = result
+            if len(result['patches']) > 0:
+                repair_task.status = "PATCHED"
+            with open(os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name, str(self.seed), "result.json"), "w+") as fd2:
+                json.dump(result, fd2, indent=2)
             cmd = "rm -rf %s;" % (bug_path)
             subprocess.call(cmd, shell=True)
         pass

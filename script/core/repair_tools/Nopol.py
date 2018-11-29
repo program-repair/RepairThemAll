@@ -35,7 +35,6 @@ class Nopol(RepairTool):
                                 "%s_%s_%s_%s" % (self.name, bug.benchmark.name, bug.project, bug.bug_id))
         repair_task.working_directory = bug_path
         self.init_bug(bug, bug_path)
-        repair_begin = datetime.datetime.now().__str__()
         try:
             classpath = ":".join(bug.bin_folders() + bug.test_bin_folders())
             classpath += ":" + bug.classpath(repair_task)
@@ -96,7 +95,7 @@ time java %s -cp %s:%s/../lib/tools.jar %s \\
                 with open(path_results) as fd:
                     repair_task.results = json.load(fd)
                     result = {
-                        "repair_begin": repair_begin,
+                        "repair_begin": self.repair_begin,
                         "repair_end": datetime.datetime.now().__str__(),
                         'patches': []
                     }

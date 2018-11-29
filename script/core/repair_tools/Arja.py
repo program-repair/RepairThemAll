@@ -35,7 +35,6 @@ class Arja(RepairTool):
         repair_task.working_directory = bug_path
         self.init_bug(bug, bug_path)
 
-        repair_begin = datetime.datetime.now().__str__()
         try:
             classpath = bug.classpath(repair_task)
             if classpath == "":
@@ -82,7 +81,7 @@ time java %s -cp %s %s \\
                 return data_file.read()
         finally:
             result = {
-                "repair_begin": repair_begin,
+                "repair_begin": self.repair_begin,
                 "repair_end": datetime.datetime.now().__str__(),
                 "patches": []
             }
@@ -139,6 +138,7 @@ time java %s -cp %s %s \\
             with open(os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
                                    str(self.seed), "result.json"), "w+") as fd2:
                 json.dump(result, fd2, indent=2)
+            repair_task.results = result
             if len(result['patches']) > 0:
                 repair_task.status = "PATCHED"
             cmd = "rm -rf %s;" % (bug_path)

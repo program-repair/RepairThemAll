@@ -39,8 +39,6 @@ class Astor(RepairTool):
         repair_task.working_directory = bug_path
         self.init_bug(bug, bug_path)
 
-        repair_begin = datetime.datetime.now().__str__()
-
         jvm4testexecution = JAVA7_HOME
         if bug.compliance_level() > 7:
             jvm4testexecution = JAVA8_HOME
@@ -127,16 +125,17 @@ time java %s -cp %s %s \\
                             os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
                                          str(self.seed), "detailed-result.json"))
                 with open(path_results) as fd:
-                    repair_task.results = json.load(fd)
+                    data = json.load(fd)
                     result = {
-                        "repair_begin": repair_begin,
+                        "repair_begin": self.repair_begin,
                         "repair_end": datetime.datetime.now().__str__(),
-                        "patches": repair_task.results["patches"]
+                        "patches": data["patches"]
                     }
+                    repair_task.results = result
                     with open(os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
                                          str(self.seed), "result.json"), "w+") as fd2:
                         json.dump(result, fd2, indent=2)
-                    if 'patches' in repair_task.results and len(repair_task.results['patches']) > 0:
+                    if len(result['patches']) > 0:
                         repair_task.status = "PATCHED"
             else:
                 repair_task.status = "ERROR"

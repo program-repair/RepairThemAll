@@ -1,6 +1,7 @@
 from Queue import Queue
 from threading import Thread
 import time
+import traceback
 
 from runner.RepairTask import RepairTask
 from runner.Runner import Runner
@@ -42,6 +43,7 @@ class RepairWorker(Thread):
             except Exception, e:
                 task.status = "ERROR"
                 print e
+                traceback.print_exc()
             finally:
                 if callback is not None:
                     callback(task)
