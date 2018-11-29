@@ -31,6 +31,10 @@ class NPEFix(RepairTool):
 
         try:
             classpath = bug.classpath(repair_task)
+            compliance_level = bug.compliance_level()
+            if compliance_level < 5:
+                # NPEFix metaprogram is not compatible below Java 1.5
+                compliance_level = 5
             cmd = """cd %s;
 export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8;
 TZ="America/New_York"; export TZ;
@@ -53,7 +57,7 @@ time java %s -cp %s %s \\
         self.main,
         ":".join(bug.failing_tests()),
         self.iteration,
-        str(bug.compliance_level()),
+        str(compliance_level),
         ":".join(bug.source_folders()),
         classpath)
             log_path = os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
