@@ -104,5 +104,5 @@ time java %s -cp %s %s \\
             with open(os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name, str(self.seed), "result.json"), "w+") as fd2:
                 json.dump(result, fd2, indent=2)
             cmd = "rm -rf %s;" % (bug_path)
-            #subprocess.call(cmd, shell=True)
+            subprocess.call(cmd, shell=True)
         pass

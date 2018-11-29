@@ -149,6 +149,10 @@ defects4j info -p %s -b %s;
                         classpath += ":"
                     classpath += os.path.join(workdir, c)
                 break
+        for (root, _, files) in os.walk(os.path.join(workdir, "lib")):
+            for f in files:
+                if f[-4:] == ".jar":
+                    classpath += ":" + (os.path.join(root, f))
         libs_path = os.path.join(self.path, "framework", "projects", bug.project, "lib")
         for lib in self.project_data[bug.project]["libs"]:
             if os.path.exists(os.path.join(libs_path, lib)):
