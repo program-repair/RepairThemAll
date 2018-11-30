@@ -146,7 +146,9 @@ class Grid5kRunner(Runner):
         to_run = self.tasks[:]
         while len(to_run) > 0 or len(self.running) > 0 or len(self.waiting) > 0:
             if len(to_run) > 0 and len(self.running) + len(self.waiting) < GRID5K_MAX_NODE:
-                self.start_task(to_run.pop())
+                task = to_run.pop()
+                if task.bug is not None:
+                    self.start_task(task)
             time.sleep(1)
             renderer.render()
             self.get_running()

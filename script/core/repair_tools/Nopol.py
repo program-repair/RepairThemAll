@@ -40,7 +40,7 @@ class Nopol(RepairTool):
             classpath += ":" + bug.classpath(repair_task)
             classpath += ":" + self.jar
             cmd = """cd %s;
-export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8;
+export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8 -Duser.language=en-US -Duser.country=US -Duser.language=en";
 TZ="America/New_York"; export TZ;
 export PATH="%s:$PATH";
 export JAVA_HOME="%s";

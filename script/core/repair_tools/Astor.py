@@ -55,7 +55,7 @@ class Astor(RepairTool):
                 if not os.path.exists(os.path.join(bug_path, folder)):
                     test_bin_folders.remove(folder)
             cmd = """cd %s;
-export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8;
+export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8 -Duser.language=en-US -Duser.country=US -Duser.language=en";
 TZ="America/New_York"; export TZ;
 export PATH="%s:$PATH";
 export JAVA_HOME="%s";

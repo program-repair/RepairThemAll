@@ -37,7 +37,7 @@ class NPEFix(RepairTool):
                 # NPEFix metaprogram is not compatible below Java 1.5
                 compliance_level = 5
             cmd = """cd %s;
-export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8;
+export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8 -Duser.language=en-US -Duser.country=US -Duser.language=en";
 TZ="America/New_York"; export TZ;
 export PATH="%s:$PATH";
 export JAVA_HOME="%s";

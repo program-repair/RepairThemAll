@@ -59,7 +59,8 @@ class RepairThreadPool:
 
     def add_repair(self, task, callback):
         """Add a task to the queue"""
-        self.tasks.put((task, callback))
+        if task.bug is not None:
+            self.tasks.put((task, callback))
 
     def wait_completion(self):
         """Wait for completion of all the tasks in the queue"""

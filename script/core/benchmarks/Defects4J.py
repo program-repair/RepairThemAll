@@ -143,7 +143,10 @@ defects4j info -p %s -b %s;
         classpath = os.path.join(self.path, "framework", "projects", "lib", "junit-4.11.jar")
         classpath += ":" + os.path.join(self.path, "framework", "projects", "lib", "cobertura-2.0.3.jar")
         workdir = repair_task.working_directory
-        for index, cp in self.project_data[bug.project]["classpath"].iteritems():
+
+        sources = self.project_data[bug.project]["classpath"]
+        sources = collections.OrderedDict(sorted(sources.items(), key=lambda t: int(t[0])))
+        for index, cp in sources.iteritems():
             if bug.bug_id <= int(index):
                 for c in cp.split(":"):
                     if classpath != "":
@@ -155,12 +158,12 @@ defects4j info -p %s -b %s;
                 if f[-4:] == ".jar":
                     classpath += ":" + (os.path.join(root, f))
         libs_path = os.path.join(self.path, "framework", "projects", bug.project, "lib")
-        for lib in self.project_data[bug.project]["libs"]:
-            if os.path.exists(os.path.join(libs_path, lib)):
-                classpath += ":" + os.path.join(libs_path, lib)
-            elif os.path.exists(os.path.join(workdir, "lib", lib)):
-                classpath += ":" + os.path.join(workdir, "lib", lib)
+        for (root, _, files) in os.walk(libs_path):
+            for f in files:
+                if f in self.project_data[bug.project]["libs"]:
+                    classpath += ":" + (os.path.join(root, f))
         return classpath
+
 
     def compliance_level(self, bug):
         return self.project_data[bug.project]["complianceLevel"][str(bug.bug_id)]["source"]

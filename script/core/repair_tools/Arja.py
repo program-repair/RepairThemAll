@@ -3,7 +3,7 @@ import os
 import datetime
 import subprocess
 
-from config import WORKING_DIRECTORY, REPAIR_ROOT, JAVA7_HOME, JAVA8_HOME, JAVA_ARGS, OUTPUT_PATH
+from config import WORKING_DIRECTORY, REPAIR_ROOT, JAVA7_HOME, JAVA8_HOME, JAVA_ARGS, OUTPUT_PATH, TOOL_TIMEOUT
 from core.RepairTool import RepairTool
 
 
@@ -46,22 +46,24 @@ class Arja(RepairTool):
             if bug.compliance_level() > 7:
                 java_version = JAVA8_HOME
             cmd = """cd %s;
-export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8;
+export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8 -Duser.language=en-US -Duser.country=US -Duser.language=en";
 TZ="America/New_York"; export TZ;
 export PATH="%s:$PATH";
 export JAVA_HOME="%s";
-time java %s -cp %s %s \\
+timeout %sm java %s -cp %s %s \\
 	%s \\
 	-DexternalProjRoot %s \\
 	-DsrcJavaDir %s \\
 	-DbinJavaDir %s \\
 	-DbinTestDir %s \\
+	-DstopFirst true \\
 	-Ddependences %s;
 	echo "\\n\\nNode: `hostname`\\n";
 	echo "\\n\\nDate: `date`\\n";
 """ % (bug_path,
        java_version,
        java_version,
+       TOOL_TIMEOUT,
        JAVA_ARGS,
        os.path.join(REPAIR_ROOT, "libs", "jmetal.jar") + ":" + self.jar,
        self.main,
