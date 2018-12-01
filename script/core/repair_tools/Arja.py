@@ -57,6 +57,7 @@ timeout %sm java %s -cp %s %s \\
 	-DbinJavaDir %s \\
 	-DbinTestDir %s \\
 	-DstopFirst true \\
+	-DdiffFormat true \\
 	-Ddependences %s;
 	echo "\\n\\nNode: `hostname`\\n";
 	echo "\\n\\nDate: `date`\\n";
@@ -103,10 +104,14 @@ timeout %sm java %s -cp %s %s \\
                     path_f = os.path.join(path_results, f)
                     if not os.path.isfile(path_f) or ".txt" not in f:
                         continue
+                    patch = {
+                        "edits": []
+                    }
+                    with open(os.path.join(path_f.replace(".txt", ""), "diff")) as fd:
+                        patch["diff"] = fd.read()
                     with open(path_f) as fd:
                         str_patches = fd.read().split(
                             "**************************************************")
-                        edits = []
                         for str_patch in str_patches:
                             splitted_patch = str_patch.strip().split("\n")
                             info_line = splitted_patch[0].split(" ")
@@ -136,10 +141,8 @@ timeout %sm java %s -cp %s %s \\
                                     "faulty": "\n".join(splitted_patch[1:])
                                 }
 
-                            edits.append(edit)
-                        result["patches"].append({
-                            "edits": edits
-                        })
+                            patch['edits'].append(edit)
+                    result["patches"].append(patch)
             with open(os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
                                    str(self.seed), "result.json"), "w+") as fd2:
                 json.dump(result, fd2, indent=2)
