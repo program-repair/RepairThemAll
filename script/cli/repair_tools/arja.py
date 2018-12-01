@@ -43,4 +43,5 @@ def arja_args(parser):
 
 def _arja_args(parser):
     parser.add_argument('--version', action='version', version='Arja 4cdec980e8687f32b365843626cc355c07cd754b')
+    parser.add_argument("--seed", help="The random seed", default=0, type=float)
     pass

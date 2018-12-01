@@ -56,7 +56,7 @@ timeout %sm java %s -cp %s %s \\
 	-DsrcJavaDir %s \\
 	-DbinJavaDir %s \\
 	-DbinTestDir %s \\
-	-DdiffFormat false \\
+	-DdiffFormat true \\
 	-Dseed %s \\
 	-Ddependences %s;
 	echo "\\n\\nNode: `hostname`\\n";
@@ -151,6 +151,6 @@ timeout %sm java %s -cp %s %s \\
             if len(result['patches']) > 0:
                 repair_task.status = "PATCHED"
             cmd = "rm -rf %s;" % (bug_path)
-            #subprocess.call(cmd, shell=True)
+            subprocess.call(cmd, shell=True)
 
     pass
