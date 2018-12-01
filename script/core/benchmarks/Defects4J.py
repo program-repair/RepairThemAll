@@ -31,7 +31,11 @@ class Defects4J(Benchmark):
         if "_" in bug_id:
             separator = "_"
         (project, id) = bug_id.split(separator)
-        return Bug(self, project.title(), int(id))
+        for bug in self.get_bugs():
+            if bug.project.lower() == project.lower():
+                if int(bug.bug_id) == int(id):
+                    return bug
+        return None
 
     def get_bugs(self):
         if self.bugs is not None:
@@ -140,8 +144,7 @@ defects4j info -p %s -b %s;
 
     def classpath(self, repair_task):
         bug = repair_task.bug
-        classpath = os.path.join(self.path, "framework", "projects", "lib", "junit-4.11.jar")
-        classpath += ":" + os.path.join(self.path, "framework", "projects", "lib", "cobertura-2.0.3.jar")
+        classpath = ""
         workdir = repair_task.working_directory
 
         sources = self.project_data[bug.project]["classpath"]
@@ -157,11 +160,27 @@ defects4j info -p %s -b %s;
             for f in files:
                 if f[-4:] == ".jar":
                     classpath += ":" + (os.path.join(root, f))
+        libs = []
+        cmd = """export PATH="%s:$PATH";
+        cd %s;
+        defects4j export -p cp.test 2> /dev/null;
+        """ % (self._get_benchmark_path(), repair_task.working_directory)
+        libs_split = subprocess.check_output(cmd, shell=True).split(":")
+        for lib_str in libs_split:
+            lib = os.path.basename(lib_str)
+            if lib[-4:] == ".jar":
+                libs.append(lib)
         libs_path = os.path.join(self.path, "framework", "projects", bug.project, "lib")
         for (root, _, files) in os.walk(libs_path):
             for f in files:
-                if f in self.project_data[bug.project]["libs"]:
+                if f in libs:
                     classpath += ":" + (os.path.join(root, f))
+        libs_path = os.path.join(self.path, "framework", "projects", "lib")
+        for (root, _, files) in os.walk(libs_path):
+            for f in files:
+                if f in libs:
+                    classpath += ":" + (os.path.join(root, f))
+
         return classpath
 
 
