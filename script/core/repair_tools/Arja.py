@@ -56,8 +56,8 @@ timeout %sm java %s -cp %s %s \\
 	-DsrcJavaDir %s \\
 	-DbinJavaDir %s \\
 	-DbinTestDir %s \\
-	-DstopFirst true \\
-	-DdiffFormat true \\
+	-DdiffFormat false \\
+	-Dseed %s \\
 	-Ddependences %s;
 	echo "\\n\\nNode: `hostname`\\n";
 	echo "\\n\\nDate: `date`\\n";
@@ -73,6 +73,7 @@ timeout %sm java %s -cp %s %s \\
        ":".join(sources),
        ":".join(bin_folders),
        ":".join(test_bin_folders),
+       self.seed,
        classpath)
             log_path = os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
                                     str(self.seed), "repair.log")
@@ -150,6 +151,6 @@ timeout %sm java %s -cp %s %s \\
             if len(result['patches']) > 0:
                 repair_task.status = "PATCHED"
             cmd = "rm -rf %s;" % (bug_path)
-            subprocess.call(cmd, shell=True)
+            #subprocess.call(cmd, shell=True)
 
     pass
