@@ -9,6 +9,14 @@ from core.Bug import Bug
 FNULL = open(os.devnull, 'w')
 
 
+def abs_to_rel(root, folders):
+    if root[-1] != '/':
+        root += "/"
+    output = []
+    for folder in folders:
+        output.append(folder.replace(root, ""))
+    return output
+
 class Bears(Benchmark):
     """Bears Benchmark"""
 
@@ -26,13 +34,18 @@ class Bears(Benchmark):
         bug_id = bug_id.replace("_", "-")
         separator = "-"
         splitted = bug_id.split(separator)
-        patched = splitted[-1]
-        buggy = splitted[-2]
-        project = "-".join(splitted[:-2])
+
+        project = splitted[0]
+        if len(splitted) < 3:
+            project = "-".join(splitted[:-1])
+        else:
+            patched = splitted[-1]
+            buggy = splitted[-2]
+            project = "-".join(splitted[:-2])
 
         for bug in self.get_bugs():
             if bug.project.lower() == project.lower():
-                if bug.bug_id.lower() == ("%s-%s" % (buggy, patched)):
+                if len(splitted) < 3 or bug.bug_id.lower() == ("%s-%s" % (buggy, patched)):
                     return bug
         return None
 
@@ -52,11 +65,27 @@ class Bears(Benchmark):
                                   "%s-%s" % (b['builds']['buggyBuild']['id'], b['builds']['fixerBuild']['id']))]
         return self.bugs
 
+    def _get_project_info(self, bug):
+        try:
+            return bug.maven_info
+        except AttributeError:
+            pass
+        cmd = """cd %s;
+mvn com.github.tdurieux:project-config-maven-plugin:1.0-SNAPSHOT:info -q;
+""" % (bug.working_directory)
+        info = json.loads(subprocess.check_output(cmd, shell=True))
+        bug.maven_info = info
+        return info
+
     def checkout(self, bug, working_directory):
         branch_id = "%s-%s" % (bug.project, bug.bug_id)
 
         cmd = "cd " + self.path + "; git reset .; git checkout -- .; git clean -x -d --force; git checkout master; git checkout " + branch_id
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
+
+        bears_info_path = os.path.join(self.path, "bears.json")
+        with open(bears_info_path) as fd:
+            bug.info = json.load(fd)
 
         cmd = "cd " + self.path + "; git log --format=format:%H --grep='Changes in the tests'"
         bug_commit = subprocess.check_output(cmd, shell=True)
@@ -105,87 +134,74 @@ mvn package -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=t
                         return tests
         return tests
 
+    def failing_module(self, bug):
+        failing_module = bug.info['tests']['failingModule']
+        buggy_build_id = str(bug.info['builds']['buggyBuild']['id'])
+        try:
+            index_build = failing_module.index(buggy_build_id + "/")
+            return failing_module[index_build + len(buggy_build_id) + 1:]
+        except ValueError:
+            return "root"
+
     def source_folders(self, bug):
         folders = []
 
-        if bug.project.lower() in self.sources:
-            return self.sources[bug.project.lower()]['sources']
+        info = self._get_project_info(bug)
+        failing_module = self.failing_module(bug)
 
-        for (root, dirnames, _) in os.walk(bug.working_directory):
-            for d in dirnames:
-                if d == "src" or d == "source":
-                    if os.path.exists(os.path.join(root, d, "main")):
-                        if os.path.exists(os.path.join(root, d, "java")):
-                            folders += [os.path.join(root, d, "java")]
-                        else:
-                            folders += [os.path.join(root, d, "main")]
-                    else:
-                        folders += [os.path.join(root, d)]
+        for module in info['modules']:
+            module_name = os.path.basename(module['baseDir'])
+            if failing_module == module_name or failing_module == module['name']:
+                return abs_to_rel(bug.working_directory, module['sources'])
         return folders
 
     def test_folders(self, bug):
-        if bug.project.lower() in self.sources:
-            return self.sources[bug.project.lower()]['tests']
-
         folders = []
 
-        for (root, dirnames, _) in os.walk(bug.working_directory):
-            for d in dirnames:
-                if d == "test":
-                    folders += [os.path.join(root, d)]
+        info = self._get_project_info(bug)
+        failing_module = self.failing_module(bug)
+
+        for module in info['modules']:
+            module_name = os.path.basename(module['baseDir'])
+            if failing_module == module_name or failing_module == module['name']:
+                return abs_to_rel(bug.working_directory, module['tests'])
+
         return folders
 
     def bin_folders(self, bug):
-        if bug.project.lower() in self.sources:
-            return self.sources[bug.project.lower()]['source-target']
-        # TODO
-        return ["target/classes"]
+        info = self._get_project_info(bug)
+        failing_module = self.failing_module(bug)
+
+        for module in info['modules']:
+            module_name = os.path.basename(module['baseDir'])
+            if failing_module == module_name or failing_module == module['name']:
+                return abs_to_rel(bug.working_directory, module['binSources'])
+        return []
 
     def test_bin_folders(self, bug):
-        if bug.project.lower() in self.sources:
-            return self.sources[bug.project.lower()]['test-target']
-        # TODO
-        return ["target/test-classes"]
+        info = self._get_project_info(bug)
+        failing_module = self.failing_module(bug)
+
+        for module in info['modules']:
+            module_name = os.path.basename(module['baseDir'])
+            if failing_module == module_name or failing_module == module['name']:
+                return abs_to_rel(bug.working_directory, module['binTests'])
+        return []
 
     def classpath(self, repair_task):
-        classpath = ""
-        workdir = repair_task.working_directory
+        info = self._get_project_info(repair_task.bug)
+        failing_module = self.failing_module(repair_task.bug)
 
-        m2_repository = os.path.expanduser("~/.m2/repository")
+        deps = []
 
-        dependencies = []
-        for (root, _, files) in os.walk(workdir):
-            for f in files:
-                if f == "classpath.info":
-                    with open(os.path.join(root, f)) as fd:
-                        classpath_info = fd.read()
-                        for lib in classpath_info.split(":"):
-                            if ".m2" not in lib:
-                                continue
-                            lib = lib[lib.index(".m2") + 4:].replace("repository/", "")
-                            tmp = lib.split("/")
-                            jar = tmp[-1]
-                            version = tmp[-2]
-                            artifact_id = tmp[-3]
-                            group_id = ".".join(tmp[:-3])
+        for module in info['modules']:
+            module_name = os.path.basename(module['baseDir'])
+            if failing_module != module_name and failing_module != module['name']:
+                deps += module['binSources']
+        deps += info['classpath']
 
-                            dependencies += [{
-                                "group_id": group_id,
-                                "artifact_id": artifact_id,
-                                "version": version,
-                                "jar": jar
-                            }]
-
-        for dep in dependencies:
-            path = os.path.join(m2_repository, dep['group_id'].replace(".", "/"), dep['artifact_id'],
-                                dep['version'], dep['jar'])
-            if os.path.exists(path):
-                if classpath != "":
-                    classpath += ":"
-                classpath += path
-            else:
-                print("[Error] Dep %s is not found" % (path.replace(m2_repository, "")))
-        return classpath
+        return ":".join(deps)
 
     def compliance_level(self, bug):
-        return 8
+        info = self._get_project_info(bug)
+        return info['complianceLevel']
