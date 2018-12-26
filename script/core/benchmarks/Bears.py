@@ -26,9 +26,6 @@ class Bears(Benchmark):
         self.project_data = {}
         self.bugs = None
         self.get_bugs()
-        self.sources = None
-        with open(os.path.join(self.get_data_path(), "sources.json")) as fd:
-            self.sources = json.load(fd)
 
     def get_bug(self, bug_id):
         bug_id = bug_id.replace("_", "-")
@@ -50,7 +47,7 @@ class Bears(Benchmark):
         return None
 
     def get_data_path(self):
-        return os.path.join(DATA_PATH, "benchmarks", "bears")
+        return os.path.join(self.path, "benchmarks", "bears")
 
     def get_bugs(self):
         if self.bugs is not None:
