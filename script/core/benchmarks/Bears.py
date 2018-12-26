@@ -47,7 +47,7 @@ class Bears(Benchmark):
         return None
 
     def get_data_path(self):
-        return os.path.join(self.path, "benchmarks", "bears")
+        return os.path.join(DATA_PATH, "benchmarks", "bears")
 
     def get_bugs(self):
         if self.bugs is not None:
