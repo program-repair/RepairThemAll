@@ -55,6 +55,9 @@ def init_parser():
 
     subparsers = parser.add_subparsers()
 
+    cardumen_parser = subparsers.add_parser('Cardumen', help='Repair the bug with Cardumen', parents=[bug_parser])
+    cardumen_args(cardumen_parser)
+
     jgenprog_parser = subparsers.add_parser('jGenProg', help='Repair the bug with jGenProg', parents=[bug_parser])
     jgenprog_args(jgenprog_parser)
 

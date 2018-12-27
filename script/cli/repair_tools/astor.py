@@ -12,6 +12,13 @@ def init(args, name, mode):
                     seed=args.seed)
 
 
+def cardumen_init(args):
+    return init(args, "Cardumen", "cardumen")
+
+def cardumen_args(parser):
+    parser.set_defaults(func=cardumen_init)
+    astor_args(parser)
+
 def jgenprog_init(args):
     return init(args, "jGenProg", "jgenprog")
 
