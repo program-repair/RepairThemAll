@@ -2,15 +2,23 @@ import os
 import shutil
 import subprocess
 import json
-import re
 from sets import Set
 
 from config import REPAIR_ROOT
 from core.Benchmark import Benchmark
 from core.Bug import Bug
 
-
 FNULL = open(os.devnull, 'w')
+
+
+def abs_to_rel(root, folders):
+    if root[-1] != '/':
+        root += "/"
+    output = []
+    for folder in folders:
+        output.append(folder.replace(root, ""))
+    return output
+
 
 class BugDotJar(Benchmark):
     """Bug_dot_jar Benchmark"""
@@ -57,7 +65,8 @@ class BugDotJar(Benchmark):
             data = json.load(fd)
             project = bug.project.split("-")[-1].upper()
             branch_id = "bugs-dot-jar_%s-%s_%s" % (project, data['jira_id'], data['commit'])
-            cmd = "cd " + os.path.join(self.path, "repositories", bug.project.lower()) + "; git reset .; git checkout -- .; git clean -x -d --force; git checkout master; git checkout " + branch_id
+            cmd = "cd " + os.path.join(self.path, "repositories",
+                                       bug.project.lower()) + "; git reset .; git checkout -- .; git clean -x -d --force; git checkout master; git checkout " + branch_id
             subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
             shutil.copytree(os.path.join(self.path, "repositories", bug.project.lower()), working_directory)
         pass
@@ -68,7 +77,7 @@ class BugDotJar(Benchmark):
         mvn test -DskipTests -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true;
         mvn dependency:build-classpath -Dmdep.outputFile="classpath.info";
         """ % (working_directory)
-        subprocess.call(cmd, shell=True)
+        subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
     def run_test(self, bug, working_directory):
@@ -76,93 +85,94 @@ class BugDotJar(Benchmark):
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
+    def _get_project_info(self, bug):
+        try:
+            return bug.maven_info
+        except AttributeError:
+            pass
+        cmd = """cd %s;
+mvn com.github.tdurieux:project-config-maven-plugin:1.0-SNAPSHOT:info -q;
+""" % (bug.working_directory)
+        info = json.loads(subprocess.check_output(cmd, shell=True))
+        bug.maven_info = info
+        return info
+
+    def failing_module(self, bug):
+        info = self._get_project_info(bug)
+        failing_tests = self.failing_tests(bug)
+        path_failing_test = failing_tests[0].replace(".", "/") + ".java"
+
+        for module in info['modules']:
+            module_name = os.path.basename(module['baseDir'])
+            for test_folder in module['tests']:
+                if os.path.exists(os.path.join(test_folder, path_failing_test)):
+                    return module_name
+        return "root"
+
     def failing_tests(self, bug):
-        tests = []
-        maven_output = os.path.join(bug.working_directory, ".bugs-dot-jar", "test-results.txt")
-        with open(maven_output) as fd:
-            content = fd.read()
-            matches = re.findall("<<< FAILURE! - in (.*)", content)
-            for m in matches:
-                tests.append(m)
-            matches = re.findall("\((.+)\) .+ <<< FAILURE!", content)
-            for m in matches:
-                tests.append(m)
-        return tests
+        dataset_path = os.path.join(self.path, "data", bug.project.lower(), "%s.json" % bug.bug_id[:8])
+        with open(dataset_path) as fd:
+            data = json.load(fd)
+            return data['failing_tests']
 
     def source_folders(self, bug):
         folders = []
-        for (root, dirnames, _) in os.walk(bug.working_directory):
-            for d in dirnames:
-                if d == "src" or d == "source":
-                    if os.path.exists(os.path.join(root, d, "main")):
-                        if os.path.exists(os.path.join(root, d, "java")):
-                            folders += [os.path.join(root, d, "java")]
-                        else:
-                            folders += [os.path.join(root, d, "main")]
-                    else:
-                        folders += [os.path.join(root, d)]
+
+        info = self._get_project_info(bug)
+        failing_module = self.failing_module(bug)
+
+        for module in info['modules']:
+            module_name = os.path.basename(module['baseDir'])
+            if failing_module == module_name or failing_module == module['name']:
+                return abs_to_rel(bug.working_directory, module['sources'])
         return folders
 
     def test_folders(self, bug):
         folders = []
 
-        for (root, dirnames, _) in os.walk(bug.working_directory):
-            for d in dirnames:
-                if d == "test":
-                    folders += [os.path.join(root, d)]
+        info = self._get_project_info(bug)
+        failing_module = self.failing_module(bug)
+
+        for module in info['modules']:
+            module_name = os.path.basename(module['baseDir'])
+            if failing_module == module_name or failing_module == module['name']:
+                return abs_to_rel(bug.working_directory, module['tests'])
+
         return folders
 
     def bin_folders(self, bug):
-        folders = []
-        for (root, dirnames, _) in os.walk(bug.working_directory):
-            for d in dirnames:
-                if d == "target":
-                    if os.path.exists(os.path.join(root, d, "classes")):
-                        folders += [os.path.join(root, d, "classes")]
-        return folders
+        info = self._get_project_info(bug)
+        failing_module = self.failing_module(bug)
+
+        for module in info['modules']:
+            module_name = os.path.basename(module['baseDir'])
+            if failing_module == module_name or failing_module == module['name']:
+                return abs_to_rel(bug.working_directory, module['binSources'])
+        return []
 
     def test_bin_folders(self, bug):
-        folders = []
-        for (root, dirnames, _) in os.walk(bug.working_directory):
-            for d in dirnames:
-                if d == "target":
-                    if os.path.exists(os.path.join(root, d, "test-classes")):
-                        folders += [os.path.join(root, d, "test-classes")]
-        return folders
+        info = self._get_project_info(bug)
+        failing_module = self.failing_module(bug)
+
+        for module in info['modules']:
+            module_name = os.path.basename(module['baseDir'])
+            if failing_module == module_name or failing_module == module['name']:
+                return abs_to_rel(bug.working_directory, module['binTests'])
+        return []
 
     def classpath(self, repair_task):
-        classpath = ""
-        workdir = repair_task.working_directory
+        info = self._get_project_info(repair_task.bug)
+        failing_module = self.failing_module(repair_task.bug)
 
-        m2_repository = os.path.expanduser("~/.m2/repository")
+        deps = []
 
-        dependencies = Set()
-        for (root, _, files) in os.walk(workdir):
-            for f in files:
-                if f == "classpath.info":
-                    with open(os.path.join(root, f)) as fd:
-                        classpath_info = fd.read()
-                        for lib in classpath_info.split(":"):
-                            if ".m2" not in lib:
-                                continue
-                            lib = lib[lib.index(".m2") + 4:].replace("repository/", "")
-                            tmp = lib.split("/")
-                            jar = tmp[-1]
-                            version = tmp[-2]
-                            artifact_id = tmp[-3]
-                            group_id = ".".join(tmp[:-3])
+        for module in info['modules']:
+            module_name = os.path.basename(module['baseDir'])
+            if failing_module != module_name and failing_module != module['name']:
+                deps += module['binSources']
+        deps += info['classpath']
 
-                            dependencies.add(os.path.join(m2_repository, group_id.replace(".", "/"), artifact_id,
-                                                          version, jar))
-
-        for dep in dependencies:
-            if os.path.exists(dep):
-                if classpath != "":
-                    classpath += ":"
-                classpath += dep
-            else:
-                print("[Error] Dep %s is not found" % (path.replace(m2_repository, "")))
-        return classpath
+        return ":".join(deps)
 
     def compliance_level(self, bug):
         return 7
