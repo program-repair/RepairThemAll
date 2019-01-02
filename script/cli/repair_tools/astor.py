@@ -13,6 +13,7 @@ def init(args, name, mode):
 
 
 def cardumen_init(args):
+    args.parameters += ":maxCombinationVariableLimit:true:maxVarCombination:1000"
     return init(args, "Cardumen", "cardumen")
 
 def cardumen_args(parser):
@@ -56,5 +57,5 @@ def astor_args(parser):
                         action='store_false',
                         dest='stopfirst',
                         default=True)
-    parser.add_argument('--version', action='version', version='Astor 4cdec980e8687f32b365843626cc355c07cd754b')
+    parser.add_argument('--version', action='version', version='Astor 26ee3dfc8b2d7ed4373f7cfe0d4bd5bcf31d9f28')
     pass
