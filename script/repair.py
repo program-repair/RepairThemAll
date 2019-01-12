@@ -13,7 +13,6 @@ from cli.repair_tools.dynamoth import dynamoth_args
 from cli.repair_tools.nopol import nopol_args
 from cli.repair_tools.npefix import npefix_args
 from cli.repair_tools.arja import *
-from cli.repair_tools.capgen import *
 from core.benchmarks.Bears import Bears
 from core.benchmarks.BugDotJar import BugDotJar
 from core.benchmarks.Defects4J import Defects4J
