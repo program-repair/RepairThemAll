@@ -43,6 +43,7 @@ class RepairTool(object):
         self.config_name = config_name
         self.repair_begin = None
         self.parseData()
+        self.seed = 0
         pass
 
     def parseData(self):

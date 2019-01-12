@@ -2,6 +2,7 @@
 # PYTHON_ARGCOMPLETE_OK
 
 import argparse
+import os
 try:
     import argcomplete
 except:
@@ -12,6 +13,7 @@ from cli.repair_tools.dynamoth import dynamoth_args
 from cli.repair_tools.nopol import nopol_args
 from cli.repair_tools.npefix import npefix_args
 from cli.repair_tools.arja import *
+from cli.repair_tools.capgen import *
 from core.benchmarks.Bears import Bears
 from core.benchmarks.BugDotJar import BugDotJar
 from core.benchmarks.Defects4J import Defects4J
@@ -51,6 +53,10 @@ def init_parser():
     bug_parser = argparse.ArgumentParser(add_help=False)
     bug_parser.add_argument("--benchmark", "-b", required=True, default="defects4j",
                             help="The benchmark to repair", choices=('Defects4J', 'IntroClassJava', 'Bugs.jar', 'Bears', 'QuixBugs'))
+    bug_parser.add_argument("--continue", help="Continue the previous execution", action='store_true',
+                        dest='continue_execution',
+                        default=False)
+
     bug_parser.add_argument("--id", "-i", nargs='+', help="The bug id").completer = completion_bug_id
 
     subparsers = parser.add_subparsers()
@@ -113,6 +119,8 @@ if __name__ == "__main__":
             args.bug = bug
 
             tool = args.func(args)
-            tasks.append(RepairTask(tool, args.benchmark, bug))
+            task = RepairTask(tool, args.benchmark, bug)
+            if not args.continue_execution or not os.path.exists(os.path.join(task.log_dir(), "repair.log")):
+                tasks.append(task)
 
         get_runner(tasks).execute()
