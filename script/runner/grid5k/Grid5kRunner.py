@@ -13,11 +13,11 @@ from config import REPAIR_ROOT, OUTPUT_PATH, GRID5K_MAX_NODE
 
 class Grid5kRunner(Runner):
 
-    def __init__(self, tasks):
+    def __init__(self, tasks, args):
         """
         :type tasks: list of RepairTask
         """
-        super(Grid5kRunner, self).__init__(tasks)
+        super(Grid5kRunner, self).__init__(tasks, args)
 
     def get_running(self):
         cmd = 'oarstat --json -u `whoami`'
@@ -144,7 +144,7 @@ class Grid5kRunner(Runner):
     def execute(self):
         renderer = get_renderer(self)
         to_run = self.tasks[:]
-        while len(to_run) > 0 or len(self.running) > 0 or len(self.waiting) > 0:
+        while (len(to_run) > 0 or len(self.running) > 0 or len(self.waiting) > 0) and not self.is_end_time():
             if len(to_run) > 0 and len(self.running) + len(self.waiting) < GRID5K_MAX_NODE:
                 task = to_run.pop()
                 if task.bug is not None:

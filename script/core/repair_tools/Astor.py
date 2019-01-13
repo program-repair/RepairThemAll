@@ -4,7 +4,7 @@ import shutil
 import subprocess
 import datetime
 
-from config import WORKING_DIRECTORY, REPAIR_ROOT, JAVA7_HOME, JAVA8_HOME, JAVA_ARGS, OUTPUT_PATH
+from config import WORKING_DIRECTORY, REPAIR_ROOT, JAVA7_HOME, JAVA8_HOME, JAVA_ARGS
 from core.RepairTool import RepairTool
 
 
@@ -105,8 +105,7 @@ time java %s -cp %s %s \\
        ":".join(test_bin_folders),
        self.parameters,
        classpath)
-            log_path = os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
-                                   str(self.seed), "repair.log")
+            log_path = os.path.join(repair_task.log_dir(), "repair.log")
             if not os.path.exists(os.path.dirname(log_path)):
                 os.makedirs(os.path.dirname(log_path))
             log = file(log_path, 'w')
@@ -122,8 +121,7 @@ time java %s -cp %s %s \\
             if os.path.exists(path_results):
                 repair_task.status = "FINISHED"
                 shutil.copy(path_results,
-                            os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
-                                         str(self.seed), "detailed-result.json"))
+                            os.path.join(repair_task.log_dir(), "detailed-result.json"))
                 with open(path_results) as fd:
                     data = json.load(fd)
                     result = {
@@ -132,8 +130,7 @@ time java %s -cp %s %s \\
                         "patches": data["patches"]
                     }
                     repair_task.results = result
-                    with open(os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
-                                         str(self.seed), "result.json"), "w+") as fd2:
+                    with open(os.path.join(repair_task.log_dir(), "result.json"), "w+") as fd2:
                         json.dump(result, fd2, indent=2)
                     if len(result['patches']) > 0:
                         repair_task.status = "PATCHED"

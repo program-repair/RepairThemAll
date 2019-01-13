@@ -55,6 +55,7 @@ def init_parser():
     bug_parser.add_argument("--continue", help="Continue the previous execution", action='store_true',
                         dest='continue_execution',
                         default=False)
+    bug_parser.add_argument("--endTime", help="Specify an hour to stop the execution (hh:mm)", dest="end_time", default=None)
 
     bug_parser.add_argument("--id", "-i", nargs='+', help="The bug id").completer = completion_bug_id
 
@@ -122,4 +123,4 @@ if __name__ == "__main__":
             if not args.continue_execution or not os.path.exists(os.path.join(task.log_dir(), "repair.log")):
                 tasks.append(task)
 
-        get_runner(tasks).execute()
+        get_runner(tasks, args).execute()

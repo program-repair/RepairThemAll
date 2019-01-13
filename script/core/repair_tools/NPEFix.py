@@ -61,8 +61,7 @@ time java %s -cp %s %s \\
         str(compliance_level),
         ":".join(bug.source_folders()),
         classpath)
-            log_path = os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
-                                    str(self.seed), "repair.log")
+            log_path = os.path.join(repair_task.log_dir(), "repair.log")
             if not os.path.exists(os.path.dirname(log_path)):
                 os.makedirs(os.path.dirname(log_path))
             log = file(log_path, 'w')
@@ -86,9 +85,7 @@ time java %s -cp %s %s \\
 
             path_output = os.path.join(bug_path, output_file) if output_file is not None else None
             if path_output is not None and os.path.exists(path_output):
-                shutil.copy(path_output,
-                            os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
-                                         str(self.seed), "detailed-result.json"))
+                shutil.copy(path_output, os.path.join(repair_task.log_dir(), "detailed-result.json"))
                 with open(path_output) as fd:
                     data = json.load(fd)
                     if 'executions' in data:
@@ -106,7 +103,7 @@ time java %s -cp %s %s \\
             repair_task.results = result
             if len(result['patches']) > 0:
                 repair_task.status = "PATCHED"
-            with open(os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name, str(self.seed), "result.json"), "w+") as fd2:
+            with open(os.path.join(repair_task.log_dir(), "result.json"), "w+") as fd2:
                 json.dump(result, fd2, indent=2)
             cmd = "rm -rf %s;" % (bug_path)
             subprocess.call(cmd, shell=True)

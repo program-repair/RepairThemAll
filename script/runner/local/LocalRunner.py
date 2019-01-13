@@ -15,16 +15,15 @@ class RunnerWorker(Thread):
         self.local_runner = local_runner
         self.callback = callback
         self.daemon = True
+        self.pool = RepairThreadPool(LOCAL_THREAD)
 
     def run(self):
-        pool = RepairThreadPool(LOCAL_THREAD)
-
         for task in self.local_runner.tasks:
             self.local_runner.running += [task]
             task.status = "WAITING"
-            pool.add_repair(task, self.callback)
+            self.pool.add_repair(task, self.callback)
 
-        pool.wait_completion()
+        self.pool.wait_completion()
 
 
 class RepairWorker(Thread):
@@ -54,8 +53,9 @@ class RepairThreadPool:
     """Pool of threads consuming tasks from a queue"""
     def __init__(self, num_threads):
         self.tasks = Queue(num_threads)
+        self.workers = []
         for _ in range(num_threads):
-            RepairWorker(self.tasks)
+            self.workers.append(RepairWorker(self.tasks))
 
     def add_repair(self, task, callback):
         """Add a task to the queue"""
@@ -69,11 +69,11 @@ class RepairThreadPool:
 
 class LocalRunner(Runner):
 
-    def __init__(self, tasks):
+    def __init__(self, tasks, args):
         """
         :type tasks: list of RepairTask
         """
-        super(LocalRunner, self).__init__(tasks)
+        super(LocalRunner, self).__init__(tasks, args)
         self.tasks = tasks
         self.finished = []
         self.running = []
@@ -93,6 +93,9 @@ class LocalRunner(Runner):
         worker.start()
 
         while worker.is_alive():
+            if self.is_end_time():
+                # kill thread
+                pass
             renderer.render()
             time.sleep(1)
 

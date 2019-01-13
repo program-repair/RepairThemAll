@@ -3,7 +3,7 @@ import os
 import datetime
 import subprocess
 
-from config import WORKING_DIRECTORY, REPAIR_ROOT, JAVA7_HOME, JAVA8_HOME, JAVA_ARGS, OUTPUT_PATH, TOOL_TIMEOUT
+from config import WORKING_DIRECTORY, REPAIR_ROOT, JAVA7_HOME, JAVA8_HOME, JAVA_ARGS, TOOL_TIMEOUT
 from core.RepairTool import RepairTool
 
 
@@ -36,6 +36,10 @@ class Arja(RepairTool):
         self.init_bug(bug, bug_path)
 
         try:
+            log_path = os.path.join(repair_task.log_dir(), "repair.log")
+            if not os.path.exists(os.path.dirname(log_path)):
+                os.makedirs(os.path.dirname(log_path))
+
             classpath = bug.classpath(repair_task)
             if classpath == "":
                 classpath = '""'
@@ -75,10 +79,6 @@ timeout %sm java %s -cp %s %s \\
        ":".join(test_bin_folders),
        self.seed,
        classpath)
-            log_path = os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
-                                    str(self.seed), "repair.log")
-            if not os.path.exists(os.path.dirname(log_path)):
-                os.makedirs(os.path.dirname(log_path))
             log = file(log_path, 'w')
             log.write(cmd)
             log.flush()
@@ -144,8 +144,7 @@ timeout %sm java %s -cp %s %s \\
 
                             patch['edits'].append(edit)
                     result["patches"].append(patch)
-            with open(os.path.join(OUTPUT_PATH, bug.benchmark.name, bug.project, str(bug.bug_id), self.name,
-                                   str(self.seed), "result.json"), "w+") as fd2:
+            with open(os.path.join(repair_task.log_dir(), "result.json"), "w+") as fd2:
                 json.dump(result, fd2, indent=2)
             repair_task.results = result
             if len(result['patches']) > 0:
