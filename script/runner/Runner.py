@@ -24,5 +24,5 @@ class Runner(object):
     def is_end_time(self):
         if self.end_time is None:
             return False
-        return self.end_time > datetime.datetime.now()
+        return self.end_time < datetime.datetime.now()
 
