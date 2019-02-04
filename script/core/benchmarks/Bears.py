@@ -101,7 +101,14 @@ cp -r . %s""" % (
         pass
 
     def compile(self, bug, working_directory):
-        cmd = """cd %s;
+	pom_path = bug.info['reproductionBuggyBuild']['projectRootPomPath']
+	buggy_build_id = bug.info['builds']['buggyBuild']['id']
+	pom_path = pom_path.partition(str(buggy_build_id))[2]
+	pom_path = pom_path.replace("/pom.xml", "")
+	pom_path = pom_path.replace("/", "", 1)
+	if pom_path:
+        	working_directory = os.path.join(working_directory, pom_path)        
+	cmd = """cd %s;
 mvn install -V -B -DskipTests -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true; 
 mvn test -DskipTests -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true;
 mvn dependency:build-classpath -Dmdep.outputFile="classpath.info";
