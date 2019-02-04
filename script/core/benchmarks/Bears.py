@@ -67,7 +67,14 @@ class Bears(Benchmark):
             return bug.maven_info
         except AttributeError:
             pass
-        cmd = """cd %s;
+	pom_path = bug.info['reproductionBuggyBuild']['projectRootPomPath']
+	buggy_build_id = bug.info['builds']['buggyBuild']['id']
+	pom_path = pom_path.partition(str(buggy_build_id))[2]
+	pom_path = pom_path.replace("/pom.xml", "")
+	pom_path = pom_path.replace("/", "", 1)
+	if pom_path:
+        	bug.working_directory = os.path.join(bug.working_directory, pom_path)        
+	cmd = """cd %s;
 mvn com.github.tdurieux:project-config-maven-plugin:1.0-SNAPSHOT:info -q;
 """ % (bug.working_directory)
         info = json.loads(subprocess.check_output(cmd, shell=True))
