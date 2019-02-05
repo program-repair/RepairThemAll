@@ -29,9 +29,9 @@ class Bug(object):
             return self.project_data
 
     def checkout(self, working_directory):
-        self.working_directory = working_directory
+        self.working_directory  = os.path.realpath(working_directory)
 
-        self.benchmark.checkout(self, working_directory)
+        self.benchmark.checkout(self, self.working_directory)
         pass
 
     def compile(self):
