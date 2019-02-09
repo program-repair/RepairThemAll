@@ -5,12 +5,12 @@
 
 | Benchmark      | # Projects | # Bugs |
 | -------------- | -----------| -------|
-| Defects4J      |          6 |    395 |
+| Bears          |         71 |    251 |
 | Bugs.jar       |          8 |   1158 |
+| Defects4J      |          6 |    395 |
 | IntroClassJava |          6 |    297 |
-| Bears          |         41 |    142 |
 | QuixBugs       |         40 |     40 |
-| **Total**      |        100 |   1992 |
+| **Total**      |        130 |   2051 |
 
 ## Tools
 
@@ -20,17 +20,23 @@
 4. jGenProg
 5. jKali
 6. jMutRepair
+7. Carduman
+8. Arja
+9. GenProg-A
+10. RSRepair-A
+11. Kali-A
 
 ## Usage
 
-There are two scripts: `script/repair.py`, the first script is used to repair one specific bug, the second is used to run the repair of all the bugs of a specific benchmark.
+1. Init the repository with `./init.sh`.
+2. Use `python script/repair.py` to run the repair tools on the benchmarks
 
 General usage:
 
 ```bash
 python script/repair.py {astor,npefix,nopol,dynamoth}
-    --benchmark [defects4j, introclassjava, bugs.jar, Bears, QuixBugs]
-    --id <bug_id> # the format is specific for each benchmark
+    --benchmark [Defects4J, IntroclassJava, Bugs.jar, Bears, QuixBugs]
+    --id <bug_id> # optional, if not specified all the bugs of the benchmark will be executed. The format is specific for each benchmark
 ```
 
 Tool Specific options:
@@ -51,7 +57,3 @@ Tool Specific options:
                         pre_then_cond]
   --seed SEED, -s SEED  The random seed
 ```
-
-#### NPEFix
-
-TODO
