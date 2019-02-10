@@ -48,10 +48,11 @@ class RepairTool(object):
 
     def parseData(self):
         path = os.path.join(DATA_PATH, 'repair_tools', self.config_name + '.json')
-        with open(path) as data_file:
-            self.data = json.load(data_file)
-            self.main = self.data["main"]
-            self.jar = os.path.join(REPAIR_TOOL_FOLDER, self.data["jar"])
+        if os.path.exists(path):
+            with open(path) as data_file:
+                self.data = json.load(data_file)
+                self.main = self.data["main"]
+                self.jar = os.path.join(REPAIR_TOOL_FOLDER, self.data["jar"])
 
     def init_bug(self, bug, bug_path):
         if os.path.exists(bug_path):

@@ -155,6 +155,14 @@ class Tool(RepairTool):
         self.init_bug(bug, bug_path)
 
         try:
+            failing_tests =  bug.failing_tests(),
+            sources = bug.source_folders(),
+            tests = bug.test_folders(),
+            bin_folders = bug.bin_folders(),
+            test_bin_folders = bug.test_bin_folders(),
+            classpath = bug.classpath(),
+            compliance_level = bug.compliance_level(),
+
             # run the repair tool
         finally:
             result = {
@@ -167,14 +175,13 @@ class Tool(RepairTool):
             # normalize the output in result
             with open(os.path.join(repair_task.log_dir(), "result.json"), "w+") as fd2:
                 json.dump(result, fd2, indent=2)
-            cmd = "rm -rf %s;" % (bug_path)
-            subprocess.call(cmd, shell=True)
+            shutil.rmtree(bug_path)
         pass
+
 
 
 def init(args):
     return Tool()
-
 
 def _args(parser):
     # additional argument for the repair tool
@@ -183,7 +190,6 @@ def _args(parser):
 
 parser = add_repair_tool(<repair_name>, init, 'Repair the bug with <repair_name>')
 _args(parser)
-
 ```
 
 3. Go to `script/core/utils.py` and import your bencmark in the end of the file (like this `import core.benchmarks.Tool`)
