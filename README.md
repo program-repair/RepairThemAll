@@ -26,10 +26,20 @@
 10. RSRepair-A
 11. Kali-A
 
+## Requirements
+
+1. Linux or Mac
+2. Java 7
+3. Java 8
+4. Python 2
+5. Maven
+6. Ant
+
 ## Usage
 
 1. Init the repository with `./init.sh`.
-2. Use `python script/repair.py` to run the repair tools on the benchmarks
+2. Go to `script/config.py` and update the configuration for your machine (java home, and working directory)
+3. Use `python script/repair.py` to run the repair tools on the benchmarks
 
 General usage:
 
