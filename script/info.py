@@ -1,6 +1,7 @@
 import os
 import argparse
 import json
+import shutil
 
 from config import WORKING_DIRECTORY
 from core.utils import get_benchmark
@@ -30,4 +31,6 @@ if __name__ == "__main__":
         "classpath": bug.classpath(),
         "complianceLevel": bug.compliance_level(),
     }, indent=1, sort_keys=True))
+
+    shutil.rmtree(bug_path)
     

@@ -93,7 +93,7 @@ class IntroClassJava(Benchmark):
     def test_bin_folders(self, bug):
         return [os.path.join("target", "test-classes")]
 
-    def classpath(self, repair_task):
+    def classpath(self, bug):
         classpath = []
         m2_repository = os.path.expanduser("~/.m2/repository")
         classpath.append(os.path.join(m2_repository, "junit", "junit", "4.11", "junit-4.11.jar"))
