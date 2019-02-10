@@ -9,7 +9,8 @@ from config import JAVA_ARGS
 from config import OUTPUT_PATH
 from config import WORKING_DIRECTORY
 from core.RepairTool import RepairTool
-
+from core.utils import add_repair_tool
+from core.runner.RepairTask import RepairTask
 
 class NPEFix(RepairTool):
     """NPEFix"""
@@ -108,3 +109,15 @@ time java %s -cp %s %s \\
             cmd = "rm -rf %s;" % (bug_path)
             subprocess.call(cmd, shell=True)
         pass
+
+
+def init(args):
+    return NPEFix(iteration=args.iteration)
+
+
+def npefix_args(parser):
+    parser.add_argument("--iteration", help="The maximum number of NPEFix iteration", default=100, type=int)
+    pass
+
+parser = add_repair_tool('NPEFix', init, 'Repair the bug with NPEFix')
+npefix_args(parser)

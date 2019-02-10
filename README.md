@@ -39,21 +39,141 @@ python script/repair.py {astor,npefix,nopol,dynamoth}
     --id <bug_id> # optional, if not specified all the bugs of the benchmark will be executed. The format is specific for each benchmark
 ```
 
-Tool Specific options:
+## Add a new benchmark
 
-#### Astor
+1. Put your benchmark folder in `script/bencmarks`
+2. Create a new file in `script/core/bencmarks` that contains the following content
 
-```bash
---seed SEED           The random seed
---scope SCOPE, -s SCOPE
-                      The scope of the ingredients [local, package, global]
+```py
+from core.Benchmark import Benchmark
+
+class BenchmarkName(Benchmark):
+    """<name> Benchmark"""
+
+    def __init__(self):
+        super(BenchmarkName, self).__init__(<name>)
+        self.path = os.path.join(REPAIR_ROOT, "benchmarks", <name>)
+        self.bugs = None
+        self.get_bugs()
+
+    def get_bugs(self):
+        if self.bugs is not None:
+            return self.bugs
+        self.bugs = []
+        # get all the bugs of the benchmark
+        return self.bugs
+
+    def get_bug(self, bug_id):
+        # get a bug based on its id
+        return None
+
+    def checkout(self, bug, working_directory):
+        # checkout a bug
+        pass
+
+
+    def compile(self, bug, working_directory):
+        # compile a bug
+        pass
+
+    def run_test(self, bug, working_directory):
+        # run the test of a bug
+        pass
+
+    def failing_tests(self, bug):
+        tests = [...] # list of failing class
+        return tests
+
+    def source_folders(self, bug):
+        return [os.path.join("src", "main", "java")]
+
+    def test_folders(self, bug):
+        return [os.path.join("src", "test", "java")]
+
+    def bin_folders(self, bug):
+        return [os.path.join("target", "classes")]
+
+    def test_bin_folders(self, bug):
+        return [os.path.join("target", "test-classes")]
+
+    def classpath(self, repair_task):
+        classpath = []
+        return ":".join(classpath)
+
+    def compliance_level(self, bug):
+        return 8
+
+add_benchmark(<name>, BenchmarkName)
 ```
 
-#### Nopol/Dynamoth
+3. Go to `script/core/utils.py` and import your bencmark in the end of the file (like this `import core.benchmarks.BenchmarkName`)
 
-```bash
- --statement-type STATEMENT_TYPE, -t STATEMENT_TYPE
-                        The targeted statement [condition, precondition,
-                        pre_then_cond]
-  --seed SEED, -s SEED  The random seed
+## Add a new Repair tools
+
+1. Add the binary of your tool in `./repair_tools`
+2. Create a new file in `script/core/repair_tools` that contains the following content
+
+```py
+import os
+import subprocess
+import datetime
+import json
+import shutil
+
+from config import OUTPUT_PATH
+from config import WORKING_DIRECTORY
+from core.RepairTool import RepairTool
+from core.utils import add_repair_tool
+from core.runner.RepairTask import RepairTask
+
+class Tool(RepairTool):
+    """Tool"""
+
+    def __init__(self, name=<repair_name>):
+        super(Tool, self).__init__(name, <repair_name>)
+        self.seed = 0
+        self.iteration = iteration
+
+    def repair(self, repair_task):
+        """"
+        :type repair_task: RepairTask
+        """
+        bug = repair_task.bug
+        bug_path = os.path.join(WORKING_DIRECTORY,
+                                "%s_%s_%s_%s" % (self.name, bug.benchmark.name, bug.project, bug.bug_id))
+        repair_task.working_directory = bug_path
+        self.init_bug(bug, bug_path)
+
+        try:
+            # run the repair tool
+        finally:
+            result = {
+                "repair_begin": self.repair_begin,
+                "repair_end": datetime.datetime.now().__str__(),
+                "patches": []
+            }
+            repair_task.status = "FINISHED"
+            
+            # normalize the output in result
+            with open(os.path.join(repair_task.log_dir(), "result.json"), "w+") as fd2:
+                json.dump(result, fd2, indent=2)
+            cmd = "rm -rf %s;" % (bug_path)
+            subprocess.call(cmd, shell=True)
+        pass
+
+
+def init(args):
+    return Tool()
+
+
+def _args(parser):
+    # additional argument for the repair tool
+    parser.add_argument("--argument", help="description", default=100)
+    pass
+
+parser = add_repair_tool(<repair_name>, init, 'Repair the bug with <repair_name>')
+_args(parser)
+
 ```
+
+3. Go to `script/core/utils.py` and import your bencmark in the end of the file (like this `import core.benchmarks.Tool`)

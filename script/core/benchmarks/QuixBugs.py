@@ -5,6 +5,7 @@ import subprocess
 from config import REPAIR_ROOT, DATA_PATH
 from core.Benchmark import Benchmark
 from core.Bug import Bug
+from core.utils import add_benchmark
 
 FNULL = open(os.devnull, 'w')
 
@@ -113,3 +114,5 @@ class QuixBugs(Benchmark):
 
     def compliance_level(self, bug):
         return 8
+
+add_benchmark("QuixBugs", QuixBugs)

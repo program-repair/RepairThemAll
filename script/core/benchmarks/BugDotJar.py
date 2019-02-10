@@ -7,6 +7,7 @@ from sets import Set
 from config import REPAIR_ROOT
 from core.Benchmark import Benchmark
 from core.Bug import Bug
+from core.utils import add_benchmark
 
 FNULL = open(os.devnull, 'w')
 
@@ -176,3 +177,5 @@ mvn com.github.tdurieux:project-config-maven-plugin:1.0-SNAPSHOT:info -q;
 
     def compliance_level(self, bug):
         return 7
+
+add_benchmark("Bugs.jar", BugDotJar)

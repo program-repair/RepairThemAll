@@ -5,6 +5,8 @@ import subprocess
 
 from config import WORKING_DIRECTORY, REPAIR_ROOT, JAVA7_HOME, JAVA8_HOME, JAVA_ARGS, TOOL_TIMEOUT
 from core.RepairTool import RepairTool
+from core.utils import add_repair_tool
+from core.runner.RepairTask import RepairTask
 
 
 def to_absolute(root, folders):
@@ -153,3 +155,35 @@ timeout %sm java %s -cp %s %s \\
             subprocess.call(cmd, shell=True)
 
     pass
+
+def init(args, name, mode):
+    return Arja(name=name, mode=mode)
+
+def genprog_init(args):
+    return init(args, "GenProg", "GenProg")
+
+def kali_init(args):
+    return init(args, "Kali", "Kali")
+
+def rsrepair_init(args):
+    return init(args, "RSRepair", "RSRepair")
+
+def arja_init(args):
+    return init(args, "Arja", "Arja")
+
+def _arja_args(parser):
+    parser.add_argument('--version', action='version', version='Arja 4cdec980e8687f32b365843626cc355c07cd754b')
+    parser.add_argument("--seed", help="The random seed", default=0, type=float)
+    pass
+
+parser = add_repair_tool("Arja", arja_init, 'Repair the bug with Arja')
+_arja_args(parser)
+
+parser = add_repair_tool("GenProg", genprog_init, 'Repair the bug with GenProg (from Arja)')
+_arja_args(parser)
+
+parser = add_repair_tool("Kali", kali_init, 'Repair the bug with Kali (from Arja)')
+_arja_args(parser)
+
+parser = add_repair_tool("RSRepair", rsrepair_init, 'Repair the bug with RSRepair (from Arja)')
+_arja_args(parser)

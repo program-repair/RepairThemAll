@@ -10,7 +10,8 @@ from config import OUTPUT_PATH
 from config import WORKING_DIRECTORY
 from config import Z3_PATH
 from core.RepairTool import RepairTool
-from runner.RepairTask import RepairTask
+from core.runner.RepairTask import RepairTask
+from core.utils import add_repair_tool
 
 
 class Nopol(RepairTool):
@@ -37,7 +38,9 @@ class Nopol(RepairTool):
         self.init_bug(bug, bug_path)
         try:
             classpath = ":".join(bug.bin_folders() + bug.test_bin_folders())
-            classpath += ":" + bug.classpath(repair_task)
+            if classpath != ":":
+                classpath += ":" 
+            classpath += bug.classpath(repair_task)
             classpath += ":" + self.jar
             cmd = """cd %s;
 export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8 -Duser.language=en-US -Duser.country=US -Duser.language=en";
@@ -105,5 +108,23 @@ time java %s -cp %s:%s/../lib/tools.jar %s \\
             else:
                 repair_task.status = "ERROR"
             cmd = "rm -rf %s;" % (bug_path)
-            subprocess.call(cmd, shell=True)
+            #subprocess.call(cmd, shell=True)
         pass
+
+def init(args):
+    return Nopol(seed=args.seed, statement_type=args.statement_type)
+
+def init_dynamoth(args):
+    return Nopol(name="DynaMoth", seed=args.seed, statement_type=args.statement_type, synthesis="dynamoth")
+
+def nopol_args(parser):
+    parser.add_argument("--statement-type", "-t",
+                        help="The targeted statement", default="pre_then_cond", choices=("condition", "precondition", "pre_then_cond"))
+    parser.add_argument("--seed", "-s", help="The random seed", default=7, type=float)
+    pass
+
+parser = add_repair_tool("Nopol", init, 'Repair the bug with Nopol')
+nopol_args(parser)
+
+parser = add_repair_tool("Dynamoth", init_dynamoth, 'Repair the bug with Dynamoth')
+nopol_args(parser)

@@ -9,6 +9,7 @@ from config import DATA_PATH
 from config import REPAIR_ROOT
 from core.Benchmark import Benchmark
 from core.Bug import Bug
+from core.utils import add_benchmark
 
 FNULL = open(os.devnull, 'w')
 
@@ -59,6 +60,7 @@ class Defects4J(Benchmark):
         return os.path.join(self.path, "framework", "bin")
 
     def checkout(self, bug, working_directory):
+        print bug, working_directory
         cmd = """export PATH="%s:$PATH";
 defects4j checkout -p %s -v %sb -w %s;
 """ % (self._get_benchmark_path(),
@@ -186,3 +188,5 @@ defects4j info -p %s -b %s;
 
     def compliance_level(self, bug):
         return self.project_data[bug.project]["complianceLevel"][str(bug.bug_id)]["source"]
+
+add_benchmark("Defects4J", Defects4J)
