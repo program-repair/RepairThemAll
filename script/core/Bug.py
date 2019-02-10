@@ -55,8 +55,8 @@ class Bug(object):
     def test_bin_folders(self):
         return self.benchmark.test_bin_folders(self)
 
-    def classpath(self, repair_task):
-        return self.benchmark.classpath(repair_task)
+    def classpath(self):
+        return self.benchmark.classpath(self)
 
     def compliance_level(self):
         return self.benchmark.compliance_level(self)

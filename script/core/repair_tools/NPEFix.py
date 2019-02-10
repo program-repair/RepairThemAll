@@ -32,7 +32,7 @@ class NPEFix(RepairTool):
 
         try:
             classpath = ":".join(bug.bin_folders() + bug.test_bin_folders())
-            classpath += ":" + bug.classpath(repair_task)
+            classpath += ":" + bug.classpath()
             compliance_level = bug.compliance_level()
             if compliance_level < 5:
                 # NPEFix metaprogram is not compatible below Java 1.5

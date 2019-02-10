@@ -44,7 +44,7 @@ class Astor(RepairTool):
         if bug.compliance_level() > 7:
             jvm4testexecution = JAVA8_HOME
         try:
-            classpath = bug.classpath(repair_task)
+            classpath = bug.classpath()
             if classpath == "":
                 classpath = '""'
             bin_folders = bug.bin_folders()[:]

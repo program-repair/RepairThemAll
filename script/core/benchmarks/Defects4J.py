@@ -5,7 +5,7 @@ import re
 import subprocess
 from sets import Set
 
-from config import DATA_PATH
+from config import DATA_PATH, JAVA7_HOME
 from config import REPAIR_ROOT
 from core.Benchmark import Benchmark
 from core.Bug import Bug
@@ -60,10 +60,10 @@ class Defects4J(Benchmark):
         return os.path.join(self.path, "framework", "bin")
 
     def checkout(self, bug, working_directory):
-        print bug, working_directory
-        cmd = """export PATH="%s:$PATH";
+        cmd = """export PATH="%s:%s:$PATH";
 defects4j checkout -p %s -v %sb -w %s;
-""" % (self._get_benchmark_path(),
+""" % (JAVA7_HOME,
+       self._get_benchmark_path(),
        bug.project,
        bug.bug_id,
        working_directory)
@@ -71,28 +71,33 @@ defects4j checkout -p %s -v %sb -w %s;
         pass
 
     def compile(self, bug, working_directory):
-        cmd = """export PATH="%s:$PATH";
+        cmd = """export PATH="%s:%s:$PATH";
 cd %s;
 defects4j compile;
-""" % (self._get_benchmark_path(),
+""" % (JAVA7_HOME,
+       self._get_benchmark_path(),
        working_directory)
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
     def run_test(self, bug, working_directory):
-        cmd = """export PATH="%s:$PATH";
+        cmd = """export PATH="%s:%s:$PATH";
 cd %s;
 defects4j test;
-""" % (self._get_benchmark_path(),
+""" % (JAVA7_HOME,
+       self._get_benchmark_path(),
        working_directory)
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
     def failing_tests(self, bug):
-        cmd = """export PATH="%s:$PATH";
+        cmd = """export PATH="%s:%s:$PATH";
 defects4j info -p %s -b %s;
-""" % (self._get_benchmark_path(), bug.project, bug.bug_id)
-        info = subprocess.check_output(cmd, shell=True)
+""" % (JAVA7_HOME,
+       self._get_benchmark_path(), 
+       bug.project, 
+       bug.bug_id)
+        info = subprocess.check_output(cmd, shell=True, stderr=FNULL)
 
         tests = Set()
         reg = re.compile('- (.*)::(.*)')
@@ -144,10 +149,9 @@ defects4j info -p %s -b %s;
                 break
         return [source]
 
-    def classpath(self, repair_task):
-        bug = repair_task.bug
+    def classpath(self, bug):
         classpath = ""
-        workdir = repair_task.working_directory
+        workdir = bug.working_directory
 
         sources = self.project_data[bug.project]["classpath"]
         sources = collections.OrderedDict(sorted(sources.items(), key=lambda t: int(t[0])))
@@ -163,11 +167,11 @@ defects4j info -p %s -b %s;
                 if f[-4:] == ".jar":
                     classpath += ":" + (os.path.join(root, f))
         libs = []
-        cmd = """export PATH="%s:$PATH";
+        cmd = """export PATH="%s:%s:$PATH";
         cd %s;
         defects4j export -p cp.test 2> /dev/null;
-        """ % (self._get_benchmark_path(), repair_task.working_directory)
-        libs_split = subprocess.check_output(cmd, shell=True).split(":")
+        """ % (JAVA7_HOME, self._get_benchmark_path(), bug.working_directory)
+        libs_split = subprocess.check_output(cmd, shell=True, stderr=FNULL).split(":")
         for lib_str in libs_split:
             lib = os.path.basename(lib_str)
             if lib[-4:] == ".jar":

@@ -42,7 +42,7 @@ class Arja(RepairTool):
             if not os.path.exists(os.path.dirname(log_path)):
                 os.makedirs(os.path.dirname(log_path))
 
-            classpath = bug.classpath(repair_task)
+            classpath = bug.classpath()
             if classpath == "":
                 classpath = '""'
             bin_folders = to_absolute(bug_path, bug.bin_folders())

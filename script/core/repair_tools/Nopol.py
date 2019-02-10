@@ -40,7 +40,7 @@ class Nopol(RepairTool):
             classpath = ":".join(bug.bin_folders() + bug.test_bin_folders())
             if classpath != ":":
                 classpath += ":" 
-            classpath += bug.classpath(repair_task)
+            classpath += bug.classpath()
             classpath += ":" + self.jar
             cmd = """cd %s;
 export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8 -Duser.language=en-US -Duser.country=US -Duser.language=en";

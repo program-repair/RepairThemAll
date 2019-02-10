@@ -201,9 +201,9 @@ mvn package -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=t
                 return abs_to_rel(bug.working_directory, module['binTests'])
         return []
 
-    def classpath(self, repair_task):
-        info = self._get_project_info(repair_task.bug)
-        failing_module = self.failing_module(repair_task.bug)
+    def classpath(self, bug):
+        info = self._get_project_info(bug)
+        failing_module = self.failing_module(bug)
 
         deps = []
 
