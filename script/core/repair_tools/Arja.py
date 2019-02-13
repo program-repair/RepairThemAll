@@ -173,7 +173,7 @@ def arja_init(args):
 
 def _arja_args(parser):
     parser.add_argument('--version', action='version', version='Arja e60b990f9')
-    parser.add_argument("--seed", help="The random seed", default=0, type=float)
+    parser.add_argument("--seed", help="The random seed", default=0, type=int)
     pass
 
 parser = add_repair_tool("Arja", arja_init, 'Repair the bug with Arja')

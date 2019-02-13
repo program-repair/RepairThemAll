@@ -127,5 +127,5 @@ def nopol_args(parser):
 parser = add_repair_tool("Nopol", init, 'Repair the bug with Nopol')
 nopol_args(parser)
 
-parser = add_repair_tool("Dynamoth", init_dynamoth, 'Repair the bug with Dynamoth')
+parser = add_repair_tool("DynaMoth", init_dynamoth, 'Repair the bug with DynaMoth')
 nopol_args(parser)
