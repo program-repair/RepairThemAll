@@ -166,7 +166,7 @@ def jMutRepair_init(args):
     return init(args, "jMutRepair", "jMutRepair")
 
 def astor_args(parser):
-    parser.add_argument("--seed", help="The random seed", default=0, type=float)
+    parser.add_argument("--seed", help="The random seed", default=0, type=int)
     parser.add_argument("--maxtime", help="Astor timeout", default=120, type=int)
     parser.add_argument("--population", help="Astor population", default=1, type=int)
     parser.add_argument("--maxgen", help="Astor maxgen", default=1000000, type=int)

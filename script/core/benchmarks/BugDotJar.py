@@ -25,7 +25,7 @@ class BugDotJar(Benchmark):
     """Bug_dot_jar Benchmark"""
 
     def __init__(self):
-        super(BugDotJar, self).__init__("Bug_dot_jar")
+        super(BugDotJar, self).__init__("Bugs.jar")
         self.path = os.path.join(REPAIR_ROOT, "benchmarks", "Bug-dot-jar")
         self.bugs = None
         self.get_bugs()

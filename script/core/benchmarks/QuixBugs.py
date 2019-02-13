@@ -34,6 +34,8 @@ class QuixBugs(Benchmark):
         return self.bugs
 
     def get_bug(self, bug_id):
+        if bug_id[-1] == '_':
+            bug_id = bug_id[:-1]
         for bug in self.get_bugs():
             if bug_id.lower() == bug.project.lower():
                 return bug

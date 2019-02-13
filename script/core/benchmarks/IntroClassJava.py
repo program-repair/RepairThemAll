@@ -32,6 +32,8 @@ class IntroClassJava(Benchmark):
                 if os.path.isfile(user_path):
                     continue
                 for revision in os.listdir(user_path):
+                    if revision == "reference":
+                        continue
                     revision_path = os.path.join(user_path, revision)
                     if os.path.isfile(revision_path):
                         continue

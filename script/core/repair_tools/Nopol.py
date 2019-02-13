@@ -121,7 +121,7 @@ def nopol_args(parser):
     parser.add_argument("--statement-type", "-t",
                         help="The targeted statement", default="pre_then_cond", choices=("condition", "precondition", "pre_then_cond"))
     parser.add_argument('--version', action='version', version='Astor 7ba58a78d')                        
-    parser.add_argument("--seed", "-s", help="The random seed", default=7, type=float)
+    parser.add_argument("--seed", "-s", help="The random seed", default=7, type=int)
     pass
 
 parser = add_repair_tool("Nopol", init, 'Repair the bug with Nopol')

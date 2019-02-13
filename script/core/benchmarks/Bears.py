@@ -85,7 +85,7 @@ mvn com.github.tdurieux:project-config-maven-plugin:1.0-SNAPSHOT:info -q;
     def checkout(self, bug, working_directory):
         branch_id = "%s-%s" % (bug.project, bug.bug_id)
 
-        cmd = "cd " + self.path + "; git reset .; git checkout -- .; git clean -x -d --force; git checkout master; git checkout " + branch_id
+        cmd = "cd " + self.path + "; git reset .; git checkout -- .; git clean -x -d --force; git checkout -f master; git checkout -f " + branch_id
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
         bears_info_path = os.path.join(self.path, "bears.json")
@@ -99,7 +99,7 @@ mvn com.github.tdurieux:project-config-maven-plugin:1.0-SNAPSHOT:info -q;
             bug_commit = subprocess.check_output(cmd, shell=True)
 
         cmd = """cd %s;
-git checkout %s;
+git checkout -f %s;
 cp -r . %s""" % (
             self.path,
             bug_commit,

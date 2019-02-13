@@ -15,4 +15,4 @@ def get_renderer(runner):
     """
     if is_grid5k_node():
         return EmptyRenderer(runner)
-    return EmptyRenderer(runner)
+    return BashRenderer(runner)
