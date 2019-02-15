@@ -113,7 +113,7 @@ class TestInfo(RepairTool):
                 os.makedirs(test_results_path)
             
 
-            bug_id = "%s_%s_%s" % (bug.project, bug.bug_id)
+            bug_id = "%s_%s" % (bug.project, bug.bug_id)
             surefire_path = os.path.join(OUTPUT_PATH, 'surefire', bug.benchmark.name, bug_id)
             if not os.path.exists(surefire_path):
                 os.makedirs(surefire_path)
