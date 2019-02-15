@@ -107,19 +107,21 @@ class TestInfo(RepairTool):
             tests['failureDetails'] = failureDetails
             jsonFile['tests'] = tests
 
-            if not os.path.exists(os.path.join(OUTPUT_PATH, 'testResults')):
-                os.makedirs(os.path.join(OUTPUT_PATH, 'testResults'))
+
+            test_results_path = os.path.join(OUTPUT_PATH, 'testResults', bug.benchmark.name)
+            if not os.path.exists(test_results_path):
+                os.makedirs(test_results_path)
             
 
-            bug_id = "%s_%s_%s" % (bug.benchmark.name, bug.project, bug.bug_id)
-            surefire_path = os.path.join(OUTPUT_PATH, 'surefire', bug_id)
+            bug_id = "%s_%s_%s" % (bug.project, bug.bug_id)
+            surefire_path = os.path.join(OUTPUT_PATH, 'surefire', bug.benchmark.name, bug_id)
             if not os.path.exists(surefire_path):
                 os.makedirs(surefire_path)
             
             for f in reportFiles:
                 shutil.copy(f, os.path.join(surefire_path, os.path.basename(f)))
             
-            with open(os.path.join(OUTPUT_PATH, 'testResults', bug_id + '.json'), 'w') as f:
+            with open(os.path.join(test_results_path, bug_id + '.json'), 'w') as f:
                 f.write(json.dumps(jsonFile, indent=2))
         finally:
             cmd = "rm -rf %s;" % (bug_path)
