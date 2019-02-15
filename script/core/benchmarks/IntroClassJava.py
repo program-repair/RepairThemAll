@@ -64,12 +64,12 @@ class IntroClassJava(Benchmark):
         pass
 
     def compile(self, bug, working_directory):
-        cmd = "cd %s; mvn test -DskipTests;" % (working_directory)
+        cmd = "cd %s; export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true; mvn test -DskipTests;" % (working_directory)
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
     def run_test(self, bug, working_directory):
-        cmd = "cd %s; mvn test;" % (working_directory)
+        cmd = "cd %s; export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true; mvn test;" % (working_directory)
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
