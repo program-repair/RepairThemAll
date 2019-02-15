@@ -60,10 +60,11 @@ class Defects4J(Benchmark):
         return os.path.join(self.path, "framework", "bin")
 
     def checkout(self, bug, working_directory):
-        cmd = """export PATH="%s:%s:$PATH";
+        cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";
 defects4j checkout -p %s -v %sb -w %s;
 """ % (JAVA7_HOME,
        self._get_benchmark_path(),
+       os.path.join(JAVA7_HOME, '..'),
        bug.project,
        bug.bug_id,
        working_directory)
@@ -71,30 +72,33 @@ defects4j checkout -p %s -v %sb -w %s;
         pass
 
     def compile(self, bug, working_directory):
-        cmd = """export PATH="%s:%s:$PATH";
+        cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";
 cd %s;
 defects4j compile;
 """ % (JAVA7_HOME,
        self._get_benchmark_path(),
+       os.path.join(JAVA7_HOME, '..'),
        working_directory)
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
     def run_test(self, bug, working_directory):
-        cmd = """export PATH="%s:%s:$PATH";
+        cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";
 cd %s;
 defects4j test;
 """ % (JAVA7_HOME,
        self._get_benchmark_path(),
+       os.path.join(JAVA7_HOME, '..'),
        working_directory)
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
     def failing_tests(self, bug):
-        cmd = """export PATH="%s:%s:$PATH";
+        cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";
 defects4j info -p %s -b %s;
 """ % (JAVA7_HOME,
        self._get_benchmark_path(), 
+       os.path.join(JAVA7_HOME, '..'),
        bug.project, 
        bug.bug_id)
         info = subprocess.check_output(cmd, shell=True, stderr=FNULL)
@@ -167,10 +171,13 @@ defects4j info -p %s -b %s;
                 if f[-4:] == ".jar":
                     classpath += ":" + (os.path.join(root, f))
         libs = []
-        cmd = """export PATH="%s:%s:$PATH";
+        cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";
         cd %s;
         defects4j export -p cp.test 2> /dev/null;
-        """ % (JAVA7_HOME, self._get_benchmark_path(), bug.working_directory)
+        """ % (JAVA7_HOME, 
+        self._get_benchmark_path(), 
+        os.path.join(JAVA7_HOME, '..'),
+        bug.working_directory)
         libs_split = subprocess.check_output(cmd, shell=True, stderr=FNULL).split(":")
         for lib_str in libs_split:
             lib = os.path.basename(lib_str)
