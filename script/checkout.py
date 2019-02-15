@@ -1,3 +1,4 @@
+import os
 import argparse
 
 from core.utils import get_benchmark
@@ -12,4 +13,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args.benchmark = get_benchmark(args.benchmark)
     bug = args.benchmark.get_bug(args.id)
-    bug.checkout(args.working_directory)
+    bug_path = os.path.join(args.working_directory,
+                            "%s_%s_%s" % (bug.benchmark.name, bug.project, bug.bug_id))
+    bug.checkout(bug_path)
