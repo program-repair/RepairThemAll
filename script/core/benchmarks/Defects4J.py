@@ -73,6 +73,7 @@ defects4j checkout -p %s -v %sb -w %s;
 
     def compile(self, bug, working_directory):
         cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";
+export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true;
 cd %s;
 defects4j compile;
 """ % (JAVA7_HOME,
@@ -84,6 +85,7 @@ defects4j compile;
 
     def run_test(self, bug, working_directory):
         cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";
+export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true; 
 cd %s;
 defects4j test;
 """ % (JAVA7_HOME,
@@ -95,6 +97,7 @@ defects4j test;
 
     def failing_tests(self, bug):
         cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";
+export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true;
 defects4j info -p %s -b %s;
 """ % (JAVA7_HOME,
        self._get_benchmark_path(), 
