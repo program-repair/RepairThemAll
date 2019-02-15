@@ -8,7 +8,7 @@ from xml.etree.ElementTree import parse
 from config import WORKING_DIRECTORY
 from core.utils import get_benchmark
 
-parser = argparse.ArgumentParser(prog="run_tests", description='Run tests')
+parser = argparse.ArgumentParser(prog="info_json_file", description='Get info json file')
 parser.add_argument("--benchmark", "-b", required=True, default="Defects4J",
                         help="The benchmark to repair")
 parser.add_argument("--id", "-i", help="The bug id")
@@ -79,7 +79,14 @@ if __name__ == "__main__":
         repository = {}
         repository['name'] = bug.project
         jsonFile['repository'] = repository
-        
+
+        if bug.benchmark.name == 'Defects4J' or bug.benchmark.name == 'Bugs.jar' or bug.benchmark.name == 'Bears': 
+            projectInfo = bug.benchmark._get_project_info(bug)
+            projectMetrics = {}
+            if projectInfo is not None:
+                projectMetrics['numberModules'] = len(projectInfo['modules'])
+            jsonFile['projectMetrics'] = projectMetrics
+
         tests = {}
         overallMetrics = {}
         overallMetrics['numberPassing'] = passingTests
