@@ -1,9 +1,24 @@
+import json
+import subprocess
+
 class Benchmark(object):
     """Benchmark"""
 
     def __init__(self, name):
         self.name = name
         pass
+
+    def _get_project_info(self, bug):
+        try:
+            return bug.maven_info
+        except AttributeError:
+            pass
+        cmd = """cd %s;
+mvn com.github.tdurieux:project-config-maven-plugin:1.0-SNAPSHOT:info -q;
+""" % (bug.working_directory)
+        info = json.loads(subprocess.check_output(cmd, shell=True))
+        bug.maven_info = info
+        return info
 
     def checkout(self, bug, working_directory):
         pass

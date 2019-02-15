@@ -86,17 +86,6 @@ class BugDotJar(Benchmark):
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
-    def _get_project_info(self, bug):
-        try:
-            return bug.maven_info
-        except AttributeError:
-            pass
-        cmd = """cd %s;
-mvn com.github.tdurieux:project-config-maven-plugin:1.0-SNAPSHOT:info -q;
-""" % (bug.working_directory)
-        info = json.loads(subprocess.check_output(cmd, shell=True))
-        bug.maven_info = info
-        return info
 
     def failing_module(self, bug):
         info = self._get_project_info(bug)
