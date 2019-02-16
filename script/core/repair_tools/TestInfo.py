@@ -121,8 +121,8 @@ class TestInfo(RepairTool):
             for f in reportFiles:
                 shutil.copy(f, os.path.join(surefire_path, os.path.basename(f)))
             
-            if os.path.exists(os.path.join(bug_path, "all-tests.txt")):
-                shutil.copy(os.path.join(bug_path, "all-tests.txt"), os.path.join(surefire_path, "all-tests.txt"))
+            if os.path.exists(os.path.join(bug_path, "all_tests")):
+                shutil.copy(os.path.join(bug_path, "all_tests"), os.path.join(surefire_path, "all-tests.txt"))
             if os.path.exists(os.path.join(bug_path, "failing_tests")):
                 shutil.copy(os.path.join(bug_path, "failing_tests"), os.path.join(surefire_path, "failing_tests"))
 
