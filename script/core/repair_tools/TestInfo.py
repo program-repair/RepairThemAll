@@ -121,10 +121,10 @@ class TestInfo(RepairTool):
             for f in reportFiles:
                 shutil.copy(f, os.path.join(surefire_path, os.path.basename(f)))
             
-            if os.path.exists(os.path.join(WORKING_DIRECTORY, "all-tests.txt")):
-                shutil.copy(os.path.join(WORKING_DIRECTORY, "all-tests.txt"), os.path.join(surefire_path, "all-tests.txt"))
-            if os.path.exists(os.path.join(WORKING_DIRECTORY, "failing_tests")):
-                shutil.copy(os.path.join(WORKING_DIRECTORY, "failing_tests"), os.path.join(surefire_path, "failing_tests"))
+            if os.path.exists(os.path.join(bug_path, "all-tests.txt")):
+                shutil.copy(os.path.join(bug_path, "all-tests.txt"), os.path.join(surefire_path, "all-tests.txt"))
+            if os.path.exists(os.path.join(bug_path, "failing_tests")):
+                shutil.copy(os.path.join(bug_path, "failing_tests"), os.path.join(surefire_path, "failing_tests"))
 
             with open(os.path.join(test_results_path, bug_id + '.json'), 'w') as f:
                 f.write(json.dumps(jsonFile, indent=2))
