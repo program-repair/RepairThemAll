@@ -116,7 +116,7 @@ def init(args):
 
 
 def npefix_args(parser):
-    parser.add_argument('--version', action='version', version='Astor 403445b9a')
+    parser.add_argument('--version', action='version', version='NPEFix 403445b9a')
     parser.add_argument("--iteration", help="The maximum number of NPEFix iteration", default=100, type=int)
     pass
 

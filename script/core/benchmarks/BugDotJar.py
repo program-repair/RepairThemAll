@@ -4,7 +4,7 @@ import subprocess
 import json
 from sets import Set
 
-from config import REPAIR_ROOT
+from config import REPAIR_ROOT, JAVA7_HOME, JAVA8_HOME
 from core.Benchmark import Benchmark
 from core.Bug import Bug
 from core.utils import add_benchmark
@@ -73,19 +73,28 @@ class BugDotJar(Benchmark):
         pass
 
     def compile(self, bug, working_directory):
+        java_version = JAVA8_HOME
+        if bug.project == "Wicket":
+            java_version = JAVA7_HOME
         cmd = """cd %s;
+        export JAVA_HOME="%s";
         export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true;
         mvn install -V -B -DskipTests -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true; 
         mvn test -DskipTests -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true;
         mvn dependency:build-classpath -Dmdep.outputFile="classpath.info";
-        """ % (working_directory)
+        """ % (java_version, working_directory)
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
     def run_test(self, bug, working_directory):
-        cmd = """cd %s; export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true;
+        java_version = JAVA8_HOME
+        if bug.project == "Wicket":
+            java_version = JAVA7_HOME
+        cmd = """cd %s; 
+        export JAVA_HOME="%s";
+        export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true;
         rm -rf .git; git init; git commit -m 'init' --allow-empty;
-        mvn test -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true -Djacoco.skip=true;""" % (working_directory)
+        mvn test -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true -Djacoco.skip=true;""" % (java_version, working_directory)
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
