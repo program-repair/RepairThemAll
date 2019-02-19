@@ -84,7 +84,7 @@ class BugDotJar(Benchmark):
 
     def run_test(self, bug, working_directory):
         cmd = """cd %s; export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true;
-        mvn test;""" % (working_directory)
+        mvn test -Djacoco.skip=true;""" % (working_directory)
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
