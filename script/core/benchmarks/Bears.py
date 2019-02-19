@@ -127,11 +127,19 @@ mvn dependency:build-classpath -Dmdep.outputFile="classpath.info";
         pass
 
     def run_test(self, bug, working_directory):
+        local_working_directory = working_directory
+        pom_path = bug.info['reproductionBuggyBuild']['projectRootPomPath']
+        buggy_build_id = bug.info['builds']['buggyBuild']['id']
+        pom_path = pom_path.partition(str(buggy_build_id))[2]
+        pom_path = pom_path.replace("/pom.xml", "")
+        pom_path = pom_path.replace("/", "", 1)
+        if pom_path:
+        	local_working_directory = os.path.join(local_working_directory, pom_path)
         cmd = """cd %s;
 export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true;  
 rm -rf .git; git init; git commit -m 'init' --allow-empty;
 mvn test -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true -Djacoco.skip=true
-""" % (working_directory)
+""" % (local_working_directory)
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
