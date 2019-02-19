@@ -80,7 +80,7 @@ class BugDotJar(Benchmark):
         export JAVA_HOME="%s";
         export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true;
         mvn install -V -B -DskipTests -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true; 
-        mvn test -DskipTests -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true;
+        mvn test -DskipTests -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true -Dhttps.protocols=TLSv1.2;
         mvn dependency:build-classpath -Dmdep.outputFile="classpath.info";
         """ % (java_version, working_directory)
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
@@ -94,7 +94,7 @@ class BugDotJar(Benchmark):
         export JAVA_HOME="%s";
         export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true;
         rm -rf .git; git init; git commit -m 'init' --allow-empty;
-        mvn test -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true -Djacoco.skip=true;""" % (java_version, working_directory)
+        mvn test -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true -Djacoco.skip=true -Dhttps.protocols=TLSv1.2;""" % (java_version, working_directory)
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
