@@ -71,7 +71,9 @@ class TestInfo(RepairTool):
                             else:
                                 passingTests += 1
 
-            jsonFile = {
+            jsonFile = {}
+            
+            jsonFile['tool_inputs'] = {
                 'failing_tests':  bug.failing_tests(),
                 'sources': bug.source_folders(),
                 'tests': bug.test_folders(),
@@ -89,7 +91,7 @@ class TestInfo(RepairTool):
 
             try:
                 projectInfo = bug.benchmark._get_project_info(bug)
-                jsonFile['projectInfo'] = projectInfo
+                jsonFile['tool_inputs']['projectInfo'] = projectInfo
                 projectMetrics = {}
                 if projectInfo is not None:
                     projectMetrics['numberModules'] = len(projectInfo['modules'])
