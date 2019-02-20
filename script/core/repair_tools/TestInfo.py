@@ -43,33 +43,39 @@ class TestInfo(RepairTool):
             erroringTests = 0
             failureDetails = []
             for xmlFile in reportFiles:
-                with open(xmlFile, 'r') as file:
-                    xmlTree = parse(file)
-                    testCases = xmlTree.findall('testcase')
-                    for testCase in testCases:
-                        failureDetail = {}
-                        failureDetail['testClass'] = testCase.attrib['classname']
-                        failureDetail['testMethod'] = testCase.attrib['name']
-                        
-                        failure = testCase.findall('failure')
-                        if len(failure) > 0:
-                            failingTests += 1
-                            failureDetail['failureName'] = failure[0].attrib['type']
-                            if 'message' in failure[0].attrib:
-                                failureDetail['detail'] = failure[0].attrib['message']
-                            failureDetail['isError'] = False
-                            failureDetails.append(failureDetail)
-                        else:
-                            error = testCase.findall('error')
-                            if len(error) > 0:
-                                erroringTests += 1
-                                failureDetail['failureName'] = error[0].attrib['type']
-                                if 'message' in error[0].attrib:
-                                    failureDetail['detail'] = error[0].attrib['message']
-                                failureDetail['isError'] = True
+                try:
+                    with open(xmlFile, 'r') as file:
+                        xmlTree = parse(file)
+                        testCases = xmlTree.findall('testcase')
+                        for testCase in testCases:
+                            failureDetail = {}
+                            if 'classname' in testCase.attrib:
+                                failureDetail['testClass'] = testCase.attrib['classname']
+                            if 'name' in testCase.attrib:
+                                failureDetail['testMethod'] = testCase.attrib['name']
+                            
+                            failure = testCase.findall('failure')
+                            if len(failure) > 0:
+                                failingTests += 1
+                                failureDetail['failureName'] = failure[0].attrib['type']
+                                if 'message' in failure[0].attrib:
+                                    failureDetail['detail'] = failure[0].attrib['message']
+                                failureDetail['isError'] = False
                                 failureDetails.append(failureDetail)
                             else:
-                                passingTests += 1
+                                error = testCase.findall('error')
+                                if len(error) > 0:
+                                    erroringTests += 1
+                                    failureDetail['failureName'] = error[0].attrib['type']
+                                    if 'message' in error[0].attrib:
+                                        failureDetail['detail'] = error[0].attrib['message']
+                                    failureDetail['isError'] = True
+                                    failureDetails.append(failureDetail)
+                                else:
+                                    passingTests += 1
+                except:
+
+                    pass
 
             jsonFile = {}
             
