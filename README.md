@@ -14,7 +14,9 @@ If you use RepairThemAll, please cite our paper:
 }
 ```
 
-## Benchmarks
+## Current support
+
+### Benchmarks of bugs
 
 | Benchmark      | # Projects | # Bugs |
 | -------------- | -----------| -------|
@@ -25,7 +27,7 @@ If you use RepairThemAll, please cite our paper:
 | QuixBugs       |         40 |     40 |
 | **Total**      |        130 |   2051 |
 
-## Tools
+### Repair tools
 
 1. Nopol
 2. DynaMoth
@@ -33,13 +35,15 @@ If you use RepairThemAll, please cite our paper:
 4. jGenProg
 5. jKali
 6. jMutRepair
-7. Carduman
-8. Arja
+7. Cardumen
+8. ARJA
 9. GenProg-A
 10. RSRepair-A
 11. Kali-A
 
-## Requirements
+## Usage
+
+### Requirements
 
 1. Linux or Mac
 2. Java 7
@@ -48,11 +52,13 @@ If you use RepairThemAll, please cite our paper:
 5. Maven
 6. Ant
 
-## Usage
+### Executing repair tools
 
 1. Init the repository with `./init.sh`.
-2. Go to `script/config.py` and update the configuration for your machine (java home, and working directory)
-3. Use `python script/repair.py` to run the repair tools on the benchmarks
+
+2. Go to `script/config.py` and update the configuration for your machine (java home and working directory).
+
+3. Use `python script/repair.py` to run the repair tools on the benchmarks.
 
 General usage:
 
@@ -62,10 +68,13 @@ python script/repair.py {astor,npefix,nopol,dynamoth}
     --id <bug_id> # optional, if not specified all the bugs of the benchmark will be executed. The format is specific for each benchmark
 ```
 
-## Add a new benchmark
+## Extending RepairThemAll
 
-1. Put your benchmark folder in `script/bencmarks`
-2. Create a new file in `script/core/bencmarks` that contains the following content
+### To add a new benchmark
+
+1. Put your benchmark folder in `./benchmarks`.
+
+2. Create a new file in `script/core/benchmarks/` that contains the following content:
 
 ```py
 from core.Benchmark import Benchmark
@@ -129,12 +138,13 @@ class BenchmarkName(Benchmark):
 add_benchmark(<name>, BenchmarkName)
 ```
 
-3. Go to `script/core/utils.py` and import your bencmark in the end of the file (like this `import core.benchmarks.BenchmarkName`)
+3. Go to `script/core/utils.py` and import your benchmark in the end of the file (like `import core.benchmarks.BenchmarkName`).
 
-## Add a new Repair tools
+### To add a new repair tool
 
-1. Add the binary of your tool in `./repair_tools`
-2. Create a new file in `script/core/repair_tools` that contains the following content
+1. Add the binary of your repair tool in `./repair_tools`.
+
+2. Create a new file in `script/core/repair_tools/` that contains the following content:
 
 ```py
 import os
@@ -205,4 +215,4 @@ parser = add_repair_tool(<repair_name>, init, 'Repair the bug with <repair_name>
 _args(parser)
 ```
 
-3. Go to `script/core/utils.py` and import your bencmark in the end of the file (like this `import core.benchmarks.Tool`)
+3. Go to `script/core/utils.py` and import your repair tool in the end of the file (like `import core.repair_tools.Tool`).
