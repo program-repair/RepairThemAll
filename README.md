@@ -1,5 +1,18 @@
-# Repair Them All
+# RepairThemAll
 
+RepairThemAll is a framework that allows the execution of automatic program repair tools on benchmarks of bugs by providing an abstraction around the repair tools and the benchmarks.
+
+If you use RepairThemAll, please cite our paper:
+
+```bibtex
+@inproceedings{RepairThemAll2019,
+  author    = {Thomas Durieux and Fernanda Madeiral and Matias Martinez and Rui Abreu},
+  title     = {{Empirical Review of Java Program Repair Tools: A Large-Scale Experiment on 2,141 Bugs and 23,551 Repair Attempts}},
+  booktitle = {Proceedings of the 27th ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering (ESEC/FSE '19)},
+  year      = {2019},
+  url       = {https://arxiv.org/abs/1905.11973}
+}
+```
 
 ## Benchmarks
 
