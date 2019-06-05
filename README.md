@@ -54,11 +54,13 @@ If you use RepairThemAll, please cite our paper:
 
 ### Executing repair tools
 
-1. Init the repository with `./init.sh`.
+1. Clone this repository with `git clone --recursive https://github.com/program-repair/RepairThemAll.git`
 
-2. Go to `script/config.py` and update the configuration for your machine (java home and working directory).
+2. Init the repository with `./init.sh`.
 
-3. Use `python script/repair.py` to run the repair tools on the benchmarks.
+3. Go to `script/config.py` and update the configuration for your machine (java home and working directory).
+
+4. Use `python script/repair.py` to run the repair tools on the benchmarks.
 
 General usage:
 
