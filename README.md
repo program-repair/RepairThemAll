@@ -65,9 +65,15 @@ If you use RepairThemAll, please cite our paper:
 General usage:
 
 ```bash
-python script/repair.py {astor,npefix,nopol,dynamoth}
-    --benchmark [Defects4J, IntroclassJava, Bugs.jar, Bears, QuixBugs]
-    --id <bug_id> # optional, if not specified all the bugs of the benchmark will be executed. The format is specific for each benchmark
+python script/repair.py {Arja,GenProg,Kali,RSRepair,jKali,jGenProg,jMutRepair,Cardumen,CapGen,LSRepair,Nopol,DynaMoth,NPEFix,TestInfo}
+    --benchmark {Bears, Bugs.jar, Defects4J, IntroClassJava, QuixBugs}
+    --id <bug_id> # optional, if not specified all the bugs of the benchmark will be used. The format is specific for each benchmark, and you can check the list of bugs available per benchmark with `python script/print_bugs_available.py --benchmark <benchmark_name>`
+```
+
+Example:
+
+```bash
+python script/repair.py GenProg --benchmark Defects4J --id Math-70
 ```
 
 ## Extending RepairThemAll
