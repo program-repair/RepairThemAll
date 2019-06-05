@@ -6,6 +6,7 @@ import time
 from core.runner.Runner import Runner
 from EmptyRenderer import EmptyRenderer
 
+from config import OUTPUT_PATH
 
 def get_terminal_size():
     env = os.environ
@@ -120,9 +121,12 @@ class BashRenderer(EmptyRenderer):
 
         output += "%d Finished, %d Patched, %d Error\n\n" % (len(self.runner.finished), len(self.get_patched_tasks()), len(self.get_errored_tasks()))
 
-        output += "Patched bug: \n"
-        patch_number = 1
-        for task in self.get_patched_tasks():
-            output += "%d. %s %s\n" % (patch_number, task.tool.name, task.bug)
-            patch_number += 1
+        #output += "Patched bug: \n"
+        #patch_number = 1
+        #for task in self.get_patched_tasks():
+        #    output += "%d. %s %s\n" % (patch_number, task.tool.name, task.bug)
+        #    patch_number += 1
+
+	output += "Check the results and logs in %s/" % os.path.abspath(OUTPUT_PATH)
+
         print(output)
