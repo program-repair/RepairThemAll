@@ -7,4 +7,15 @@ cd ../defects4j;
 ./init.sh
 cd ../../
 
-mvn org.apache.maven.plugins:maven-dependency-plugin:3.1.1:get -DremoteRepositories=https://tdurieux.github.io/maven-repository/snapshots/ -Dartifact=com.github.tdurieux:project-config-maven-plugin:1.0-SNAPSHOT;
+cd libs/z3
+python scripts/mk_make.py --java
+cd build
+make
+make install
+cd ../../
+
+git clone https://github.com/tdurieux/project-info-maven-plugin
+cd project-info-maven-plugin 
+mvn -Dhttps.protocols=TLSv1.2 install -DskipTests
+cd ..
+rm -rf project-info-maven-plugin
