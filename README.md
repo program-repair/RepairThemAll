@@ -1,4 +1,4 @@
-# RepairThemAll
+# The RepairThemAll Framework
 
 RepairThemAll is a framework that allows the execution of automatic program repair tools on benchmarks of bugs by providing an abstraction around the repair tools and the benchmarks.
 
@@ -14,213 +14,80 @@ If you use RepairThemAll, please cite our paper:
 }
 ```
 
-## Current support
+## Table of Contents
 
-### Benchmarks of bugs
+1. [Features](#1-features)
+2. [Supported repair tools](#2-supported-repair-tools)
+3. [Supported benchmarks of bugs](#3-supported-benchmarks-of-bugs)
+4. [Repository structure](#4-repository-structure)
+5. [Usage](#5-usage)
+6. [Extending RepairThemAll to add support for different repair tools and benchmarks of bugs](#6-extending-repairthemall-to-add-support-for-different-repair-tools-and-benchmarks-of-bugs)
+7. [Reproduce the experiment reported in the paper using RepairThemAll](#7-reproduce-the-experiment-reported-in-the-paper-using-repairthemall)
 
-| Benchmark      | # Projects | # Bugs |
-| -------------- | -----------| -------|
-| Bears          |         71 |    251 |
-| Bugs.jar       |          8 |   1158 |
-| Defects4J      |          6 |    395 |
-| IntroClassJava |          6 |    297 |
-| QuixBugs       |         40 |     40 |
-| **Total**      |        130 |   2051 |
+## 1. Features
 
-### Repair tools
+* Execution of repair tools on benchmarks of bugs
+* Configuration of the environment to execute repair tools properly on the bugs
+* Multi-process execution
+* [Grid5000](https://grid5000.fr) cluster support
 
-1. Nopol
-2. DynaMoth
-3. NPEFix
-4. jGenProg
-5. jKali
-6. jMutRepair
-7. Cardumen
-8. ARJA
-9. GenProg-A
-10. RSRepair-A
-11. Kali-A
+## 2. Supported repair tools
 
-## Usage
+| #  | Tool          | Language | Link |
+| -- | ------------- | -------- | ---- |
+| 1  | Nopol         | Java     | https://github.com/SpoonLab/nopol |
+| 2  | DynaMoth      | Java     | https://github.com/SpoonLab/nopol |
+| 3  | NPEFix        | Java     | https://github.com/SpoonLab/npefix |
+| 4  | jGenProg      | Java     | https://github.com/SpoonLab/Astor |
+| 5  | jKali         | Java     | https://github.com/SpoonLab/Astor |
+| 6  | jMutRepair    | Java     | https://github.com/SpoonLab/Astor |
+| 7  | Carduman      | Java     | https://github.com/SpoonLab/Astor |
+| 8  | ARJA          | Java     | https://github.com/yyxhdy/arja |
+| 9  | GenProg-A     | Java     | https://github.com/yyxhdy/arja |
+| 10 | RSRepair-A    | Java     | https://github.com/yyxhdy/arja |
+| 11 | Kali-A        | Java     | https://github.com/yyxhdy/arja |
 
-### Requirements
 
-1. Linux or Mac
-2. Java 7
-3. Java 8
-4. Python 2
-5. Maven
-6. Ant
+## 3. Supported benchmarks of bugs
 
-### Executing repair tools
+| # | Benchmark      | Language | # Projects | # Bugs | Link |
+| - | -------------- | -------- | ---------- | ------ | ---- |
+| 1 | Bears          | Java     |         71 |    251 | https://github.com/bears-bugs/bears-benchmark |
+| 2 | Bugs.jar       | Java     |          8 |  1,158 | https://github.com/bugs-dot-jar/bugs-dot-jar | 
+| 3 | Defects4J      | Java     |          6 |    395 | https://github.com/rjust/defects4j |
+| 4 | IntroClassJava | Java     |          6 |    297 | https://github.com/Spirals-Team/IntroClassJava |
+| 5 | QuixBugs       | Java     |         40 |     40 | https://github.com/jkoppel/QuixBugs |
+|   | **Total**      |          |        130 |  2,051 | |
 
-1. Clone this repository with `git clone --recursive https://github.com/program-repair/RepairThemAll.git`
+## 4. Repository structure
 
-2. Init the repository with `./init.sh`.
+This repository is structured as follow:
 
-3. Go to `script/config.py` and update the configuration for your machine (java home and working directory).
+```
+- benchmarks: contains a git submodule per benchmark plugged-in RepairThemAll
+- data: 
+-- benchmarks: contains additional information/files on benchmarks
+-- repair_tools: contains information on repair tools, e.g. the launcher class name
+- libs: contains dependencies
+- repair_tools: contains a jar file per repair tool (e.g. npefix.jar) or per repair framework where several repair tools are implemented (e.g. astor.jar)
+- script: contains scripts that use everything mentioned above
+-- TODO
 
-4. Use `python script/repair.py` to run the repair tools on the benchmarks.
-
-General usage:
-
-```bash
-python script/repair.py {Arja,GenProg,Kali,RSRepair,jKali,jGenProg,jMutRepair,Cardumen,CapGen,LSRepair,Nopol,DynaMoth,NPEFix,TestInfo}
-    --benchmark {Bears, Bugs.jar, Defects4J, IntroClassJava, QuixBugs}
-    --id <bug_id> # optional, if not specified all the bugs of the benchmark will be used. The format is specific for each benchmark, and you can check the list of bugs available per benchmark with `python script/print_bugs_available.py --benchmark <benchmark_name>`
+-- get_patched_bugs.py the script that are used to generate the table for the paper
 ```
 
-Example:
+## 5. Usage 
 
-```bash
-python script/repair.py GenProg --benchmark Defects4J --id Math-70
-```
+RepairThemAll can be executed directly from the **source** or via a **Docker** image where RepairThemAll has been pre-configured and is ready to be used. One can find the usage instructions [here](INSTALL.md).
 
-## Extending RepairThemAll
+## 6. Extending RepairThemAll to add support for different repair tools and benchmarks of bugs
 
-### To add a new benchmark
+To add a new benchmark or a new repair tool, see the instructions [here](EXTEND.md).
 
-1. Put your benchmark folder in `./benchmarks`.
+## 7. Reproduce the experiment reported in the paper using RepairThemAll
 
-2. Create a new file in `script/core/benchmarks/` that contains the following content:
+In order to reproduce the experiment presented in the paper, the 11 repair tools need to be executed on the 5 benchmarks. The experiment took 313 days of combined execution time.
 
-```py
-from core.Benchmark import Benchmark
+TODO
 
-class BenchmarkName(Benchmark):
-    """<name> Benchmark"""
-
-    def __init__(self):
-        super(BenchmarkName, self).__init__(<name>)
-        self.path = os.path.join(REPAIR_ROOT, "benchmarks", <name>)
-        self.bugs = None
-        self.get_bugs()
-
-    def get_bugs(self):
-        if self.bugs is not None:
-            return self.bugs
-        self.bugs = []
-        # get all the bugs of the benchmark
-        return self.bugs
-
-    def get_bug(self, bug_id):
-        # get a bug based on its id
-        return None
-
-    def checkout(self, bug, working_directory):
-        # checkout a bug
-        pass
-
-
-    def compile(self, bug, working_directory):
-        # compile a bug
-        pass
-
-    def run_test(self, bug, working_directory):
-        # run the test of a bug
-        pass
-
-    def failing_tests(self, bug):
-        tests = [...] # list of failing class
-        return tests
-
-    def source_folders(self, bug):
-        return [os.path.join("src", "main", "java")]
-
-    def test_folders(self, bug):
-        return [os.path.join("src", "test", "java")]
-
-    def bin_folders(self, bug):
-        return [os.path.join("target", "classes")]
-
-    def test_bin_folders(self, bug):
-        return [os.path.join("target", "test-classes")]
-
-    def classpath(self, repair_task):
-        classpath = []
-        return ":".join(classpath)
-
-    def compliance_level(self, bug):
-        return 8
-
-add_benchmark(<name>, BenchmarkName)
-```
-
-3. Go to `script/core/utils.py` and import your benchmark in the end of the file (like `import core.benchmarks.BenchmarkName`).
-
-### To add a new repair tool
-
-1. Add the binary of your repair tool in `./repair_tools`.
-
-2. Create a new file in `script/core/repair_tools/` that contains the following content:
-
-```py
-import os
-import subprocess
-import datetime
-import json
-import shutil
-
-from config import OUTPUT_PATH
-from config import WORKING_DIRECTORY
-from core.RepairTool import RepairTool
-from core.utils import add_repair_tool
-from core.runner.RepairTask import RepairTask
-
-class Tool(RepairTool):
-    """Tool"""
-
-    def __init__(self, name=<repair_name>):
-        super(Tool, self).__init__(name, <repair_name>)
-        self.seed = 0
-        self.iteration = iteration
-
-    def repair(self, repair_task):
-        """"
-        :type repair_task: RepairTask
-        """
-        bug = repair_task.bug
-        bug_path = os.path.join(WORKING_DIRECTORY,
-                                "%s_%s_%s_%s" % (self.name, bug.benchmark.name, bug.project, bug.bug_id))
-        repair_task.working_directory = bug_path
-        self.init_bug(bug, bug_path)
-
-        try:
-            failing_tests =  bug.failing_tests(),
-            sources = bug.source_folders(),
-            tests = bug.test_folders(),
-            bin_folders = bug.bin_folders(),
-            test_bin_folders = bug.test_bin_folders(),
-            classpath = bug.classpath(),
-            compliance_level = bug.compliance_level(),
-
-            # run the repair tool
-        finally:
-            result = {
-                "repair_begin": self.repair_begin,
-                "repair_end": datetime.datetime.now().__str__(),
-                "patches": []
-            }
-            repair_task.status = "FINISHED"
-            
-            # normalize the output in result
-            with open(os.path.join(repair_task.log_dir(), "result.json"), "w+") as fd2:
-                json.dump(result, fd2, indent=2)
-            shutil.rmtree(bug_path)
-        pass
-
-
-
-def init(args):
-    return Tool()
-
-def _args(parser):
-    # additional argument for the repair tool
-    parser.add_argument("--argument", help="description", default=100)
-    pass
-
-parser = add_repair_tool(<repair_name>, init, 'Repair the bug with <repair_name>')
-_args(parser)
-```
-
-3. Go to `script/core/utils.py` and import your repair tool in the end of the file (like `import core.repair_tools.Tool`).
+`script/generate_tables.py` is the script we used to generate the figure and the tables of our paper.
