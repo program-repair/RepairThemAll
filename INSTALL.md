@@ -83,7 +83,7 @@ docker pull tdurieux/repairthemall
 
 The shortest command to run Astor on a particular defect from Defects4J is: 
 ```
-docker run -it --rm -v <absolute_path_to_store_results>:/results tdurieux/RepairThemAll --id Chart_5
+docker run -it --rm -v <absolute_path_to_store_results>:/results tdurieux/repairthemall --id Chart_5
 ```
 
 ### UI
