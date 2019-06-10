@@ -1,29 +1,27 @@
-FROM java:8
+FROM tdurieux/astor
 
-# Install basic utils and build envs.
-RUN apt-get update -qq
-RUN apt-get install -y git
-RUN apt-get install -y subversion
-RUN apt-get install -y perl
-RUN apt-get install -y unzip
-RUN apt-get install -y libdbi-perl
-RUN apt-get install -y libtext-csv-perl
-RUN apt-get install -y libdbd-csv-perl
-RUN apt-get install -y debconf
-RUN apt-get install -y curl
+RUN apt-get install -y time
+RUN add-apt-repository ppa:openjdk-r/ppa
 RUN apt-get install -y software-properties-common
-RUN apt-get install -y python
-RUN apt-get install -y maven
-RUN apt-get install -y patch
+RUN apt-get -o Acquire::Check-Valid-Until=false update; exit 0
+RUN apt-get install --fix-missing -y -f --force-yes openjdk-7-jdk
+
+RUN echo "deb [check-valid-until=no] http://cdn-fastly.deb.debian.org/debian jessie main" > /etc/apt/sources.list.d/jessie.list
+RUN sed -i '/deb http:\/\/deb.debian.org\/debian jessie-updates main/d' /etc/apt/sources.list
+RUN echo "deb http://ftp.us.debian.org/debian unstable main contrib non-free" >> /etc/apt/sources.list.d/unstable.list
+
+RUN apt-get -o Acquire::Check-Valid-Until=false update; exit 0
+RUN apt-get install --fix-missing -y --force-yes -f build-essential
 
 # install runner
-RUN mkdir /results
-COPY benchmarks /benchmarks
-COPY script /script
+COPY .git /.git
 COPY repair_tools /repair_tools
 COPY libs /libs
+RUN rm -rf libs/z3/build
+COPY data /data
 COPY init.sh /init.sh 
+COPY benchmarks /benchmarks
+COPY script /script
 
 RUN /init.sh
-
-ENTRYPOINT [ "script/RepairThemAll.py" ] 
+ENTRYPOINT [ "script/repair.py" ]

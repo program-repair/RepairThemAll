@@ -63,7 +63,7 @@ python script/repair.py {Arja,GenProg,Kali,RSRepair,jKali,jGenProg,jMutRepair,Ca
 Example:
 
 ```bash
-python script/repair.py GenProg --benchmark Defects4J --id Math-70
+python script/repair.py Nopol --benchmark Defects4J --id chart-5
 ```
 
 ### From Docker
@@ -75,14 +75,14 @@ python script/repair.py GenProg --benchmark Defects4J --id Math-70
 2. Then, execute the command to download the image:
 
 ```
-docker pull tdurieux/RepairThemAll
+docker pull tdurieux/repairthemall
 ```
 
 ### Execute
 
 The shortest command to run Astor on a particular defect from Defects4J is: 
 ```
-docker run -it --rm -v <path_to_store_results>:/results tdurieux/RepairThemAll --id Chart_5
+docker run -it --rm -v <absolute_path_to_store_results>:/results tdurieux/RepairThemAll --id Chart_5
 ```
 
 ### UI
