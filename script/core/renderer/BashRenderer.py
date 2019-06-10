@@ -117,16 +117,15 @@ class BashRenderer(EmptyRenderer):
         print(output)
 
     def render_final_result(self):
+        clean_terminal()
         output = ""
 
         output += "%d Finished, %d Patched, %d Error\n\n" % (len(self.runner.finished), len(self.get_patched_tasks()), len(self.get_errored_tasks()))
 
-        #output += "Patched bug: \n"
-        #patch_number = 1
-        #for task in self.get_patched_tasks():
-        #    output += "%d. %s %s\n" % (patch_number, task.tool.name, task.bug)
-        #    patch_number += 1
-
-	output += "Check the results and logs in %s/" % os.path.abspath(OUTPUT_PATH)
-
+        output += "Patched bug: \n"
+        patch_number = 1
+        for task in self.get_patched_tasks():
+            output += "%d. %s %s\n" % (patch_number, task.tool.name, task.bug)
+            patch_number += 1
+        output += "Check the results and logs in %s/" % os.path.abspath(OUTPUT_PATH)
         print(output)
