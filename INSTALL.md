@@ -12,6 +12,7 @@ RepairThemAll can be executed directly from the **source** or via a **Docker** i
 4. Python 2
 5. Maven
 6. Ant
+7. wget
 
 #### Default Configuration
 
