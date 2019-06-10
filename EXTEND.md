@@ -9,12 +9,12 @@
 ```py
 from core.Benchmark import Benchmark
 
-class BenchmarkName(Benchmark):
-    """<name> Benchmark"""
+class <benchmark_name>(Benchmark):
+    """<benchmark_name> Benchmark"""
 
     def __init__(self):
-        super(BenchmarkName, self).__init__(<name>)
-        self.path = os.path.join(REPAIR_ROOT, "benchmarks", <name>)
+        super(<benchmark_name>, self).__init__("<benchmark_name>")
+        self.path = os.path.join(REPAIR_ROOT, "benchmarks", "<benchmark_name>")
         self.bugs = None
         self.get_bugs()
 
@@ -32,7 +32,6 @@ class BenchmarkName(Benchmark):
     def checkout(self, bug, working_directory):
         # checkout a bug
         pass
-
 
     def compile(self, bug, working_directory):
         # compile a bug
@@ -65,14 +64,14 @@ class BenchmarkName(Benchmark):
     def compliance_level(self, bug):
         return 8
 
-add_benchmark(<name>, BenchmarkName)
+add_benchmark("<benchmark_name>", <benchmark_name>)
 ```
 
-3. Go to `script/core/utils.py` and import your benchmark in the end of the file (like `import core.benchmarks.BenchmarkName`).
+3. Go to `script/core/utils.py` and import your benchmark in the end of the file (like `import core.benchmarks.<benchmark_name>`).
 
 ### To add a new repair tool
 
-1. Add the binary of your repair tool in `./repair_tools`.
+1. Add the binary (jar file) of your repair tool in `./repair_tools`.
 
 2. Create a new file in `script/core/repair_tools/` that contains the following content:
 
@@ -89,11 +88,11 @@ from core.RepairTool import RepairTool
 from core.utils import add_repair_tool
 from core.runner.RepairTask import RepairTask
 
-class Tool(RepairTool):
-    """Tool"""
+class <repair_tool_name>(RepairTool):
+    """<repair_tool_name>"""
 
-    def __init__(self, name=<repair_name>):
-        super(Tool, self).__init__(name, <repair_name>)
+    def __init__(self, name="<repair_tool_name>"):
+        super(<repair_tool_name>, self).__init__(name, "<repair_tool_name>")
         self.seed = 0
         self.iteration = iteration
 
@@ -141,10 +140,10 @@ def _args(parser):
     parser.add_argument("--argument", help="description", default=100)
     pass
 
-parser = add_repair_tool(<repair_name>, init, 'Repair the bug with <repair_name>')
+parser = add_repair_tool("<repair_tool_name>", init, 'Repair the bug with <repair_tool_name>')
 _args(parser)
 ```
 
-3. Go to `script/core/utils.py` and import your repair tool in the end of the file (like `import core.repair_tools.Tool`).
+3. Go to `script/core/utils.py` and import your repair tool in the end of the file (like `import core.repair_tools.<repair_tool_name>`).
 
 
