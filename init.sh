@@ -43,15 +43,6 @@ do_version_check() {
     fi
 }
 
-git submodule init;
-git submodule update;
-cd benchmarks/Bug-dot-jar/;
-git submodule init;
-git submodule update;
-cd ../defects4j;
-./init.sh
-cd ../../
-
 perl_version=`perl -e 'print $];'`
 do_version_check "$perl_version" "5.0.10" 
 [[ $? -eq 9 ]] && echo "[Error] Perl version >= 5.0.10" && exit 1 ;
@@ -74,11 +65,14 @@ which time > /dev/null
 which mvn > /dev/null
 [[ $? -eq 1 ]] && echo "[Error] maven not installed" && exit 1 ;
 
-cd libs/z3
-python scripts/mk_make.py --java
-cd build
-make
-make install
+
+git submodule init;
+git submodule update;
+cd benchmarks/Bug-dot-jar/;
+git submodule init;
+git submodule update;
+cd ../defects4j;
+./init.sh
 cd ../../
 
 git clone https://github.com/tdurieux/project-info-maven-plugin
@@ -86,3 +80,10 @@ cd project-info-maven-plugin
 mvn -Dhttps.protocols=TLSv1.2 install -DskipTests
 cd ..
 rm -rf project-info-maven-plugin
+
+cd libs/z3
+python scripts/mk_make.py --java
+cd build
+make
+make install
+cd ../../
