@@ -63,7 +63,7 @@ which gradle > /dev/null
 which time > /dev/null
 [[ $? -eq 1 ]] && echo "[Error] time not installed" && exit 1 ;
 
-which maven > /dev/null
+which mvn > /dev/null
 [[ $? -eq 1 ]] && echo "[Error] maven not installed" && exit 1 ;
 
 cd libs/z3
