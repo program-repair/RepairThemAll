@@ -86,8 +86,14 @@ To add a new benchmark or a new repair tool, see the instructions [here](EXTEND.
 
 ## 7. Reproduce the experiment reported in the paper using RepairThemAll
 
-In order to reproduce the experiment presented in the paper, the 11 repair tools need to be executed on the 5 benchmarks. The experiment took 313 days of combined execution time.
+The results reported in the paper are at [program-repair/RepairThemAll_experiment](https://github.com/program-repair/RepairThemAll_experiment).
 
-TODO
+In order to reproduce those results, the 11 repair tools need to be executed on the 5 benchmarks. Warning: the experiment took 313 days of combined execution time.
 
-`script/generate_tables.py` is the script we used to generate the figure and the tables of our paper.
+That execution requires a command line for each pair of repair tool and benchmark as following:
+
+```bash
+python script/repair.py Nopol --benchmark Defects4J
+python script/repair.py Nopol --benchmark Bears
+...
+```
