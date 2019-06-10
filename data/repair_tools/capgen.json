@@ -1,6 +1,0 @@
-{
-	"name": "CapGen",
-	"version": "0d47b5eb49a9994e28d533d7d1c56a421847cfa0",
-	"jar": "CapGen.jar",
-	"main": "org.capgen.main.Main"
-}
