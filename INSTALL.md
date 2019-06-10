@@ -96,15 +96,15 @@ docker run -it --rm -v <absolute_path_to_store_results>:/results tdurieux/repair
 The output folder can be setup in `script/config.py`. One will find there the following structure:
 
 ```
-- /benchmark name
--- /project
---- /bug id
----- /tool
------ /random seed
------- repair.log (stdout from the repair tool)
------- result.json (see below)
------- grid5k.stderr.log (on Grid5k)
------- detailed-result.json (available only for some repair tool)
+├── benchmark name
+│ ├── project
+│ │ ├── bug id
+│ │ │ ├── tool
+│ │ │ │ ├── random seed
+│ │ │ │ │ ├── repair.log (stdout from the repair tool)
+│ │ │ │ │ ├── result.json (see below)
+│ │ │ │ │ ├── grid5k.stderr.log (on Grid5k)
+│ │ │ │ │ └── detailed-result.json (available only for some repair tool)
 ```
 
 The `result.json` file is structured as follows:

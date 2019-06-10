@@ -50,31 +50,31 @@ If you use RepairThemAll, please cite our paper:
 
 ## 3. Supported benchmarks of bugs
 
-| # | Benchmark      | Language | # Projects | # Bugs | Link |
-| - | -------------- | -------- | ----------:| ------:| ---- |
-| 1 | Bears          | Java     |         71 |    251 | https://github.com/bears-bugs/bears-benchmark |
-| 2 | Bugs.jar       | Java     |          8 |  1,158 | https://github.com/bugs-dot-jar/bugs-dot-jar | 
-| 3 | Defects4J      | Java     |          6 |    395 | https://github.com/rjust/defects4j |
+| # | Benchmark      | Language | # Projects | # Bugs | Link                                           |
+| - | -------------- | -------- | ----------:| ------:| ---------------------------------------------  |
+| 1 | Bears          | Java     |         71 |    251 | https://github.com/bears-bugs/bears-benchmark  |
+| 2 | Bugs.jar       | Java     |          8 |  1,158 | https://github.com/bugs-dot-jar/bugs-dot-jar   | 
+| 3 | Defects4J      | Java     |          6 |    395 | https://github.com/rjust/defects4j             |
 | 4 | IntroClassJava | Java     |          6 |    297 | https://github.com/Spirals-Team/IntroClassJava |
-| 5 | QuixBugs       | Java     |         40 |     40 | https://github.com/jkoppel/QuixBugs |
-|   | **Total**      |          |        130 |  2,051 | |
+| 5 | QuixBugs       | Java     |         40 |     40 | https://github.com/jkoppel/QuixBugs            |
+|   | **Total**      |          |        130 |  2,051 |                                                |
 
 ## 4. Repository structure
 
 This repository is structured as follow:
 
 ```
-- benchmarks: contains a git submodule per benchmark plugged-in RepairThemAll
-- data: 
--- benchmarks: contains additional information/files on benchmarks
--- repair_tools: contains information on repair tools, e.g. the launcher class name
-- libs: contains the dependencies
-- repair_tools: contains a jar file per repair tool (e.g. npefix.jar) or per repair framework where several repair tools are implemented (e.g. astor.jar)
-- script: contains the actual scripts of RepairThemAll that use everything mentioned above to run repair tools on benchmarks of bugs
--- Main files:
--- config.py: contains the parameters of RepairThemAll (see [here](INSTALL.md))
--- repair.py: contains the script to run a repair tool on a benchmark
--- print_bugs_available.py: contains the script to print the bugs available from a benchmark
+├── benchmarks: contains a git submodule per benchmark plugged-in RepairThemAll
+├── data: 
+│ ├── benchmarks: contains additional information/files on benchmarks
+│ ├── repair_tools: contains information on repair tools, e.g. the launcher class name
+├── libs: contains the dependencies
+├── repair_tools: contains a jar file per repair tool (e.g. npefix.jar) or per repair framework where several repair tools are implemented (e.g. astor.jar)
+├── script: contains the actual scripts of RepairThemAll that use everything mentioned above to run repair tools on benchmarks of bugs
+│ ├── Main files:
+│ ├── config.py: contains the parameters of RepairThemAll (see INSTALL.md file)
+│ ├── repair.py: contains the script to run a repair tool on a benchmark
+│ └── print_bugs_available.py: contains the script to print the bugs available from a benchmark
 ```
 
 ## 5. Usage 
