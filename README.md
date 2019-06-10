@@ -33,25 +33,25 @@ If you use RepairThemAll, please cite our paper:
 
 ## 2. Supported repair tools
 
-| #  | Tool          | Language | Link |
-| -- | ------------- | -------- | ---- |
-| 1  | Nopol         | Java     | https://github.com/SpoonLab/nopol |
-| 2  | DynaMoth      | Java     | https://github.com/SpoonLab/nopol |
-| 3  | NPEFix        | Java     | https://github.com/SpoonLab/npefix |
-| 4  | jGenProg      | Java     | https://github.com/SpoonLab/Astor |
-| 5  | jKali         | Java     | https://github.com/SpoonLab/Astor |
-| 6  | jMutRepair    | Java     | https://github.com/SpoonLab/Astor |
-| 7  | Carduman      | Java     | https://github.com/SpoonLab/Astor |
-| 8  | ARJA          | Java     | https://github.com/yyxhdy/arja |
-| 9  | GenProg-A     | Java     | https://github.com/yyxhdy/arja |
-| 10 | RSRepair-A    | Java     | https://github.com/yyxhdy/arja |
-| 11 | Kali-A        | Java     | https://github.com/yyxhdy/arja |
+| #  | Tool          | Language | Repository                         | Commit id |
+| -- | ------------- | -------- | ---------------------------------- | --------- |
+| 1  | Nopol         | Java     | https://github.com/SpoonLab/nopol  | 7ba58a78d |
+| 2  | DynaMoth      | Java     | https://github.com/SpoonLab/nopol  | 7ba58a78d |
+| 3  | NPEFix        | Java     | https://github.com/SpoonLab/npefix | 403445b9a |
+| 4  | jGenProg      | Java     | https://github.com/SpoonLab/Astor  | 26ee3dfc8 |
+| 5  | jKali         | Java     | https://github.com/SpoonLab/Astor  | 26ee3dfc8 |
+| 6  | jMutRepair    | Java     | https://github.com/SpoonLab/Astor  | 26ee3dfc8 |
+| 7  | Cardumen      | Java     | https://github.com/SpoonLab/Astor  | 26ee3dfc8 |
+| 8  | ARJA          | Java     | https://github.com/yyxhdy/arja     | e60b990f9 |
+| 9  | GenProg-A     | Java     | https://github.com/yyxhdy/arja     | e60b990f9 |
+| 10 | RSRepair-A    | Java     | https://github.com/yyxhdy/arja     | e60b990f9 |
+| 11 | Kali-A        | Java     | https://github.com/yyxhdy/arja     | e60b990f9 |
 
 
 ## 3. Supported benchmarks of bugs
 
 | # | Benchmark      | Language | # Projects | # Bugs | Link |
-| - | -------------- | -------- | ---------- | ------ | ---- |
+| - | -------------- | -------- | ----------:| ------:| ---- |
 | 1 | Bears          | Java     |         71 |    251 | https://github.com/bears-bugs/bears-benchmark |
 | 2 | Bugs.jar       | Java     |          8 |  1,158 | https://github.com/bugs-dot-jar/bugs-dot-jar | 
 | 3 | Defects4J      | Java     |          6 |    395 | https://github.com/rjust/defects4j |
@@ -68,12 +68,13 @@ This repository is structured as follow:
 - data: 
 -- benchmarks: contains additional information/files on benchmarks
 -- repair_tools: contains information on repair tools, e.g. the launcher class name
-- libs: contains dependencies
+- libs: contains the dependencies
 - repair_tools: contains a jar file per repair tool (e.g. npefix.jar) or per repair framework where several repair tools are implemented (e.g. astor.jar)
-- script: contains scripts that use everything mentioned above
--- TODO
-
--- get_patched_bugs.py the script that are used to generate the table for the paper
+- script: contains the actual scripts of RepairThemAll that use everything mentioned above to run repair tools on benchmarks of bugs
+-- Main files:
+-- config.py: contains the parameters of RepairThemAll (see [here](INSTALL.md))
+-- repair.py: contains the script to run a repair tool on a benchmark
+-- print_bugs_available.py: contains the script to print the bugs available from a benchmark
 ```
 
 ## 5. Usage 
