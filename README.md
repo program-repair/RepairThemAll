@@ -90,7 +90,7 @@ The results reported in the paper are at [program-repair/RepairThemAll_experimen
 
 In order to reproduce those results, the 11 repair tools need to be executed on the 5 benchmarks. Warning: the experiment took 313 days of combined execution time.
 
-That execution requires a command line for each pair of repair tool and benchmark as following:
+That execution requires a command line for each pair of repair tool and benchmark (totaling 55 command lines) as following:
 
 ```bash
 python script/repair.py Nopol --benchmark Defects4J
