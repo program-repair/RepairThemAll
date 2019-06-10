@@ -56,7 +56,7 @@ Use `python script/repair.py` to run the repair tools on the benchmarks
 Command line
 
 ```bash
-python script/repair.py {Arja,GenProg,Kali,RSRepair,jKali,jGenProg,jMutRepair,Cardumen,CapGen,LSRepair,Nopol,DynaMoth,NPEFix,TestInfo}
+python script/repair.py {Arja,GenProg,Kali,RSRepair,jKali,jGenProg,jMutRepair,Cardumen,Nopol,DynaMoth,NPEFix}
     --benchmark {Bears, Bugs.jar, Defects4J, IntroClassJava, QuixBugs}
     --id <bug_id> # optional, if not specified all the bugs of the benchmark will be used. The format is specific for each benchmark, and you can check the list of bugs available per benchmark with `python script/print_bugs_available.py --benchmark <benchmark_name>`
 ```
