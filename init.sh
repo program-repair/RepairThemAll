@@ -43,6 +43,14 @@ do_version_check() {
     fi
 }
 
+git submodule init;
+git submodule update;
+cd benchmarks/Bug-dot-jar/;
+git submodule init;
+git submodule update;
+cd ../defects4j;
+./init.sh
+cd ../../
 
 perl_version=`perl -e 'print $];'`
 do_version_check "$perl_version" "5.0.10" 
