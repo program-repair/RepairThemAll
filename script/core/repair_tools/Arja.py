@@ -111,7 +111,7 @@ timeout %sm java %s -cp %s %s \\
                         "edits": []
                     }
                     with open(os.path.join(path_f.replace(".txt", ""), "diff")) as fd:
-                        patch["diff"] = fd.read()
+                        patch["patch"] = fd.read()
                     with open(path_f) as fd:
                         str_patches = fd.read().split(
                             "**************************************************")
