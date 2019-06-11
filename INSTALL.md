@@ -17,6 +17,14 @@ RepairThemAll can be executed directly from the **source** or via a **Docker** i
 9. SVN >= 1.8
 10. Perl >= 5.0.10
 
+### Init RepairThemAll
+
+1. Clone this repository with `git clone --recursive https://github.com/program-repair/RepairThemAll.git`
+
+2. Init the repository with `./init.sh`.
+
+3. Go to `script/config.py` and update the configuration for your machine (java home, and working directory)
+
 ### Default Configuration
 
 The default configuration is stored at `script/config.py`.
@@ -45,14 +53,6 @@ GRID5K_MAX_NODE = 50
 # Repair Attemps timeout in minute
 TOOL_TIMEOUT = "120"
 ```
-
-### Init RepairThemAll
-
-1. Clone this repository with `git clone --recursive https://github.com/program-repair/RepairThemAll.git`
-
-2. Init the repository with `./init.sh`.
-
-3. Go to `script/config.py` and update the configuration for your machine (java home, and working directory)
 
 ### Execute 
 
