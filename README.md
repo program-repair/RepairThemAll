@@ -1,4 +1,4 @@
-![Logo](logo/logo.png)
+<img src="logo/logo.png" width="1000">
 
 # The RepairThemAll Framework
 
