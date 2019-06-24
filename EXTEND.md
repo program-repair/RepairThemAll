@@ -133,7 +133,7 @@ class <repair_tool_name>(RepairTool):
 
 
 def init(args):
-    return Tool()
+    return <repair_tool_name>()
 
 def _args(parser):
     # additional argument for the repair tool
@@ -146,4 +146,16 @@ _args(parser)
 
 3. Go to `script/core/utils.py` and import your repair tool in the end of the file (like `import core.repair_tools.<repair_tool_name>`).
 
+4. Add the file `<repair_tool_name>.json` into folder `data/repair_tools/`.
+The file must have the following content:
+
+```
+{
+	"name": "<repair_tool_name>",
+	"version": "x.y.z",
+	"jar": "<repair_tool_name>.jar",
+	"main": "<main of the class containing the main (the entry point of the tool)>"
+}
+
+```
 
