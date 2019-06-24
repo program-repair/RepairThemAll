@@ -46,8 +46,6 @@ import core.benchmarks.QuixBugs
 
 import core.repair_tools.Arja
 import core.repair_tools.Astor
-import core.repair_tools.CapGen
-import core.repair_tools.LSRepair
 import core.repair_tools.Nopol
 import core.repair_tools.NPEFix
 import core.repair_tools.TestInfo
