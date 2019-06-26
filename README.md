@@ -1,3 +1,5 @@
+<img src="logo/logo.png" width="1000">
+
 # The RepairThemAll Framework
 
 RepairThemAll is a framework that allows the execution of automatic program repair tools on benchmarks of bugs by providing an abstraction around the repair tools and the benchmarks.
