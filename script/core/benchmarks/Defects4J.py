@@ -189,7 +189,7 @@ defects4j info -p %s -b %s;
         libs_path = os.path.join(self.path, "framework", "projects", bug.project, "lib")
         for (root, _, files) in os.walk(libs_path):
             for f in files:
-                if f in libs:
+                if f not in libs:
                     classpath += ":" + (os.path.join(root, f))
         libs_path = os.path.join(self.path, "framework", "projects", "lib")
         for (root, _, files) in os.walk(libs_path):
