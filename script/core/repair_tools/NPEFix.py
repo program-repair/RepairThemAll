@@ -95,7 +95,7 @@ time java %s -cp %s %s \\
                             if not execution['result']['success'] or 'decisions' not in execution:
                                 continue
                             result['patches'].append({
-                                'diff': execution['diff'],
+                                'patch': execution['diff'],
                                 'locations': execution['locations']
                             })
                 pass
