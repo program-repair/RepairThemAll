@@ -8,7 +8,7 @@ import sys
 from core.runner.RepairTask import RepairTask
 from core.runner.Runner import Runner
 from core.renderer.renderer import get_renderer
-from config import REPAIR_ROOT, OUTPUT_PATH, GRID5K_MAX_NODE
+from config import REPAIR_ROOT, OUTPUT_PATH, GRID5K_MAX_NODE, GRID5K_TIME_OUT
 
 
 class Grid5kRunner(Runner):
@@ -129,7 +129,7 @@ class Grid5kRunner(Runner):
         node_cmd = "sudo-g5k apt-get install maven -y -qq > /dev/null; python %s" % node_cmd_args
 
         cmd = "oarsub -l nodes=1,walltime=%s -O %s -E %s \"%s\"" % (
-            "2:15",
+            GRID5K_TIME_OUT,
             stdout_log,
             stderr_log,
             node_cmd)

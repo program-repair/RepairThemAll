@@ -1,5 +1,6 @@
 import os
 from os.path import expanduser
+from core.Support import getGridTime
 
 REPAIR_ROOT = os.path.join(os.path.dirname(__file__), '..')
 DATA_PATH = os.path.join(REPAIR_ROOT, "data")
@@ -15,5 +16,8 @@ JAVA_ARGS = "-Xmx4g -Xms1g"
 
 LOCAL_THREAD = 1
 GRID5K_MAX_NODE = 50
-
+##In minutes
 TOOL_TIMEOUT = "120"
+#Format: HH:MM ## the fuction getGridTime calculates the timeout of the grid taking into account an overhead (expressed as percentage)
+GRID5K_TIME_OUT = getGridTime(TOOL_TIMEOUT, overhead=0.33)
+
