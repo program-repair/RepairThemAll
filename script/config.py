@@ -1,5 +1,6 @@
 import os
 from os.path import expanduser
+from core.Support import getGridTime
 
 REPAIR_ROOT = os.path.join(os.path.dirname(__file__), '..')
 DATA_PATH = os.path.join(REPAIR_ROOT, "data")
@@ -15,7 +16,8 @@ JAVA_ARGS = "-Xmx4g -Xms1g"
 
 LOCAL_THREAD = 1
 GRID5K_MAX_NODE = 50
-
+##In minutes
 TOOL_TIMEOUT = "120"
-#Format HH:MM
-GRID5K_TIME_OUT = "2:15"
+#Format: HH:MM
+GRID5K_TIME_OUT = getGridTime(TOOL_TIMEOUT, 0.33)
+
