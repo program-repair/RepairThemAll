@@ -37,13 +37,13 @@ If you use RepairThemAll, please cite our paper:
 
 | #  | Tool          | Language | Repository                         | Commit id |
 | -- | ------------- | -------- | ---------------------------------- | --------- |
-| 1  | Nopol         | Java     | https://github.com/SpoonLab/nopol  | 7ba58a78d |
-| 2  | DynaMoth      | Java     | https://github.com/SpoonLab/nopol  | 7ba58a78d |
-| 3  | NPEFix        | Java     | https://github.com/SpoonLab/npefix | 403445b9a |
-| 4  | jGenProg      | Java     | https://github.com/SpoonLab/Astor  | 26ee3dfc8 |
-| 5  | jKali         | Java     | https://github.com/SpoonLab/Astor  | 26ee3dfc8 |
-| 6  | jMutRepair    | Java     | https://github.com/SpoonLab/Astor  | 26ee3dfc8 |
-| 7  | Cardumen      | Java     | https://github.com/SpoonLab/Astor  | 26ee3dfc8 |
+| 1  | Nopol         | Java     | https://github.com/SpoonLabs/nopol  | 7ba58a78d |
+| 2  | DynaMoth      | Java     | https://github.com/SpoonLabs/nopol  | 7ba58a78d |
+| 3  | NPEFix        | Java     | https://github.com/SpoonLabs/npefix | 403445b9a |
+| 4  | jGenProg      | Java     | https://github.com/SpoonLabs/Astor  | 26ee3dfc8 |
+| 5  | jKali         | Java     | https://github.com/SpoonLabs/Astor  | 26ee3dfc8 |
+| 6  | jMutRepair    | Java     | https://github.com/SpoonLabs/Astor  | 26ee3dfc8 |
+| 7  | Cardumen      | Java     | https://github.com/SpoonLabs/Astor  | 26ee3dfc8 |
 | 8  | ARJA          | Java     | https://github.com/yyxhdy/arja     | e60b990f9 |
 | 9  | GenProg-A     | Java     | https://github.com/yyxhdy/arja     | e60b990f9 |
 | 10 | RSRepair-A    | Java     | https://github.com/yyxhdy/arja     | e60b990f9 |
