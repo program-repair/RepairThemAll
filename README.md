@@ -54,12 +54,12 @@ If you use RepairThemAll, please cite our paper:
 
 | # | Benchmark      | Language | # Projects | # Bugs | Link                                           |
 | - | -------------- | -------- | ----------:| ------:| ---------------------------------------------  |
-| 1 | Bears          | Java     |         71 |    251 | https://github.com/bears-bugs/bears-benchmark  |
+| 1 | Bears          | Java     |         72 |    251 | https://github.com/bears-bugs/bears-benchmark  |
 | 2 | Bugs.jar       | Java     |          8 |  1,158 | https://github.com/bugs-dot-jar/bugs-dot-jar   | 
 | 3 | Defects4J      | Java     |          6 |    395 | https://github.com/rjust/defects4j             |
 | 4 | IntroClassJava | Java     |          6 |    297 | https://github.com/Spirals-Team/IntroClassJava |
 | 5 | QuixBugs       | Java     |         40 |     40 | https://github.com/jkoppel/QuixBugs            |
-|   | **Total**      |          |        130 |  2,051 |                                                |
+|   | **Total**      |          |        132 |  2,141 |                                                |
 
 ## 4. Repository structure
 
