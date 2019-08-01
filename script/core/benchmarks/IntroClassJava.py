@@ -37,28 +37,23 @@ class IntroClassJava(Benchmark):
                     revision_path = os.path.join(user_path, revision)
                     if os.path.isfile(revision_path):
                         continue
-                    bug = Bug(self, project, "%s_%s" % (user, revision))
+                    bug = Bug(self, project, "%s-%s" % (user, revision))
                     self.bugs += [bug]
         return self.bugs
 
     def get_bug(self, bug_id):
-        separator = "-"
-        if "_" in bug_id:
-            separator = "_"
-        elif "/" in bug_id:
-            separator = "/"
-        (project, user, revision) = bug_id.split(separator)
+        (project, user, revision) = bug_id.split("-")
 
         for bug in self.get_bugs():
             if project != bug.project:
                 continue
-            (bug_user, bug_revision) = bug.bug_id.split("_")
+            (bug_user, bug_revision) = bug.bug_id.split("-")
             if user in bug_user and int(revision) == int(bug_revision):
                 return bug
         return None
 
     def checkout(self, bug, working_directory):
-        user, revision = bug.bug_id.split("_")
+        user, revision = bug.bug_id.split("-")
         bug_path = os.path.join(self.path, "dataset", bug.project, user, revision)
         shutil.copytree(bug_path, working_directory)
         pass
@@ -74,7 +69,7 @@ class IntroClassJava(Benchmark):
         pass
 
     def failing_tests(self, bug):
-        (bug_user, bug_revision) = bug.bug_id.split("_")
+        (bug_user, bug_revision) = bug.bug_id.split("-")
         bug_user = bug_user[:8]
         tests = [
             "introclassJava.%s_%s_%sBlackboxTest" % (bug.project.lower(), bug_user, bug_revision),
