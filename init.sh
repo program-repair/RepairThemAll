@@ -65,6 +65,7 @@ which time > /dev/null
 which mvn > /dev/null
 [[ $? -eq 1 ]] && echo "[Error] maven not installed" && exit 1 ;
 
+if ! perl -MDBI -e 1 2>/dev/null;then echo "[Error] Perl DBI not installed (perl -MCPAN -e 'install DBI')" && exit 1 ; fi 
 
 git submodule init;
 git submodule update;
