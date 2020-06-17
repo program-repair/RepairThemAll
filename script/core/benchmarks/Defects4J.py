@@ -59,7 +59,7 @@ class Defects4J(Benchmark):
     def _get_benchmark_path(self):
         return os.path.join(self.path, "framework", "bin")
 
-    def checkout(self, bug, working_directory):
+    def checkout(self, bug, working_directory, buggy_version=True):
         cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";
 defects4j checkout -p %s -v %sb -w %s;
 """ % (JAVA7_HOME,
@@ -83,16 +83,23 @@ defects4j compile;
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
-    def run_test(self, bug, working_directory):
+    def run_test(self, bug, working_directory, test=None):
+        test_arg = ""
+        if test is not None:
+            test_arg = "-t %s" % (test)
         cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";
 export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true; 
 cd %s;
-defects4j test;
+defects4j test %s;
 """ % (JAVA7_HOME,
        self._get_benchmark_path(),
        os.path.join(JAVA7_HOME, '..'),
-       working_directory)
-        subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
+       working_directory,
+       test_arg)
+        subprocess.check_call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
+        if os.path.exists(os.path.join(working_directory, "failing_tests")):
+            with open(os.path.join(working_directory, "failing_tests")) as fd:
+                return fd.read()
         pass
 
     def failing_tests(self, bug):

@@ -2,7 +2,7 @@ import json
 import os
 import subprocess
 
-from config import REPAIR_ROOT, DATA_PATH
+from config import REPAIR_ROOT, DATA_PATH, JAVA8_HOME, MAVEN_BIN
 from core.Benchmark import Benchmark
 from core.Bug import Bug
 from core.utils import add_benchmark
@@ -75,14 +75,17 @@ class Bears(Benchmark):
         pom_path = pom_path.replace("/", "", 1)
         if pom_path:
         	local_working_directory = os.path.join(local_working_directory, pom_path)        
+        java_version = os.path.join(JAVA8_HOME, '..')
         cmd = """cd %s;
+export JAVA_HOME="%s";
+export PATH="%s:$PATH";
 mvn com.github.tdurieux:project-config-maven-plugin:1.0-SNAPSHOT:info -q;
-""" % (local_working_directory)
+""" % (local_working_directory, java_version, MAVEN_BIN)
         info = json.loads(subprocess.check_output(cmd, shell=True))
         bug.maven_info = info
         return info
 
-    def checkout(self, bug, working_directory):
+    def checkout(self, bug, working_directory, buggy_version=True):
         branch_id = "%s-%s" % (bug.project, bug.bug_id)
 
         cmd = "cd " + self.path + "; git reset .; git checkout -- .; git clean -x -d --force; git checkout -f master; git checkout -f " + branch_id
@@ -93,6 +96,8 @@ mvn com.github.tdurieux:project-config-maven-plugin:1.0-SNAPSHOT:info -q;
             bug.info = json.load(fd)
 
         cmd = "cd " + self.path + "; git log --format=format:%H --grep='Changes in the tests'"
+        if buggy_version == False:
+            cmd = "cd " + self.path + "; git log --format=format:%H --grep='Human patch from'"
         bug_commit = subprocess.check_output(cmd, shell=True)
         if len(bug_commit) == 0:
             cmd = "cd " + self.path + "; git log --format=format:%H --grep='Bug commit'"
@@ -116,17 +121,20 @@ cp -r . %s""" % (
         pom_path = pom_path.replace("/pom.xml", "")
         pom_path = pom_path.replace("/", "", 1)
         if pom_path:
-        	local_working_directory = os.path.join(local_working_directory, pom_path)        
+        	local_working_directory = os.path.join(local_working_directory, pom_path) 
+        java_version = os.path.join(JAVA8_HOME, '..')       
         cmd = """cd %s;
+export JAVA_HOME="%s";
+export PATH="%s:$PATH";
 export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true;
 mvn -Dhttps.protocols=TLSv1.2 install -V -B -DskipTests -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true; 
 mvn -Dhttps.protocols=TLSv1.2 test -DskipTests -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true -Denforcer.skip=true;
 mvn dependency:build-classpath -Dmdep.outputFile="classpath.info";
-""" % (local_working_directory)
+""" % (local_working_directory, java_version, MAVEN_BIN)
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
-    def run_test(self, bug, working_directory):
+    def run_test(self, bug, working_directory, test=None):
         local_working_directory = working_directory
         pom_path = bug.info['reproductionBuggyBuild']['projectRootPomPath']
         buggy_build_id = bug.info['builds']['buggyBuild']['id']
@@ -135,13 +143,16 @@ mvn dependency:build-classpath -Dmdep.outputFile="classpath.info";
         pom_path = pom_path.replace("/", "", 1)
         if pom_path:
         	local_working_directory = os.path.join(local_working_directory, pom_path)
+        java_version = os.path.join(JAVA8_HOME, '..')
         cmd = """cd %s;
+export JAVA_HOME="%s";
+export PATH="%s:$PATH";
 export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true;  
 rm -rf .git; git init; git commit -m 'init' --allow-empty;
 mvn test -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true -Djacoco.skip=true -Denforcer.skip=true
-""" % (local_working_directory)
+""" % (local_working_directory, java_version, MAVEN_BIN)
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
-        pass
+        return self.get_maven_test_results(bug, working_directory)
 
     def failing_tests(self, bug):
         tests = []

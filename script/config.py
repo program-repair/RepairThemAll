@@ -10,6 +10,8 @@ OUTPUT_PATH = os.path.join(REPAIR_ROOT, "results/")
 
 Z3_PATH = os.path.join(REPAIR_ROOT, "libs", "z3", "build")
 
+MAVEN_BIN = expanduser("/home/tdurieux/maven/bin")
+
 JAVA7_HOME = expanduser("/usr/lib/jvm/java-1.7.0-openjdk-amd64/bin/")
 JAVA8_HOME = expanduser("/usr/lib/jvm/java-1.8.0-openjdk-amd64/bin/")
 JAVA_ARGS = "-Xmx4g -Xms1g"

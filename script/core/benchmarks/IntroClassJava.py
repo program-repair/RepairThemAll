@@ -52,7 +52,7 @@ class IntroClassJava(Benchmark):
                 return bug
         return None
 
-    def checkout(self, bug, working_directory):
+    def checkout(self, bug, working_directory, buggy_version=True):
         user, revision = bug.bug_id.split("-")
         bug_path = os.path.join(self.path, "dataset", bug.project, user, revision)
         shutil.copytree(bug_path, working_directory)
@@ -63,7 +63,7 @@ class IntroClassJava(Benchmark):
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
-    def run_test(self, bug, working_directory):
+    def run_test(self, bug, working_directory, test=None):
         cmd = "cd %s; export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true; mvn -Dhttps.protocols=TLSv1.2 test;" % (working_directory)
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass

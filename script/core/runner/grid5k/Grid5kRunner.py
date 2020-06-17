@@ -126,7 +126,7 @@ class Grid5kRunner(Runner):
                 continue
             node_cmd_args += " %s%s%s" % (param["separator"], param["parameter"], param["value"])
 
-        node_cmd = "sudo-g5k apt-get install maven -y -qq > /dev/null; python %s" % node_cmd_args
+        node_cmd = "python %s" % node_cmd_args
 
         cmd = "oarsub -l nodes=1,walltime=%s -O %s -E %s \"%s\"" % (
             GRID5K_TIME_OUT,

@@ -51,8 +51,10 @@ class RepairTool(object):
         if os.path.exists(path):
             with open(path) as data_file:
                 self.data = json.load(data_file)
-                self.main = self.data["main"]
-                self.jar = os.path.join(REPAIR_TOOL_FOLDER, self.data["jar"])
+                if "main" in self.data:
+                    self.main = self.data["main"]
+                if "jar" in self.data:
+                    self.jar = os.path.join(REPAIR_TOOL_FOLDER, self.data["jar"])
 
     def init_bug(self, bug, bug_path):
         if os.path.exists(bug_path):

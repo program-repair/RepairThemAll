@@ -4,7 +4,7 @@ import subprocess
 import json
 from sets import Set
 
-from config import REPAIR_ROOT, JAVA7_HOME, JAVA8_HOME
+from config import REPAIR_ROOT, JAVA7_HOME, JAVA8_HOME, MAVEN_BIN
 from core.Benchmark import Benchmark
 from core.Bug import Bug
 from core.utils import add_benchmark
@@ -60,12 +60,15 @@ class BugDotJar(Benchmark):
                 self.bugs += [bug]
         return self.bugs
 
-    def checkout(self, bug, working_directory):
+    def checkout(self, bug, working_directory, buggy_version=True):
         dataset_path = os.path.join(self.path, "data", bug.project.lower(), "%s.json" % bug.bug_id[:8])
         with open(dataset_path) as fd:
             data = json.load(fd)
             project = bug.project.split("-")[-1].upper()
-            branch_id = "bugs-dot-jar_%s-%s_%s" % (project, data['jira_id'], data['commit'])
+            commit = data['commit']
+            if buggy_version == False:
+                commit = data['commit']
+            branch_id = "bugs-dot-jar_%s-%s_%s" % (project, data['jira_id'], commit)
             cmd = "cd " + os.path.join(self.path, "repositories",
                                        bug.project.lower()) + "; git reset .; git checkout -- .; git clean -x -d --force; git checkout master; git checkout " + branch_id
             subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
@@ -78,25 +81,27 @@ class BugDotJar(Benchmark):
             java_version = os.path.join(JAVA7_HOME, '..')
         cmd = """cd %s;
         export JAVA_HOME="%s";
+        export PATH="%s:$PATH";
         export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true;
         mvn -Dhttps.protocols=TLSv1.2 install -V -B -DskipTests -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true; 
         mvn -Dhttps.protocols=TLSv1.2 test -DskipTests -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true -Dhttps.protocols=TLSv1.2;
         mvn dependency:build-classpath -Dmdep.outputFile="classpath.info";
-        """ % (working_directory, java_version)
+        """ % (working_directory, java_version, MAVEN_BIN)
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
         pass
 
-    def run_test(self, bug, working_directory):
+    def run_test(self, bug, working_directory, test=None):
         java_version = os.path.join(JAVA8_HOME, '..')
         if bug.project == "Wicket":
             java_version = os.path.join(JAVA7_HOME, '..')
         cmd = """cd %s; 
         export JAVA_HOME="%s";
+        export PATH="%s:$PATH";
         export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true;
         rm -rf .git; git init; git commit -m 'init' --allow-empty;
-        mvn -Dhttps.protocols=TLSv1.2 test -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true -Djacoco.skip=true -Dhttps.protocols=TLSv1.2;""" % (working_directory, java_version)
+        mvn -Dhttps.protocols=TLSv1.2 test -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true -Djacoco.skip=true -Dhttps.protocols=TLSv1.2;""" % (working_directory, java_version, MAVEN_BIN)
         subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
-        pass
+        return self.get_maven_test_results(bug, working_directory)
 
 
     def failing_module(self, bug):
