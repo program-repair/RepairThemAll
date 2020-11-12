@@ -21,7 +21,7 @@ class Benchmark(object):
 export PATH="%s:$PATH";
 export JAVA_HOME="%s";
 mvn com.github.tdurieux:project-config-maven-plugin:1.0-SNAPSHOT:info -q;
-""" % (MAVEN_BIN, bug.working_directory, os.path.join(JAVA8_HOME, '..'))
+""" % (bug.working_directory, MAVEN_BIN, os.path.join(JAVA8_HOME, '..'))
         info = json.loads(subprocess.check_output(cmd, shell=True))
         bug.maven_info = info
         return info
