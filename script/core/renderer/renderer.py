@@ -5,7 +5,7 @@ from EmptyRenderer import EmptyRenderer
 
 
 def is_grid5k_node():
-    return 'OAR_JOB_ID' in os.environ
+    return 'OAR_JOB_ID' in os.environ or 'NO_FANCY_OUTPUT' in os.environ
 
 
 def get_renderer(runner):
