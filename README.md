@@ -69,14 +69,14 @@ This repository is structured as follow:
 ├── benchmarks: contains a git submodule per benchmark plugged-in RepairThemAll
 ├── data: 
 │ ├── benchmarks: contains additional information/files on benchmarks
-│ ├── repair_tools: contains information on repair tools, e.g. the launcher class name
+│ └── repair_tools: contains information on repair tools, e.g. the launcher class name
 ├── libs: contains the dependencies
 ├── repair_tools: contains a jar file per repair tool (e.g. npefix.jar) or per repair framework where several repair tools are implemented (e.g. astor.jar)
-├── script: contains the actual scripts of RepairThemAll that use everything mentioned above to run repair tools on benchmarks of bugs
-│ ├── Main files:
-│ ├── config.py: contains the parameters of RepairThemAll (see INSTALL.md file)
-│ ├── repair.py: contains the script to run a repair tool on a benchmark
-│ └── print_bugs_available.py: contains the script to print the bugs available from a benchmark
+└── script: contains the actual scripts of RepairThemAll that use everything mentioned above to run repair tools on benchmarks of bugs
+  ├── Main files:
+  ├── config.py: contains the parameters of RepairThemAll (see INSTALL.md file)
+  ├── repair.py: contains the script to run a repair tool on a benchmark
+  └── print_bugs_available.py: contains the script to print the bugs available from a benchmark
 ```
 
 ## 5. Usage 
