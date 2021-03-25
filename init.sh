@@ -50,11 +50,11 @@ do_version_check "$perl_version" "5.0.10"
 which wget > /dev/null
 [[ $? -eq 1 ]] && echo "[Error] wget not installed" && exit 1 ;
 
-do_version_check "`svn --version --quiet`" "1.8" 
-[[ $? -eq 9 ]] && echo "[Error] snv version >= 1.8" && exit 1 ;
+#do_version_check "`svn --version --quiet`" "1.8" 
+#[[ $? -eq 9 ]] && echo "[Error] snv version >= 1.8" && exit 1 ;
 
-version_checker "`git version | sed "s/git version //"`" "1.9" 
-[[ $? -eq 9 ]] && echo "[Error] git version >= 1.9" && exit 1 ;
+#version_checker "`git version | sed "s/git version //"`" "1.9" 
+#[[ $? -eq 9 ]] && echo "[Error] git version >= 1.9" && exit 1 ;
 
 which gradle > /dev/null
 [[ $? -eq 1 ]] && echo "[Error] gradle not installed" && exit 1 ;
@@ -82,9 +82,12 @@ mvn -Dhttps.protocols=TLSv1.2 install -DskipTests
 cd ..
 rm -rf project-info-maven-plugin
 
-cd libs/z3
-python scripts/mk_make.py --java
-cd build
-make
-make install
-cd ../../
+if [ ! -d libs/z3 ]; then
+    cd libs/z3
+    mkdir -p ../z3_bin
+    python scripts/mk_make.py --java --prefix=../z3_bin
+    cd build
+    make
+    #make install
+    cd ../../
+fi
