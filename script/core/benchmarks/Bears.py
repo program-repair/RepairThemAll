@@ -166,7 +166,7 @@ mvn test -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true
                 if bug.project.lower() == project_id.lower() and bug.bug_id.lower() == bug_id.lower():
                     for t in b['tests']['failingClasses']:
                         tests += [t['testClass']]
-                        return tests
+                    return tests
         return tests
 
     def failing_module(self, bug):
