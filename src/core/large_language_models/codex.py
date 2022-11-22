@@ -1,5 +1,6 @@
 from dotenv import dotenv_values
 import openai
+import javalang
 
 config = dotenv_values(".env")
 openai.api_key = config.get('OPENAI_API_KEY')
@@ -60,10 +61,17 @@ def repair_code(file_path):
         return response
 
 
+def load_file_as_ast(file_path):
+    with open(file_path, 'r') as file:
+        result = javalang.parse.parse(file.read())
+    print(result)
+
+
 def main():
     code = repair_code(EXAMPLE_FILE_PATH)
     print(code)
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    load_file_as_ast((EXAMPLE_FILE_PATH))
