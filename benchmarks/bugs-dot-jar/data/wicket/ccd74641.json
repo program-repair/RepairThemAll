@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1385, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.DefaultExceptionMapperTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/DefaultExceptionMapper.java b/wicket-core/src/main/java/org/apache/wicket/DefaultExceptionMapper.java\nindex 1a787ead4f..eea361d6d5 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/DefaultExceptionMapper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/DefaultExceptionMapper.java\n@@ -17,21 +17,23 @@\n package org.apache.wicket;\n \n import org.apache.wicket.authorization.AuthorizationException;\n+import org.apache.wicket.core.request.handler.IPageRequestHandler;\n+import org.apache.wicket.core.request.handler.ListenerInvocationNotAllowedException;\n+import org.apache.wicket.core.request.handler.PageProvider;\n+import org.apache.wicket.core.request.handler.RenderPageRequestHandler;\n+import org.apache.wicket.core.request.mapper.StalePageException;\n import org.apache.wicket.markup.html.pages.ExceptionErrorPage;\n import org.apache.wicket.protocol.http.PageExpiredException;\n import org.apache.wicket.protocol.http.servlet.ResponseIOException;\n import org.apache.wicket.request.IExceptionMapper;\n import org.apache.wicket.request.IRequestHandler;\n import org.apache.wicket.request.Request;\n+import org.apache.wicket.request.Response;\n import org.apache.wicket.request.cycle.RequestCycle;\n import org.apache.wicket.request.handler.EmptyRequestHandler;\n-import org.apache.wicket.core.request.handler.IPageRequestHandler;\n-import org.apache.wicket.core.request.handler.ListenerInvocationNotAllowedException;\n-import org.apache.wicket.core.request.handler.PageProvider;\n-import org.apache.wicket.core.request.handler.RenderPageRequestHandler;\n import org.apache.wicket.request.http.WebRequest;\n+import org.apache.wicket.request.http.WebResponse;\n import org.apache.wicket.request.http.handler.ErrorCodeRequestHandler;\n-import org.apache.wicket.core.request.mapper.StalePageException;\n import org.apache.wicket.settings.IExceptionSettings;\n import org.apache.wicket.settings.IExceptionSettings.UnexpectedExceptionDisplay;\n import org.slf4j.Logger;\n@@ -51,6 +53,12 @@ public IRequestHandler map(Exception e)\n \t{\n \t\ttry\n \t\t{\n+\t\t\tResponse response = RequestCycle.get().getResponse();\n+\t\t\tif (response instanceof WebResponse)\n+\t\t\t{\n+\t\t\t\t// we don't wan't to cache an exceptional reply in the browser\n+\t\t\t\t((WebResponse)response).disableCaching();\n+\t\t\t}\n \t\t\treturn internalMap(e);\n \t\t}\n \t\tcatch (RuntimeException e2)\n", 
+  "project": "wicket", 
+  "linesAdd": 13, 
+  "jira_id": "4659", 
+  "nb_skipped": 5, 
+  "commit": "ccd74641", 
+  "nb_failure": 1, 
+  "linesRem": 5
+}

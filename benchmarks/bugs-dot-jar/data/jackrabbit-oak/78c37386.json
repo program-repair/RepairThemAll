@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1870, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.segment.ExternalBlobTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentWriter.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentWriter.java\nindex 0552b3342b..16c3f83777 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentWriter.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentWriter.java\n@@ -219,7 +219,7 @@ public synchronized void flush() {\n                 data.put(buffer, buffer.length - length, length);\n                 data.rewind();\n             } else {\n-                data = ByteBuffer.wrap(buffer);\n+                data = ByteBuffer.wrap(buffer, buffer.length - length, length);\n             }\n             tracker.setSegment(id, new Segment(tracker, id, data));\n \n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 1, 
+  "jira_id": "1817", 
+  "nb_skipped": 9, 
+  "commit": "78c37386", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

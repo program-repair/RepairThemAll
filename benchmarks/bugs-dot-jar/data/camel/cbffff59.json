@@ -1,0 +1,20 @@
+{
+  "files": 1, 
+  "nb_test": 3396, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.converter.ObjectConverterTest", 
+    "org.apache.camel.builder.xml.ExtractXPathWithNamespaceTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/converter/ObjectConverter.java b/camel-core/src/main/java/org/apache/camel/converter/ObjectConverter.java\nindex 465c4e93a1..24df84398a 100644\n--- a/camel-core/src/main/java/org/apache/camel/converter/ObjectConverter.java\n+++ b/camel-core/src/main/java/org/apache/camel/converter/ObjectConverter.java\n@@ -137,6 +137,9 @@ public static Short toShort(Object value) {\n         if (value instanceof Short) {\n             return (Short) value;\n         } else if (value instanceof Number) {\n+            if (value.equals(Double.NaN)) {\n+                return null;\n+            }\n             Number number = (Number) value;\n             return number.shortValue();\n         } else if (value instanceof String) {\n@@ -154,6 +157,9 @@ public static Integer toInteger(Object value) {\n         if (value instanceof Integer) {\n             return (Integer) value;\n         } else if (value instanceof Number) {\n+            if (value.equals(Double.NaN)) {\n+                return null;\n+            }\n             Number number = (Number) value;\n             return number.intValue();\n         } else if (value instanceof String) {\n@@ -171,6 +177,9 @@ public static Long toLong(Object value) {\n         if (value instanceof Long) {\n             return (Long) value;\n         } else if (value instanceof Number) {\n+            if (value.equals(Double.NaN)) {\n+                return null;\n+            }\n             Number number = (Number) value;\n             return number.longValue();\n         } else if (value instanceof String) {\n@@ -188,6 +197,9 @@ public static Float toFloat(Object value) {\n         if (value instanceof Float) {\n             return (Float) value;\n         } else if (value instanceof Number) {\n+            if (value.equals(Double.NaN)) {\n+                return null;\n+            }\n             Number number = (Number) value;\n             return number.floatValue();\n         } else if (value instanceof String) {\n", 
+  "project": "camel", 
+  "linesAdd": 12, 
+  "jira_id": "4011", 
+  "nb_skipped": 0, 
+  "commit": "cbffff59", 
+  "nb_failure": 5, 
+  "linesRem": 0
+}

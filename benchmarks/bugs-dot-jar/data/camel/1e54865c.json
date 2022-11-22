@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 3897, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.impl.DefaultCamelContextWithLifecycleStrategyRestartTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/impl/DefaultCamelContext.java b/camel-core/src/main/java/org/apache/camel/impl/DefaultCamelContext.java\nindex 5cc505b8cc..7857a78f3a 100644\n--- a/camel-core/src/main/java/org/apache/camel/impl/DefaultCamelContext.java\n+++ b/camel-core/src/main/java/org/apache/camel/impl/DefaultCamelContext.java\n@@ -1560,7 +1560,7 @@ protected synchronized void doStop() throws Exception {\n         // shutdown management as the last one\n         shutdownServices(managementStrategy);\n         shutdownServices(lifecycleStrategies);\n-        lifecycleStrategies.clear();\n+        // do not clear lifecycleStrategies as we can start Camel again and get the route back as before\n \n         // stop the lazy created so they can be re-created on restart\n         forceStopLazyInitialization();\n", 
+  "project": "camel", 
+  "linesAdd": 1, 
+  "jira_id": "4682", 
+  "nb_skipped": 0, 
+  "commit": "1e54865c", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

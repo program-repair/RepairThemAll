@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 245, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.maven.plugin.PluginParameterExceptionTest"
+  ], 
+  "patch": "diff --git a/maven-core/src/main/java/org/apache/maven/plugin/PluginParameterException.java b/maven-core/src/main/java/org/apache/maven/plugin/PluginParameterException.java\nindex 07302e573..350349d99 100644\n--- a/maven-core/src/main/java/org/apache/maven/plugin/PluginParameterException.java\n+++ b/maven-core/src/main/java/org/apache/maven/plugin/PluginParameterException.java\n@@ -19,8 +19,10 @@\n  * under the License.\n  */\n \n+import java.util.Collection;\n import java.util.Iterator;\n import java.util.List;\n+import java.util.Map;\n \n import org.apache.maven.plugin.descriptor.MojoDescriptor;\n import org.apache.maven.plugin.descriptor.Parameter;\n@@ -78,9 +80,50 @@ private static void decomposeParameterIntoUserInstructions( MojoDescriptor mojo,\n         \n         if ( param.isEditable() )\n         {\n-            messageBuffer.append( \"Inside the definition for plugin \\'\" + mojo.getPluginDescriptor().getArtifactId()\n-                + \"\\', specify the following:\\n\\n<configuration>\\n  ...\\n  <\" + param.getName() + \">VALUE</\"\n-                + param.getName() + \">\\n</configuration>\" );\n+            boolean isArray = param.getType().endsWith( \"[]\" );\n+            boolean isCollection = false;\n+            boolean isMap = false;\n+            if ( !isArray )\n+            {\n+                try\n+                {\n+                    //assuming Type is available in current ClassLoader\n+                    isCollection = Collection.class.isAssignableFrom( Class.forName( param.getType() ) );\n+                    isMap = Map.class.isAssignableFrom( Class.forName( param.getType() ) );\n+                }\n+                catch ( ClassNotFoundException e )\n+                {\n+                    // assume it is not assignable from Collection or Map\n+                }\n+            }\n+            \n+            messageBuffer.append( \"Inside the definition for plugin \\'\");\n+            messageBuffer.append( mojo.getPluginDescriptor().getArtifactId() );\n+            messageBuffer.append( \"\\', specify the following:\\n\\n<configuration>\\n  ...\\n\" );\n+            messageBuffer.append( \"  <\" ).append( param.getName() ).append( '>' );\n+            if( isArray || isCollection )\n+            {\n+                messageBuffer.append(  '\\n' );\n+                messageBuffer.append( \"    <item>\" );\n+            }\n+            else if ( isMap )\n+            {\n+                messageBuffer.append(  '\\n' );\n+                messageBuffer.append( \"    <KEY>\" );\n+            }\n+            messageBuffer.append( \"VALUE\" );\n+            if( isArray || isCollection )\n+            {\n+                messageBuffer.append( \"</item>\\n\" );\n+                messageBuffer.append( \"  \" );\n+            }    \n+            else if ( isMap )\n+            {\n+                messageBuffer.append( \"</KEY>\\n\" );\n+                messageBuffer.append( \"  \" );\n+            }    \n+            messageBuffer.append( \"</\" ).append( param.getName() ).append( \">\\n\" );\n+            messageBuffer.append( \"</configuration>\" );\n \n             String alias = param.getAlias();\n             if ( StringUtils.isNotEmpty( alias ) && !alias.equals( param.getName() ) )\n", 
+  "project": "maven", 
+  "linesAdd": 46, 
+  "jira_id": "3131", 
+  "nb_skipped": 0, 
+  "commit": "56cd921f", 
+  "nb_failure": 3, 
+  "linesRem": 3
+}

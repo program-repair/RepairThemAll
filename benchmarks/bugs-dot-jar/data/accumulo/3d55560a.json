@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 270, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.accumulo.core.client.mock.MockConnectorTest"
+  ], 
+  "patch": "diff --git a/src/core/src/main/java/org/apache/accumulo/core/client/mock/MockTable.java b/src/core/src/main/java/org/apache/accumulo/core/client/mock/MockTable.java\nindex ae167096b..2fe637afb 100644\n--- a/src/core/src/main/java/org/apache/accumulo/core/client/mock/MockTable.java\n+++ b/src/core/src/main/java/org/apache/accumulo/core/client/mock/MockTable.java\n@@ -69,9 +69,9 @@ public int compareTo(Key o) {\n       if (o instanceof MockMemKey) {\n         MockMemKey other = (MockMemKey) o;\n         if (count < other.count)\n-          return -1;\n-        if (count > other.count)\n           return 1;\n+        if (count > other.count)\n+          return -1;\n       } else {\n         return 1;\n       }\n", 
+  "project": "accumulo", 
+  "linesAdd": 2, 
+  "jira_id": "218", 
+  "nb_skipped": 0, 
+  "commit": "3d55560a", 
+  "nb_failure": 1, 
+  "linesRem": 2
+}

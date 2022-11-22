@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 5864, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math4.special.GammaTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math4/special/Gamma.java b/src/main/java/org/apache/commons/math4/special/Gamma.java\nindex aa0e90c23..f390f7c2b 100644\n--- a/src/main/java/org/apache/commons/math4/special/Gamma.java\n+++ b/src/main/java/org/apache/commons/math4/special/Gamma.java\n@@ -695,7 +695,7 @@ public static double gamma(final double x) {\n             }\n         } else {\n             final double y = absX + LANCZOS_G + 0.5;\n-            final double gammaAbs = SQRT_TWO_PI / x *\n+            final double gammaAbs = SQRT_TWO_PI / absX *\n                                     FastMath.pow(y, absX + 0.5) *\n                                     FastMath.exp(-y) * lanczos(absX);\n             if (x > 0.0) {\n", 
+  "project": "commons-math", 
+  "linesAdd": 1, 
+  "jira_id": "1283", 
+  "nb_skipped": 3, 
+  "commit": "9e0c5ad4", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

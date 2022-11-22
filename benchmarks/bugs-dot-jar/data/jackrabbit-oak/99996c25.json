@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 326, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.index.lucene.OakDirectoryTest"
+  ], 
+  "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/OakDirectory.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/OakDirectory.java\nindex 50c7f9e51e..2e137d5158 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/OakDirectory.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/OakDirectory.java\n@@ -91,7 +91,7 @@ public OakDirectory(NodeBuilder builder, IndexDefinition definition, boolean rea\n     public OakDirectory(NodeBuilder builder, String dataNodeName, IndexDefinition definition, boolean readOnly) {\n         this.lockFactory = NoLockFactory.getNoLockFactory();\n         this.builder = builder;\n-        this.directoryBuilder = builder.child(dataNodeName);\n+        this.directoryBuilder = readOnly ? builder.getChildNode(dataNodeName) : builder.child(dataNodeName);\n         this.definition = definition;\n         this.readOnly = readOnly;\n         this.fileNames.addAll(getListing());\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 1, 
+  "jira_id": "3920", 
+  "nb_skipped": 3, 
+  "commit": "99996c25", 
+  "nb_failure": 0, 
+  "linesRem": 1
+}

@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1196, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": true
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.markup.html.form.FormTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java\nindex 17fe546fe7..e97e0b193f 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java\n@@ -797,6 +797,7 @@ public void process(IFormSubmitter submittingComponent)\n \t\t\tif (hasError())\n \t\t\t{\n \t\t\t\tcallOnError(submittingComponent);\n+\t\t\t\treturn;\n \t\t\t}\n \n \t\t\t// Form has no error\n", 
+  "project": "wicket", 
+  "linesAdd": 1, 
+  "jira_id": "4070", 
+  "nb_skipped": 2, 
+  "commit": "d450acb0", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

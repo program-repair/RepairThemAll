@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 2421, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.document.DocumentNodeStoreTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\nindex 420ba29bc3..021cfa27a2 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\n@@ -37,7 +37,6 @@\n import com.google.common.base.Function;\n import com.google.common.base.Predicate;\n import com.google.common.collect.AbstractIterator;\n-import com.google.common.collect.ImmutableList;\n import com.google.common.collect.Iterators;\n import com.google.common.collect.Queues;\n import org.apache.jackrabbit.oak.cache.CacheValue;\n@@ -58,6 +57,7 @@\n import static com.google.common.base.Preconditions.checkNotNull;\n import static com.google.common.collect.Iterables.filter;\n import static com.google.common.collect.Iterables.transform;\n+import static java.util.Collections.reverseOrder;\n import static org.apache.jackrabbit.oak.plugins.document.Collection.NODES;\n import static org.apache.jackrabbit.oak.plugins.document.StableRevisionComparator.REVERSE;\n import static org.apache.jackrabbit.oak.plugins.document.UpdateOp.Key;\n@@ -740,11 +740,11 @@ public boolean apply(Revision input) {\n \n         Revision newestRev = null;\n         // check local commits first\n-        SortedMap<Revision, String> revisions = getLocalRevisions();\n-        SortedMap<Revision, String> commitRoots = getLocalCommitRoot();\n-        Iterator<Revision> it = filter(Iterables.mergeSorted(\n-                ImmutableList.of(revisions.keySet(), commitRoots.keySet()),\n-                revisions.comparator()), predicate).iterator();\n+        Comparator<Revision> comp = reverseOrder(context.getRevisionComparator());\n+        SortedSet<Revision> revisions = Sets.newTreeSet(comp);\n+        revisions.addAll(getLocalRevisions().keySet());\n+        revisions.addAll(getLocalCommitRoot().keySet());\n+        Iterator<Revision> it = filter(revisions, predicate).iterator();\n         if (it.hasNext()) {\n             newestRev = it.next();\n         } else {\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 6, 
+  "jira_id": "2929", 
+  "nb_skipped": 1, 
+  "commit": "a2950285", 
+  "nb_failure": 2, 
+  "linesRem": 6
+}

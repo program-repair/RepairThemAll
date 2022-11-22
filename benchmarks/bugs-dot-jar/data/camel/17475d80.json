@@ -1,0 +1,19 @@
+{
+  "files": 2, 
+  "nb_test": 5172, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.component.file.FileConsumerRestartNotLeakThreadTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/impl/DefaultScheduledPollConsumerScheduler.java b/camel-core/src/main/java/org/apache/camel/impl/DefaultScheduledPollConsumerScheduler.java\nindex c132cadb41..729ee758ea 100644\n--- a/camel-core/src/main/java/org/apache/camel/impl/DefaultScheduledPollConsumerScheduler.java\n+++ b/camel-core/src/main/java/org/apache/camel/impl/DefaultScheduledPollConsumerScheduler.java\n@@ -156,13 +156,10 @@ protected void doStart() throws Exception {\n     protected void doStop() throws Exception {\n         if (future != null) {\n             LOG.debug(\"This consumer is stopping, so cancelling scheduled task: \" + future);\n-            future.cancel(false);\n+            future.cancel(true);\n             future = null;\n         }\n-    }\n \n-    @Override\n-    protected void doShutdown() throws Exception {\n         if (shutdownExecutor && scheduledExecutorService != null) {\n             getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutorService);\n             scheduledExecutorService = null;\ndiff --git a/camel-core/src/main/java/org/apache/camel/impl/ScheduledPollConsumer.java b/camel-core/src/main/java/org/apache/camel/impl/ScheduledPollConsumer.java\nindex 5d080e2950..e300d4952b 100644\n--- a/camel-core/src/main/java/org/apache/camel/impl/ScheduledPollConsumer.java\n+++ b/camel-core/src/main/java/org/apache/camel/impl/ScheduledPollConsumer.java\n@@ -514,7 +514,8 @@ public void startScheduler() {\n \n     @Override\n     protected void doStop() throws Exception {\n-        ServiceHelper.stopService(scheduler);\n+        scheduler.unscheduleTask();\n+        ServiceHelper.stopAndShutdownServices(scheduler);\n \n         // clear counters\n         backoffCounter = 0;\n", 
+  "project": "camel", 
+  "linesAdd": 3, 
+  "jira_id": "8146", 
+  "nb_skipped": 4, 
+  "commit": "17475d80", 
+  "nb_failure": 1, 
+  "linesRem": 5
+}

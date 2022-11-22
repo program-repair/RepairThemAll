@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1526, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.markup.parser.XmlPullParserTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/parser/XmlPullParser.java b/wicket-core/src/main/java/org/apache/wicket/markup/parser/XmlPullParser.java\nindex 262b79576f..377138a63b 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/parser/XmlPullParser.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/parser/XmlPullParser.java\n@@ -17,9 +17,9 @@\n package org.apache.wicket.markup.parser;\n \n import java.io.BufferedInputStream;\n-import java.io.ByteArrayInputStream;\n import java.io.IOException;\n import java.io.InputStream;\n+import java.io.StringReader;\n import java.text.ParseException;\n \n import org.apache.wicket.markup.parser.XmlTag.TagType;\n@@ -48,10 +48,9 @@\n \tpublic static final String SCRIPT = \"script\";\n \n \t/**\n-\t * Reads the xml data from an input stream and converts the chars according to its encoding\n-\t * (<?xml ... encoding=\"...\" ?>)\n+\t * The encoding of the XML.\n \t */\n-\tprivate XmlReader xmlReader;\n+\tprivate String encoding;\n \n \t/**\n \t * A XML independent reader which loads the whole source data into memory and which provides\n@@ -84,7 +83,7 @@ public XmlPullParser()\n \t@Override\n \tpublic final String getEncoding()\n \t{\n-\t\treturn xmlReader.getEncoding();\n+\t\treturn encoding;\n \t}\n \n \t@Override\n@@ -544,7 +543,10 @@ else if (charAt == ch)\n \t@Override\n \tpublic void parse(final CharSequence string) throws IOException\n \t{\n-\t\tparse(new ByteArrayInputStream(string.toString().getBytes()), null);\n+\t\tArgs.notNull(string, \"string\");\n+\n+\t\tthis.input = new FullyBufferedReader(new StringReader(string.toString()));\n+\t\tthis.encoding = null;\n \t}\n \n \t/**\n@@ -554,6 +556,8 @@ public void parse(final CharSequence string) throws IOException\n \t * @param in\n \t *            The input stream to read and parse\n \t * @throws IOException\n+\t * \n+\t * @see {@link #parse(InputStream, String)}\n \t */\n \t@Override\n \tpublic void parse(final InputStream in) throws IOException\n@@ -563,7 +567,9 @@ public void parse(final InputStream in) throws IOException\n \t}\n \n \t/**\n-\t * Reads and parses markup from an input stream\n+\t * Reads and parses markup from an input stream.\n+\t * <p>\n+\t * Note: The input is closed after parsing.\n \t * \n \t * @param inputStream\n \t *            The input stream to read and parse\n@@ -578,13 +584,14 @@ public void parse(final InputStream inputStream, final String encoding) throws I\n \n \t\ttry\n \t\t{\n-\t\t\txmlReader = new XmlReader(new BufferedInputStream(inputStream, 4000), encoding);\n-\t\t\tinput = new FullyBufferedReader(xmlReader);\n+\t\t\tXmlReader xmlReader = new XmlReader(new BufferedInputStream(inputStream, 4000),\n+\t\t\t\tencoding);\n+\t\t\tthis.input = new FullyBufferedReader(xmlReader);\n+\t\t\tthis.encoding = xmlReader.getEncoding();\n \t\t}\n \t\tfinally\n \t\t{\n \t\t\tIOUtils.closeQuietly(inputStream);\n-\t\t\tIOUtils.closeQuietly(xmlReader);\n \t\t}\n \t}\n \n", 
+  "project": "wicket", 
+  "linesAdd": 17, 
+  "jira_id": "5398", 
+  "nb_skipped": 2, 
+  "commit": "19e7c1cd", 
+  "nb_failure": 1, 
+  "linesRem": 10
+}

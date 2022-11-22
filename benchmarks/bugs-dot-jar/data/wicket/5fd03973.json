@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1239, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.request.handler.ListenerInterfaceRequestHandlerTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/request/handler/ListenerInterfaceRequestHandler.java b/wicket-core/src/main/java/org/apache/wicket/request/handler/ListenerInterfaceRequestHandler.java\nindex a4b581719c..0c497d5fc8 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/handler/ListenerInterfaceRequestHandler.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/handler/ListenerInterfaceRequestHandler.java\n@@ -249,8 +249,16 @@ private void invokeListener()\n \n \tpublic final boolean isPageInstanceCreated()\n \t{\n-\t\t// this request handler always operates on a created page instance\n-\t\treturn true;\n+\t\t// FIXME wicket.next remove the workaround for page providers that don't implement the\n+\t\t// interface\n+\t\tif (!(pageComponentProvider instanceof IIntrospectablePageProvider))\n+\t\t{\n+\t\t\tLOG.warn(\n+\t\t\t\t\"{} used by this application does not implement {}, the request handler is falling back on using incorrect behavior\",\n+\t\t\t\tIPageProvider.class, IIntrospectablePageProvider.class);\n+\t\t\treturn !pageComponentProvider.isNewPageInstance();\n+\t\t}\n+\t\treturn ((IIntrospectablePageProvider)pageComponentProvider).hasPageInstance();\n \t}\n \n \tpublic final String getComponentPath()\n", 
+  "project": "wicket", 
+  "linesAdd": 10, 
+  "jira_id": "4185", 
+  "nb_skipped": 3, 
+  "commit": "5fd03973", 
+  "nb_failure": 1, 
+  "linesRem": 2
+}

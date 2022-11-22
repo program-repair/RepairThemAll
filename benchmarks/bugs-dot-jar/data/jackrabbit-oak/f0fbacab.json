@@ -1,0 +1,20 @@
+{
+  "files": 1, 
+  "nb_test": 509, 
+  "nb_error": 5, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.jcr.RepositoryTest", 
+    "org.apache.jackrabbit.oak.jcr.MoveRemoveTest"
+  ], 
+  "patch": "diff --git a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/ItemDelegate.java b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/ItemDelegate.java\nindex 501cebbe15..426621f28b 100644\n--- a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/ItemDelegate.java\n+++ b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/ItemDelegate.java\n@@ -83,8 +83,7 @@ public NodeDelegate getParent() throws InvalidItemStateException {\n      * @return  {@code true} iff stale\n      */\n     public boolean isStale() {\n-        Status status = getLocationOrNull().getStatus();\n-        return status == Status.DISCONNECTED || status == null;\n+        return !getLocationInternal().exists();\n     }\n \n     /**\n@@ -116,7 +115,7 @@ public final SessionDelegate getSessionDelegate() {\n      */\n     @Nonnull\n     public TreeLocation getLocation() throws InvalidItemStateException {\n-        TreeLocation location = getLocationOrNull();\n+        TreeLocation location = getLocationInternal();\n         if (!location.exists()) {\n             throw new InvalidItemStateException(\"Item is stale\");\n         }\n@@ -134,12 +133,12 @@ public String toString() {\n     /**\n      * The underlying {@link org.apache.jackrabbit.oak.api.TreeLocation} of this item.\n      * The location is only re-resolved when the revision of this item does not match\n-     * the revision of the session.\n+     * the revision of the session or when the location does not exist (anymore).\n      * @return  tree location of the underlying item.\n      */\n     @Nonnull\n-    private synchronized TreeLocation getLocationOrNull() {\n-        if (location.exists() && sessionDelegate.getRevision() != revision) {\n+    private synchronized TreeLocation getLocationInternal() {\n+        if (sessionDelegate.getRevision() != revision || !location.exists()) {\n             location = sessionDelegate.getLocation(location.getPath());\n             revision = sessionDelegate.getRevision();\n         }\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 5, 
+  "jira_id": "606", 
+  "nb_skipped": 1, 
+  "commit": "f0fbacab", 
+  "nb_failure": 0, 
+  "linesRem": 6
+}

@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1323, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.ComponentTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/Component.java b/wicket-core/src/main/java/org/apache/wicket/Component.java\nindex fb56254ff5..342f10742e 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/Component.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/Component.java\n@@ -2985,15 +2985,11 @@ public Component setDefaultModel(final IModel<?> model)\n \t\t// Change model\n \t\tif (wrappedModel != model)\n \t\t{\n-\t\t\tif (wrappedModel != null)\n-\t\t\t{\n-\t\t\t\taddStateChange();\n-\t\t\t}\n-\n+\t\t\tmodelChanging();\n \t\t\tsetModelImpl(wrap(model));\n+\t\t\tmodelChanged();\n \t\t}\n \n-\t\tmodelChanged();\n \t\treturn this;\n \t}\n \n", 
+  "project": "wicket", 
+  "linesAdd": 2, 
+  "jira_id": "4483", 
+  "nb_skipped": 8, 
+  "commit": "53442bb4", 
+  "nb_failure": 1, 
+  "linesRem": 6
+}

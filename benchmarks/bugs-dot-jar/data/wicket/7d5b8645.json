@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 52, 
+  "nb_error": 2, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.request.UrlTest"
+  ], 
+  "patch": "diff --git a/wicket-request/src/main/java/org/apache/wicket/request/Url.java b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\nindex 2c3289bceb..6950de276c 100755\n--- a/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n+++ b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n@@ -592,8 +592,8 @@ public String toString()\n \t}\n \n \t/**\n-\t * render full representation of url (including protocol, host and port) \n-\t * into string representation\n+\t * render full representation of url (including protocol, host and port) into string\n+\t * representation\n \t */\n \tpublic String toAbsoluteString()\n \t{\n@@ -601,8 +601,8 @@ public String toAbsoluteString()\n \t}\n \n \t/**\n-\t * render full representation of url (including protocol, host and port) \n-\t * into string representation\n+\t * render full representation of url (including protocol, host and port) into string\n+\t * representation\n \t * \n \t * @param charset\n \t * \n@@ -879,10 +879,12 @@ public String toString(final Charset charset)\n \t *            relative url\n \t */\n \tpublic void resolveRelative(final Url relative)\n+\t{\n+\t\tif (getSegments().size() > 0)\n \t\t{\n \t\t\t// strip the first non-folder segment\n \t\t\tgetSegments().remove(getSegments().size() - 1);\n-\n+\t\t}\n \t\t// remove all './' (current folder) from the relative url\n \t\tif (!relative.getSegments().isEmpty() && \".\".equals(relative.getSegments().get(0)))\n \t\t{\n", 
+  "project": "wicket", 
+  "linesAdd": 7, 
+  "jira_id": "4072", 
+  "nb_skipped": 0, 
+  "commit": "7d5b8645", 
+  "nb_failure": 0, 
+  "linesRem": 5
+}

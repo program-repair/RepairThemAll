@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 4910, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.processor.MulticastGroupedExchangeExceptionTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/aggregate/GroupedExchangeAggregationStrategy.java b/camel-core/src/main/java/org/apache/camel/processor/aggregate/GroupedExchangeAggregationStrategy.java\nindex 84b375dd78..2906270d68 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/aggregate/GroupedExchangeAggregationStrategy.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/aggregate/GroupedExchangeAggregationStrategy.java\n@@ -19,6 +19,7 @@\n import java.util.List;\n \n import org.apache.camel.Exchange;\n+import org.apache.camel.impl.DefaultExchange;\n \n /**\n  * Aggregate all exchanges into a single combined Exchange holding all the aggregated exchanges\n@@ -43,13 +43,12 @@ public void onCompletion(Exchange exchange) {\n \n     @Override\n     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {\n-        Exchange answer = super.aggregate(oldExchange, newExchange);\n         if (oldExchange == null) {\n-            // for the first time we must do a copy as the answer, so the outgoing\n-            // exchange is not one of the grouped exchanges, as that causes a endless circular reference\n-            answer = answer.copy();\n+            // for the first time we must create a new empty exchange as the holder, as the outgoing exchange\n+            // must not be one of the grouped exchanges, as that causes a endless circular reference\n+            oldExchange = new DefaultExchange(newExchange);\n         }\n-        return answer;\n+        return super.aggregate(oldExchange, newExchange);\n     }\n \n     @Override\n", 
+  "project": "camel", 
+  "linesAdd": 5, 
+  "jira_id": "7271", 
+  "nb_skipped": 3, 
+  "commit": "a5a2f750", 
+  "nb_failure": 0, 
+  "linesRem": 5
+}

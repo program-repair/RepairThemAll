@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 2356, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math.optimization.univariate.MultiStartUnivariateRealOptimizerTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math/optimization/univariate/MultiStartUnivariateRealOptimizer.java b/src/main/java/org/apache/commons/math/optimization/univariate/MultiStartUnivariateRealOptimizer.java\nindex aa14ce6c1..952e56569 100644\n--- a/src/main/java/org/apache/commons/math/optimization/univariate/MultiStartUnivariateRealOptimizer.java\n+++ b/src/main/java/org/apache/commons/math/optimization/univariate/MultiStartUnivariateRealOptimizer.java\n@@ -143,18 +143,22 @@ public UnivariateRealPointValuePair optimize(final FUNC f,\n                                                  final GoalType goal,\n                                                  final double min, final double max)\n         throws FunctionEvaluationException {\n+        return optimize(f, goal, min, max, min + 0.5 * (max - min));\n+    }\n \n+    /** {@inheritDoc} */\n+    public UnivariateRealPointValuePair optimize(final FUNC f, final GoalType goal,\n+                                                 final double min, final double max,\n+                                                 final double startValue)\n+        throws FunctionEvaluationException {\n         optima = new UnivariateRealPointValuePair[starts];\n         totalEvaluations = 0;\n \n         // Multi-start loop.\n         for (int i = 0; i < starts; ++i) {\n             try {\n-                final double bound1 = (i == 0) ? min : min + generator.nextDouble() * (max - min);\n-                final double bound2 = (i == 0) ? max : min + generator.nextDouble() * (max - min);\n-                optima[i] = optimizer.optimize(f, goal,\n-                                               FastMath.min(bound1, bound2),\n-                                               FastMath.max(bound1, bound2));\n+                final double s = (i == 0) ? startValue : min + generator.nextDouble() * (max - min);\n+                optima[i] = optimizer.optimize(f, goal, min, max, s);\n             } catch (FunctionEvaluationException fee) {\n                 optima[i] = null;\n             } catch (ConvergenceException ce) {\n@@ -177,16 +181,6 @@ public UnivariateRealPointValuePair optimize(final FUNC f,\n         return optima[0];\n     }\n \n-    /** {@inheritDoc} */\n-    public UnivariateRealPointValuePair optimize(final FUNC f, final GoalType goalType,\n-                                                 final double min, final double max,\n-                                                 final double startValue)\n-            throws FunctionEvaluationException {\n-        // XXX Main code should be here, using \"startValue\" for the first start.\n-        // XXX This method should set \"startValue\" to min + 0.5 * (max - min)\n-        return optimize(f, goalType, min, max);\n-    }\n-\n     /**\n      * Sort the optima from best to worst, followed by {@code null} elements.\n      *\n", 
+  "project": "commons-math", 
+  "linesAdd": 9, 
+  "jira_id": "413", 
+  "nb_skipped": 1, 
+  "commit": "51aa6e6c", 
+  "nb_failure": 1, 
+  "linesRem": 15
+}

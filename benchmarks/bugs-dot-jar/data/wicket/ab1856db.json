@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1128, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.request.cycle.RequestCycleListenerTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/request/cycle/RequestCycleListenerCollection.java b/wicket-core/src/main/java/org/apache/wicket/request/cycle/RequestCycleListenerCollection.java\nindex 7422820ec4..821b883246 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/cycle/RequestCycleListenerCollection.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/cycle/RequestCycleListenerCollection.java\n@@ -19,14 +19,13 @@\n import java.util.ArrayList;\r\n import java.util.List;\r\n \r\n-import org.apache.wicket.WicketRuntimeException;\r\n import org.apache.wicket.request.IRequestHandler;\r\n import org.apache.wicket.util.listener.ListenerCollection;\r\n import org.slf4j.Logger;\r\n import org.slf4j.LoggerFactory;\r\n \r\n /**\r\n- * \r\n+ * Special, Wicket internal composite {@link IRequestCycleListener} that\r\n  */\r\n public class RequestCycleListenerCollection extends ListenerCollection<IRequestCycleListener>\r\n \timplements\r\n@@ -57,6 +56,13 @@ public void notify(IRequestCycleListener listener)\n \t\t});\r\n \t}\r\n \r\n+\t/**\r\n+\t * Notifies all registered listeners of the exception and calls the first handler that was\r\n+\t * returned by the listeners.\r\n+\t * \r\n+\t * @see org.apache.wicket.request.cycle.IRequestCycleListener#onException(org.apache.wicket.request.cycle.RequestCycle,\r\n+\t *      java.lang.Exception)\r\n+\t */\r\n \tpublic IRequestHandler onException(final RequestCycle cycle, final Exception ex)\r\n \t{\r\n \t\tfinal List<IRequestHandler> handlers = new ArrayList<IRequestHandler>();\r\n@@ -77,14 +83,12 @@ public void notify(IRequestCycleListener listener)\n \t\t{\r\n \t\t\treturn null;\r\n \t\t}\r\n-\r\n \t\tif (handlers.size() > 1)\r\n \t\t{\r\n-\t\t\tthrow new WicketRuntimeException(\r\n-\t\t\t\t\"More than one request cycle listener returned a request handler while handling the exception.\",\r\n-\t\t\t\tex);\r\n+\t\t\tlogger.debug(\r\n+\t\t\t\t\"{} exception handlers available for exception {}, using the first handler\",\r\n+\t\t\t\thandlers.size(), ex);\r\n \t\t}\r\n-\r\n \t\treturn handlers.get(0);\r\n \t}\r\n \r\n", 
+  "project": "wicket", 
+  "linesAdd": 11, 
+  "jira_id": "3644", 
+  "nb_skipped": 0, 
+  "commit": "ab1856db", 
+  "nb_failure": 0, 
+  "linesRem": 7
+}

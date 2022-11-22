@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 856, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "typeutils.runtime.PojoSerializerTest"
+  ], 
+  "patch": "diff --git a/flink-java/src/main/java/org/apache/flink/api/java/typeutils/runtime/PojoSerializer.java b/flink-java/src/main/java/org/apache/flink/api/java/typeutils/runtime/PojoSerializer.java\nindex b81ab67945..c61ad8d157 100644\n--- a/flink-java/src/main/java/org/apache/flink/api/java/typeutils/runtime/PojoSerializer.java\n+++ b/flink-java/src/main/java/org/apache/flink/api/java/typeutils/runtime/PojoSerializer.java\n@@ -293,7 +293,14 @@ public T copy(T from, T reuse) {\n \t\t\t\tfor (int i = 0; i < numFields; i++) {\n \t\t\t\t\tObject value = fields[i].get(from);\n \t\t\t\t\tif (value != null) {\n-\t\t\t\t\t\tObject copy = fieldSerializers[i].copy(fields[i].get(from), fields[i].get(reuse));\n+\t\t\t\t\t\tObject reuseValue = fields[i].get(reuse);\n+\t\t\t\t\t\tObject copy;\n+\t\t\t\t\t\tif(reuseValue != null) {\n+\t\t\t\t\t\t\tcopy = fieldSerializers[i].copy(value, reuseValue);\n+\t\t\t\t\t\t}\n+\t\t\t\t\t\telse {\n+\t\t\t\t\t\t\tcopy = fieldSerializers[i].copy(value);\n+\t\t\t\t\t\t}\n \t\t\t\t\t\tfields[i].set(reuse, copy);\n \t\t\t\t\t}\n \t\t\t\t\telse {\n@@ -484,7 +491,15 @@ public T deserialize(T reuse, DataInputView source) throws IOException {\n \t\t\t\t\tif (isNull) {\n \t\t\t\t\t\tfields[i].set(reuse, null);\n \t\t\t\t\t} else {\n-\t\t\t\t\t\tObject field = fieldSerializers[i].deserialize(fields[i].get(reuse), source);\n+\t\t\t\t\t\tObject field;\n+\n+\t\t\t\t\t\tObject reuseField = fields[i].get(reuse);\n+\t\t\t\t\t\tif(reuseField != null) {\n+\t\t\t\t\t\t\tfield = fieldSerializers[i].deserialize(reuseField, source);\n+\t\t\t\t\t\t}\n+\t\t\t\t\t\telse {\n+\t\t\t\t\t\t\tfield = fieldSerializers[i].deserialize(source);\n+\t\t\t\t\t\t}\n \n \t\t\t\t\t\tfields[i].set(reuse, field);\n \t\t\t\t\t}\n", 
+  "project": "flink", 
+  "linesAdd": 17, 
+  "jira_id": "1978", 
+  "nb_skipped": 0, 
+  "commit": "0078c44e", 
+  "nb_failure": 3, 
+  "linesRem": 2
+}

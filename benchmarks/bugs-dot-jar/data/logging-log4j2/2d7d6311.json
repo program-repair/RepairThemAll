@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 183, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.logging.log4j.core.filter.RegexFilterTest"
+  ], 
+  "patch": "diff --git a/core/src/main/java/org/apache/logging/log4j/core/filter/RegexFilter.java b/core/src/main/java/org/apache/logging/log4j/core/filter/RegexFilter.java\nindex ae41b8685..56d8ec658 100644\n--- a/core/src/main/java/org/apache/logging/log4j/core/filter/RegexFilter.java\n+++ b/core/src/main/java/org/apache/logging/log4j/core/filter/RegexFilter.java\n@@ -57,12 +57,18 @@ public Result filter(final Logger logger, final Level level, final Marker marker\n     @Override\n     public Result filter(final Logger logger, final Level level, final Marker marker, final Object msg,\n                          final Throwable t) {\n+        if (msg == null) {\n+            return onMismatch;\n+        }\n         return filter(msg.toString());\n     }\n \n     @Override\n     public Result filter(final Logger logger, final Level level, final Marker marker, final Message msg,\n                          final Throwable t) {\n+        if (msg == null) {\n+            return onMismatch;\n+        }\n         final String text = useRawMessage ? msg.getFormat() : msg.getFormattedMessage();\n         return filter(text);\n     }\n", 
+  "project": "logging-log4j2", 
+  "linesAdd": 6, 
+  "jira_id": "234", 
+  "nb_skipped": 0, 
+  "commit": "2d7d6311", 
+  "nb_failure": 0, 
+  "linesRem": 0
+}

@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 5096, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.component.validator.ValidatorIncludeEncodingRouteTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/component/validator/DefaultLSResourceResolver.java b/camel-core/src/main/java/org/apache/camel/component/validator/DefaultLSResourceResolver.java\nindex 622e257172..38fa7041be 100644\n--- a/camel-core/src/main/java/org/apache/camel/component/validator/DefaultLSResourceResolver.java\n+++ b/camel-core/src/main/java/org/apache/camel/component/validator/DefaultLSResourceResolver.java\n@@ -117,8 +117,7 @@ private String getInputUri() {\n         \n         @Override\n         public Reader getCharacterStream() {\n-            InputStream is = getByteStream();\n-            return camelContext.getTypeConverter().convertTo(Reader.class, is);\n+            return null;\n         }\n \n         @Override\n", 
+  "project": "camel", 
+  "linesAdd": 1, 
+  "jira_id": "7883", 
+  "nb_skipped": 3, 
+  "commit": "d57f402b", 
+  "nb_failure": 0, 
+  "linesRem": 2
+}

@@ -1,0 +1,20 @@
+{
+  "files": 1, 
+  "nb_test": 4114, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math3.random.CorrelatedRandomVectorGeneratorTest", 
+    "org.apache.commons.math3.linear.RectangularCholeskyDecompositionTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math3/linear/RectangularCholeskyDecomposition.java b/src/main/java/org/apache/commons/math3/linear/RectangularCholeskyDecomposition.java\nindex 38584d420..aba7b9806 100644\n--- a/src/main/java/org/apache/commons/math3/linear/RectangularCholeskyDecomposition.java\n+++ b/src/main/java/org/apache/commons/math3/linear/RectangularCholeskyDecomposition.java\n@@ -62,11 +62,10 @@\n     public RectangularCholeskyDecomposition(RealMatrix matrix, double small)\n         throws NonPositiveDefiniteMatrixException {\n \n-        int order = matrix.getRowDimension();\n-        double[][] c = matrix.getData();\n-        double[][] b = new double[order][order];\n+        final int order = matrix.getRowDimension();\n+        final double[][] c = matrix.getData();\n+        final double[][] b = new double[order][order];\n \n-        int[] swap  = new int[order];\n         int[] index = new int[order];\n         for (int i = 0; i < order; ++i) {\n             index[i] = i;\n@@ -76,21 +75,24 @@ public RectangularCholeskyDecomposition(RealMatrix matrix, double small)\n         for (boolean loop = true; loop;) {\n \n             // find maximal diagonal element\n-            swap[r] = r;\n+            int swapR = r;\n             for (int i = r + 1; i < order; ++i) {\n                 int ii  = index[i];\n-                int isi = index[swap[i]];\n-                if (c[ii][ii] > c[isi][isi]) {\n-                    swap[r] = i;\n+                int isr = index[swapR];\n+                if (c[ii][ii] > c[isr][isr]) {\n+                    swapR = i;\n                 }\n             }\n \n \n             // swap elements\n-            if (swap[r] != r) {\n-                int tmp = index[r];\n-                index[r] = index[swap[r]];\n-                index[swap[r]] = tmp;\n+            if (swapR != r) {\n+                final int tmpIndex    = index[r];\n+                index[r]              = index[swapR];\n+                index[swapR]          = tmpIndex;\n+                final double[] tmpRow = b[r];\n+                b[r]                  = b[swapR];\n+                b[swapR]              = tmpRow;\n             }\n \n             // check diagonal element\n@@ -118,17 +120,18 @@ public RectangularCholeskyDecomposition(RealMatrix matrix, double small)\n             } else {\n \n                 // transform the matrix\n-                double sqrt = FastMath.sqrt(c[ir][ir]);\n+                final double sqrt = FastMath.sqrt(c[ir][ir]);\n                 b[r][r] = sqrt;\n-                double inverse = 1 / sqrt;\n+                final double inverse  = 1 / sqrt;\n+                final double inverse2 = 1 / c[ir][ir];\n                 for (int i = r + 1; i < order; ++i) {\n-                    int ii = index[i];\n-                    double e = inverse * c[ii][ir];\n+                    final int ii = index[i];\n+                    final double e = inverse * c[ii][ir];\n                     b[i][r] = e;\n-                    c[ii][ii] -= e * e;\n+                    c[ii][ii] -= c[ii][ir] * c[ii][ir] * inverse2;\n                     for (int j = r + 1; j < i; ++j) {\n-                        int ij = index[j];\n-                        double f = c[ii][ij] - e * b[j][r];\n+                        final int ij = index[j];\n+                        final double f = c[ii][ij] - e * b[j][r];\n                         c[ii][ij] = f;\n                         c[ij][ii] = f;\n                     }\n", 
+  "project": "commons-math", 
+  "linesAdd": 22, 
+  "jira_id": "789", 
+  "nb_skipped": 4, 
+  "commit": "621bbb8f", 
+  "nb_failure": 3, 
+  "linesRem": 19
+}

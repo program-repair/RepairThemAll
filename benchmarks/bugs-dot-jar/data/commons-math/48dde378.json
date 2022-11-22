@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 4550, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math3.analysis.differentiation.DerivativeStructureTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math3/analysis/differentiation/DSCompiler.java b/src/main/java/org/apache/commons/math3/analysis/differentiation/DSCompiler.java\nindex 9d0855530..d5a3c18b8 100644\n--- a/src/main/java/org/apache/commons/math3/analysis/differentiation/DSCompiler.java\n+++ b/src/main/java/org/apache/commons/math3/analysis/differentiation/DSCompiler.java\n@@ -1415,6 +1415,9 @@ public void atan2(final double[] y, final int yOffset,\n \n         }\n \n+        // fix value to take special cases (+0/+0, +0/-0, -0/+0, -0/-0, +/-infinity) correctly\n+        result[resultOffset] = FastMath.atan2(y[yOffset], x[xOffset]);\n+\n     }\n \n     /** Compute hyperbolic cosine of a derivative structure.\n", 
+  "project": "commons-math", 
+  "linesAdd": 3, 
+  "jira_id": "935", 
+  "nb_skipped": 4, 
+  "commit": "48dde378", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

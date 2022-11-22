@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 4714, 
+  "nb_error": 2, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.converter.jaxp.StaxConverterTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/converter/jaxp/StaxConverter.java b/camel-core/src/main/java/org/apache/camel/converter/jaxp/StaxConverter.java\nindex 1cd33ae38c..5469df590b 100644\n--- a/camel-core/src/main/java/org/apache/camel/converter/jaxp/StaxConverter.java\n+++ b/camel-core/src/main/java/org/apache/camel/converter/jaxp/StaxConverter.java\n@@ -167,7 +167,7 @@ public XMLStreamReader createXMLStreamReader(InputStream in) throws XMLStreamExc\n     public XMLStreamReader createXMLStreamReader(InputStream in, Exchange exchange) throws XMLStreamException {\n         XMLInputFactory factory = getInputFactory();\n         try {\n-            return factory.createXMLStreamReader(IOHelper.buffered(in), IOHelper.getCharsetName(exchange));\n+            return factory.createXMLStreamReader(IOHelper.buffered(in), IOHelper.getCharsetName(exchange, false));\n         } finally {\n             returnXMLInputFactory(factory);\n         }\n@@ -236,7 +236,7 @@ public XMLEventReader createXMLEventReader(InputStream in) throws XMLStreamExcep\n     public XMLEventReader createXMLEventReader(InputStream in, Exchange exchange) throws XMLStreamException {\n         XMLInputFactory factory = getInputFactory();\n         try {\n-            return factory.createXMLEventReader(IOHelper.buffered(in), IOHelper.getCharsetName(exchange));\n+            return factory.createXMLEventReader(IOHelper.buffered(in), IOHelper.getCharsetName(exchange, false));\n         } finally {\n             returnXMLInputFactory(factory);\n         }\n", 
+  "project": "camel", 
+  "linesAdd": 2, 
+  "jira_id": "6779", 
+  "nb_skipped": 1, 
+  "commit": "f412d744", 
+  "nb_failure": 0, 
+  "linesRem": 2
+}

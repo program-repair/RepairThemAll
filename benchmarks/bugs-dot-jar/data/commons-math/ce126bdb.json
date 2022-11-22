@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 4224, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math3.random.SynchronizedRandomGeneratorTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math3/random/SynchronizedRandomGenerator.java b/src/main/java/org/apache/commons/math3/random/SynchronizedRandomGenerator.java\nindex 54c006dee..d28f74bf6 100644\n--- a/src/main/java/org/apache/commons/math3/random/SynchronizedRandomGenerator.java\n+++ b/src/main/java/org/apache/commons/math3/random/SynchronizedRandomGenerator.java\n@@ -82,7 +82,7 @@ public synchronized int nextInt() {\n      * {@inheritDoc}\n      */\n     public synchronized int nextInt(int n) {\n-        return wrapped.nextInt();\n+        return wrapped.nextInt(n);\n     }\n \n     /**\n", 
+  "project": "commons-math", 
+  "linesAdd": 1, 
+  "jira_id": "899", 
+  "nb_skipped": 4, 
+  "commit": "ce126bdb", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 89, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.maven.model.interpolation.StringSearchModelInterpolatorTest"
+  ], 
+  "patch": "diff --git a/maven-model-builder/src/main/java/org/apache/maven/model/interpolation/StringSearchModelInterpolator.java b/maven-model-builder/src/main/java/org/apache/maven/model/interpolation/StringSearchModelInterpolator.java\nindex 8f7085ad8..590f2dab0 100644\n--- a/maven-model-builder/src/main/java/org/apache/maven/model/interpolation/StringSearchModelInterpolator.java\n+++ b/maven-model-builder/src/main/java/org/apache/maven/model/interpolation/StringSearchModelInterpolator.java\n@@ -324,6 +324,11 @@ private boolean isQualifiedForInterpolation( Class<?> cls )\n \n         private boolean isQualifiedForInterpolation( Field field, Class<?> fieldType )\n         {\n+            if ( Map.class.equals( fieldType ) && \"locations\".equals( field.getName() ) )\n+            {\n+                return false;\n+            }\n+\n             Boolean primitive = fieldIsPrimitiveByClass.get( fieldType );\n             if ( primitive == null )\n             {\n", 
+  "project": "maven", 
+  "linesAdd": 5, 
+  "jira_id": "4837", 
+  "nb_skipped": 0, 
+  "commit": "3fca2bb2", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

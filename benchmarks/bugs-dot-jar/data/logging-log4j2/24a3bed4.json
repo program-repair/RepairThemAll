@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 516, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.logging.log4j.core.jmx.ServerTest"
+  ], 
+  "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/jmx/Server.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/jmx/Server.java\nindex 537b029ad..898e5e177 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/jmx/Server.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/jmx/Server.java\n@@ -87,6 +87,14 @@ public static String escape(final String name) {\n                 // no need to escape these, but value must be quoted\n                 needsQuotes = true;\n                 break;\n+            case '\\r':\n+                // replace by \\\\r, no need to quote\n+                sb.append(\"\\\\r\");\n+                continue;\n+            case '\\n':\n+                // replace by \\\\n, no need to quote\n+                sb.append(\"\\\\n\");\n+                continue;\n             }\n             sb.append(c);\n         }\n", 
+  "project": "logging-log4j2", 
+  "linesAdd": 8, 
+  "jira_id": "492", 
+  "nb_skipped": 1, 
+  "commit": "24a3bed4", 
+  "nb_failure": 0, 
+  "linesRem": 0
+}

@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1589, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.jcr.security.authorization.ReadTest"
+  ], 
+  "patch": "diff --git a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/delegate/NodeDelegate.java b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/delegate/NodeDelegate.java\nindex 16c315009c..9cbfaf08f4 100644\n--- a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/delegate/NodeDelegate.java\n+++ b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/delegate/NodeDelegate.java\n@@ -338,7 +338,7 @@ public NodeDelegate getChild(String relPath) throws RepositoryException {\n                 filter(iterator, new Predicate<Tree>() {\n                     @Override\n                     public boolean apply(Tree tree) {\n-                        return !tree.getName().startsWith(\":\");\n+                        return tree.exists();\n                     }\n                 }),\n                 new Function<Tree, NodeDelegate>() {\n@@ -447,7 +447,6 @@ public void removeMixin(String typeName) throws RepositoryException {\n     /**\n      * Set a property\n      *\n-     * @param propertyState\n      * @return the set property\n      */\n     @Nonnull\n@@ -824,7 +823,7 @@ private Tree internalAddChild(\n     @Nonnull // FIXME this should be package private. OAK-672\n     public Tree getTree() throws InvalidItemStateException {\n         if (!tree.exists()) {\n-            throw new InvalidItemStateException(\"Item is stale\");\n+            throw new InvalidItemStateException(\"Item is stale \" + tree.getPath());\n         }\n         return tree;\n     }\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 2, 
+  "jira_id": "1081", 
+  "nb_skipped": 3, 
+  "commit": "4ce4e3c9", 
+  "nb_failure": 1, 
+  "linesRem": 3
+}

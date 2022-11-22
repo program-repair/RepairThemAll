@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 21, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.maven.artifact.versioning.VersionRangeTest"
+  ], 
+  "patch": "diff --git a/maven-artifact/src/main/java/org/apache/maven/artifact/versioning/Restriction.java b/maven-artifact/src/main/java/org/apache/maven/artifact/versioning/Restriction.java\nindex a3a1b772c..f8de2c95e 100644\n--- a/maven-artifact/src/main/java/org/apache/maven/artifact/versioning/Restriction.java\n+++ b/maven-artifact/src/main/java/org/apache/maven/artifact/versioning/Restriction.java\n@@ -20,6 +19,8 @@\n  * under the License.\n  */\n \n+import org.apache.maven.artifact.Artifact;\n+\n /**\n  * Describes a restriction in versioning.\n  *\n@@ -71,9 +72,17 @@ public boolean isUpperBoundInclusive()\n \n     public boolean containsVersion( ArtifactVersion version )\n     {\n+        boolean snapshot = isSnapshot( version );\n+\n         if ( lowerBound != null )\n         {\n             int comparison = lowerBound.compareTo( version );\n+\n+            if ( snapshot && comparison == 0 )\n+            {\n+                return true;\n+            }\n+\n             if ( ( comparison == 0 ) && !lowerBoundInclusive )\n             {\n                 return false;\n@@ -86,6 +95,12 @@ public boolean containsVersion( ArtifactVersion version )\n         if ( upperBound != null )\n         {\n             int comparison = upperBound.compareTo( version );\n+\n+            if ( snapshot && comparison == 0 )\n+            {\n+                return true;\n+            }\n+\n             if ( ( comparison == 0 ) && !upperBoundInclusive )\n             {\n                 return false;\n@@ -95,9 +110,20 @@ public boolean containsVersion( ArtifactVersion version )\n                 return false;\n             }\n         }\n+\n+        if ( lowerBound != null || upperBound != null )\n+        {\n+            return !snapshot;\n+        }\n+\n         return true;\n     }\n \n+    private boolean isSnapshot( ArtifactVersion version )\n+    {\n+        return Artifact.SNAPSHOT_VERSION.equals( version.getQualifier() );\n+    }\n+\n     @Override\n     public int hashCode()\n     {\n", 
+  "project": "maven", 
+  "linesAdd": 27, 
+  "jira_id": "3092", 
+  "nb_skipped": 0, 
+  "commit": "5ffd8903", 
+  "nb_failure": 2, 
+  "linesRem": 0
+}

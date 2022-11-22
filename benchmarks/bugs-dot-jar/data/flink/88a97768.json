@@ -1,0 +1,19 @@
+{
+  "files": 2, 
+  "nb_test": 299, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.flink.streaming.api.streamtask.StreamIterationHeadTest"
+  ], 
+  "patch": "diff --git a/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/runtime/io/StreamInputProcessor.java b/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/runtime/io/StreamInputProcessor.java\nindex f50ddcd832..80563b84e7 100644\n--- a/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/runtime/io/StreamInputProcessor.java\n+++ b/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/runtime/io/StreamInputProcessor.java\n@@ -79,7 +79,7 @@\n \n \tprivate final DeserializationDelegate<StreamElement> deserializationDelegate;\n \n-\t@SuppressWarnings({\"unchecked\", \"rawtypes\"})\n+\t@SuppressWarnings(\"unchecked\")\n \tpublic StreamInputProcessor(InputGate[] inputGates, TypeSerializer<IN> inputSerializer,\n \t\t\t\t\t\t\t\tEventListener<CheckpointBarrier> checkpointListener,\n \t\t\t\t\t\t\t\tCheckpointingMode checkpointMode,\n@@ -125,7 +125,6 @@ else if (checkpointMode == CheckpointingMode.AT_LEAST_ONCE) {\n \t\tlastEmittedWatermark = Long.MIN_VALUE;\n \t}\n \n-\t@SuppressWarnings(\"unchecked\")\n \tpublic boolean processInput(OneInputStreamOperator<IN, ?> streamOperator, Object lock) throws Exception {\n \t\tif (isFinished) {\n \t\t\treturn false;\ndiff --git a/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/runtime/tasks/StreamIterationHead.java b/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/runtime/tasks/StreamIterationHead.java\nindex 2ad2d2da2f..c937e51d05 100644\n--- a/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/runtime/tasks/StreamIterationHead.java\n+++ b/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/runtime/tasks/StreamIterationHead.java\n@@ -23,6 +23,7 @@\n import java.util.concurrent.TimeUnit;\n \n import org.apache.flink.api.common.JobID;\n+import org.apache.flink.streaming.api.watermark.Watermark;\n import org.apache.flink.streaming.runtime.io.RecordWriterOutput;\n import org.apache.flink.streaming.runtime.io.BlockingQueueBroker;\n import org.apache.flink.streaming.runtime.streamrecord.StreamRecord;\n@@ -64,6 +64,13 @@ protected void run() throws Exception {\n \t\t\tCollection<RecordWriterOutput<OUT>> outputs = \n \t\t\t\t\t(Collection<RecordWriterOutput<OUT>>) (Collection<?>) outputHandler.getOutputs();\n \n+\t\t\t// If timestamps are enabled we make sure to remove cyclic watermark dependencies\n+\t\t\tif (getExecutionConfig().areTimestampsEnabled()) {\n+\t\t\t\tfor (RecordWriterOutput<OUT> output : outputs) {\n+\t\t\t\t\toutput.emitWatermark(new Watermark(Long.MAX_VALUE));\n+\t\t\t\t}\n+\t\t\t}\n+\n \t\t\twhile (running) {\n \t\t\t\tStreamRecord<OUT> nextRecord = shouldWait ?\n \t\t\t\t\tdataChannel.poll(iterationWaitTime, TimeUnit.MILLISECONDS) :\n", 
+  "project": "flink", 
+  "linesAdd": 9, 
+  "jira_id": "2802", 
+  "nb_skipped": 3, 
+  "commit": "88a97768", 
+  "nb_failure": 1, 
+  "linesRem": 2
+}

@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1174, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.markup.html.form.upload.FileUploadTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/upload/FileUpload.java b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/upload/FileUpload.java\nindex 3f895d300b..6bc50c4973 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/upload/FileUpload.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/upload/FileUpload.java\n@@ -27,6 +27,7 @@\n import org.apache.wicket.IClusterable;\n import org.apache.wicket.Session;\n import org.apache.wicket.WicketRuntimeException;\n+import org.apache.wicket.request.cycle.RequestCycle;\n import org.apache.wicket.util.file.Files;\n import org.apache.wicket.util.io.IOUtils;\n import org.apache.wicket.util.lang.Args;\n@@ -247,8 +248,10 @@ public void writeTo(final File file) throws IOException\n \t */\n \tpublic final File writeToTempFile() throws IOException\n \t{\n-\t\tFile temp = File.createTempFile(Session.get().getId(),\n-\t\t\tFiles.cleanupFilename(item.getFieldName()));\n+\t\tSession.get();\n+\t\tString sessionId = Session.exists() ? Session.get().getId() : \"\";\n+\t\tString tempFileName = sessionId + \"_\" + RequestCycle.get().getStartTime();\n+\t\tFile temp = File.createTempFile(tempFileName, Files.cleanupFilename(item.getFieldName()));\n \t\twriteTo(temp);\n \t\treturn temp;\n \t}\n", 
+  "project": "wicket", 
+  "linesAdd": 5, 
+  "jira_id": "3715", 
+  "nb_skipped": 0, 
+  "commit": "557de7bc", 
+  "nb_failure": 0, 
+  "linesRem": 2
+}

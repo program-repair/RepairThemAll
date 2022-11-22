@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1251, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.authorization.ComponentIsRenderedAllowedTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/Component.java b/wicket-core/src/main/java/org/apache/wicket/Component.java\nindex e9e5a60006..1d2ccc3be3 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/Component.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/Component.java\n@@ -971,6 +971,9 @@ private final void internalBeforeRender()\n \t{\n \t\tconfigure();\n \n+\t\t// check authorization\n+\t\tsetRenderAllowed();\n+\n \t\tif ((determineVisibility()) && !getFlag(FLAG_RENDERING) &&\n \t\t\t!getFlag(FLAG_PREPARED_FOR_RENDER))\n \t\t{\n@@ -2210,11 +2213,6 @@ public void internalPrepareForRender(boolean setRenderingFlag)\n \t\t}\n \n \t\tmarkRendering(setRenderingFlag);\n-\n-\t\t// check authorization\n-\t\t// first the component itself\n-\t\t// (after attach as otherwise list views etc wont work)\n-\t\tsetRenderAllowed();\n \t}\n \n \t/**\n", 
+  "project": "wicket", 
+  "linesAdd": 3, 
+  "jira_id": "4256", 
+  "nb_skipped": 3, 
+  "commit": "09166ea8", 
+  "nb_failure": 1, 
+  "linesRem": 5
+}

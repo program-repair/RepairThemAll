@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 3, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.bean.validation.DefaultPropertyResolverTest"
+  ], 
+  "patch": "diff --git a/wicket-experimental/wicket-bean-validation/src/main/java/org/apache/wicket/bean/validation/DefaultPropertyResolver.java b/wicket-experimental/wicket-bean-validation/src/main/java/org/apache/wicket/bean/validation/DefaultPropertyResolver.java\nindex 64caf18a87..91eb1a3882 100644\n--- a/wicket-experimental/wicket-bean-validation/src/main/java/org/apache/wicket/bean/validation/DefaultPropertyResolver.java\n+++ b/wicket-experimental/wicket-bean-validation/src/main/java/org/apache/wicket/bean/validation/DefaultPropertyResolver.java\n@@ -6,6 +6,7 @@\n import org.apache.wicket.markup.html.form.FormComponent;\n import org.apache.wicket.model.IModel;\n import org.apache.wicket.model.IPropertyReflectionAwareModel;\n+import org.apache.wicket.model.IWrapModel;\n import org.apache.wicket.model.PropertyModel;\n \n /**\n@@ -23,8 +24,21 @@ public Property resolveProperty(FormComponent<?> component)\n \t{\n \t\tIModel<?> model = component.getModel();\n \n-\t\tif (!(model instanceof IPropertyReflectionAwareModel))\n+\t\twhile (true)\n \t\t{\n+\t\t\tif (model == null)\n+\t\t\t{\n+\t\t\t\treturn null;\n+\t\t\t}\n+\t\t\tif (model instanceof IPropertyReflectionAwareModel)\n+\t\t\t{\n+\t\t\t\tbreak;\n+\t\t\t}\n+\t\t\tif (model instanceof IWrapModel<?>)\n+\t\t\t{\n+\t\t\t\tmodel = ((IWrapModel<?>)model).getWrappedModel();\n+\t\t\t\tcontinue;\n+\t\t\t}\n \t\t\treturn null;\n \t\t}\n \n@@ -39,7 +53,7 @@ public Property resolveProperty(FormComponent<?> component)\n \t\tMethod getter = delegate.getPropertyGetter();\n \t\tif (getter != null)\n \t\t{\n-\t\t\tString name = getter.getName().substring(3, 1).toLowerCase() +\n+\t\t\tString name = getter.getName().substring(3, 4).toLowerCase() +\n \t\t\t\tgetter.getName().substring(4);\n \t\t\treturn new Property(getter.getDeclaringClass(), name);\n \t\t}\n", 
+  "project": "wicket", 
+  "linesAdd": 16, 
+  "jira_id": "5102", 
+  "nb_skipped": 0, 
+  "commit": "d110e307", 
+  "nb_failure": 0, 
+  "linesRem": 2
+}

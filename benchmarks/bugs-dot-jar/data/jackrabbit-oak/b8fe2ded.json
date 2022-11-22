@@ -1,0 +1,19 @@
+{
+  "files": 2, 
+  "nb_test": 1485, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.index.nodetype.NodeTypeIndexQueryTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/nodetype/NodeTypeIndex.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/nodetype/NodeTypeIndex.java\nindex 8ffa57bc8f..f4f8dfb648 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/nodetype/NodeTypeIndex.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/nodetype/NodeTypeIndex.java\n@@ -48,7 +48,7 @@ public double getCost(Filter filter, NodeState root) {\n             return Double.POSITIVE_INFINITY;\n         }\n         NodeTypeIndexLookup lookup = new NodeTypeIndexLookup(root);\n-        if (lookup.isIndexed(filter.getPath())) {\n+        if (lookup.isIndexed(filter.getPath(), filter)) {\n             return lookup.getCost(filter);\n         } else {\n             return Double.POSITIVE_INFINITY;\n@@ -58,7 +58,7 @@ public double getCost(Filter filter, NodeState root) {\n     @Override\n     public Cursor query(Filter filter, NodeState root) {\n         NodeTypeIndexLookup lookup = new NodeTypeIndexLookup(root);\n-        if (!hasNodeTypeRestriction(filter) || !lookup.isIndexed(filter.getPath())) {\n+        if (!hasNodeTypeRestriction(filter) || !lookup.isIndexed(filter.getPath(), filter)) {\n             throw new IllegalStateException(\n                     \"NodeType index is used even when no index is available for filter \" + filter);\n         }\ndiff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/nodetype/NodeTypeIndexLookup.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/nodetype/NodeTypeIndexLookup.java\nindex 9a9316bcd2..e4a61bb21f 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/nodetype/NodeTypeIndexLookup.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/nodetype/NodeTypeIndexLookup.java\n@@ -45,10 +45,10 @@ public NodeTypeIndexLookup(NodeState root) {\n      * @return <code>true</code> if a node type index exists; <code>false</code>\n      *         otherwise.\n      */\n-    public boolean isIndexed(String path) {\n+    public boolean isIndexed(String path, Filter f) {\n         PropertyIndexLookup lookup = new PropertyIndexLookup(root);\n-        if (lookup.isIndexed(JCR_PRIMARYTYPE, path, null)\n-                && lookup.isIndexed(JCR_MIXINTYPES, path, null)) {\n+        if (lookup.isIndexed(JCR_PRIMARYTYPE, path, f)\n+                && lookup.isIndexed(JCR_MIXINTYPES, path, f)) {\n             return true;\n         }\n \n@@ -62,13 +62,13 @@ public boolean isIndexed(String path) {\n \n         NodeState child = root.getChildNode(path.substring(0, slash));\n         return new NodeTypeIndexLookup(child).isIndexed(\n-                path.substring(slash));\n+                path.substring(slash), f);\n     }\n \n     public double getCost(Filter filter) {\n         PropertyIndexLookup lookup = new PropertyIndexLookup(root);\n-        return lookup.getCost(null, JCR_PRIMARYTYPE, newName(filter.getPrimaryTypes()))\n-                + lookup.getCost(null, JCR_MIXINTYPES, newName(filter.getMixinTypes()));\n+        return lookup.getCost(filter, JCR_PRIMARYTYPE, newName(filter.getPrimaryTypes()))\n+                + lookup.getCost(filter, JCR_MIXINTYPES, newName(filter.getMixinTypes()));\n     }\n \n     /**\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 8, 
+  "jira_id": "1269", 
+  "nb_skipped": 6, 
+  "commit": "b8fe2ded", 
+  "nb_failure": 1, 
+  "linesRem": 8
+}

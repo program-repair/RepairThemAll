@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1562, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.cache.ConcurrentTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/cache/CacheLIRS.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/cache/CacheLIRS.java\nindex 33561315b1..431d1f3b02 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/cache/CacheLIRS.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/cache/CacheLIRS.java\n@@ -154,11 +154,6 @@ public void invalidateAll() {\n         }\n     }\n \n-    private Entry<K, V> find(Object key) {\n-        int hash = getHash(key);\n-        return getSegment(hash).find(key, hash);\n-    }\n-\n     /**\n      * Check whether there is a resident entry for the given key. This\n      * method does not adjust the internal state of the cache.\n@@ -179,7 +174,8 @@ public boolean containsKey(Object key) {\n      * @return the value, or null if there is no resident entry\n      */\n     public V peek(K key) {\n-        Entry<K, V> e = find(key);\n+        int hash = getHash(key);\n+        Entry<K, V> e = getSegment(hash).find(key, hash);\n         return e == null ? null : e.value;\n     }\n \n@@ -459,7 +455,10 @@ public long getMaxMemory() {\n     public synchronized Set<Map.Entry<K, V>> entrySet() {\n         HashMap<K, V> map = new HashMap<K, V>();\n         for (K k : keySet()) {\n-            map.put(k,  find(k).value);\n+            V v = peek(k);\n+            if (v != null) {\n+                map.put(k,  v);\n+            }\n         }\n         return map.entrySet();\n     }\n@@ -467,7 +466,7 @@ public long getMaxMemory() {\n     protected Collection<V> values() {\n         ArrayList<V> list = new ArrayList<V>();\n         for (K k : keySet()) {\n-            V v = find(k).value;\n+            V v = peek(k);\n             if (v != null) {\n                 list.add(v);\n             }\n@@ -478,7 +477,7 @@ public long getMaxMemory() {\n     boolean containsValue(Object value) {\n         for (Segment<K, V> s : segments) {\n             for (K k : s.keySet()) {\n-                V v = find(k).value;\n+                V v = peek(k);\n                 if (v != null && v.equals(value)) {\n                     return true;\n                 }\n@@ -860,6 +859,9 @@ synchronized V get(K key, int hash, Callable<? extends V> valueLoader) throws Ex\n         synchronized V get(K key, int hash, CacheLoader<K, V> loader) throws ExecutionException {\n             V value = get(key, hash);\n             if (value == null) {\n+                if (loader == null) {\n+                    return null;\n+                }\n                 long start = System.nanoTime();\n                 try {\n                     value = loader.load(key);\n@@ -1394,7 +1396,7 @@ public boolean containsValue(Object value) {\n             @SuppressWarnings(\"unchecked\")\n             @Override\n             public V get(Object key) {\n-                return CacheLIRS.this.getUnchecked((K) key);\n+                return CacheLIRS.this.peek((K) key);\n             }\n \n             @Override\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 12, 
+  "jira_id": "1364", 
+  "nb_skipped": 6, 
+  "commit": "05c89637", 
+  "nb_failure": 0, 
+  "linesRem": 10
+}

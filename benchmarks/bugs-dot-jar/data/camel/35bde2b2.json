@@ -1,0 +1,20 @@
+{
+  "files": 1, 
+  "nb_test": 5054, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.issues.OnCompletionIssueTest", 
+    "org.apache.camel.processor.ThrottlerNullEvalTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/Throttler.java b/camel-core/src/main/java/org/apache/camel/processor/Throttler.java\nindex f70325de76..c986bf7dae 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/Throttler.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/Throttler.java\n@@ -108,7 +108,7 @@ public void setTimePeriodMillis(long timePeriodMillis) {\n     protected long calculateDelay(Exchange exchange) {\n         // evaluate as Object first to see if we get any result at all\n         Object result = maxRequestsPerPeriodExpression.evaluate(exchange, Object.class);\n-        if (result == null) {\n+        if (maximumRequestsPerPeriod == 0 && result == null) {\n             throw new RuntimeExchangeException(\"The max requests per period expression was evaluated as null: \" + maxRequestsPerPeriodExpression, exchange);\n         }\n \n", 
+  "project": "camel", 
+  "linesAdd": 1, 
+  "jira_id": "7448", 
+  "nb_skipped": 3, 
+  "commit": "35bde2b2", 
+  "nb_failure": 3, 
+  "linesRem": 1
+}

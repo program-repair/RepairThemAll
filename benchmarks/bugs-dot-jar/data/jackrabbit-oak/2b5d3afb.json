@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1257, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.query.index.TraversingIndexQueryTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/fulltext/FullTextTerm.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/fulltext/FullTextTerm.java\nindex 2d33a2964c..78a672f840 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/fulltext/FullTextTerm.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/fulltext/FullTextTerm.java\n@@ -67,7 +67,7 @@ public FullTextTerm(String propertyName, String text, boolean not, boolean escap\n                 } else if (c == '_') {\n                     buff.append(\"\\\\_\");\n                     pattern = true;\n-                } else if (Character.isLetterOrDigit(c) || \" +-:&\".indexOf(c) >= 0) {\n+                } else if (Character.isLetterOrDigit(c) || \" +-:&/\".indexOf(c) >= 0) {\n                     buff.append(c);\n                 }\n             }\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 1, 
+  "jira_id": "1024", 
+  "nb_skipped": 8, 
+  "commit": "2b5d3afb", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

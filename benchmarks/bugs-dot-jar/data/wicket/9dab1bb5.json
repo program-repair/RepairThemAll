@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 156, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.util.time.DurationTest"
+  ], 
+  "patch": "diff --git a/wicket-util/src/main/java/org/apache/wicket/util/time/Duration.java b/wicket-util/src/main/java/org/apache/wicket/util/time/Duration.java\nindex fc232bf5f3..c366990edc 100755\n--- a/wicket-util/src/main/java/org/apache/wicket/util/time/Duration.java\n+++ b/wicket-util/src/main/java/org/apache/wicket/util/time/Duration.java\n@@ -526,7 +526,7 @@ public String toString(final Locale locale)\n \t\t\t\treturn unitString(seconds(), \"second\", locale);\r\n \t\t\t}\r\n \r\n-\t\t\treturn unitString(seconds(), \"millisecond\", locale);\r\n+\t\t\treturn unitString(getMilliseconds(), \"millisecond\", locale);\r\n \t\t}\r\n \t\telse\r\n \t\t{\r\n", 
+  "project": "wicket", 
+  "linesAdd": 1, 
+  "jira_id": "4597", 
+  "nb_skipped": 0, 
+  "commit": "9dab1bb5", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

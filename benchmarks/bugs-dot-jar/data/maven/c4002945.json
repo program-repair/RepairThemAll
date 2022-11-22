@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 2, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.maven.plugin.descriptor.PluginDescriptorBuilderTest"
+  ], 
+  "patch": "diff --git a/maven-plugin-api/src/main/java/org/apache/maven/plugin/descriptor/PluginDescriptorBuilder.java b/maven-plugin-api/src/main/java/org/apache/maven/plugin/descriptor/PluginDescriptorBuilder.java\nindex 894709483..66b16916d 100644\n--- a/maven-plugin-api/src/main/java/org/apache/maven/plugin/descriptor/PluginDescriptorBuilder.java\n+++ b/maven-plugin-api/src/main/java/org/apache/maven/plugin/descriptor/PluginDescriptorBuilder.java\n@@ -254,6 +254,13 @@ public MojoDescriptor buildComponentDescriptor( PlexusConfiguration c, PluginDes\n             mojo.setThreadSafe( Boolean.parseBoolean( threadSafe ) );\n         }\n \n+        // ----------------------------------------------------------------------\n+        // Configuration\n+        // ----------------------------------------------------------------------\n+\n+        PlexusConfiguration mojoConfig = c.getChild( \"configuration\" );\n+        mojo.setMojoConfiguration( mojoConfig );\n+\n         // ----------------------------------------------------------------------\n         // Parameters\n         // ----------------------------------------------------------------------\n@@ -292,6 +299,13 @@ public MojoDescriptor buildComponentDescriptor( PlexusConfiguration c, PluginDes\n \n             parameter.setImplementation( d.getChild( \"implementation\" ).getValue() );\n \n+            PlexusConfiguration paramConfig = mojoConfig.getChild( parameter.getName(), false );\n+            if ( paramConfig != null )\n+            {\n+                parameter.setExpression( paramConfig.getValue( null ) );\n+                parameter.setDefaultValue( paramConfig.getAttribute( \"default-value\" ) );\n+            }\n+\n             parameters.add( parameter );\n         }\n \n@@ -299,15 +313,6 @@ public MojoDescriptor buildComponentDescriptor( PlexusConfiguration c, PluginDes\n \n         // TODO: this should not need to be handed off...\n \n-        // ----------------------------------------------------------------------\n-        // Configuration\n-        // ----------------------------------------------------------------------\n-\n-        mojo.setMojoConfiguration( c.getChild( \"configuration\" ) );\n-\n-        // TODO: Go back to this when we get the container ready to configure mojos...\n-        //        mojo.setConfiguration( c.getChild( \"configuration\" ) );\n-\n         // ----------------------------------------------------------------------\n         // Requirements\n         // ----------------------------------------------------------------------\n", 
+  "project": "maven", 
+  "linesAdd": 14, 
+  "jira_id": "4941", 
+  "nb_skipped": 0, 
+  "commit": "c4002945", 
+  "nb_failure": 1, 
+  "linesRem": 9
+}

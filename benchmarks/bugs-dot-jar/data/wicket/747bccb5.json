@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 10, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.request.UrlTest"
+  ], 
+  "patch": "diff --git a/wicket-request/src/main/java/org/apache/wicket/request/Url.java b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\nindex 247197e9c3..d9e0cd5905 100755\n--- a/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n+++ b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n@@ -22,6 +22,7 @@\n import java.util.Collections;\n import java.util.Iterator;\n import java.util.List;\n+import java.util.Locale;\n \n import org.apache.wicket.util.lang.Args;\n import org.apache.wicket.util.lang.Generics;\n@@ -105,6 +106,7 @@ else if (parts.length == 1)\n \t * Parses the given URL string.\n \t * \n \t * @param url\n+\t *           absolute or relative url with query string\n \t * @return Url object\n \t */\n \tpublic static Url parse(final String url)\n@@ -116,7 +118,7 @@ public static Url parse(final String url)\n \t * Parses the given URL string.\n \t * \n \t * @param url\n-\t *           full absolute or relative url with query string\n+\t *           absolute or relative url with query string\n \t * @param charset\n \t * @return Url object\n \t */\n@@ -154,7 +156,7 @@ public static Url parse(String url, Charset charset)\n \n \t\tif (protocolAt != -1)\n \t\t{\n-\t\t\tresult.protocol = absoluteUrl.substring(0, protocolAt);\n+\t\t\tresult.protocol = absoluteUrl.substring(0, protocolAt).toLowerCase(Locale.US);\n \t\t\tfinal String afterProto = absoluteUrl.substring(protocolAt + 3);\n \t\t\tfinal String hostAndPort;\n \n@@ -176,7 +179,7 @@ public static Url parse(String url, Charset charset)\n \t\t\tif (portAt == -1)\n \t\t\t{\n \t\t\t\tresult.host = hostAndPort;\n-\t\t\t\tresult.port = null;\n+\t\t\t\tresult.port = getDefaultPortForProtocol(result.protocol);\n \t\t\t}\n \t\t\telse\n \t\t\t{\n@@ -229,6 +232,33 @@ public static Url parse(String url, Charset charset)\n \t\treturn result;\n \t}\n \n+\t/**\n+\t * get default port number for protocol\n+\t * \n+\t * @param protocol\n+\t *           name of protocol\n+\t * @return default port for protocol or <code>null</code> if unknown\n+\t */\n+\tprivate static Integer getDefaultPortForProtocol(String protocol)\n+\t{\n+\t\tif (\"http\".equals(protocol))\n+\t\t{\n+\t\t\treturn 80;\n+\t\t}\n+\t\telse if (\"https\".equals(protocol))\n+\t\t{\n+\t\t\treturn 443;\n+\t\t}\n+\t\telse if (\"ftp\".equals(protocol))\n+\t\t{\n+\t\t\treturn 21;\n+\t\t}\n+\t\telse\n+\t\t{\n+\t\t\treturn null;\n+\t\t}\n+\t}\n+\n \t/**\n \t * Construct.\n \t */\n", 
+  "project": "wicket", 
+  "linesAdd": 32, 
+  "jira_id": "3834", 
+  "nb_skipped": 0, 
+  "commit": "747bccb5", 
+  "nb_failure": 1, 
+  "linesRem": 3
+}

@@ -1,0 +1,19 @@
+{
+  "files": 3, 
+  "nb_test": 413, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.security.principal.PrincipalProviderImplTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/api/QueryEngine.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/api/QueryEngine.java\nindex c43f58e92c..96b3ef82c8 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/api/QueryEngine.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/api/QueryEngine.java\n@@ -52,8 +52,8 @@\n      *\n      * @param statement the query statement\n      * @param language the language\n-     * @param limit the maximum result set size\n-     * @param offset the number of rows to skip\n+     * @param limit the maximum result set size (may not be negative)\n+     * @param offset the number of rows to skip (may not be negative)\n      * @param bindings the bind variable value bindings\n      * @param namePathMapper the name and path mapper to use\n      * @return the result\ndiff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/QueryEngineImpl.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/QueryEngineImpl.java\nindex 4dcb86b704..e5d4adb954 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/QueryEngineImpl.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/QueryEngineImpl.java\n@@ -138,6 +138,12 @@ private Query parseQuery(String statement, String language) throws ParseExceptio\n     public Result executeQuery(String statement, String language, long limit,\n             long offset, Map<String, ? extends PropertyValue> bindings,\n             NamePathMapper namePathMapper) throws ParseException {\n+        if (limit < 0) {\n+            throw new IllegalArgumentException(\"Limit may not be negative, is: \" + limit);\n+        }\n+        if (offset < 0) {\n+            throw new IllegalArgumentException(\"Offset may not be negative, is: \" + offset);\n+        }\n         Query q = parseQuery(statement, language);\n         q.setRootTree(getRootTree());\n         q.setRootState(getRootState());\ndiff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/security/user/query/XPathQueryBuilder.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/security/user/query/XPathQueryBuilder.java\nindex 893738bf0a..d1dd992d5f 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/security/user/query/XPathQueryBuilder.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/security/user/query/XPathQueryBuilder.java\n@@ -35,7 +35,7 @@\n     private boolean sortIgnoreCase;\n     private Value bound;\n     private long offset;\n-    private long maxCount = -1;\n+    private long maxCount = Long.MAX_VALUE;\n \n     //-------------------------------------------------------< QueryBuilder >---\n     @Override\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 9, 
+  "jira_id": "546", 
+  "nb_skipped": 1, 
+  "commit": "428e32c6", 
+  "nb_failure": 3, 
+  "linesRem": 3
+}

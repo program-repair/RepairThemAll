@@ -1,0 +1,19 @@
+{
+  "files": 2, 
+  "nb_test": 269, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexSuggestionTest"
+  ], 
+  "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndex.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndex.java\nindex 0a38732b44..a582292276 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndex.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndex.java\n@@ -1038,14 +1038,17 @@ public NodeAggregator getNodeAggregator() {\n         final String path;\n         final double score;\n         final Iterable<String> suggestWords;\n+        final boolean isVirtual;\n \n         LuceneResultRow(String path, double score) {\n+            this.isVirtual = false;\n             this.path = path;\n             this.score = score;\n             this.suggestWords = Collections.emptySet();\n         }\n \n         LuceneResultRow(Iterable<String> suggestWords) {\n+            this.isVirtual = true;\n             this.path = \"/\";\n             this.score = 1.0d;\n             this.suggestWords = suggestWords;\n@@ -1110,7 +1113,7 @@ public IndexRow next() {\n \n                 @Override\n                 public boolean isVirtualRow() {\n-                    return getPath() == null;\n+                    return currentRow.isVirtual;\n                 }\n \n                 @Override\ndiff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LucenePropertyIndex.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LucenePropertyIndex.java\nindex 40952779be..2b7e4776eb 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LucenePropertyIndex.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LucenePropertyIndex.java\n@@ -1280,14 +1280,17 @@ private static Query newDepthQuery(String path) {\n         final String path;\n         final double score;\n         final Iterable<String> suggestWords;\n+        final boolean isVirutal;\n \n         LuceneResultRow(String path, double score) {\n+            this.isVirutal = false;\n             this.path = path;\n             this.score = score;\n             this.suggestWords = Collections.emptySet();\n         }\n \n         LuceneResultRow(Iterable<String> suggestWords) {\n+            this.isVirutal = true;\n             this.path = \"/\";\n             this.score = 1.0d;\n             this.suggestWords = suggestWords;\n@@ -1354,7 +1357,7 @@ public IndexRow next() {\n \n                 @Override\n                 public boolean isVirtualRow() {\n-                    return getPath() == null;\n+                    return currentRow.isVirutal;\n                 }\n \n                 @Override\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 8, 
+  "jira_id": "3156", 
+  "nb_skipped": 4, 
+  "commit": "786b3d76", 
+  "nb_failure": 3, 
+  "linesRem": 2
+}

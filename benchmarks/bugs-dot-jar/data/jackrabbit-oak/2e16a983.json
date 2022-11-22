@@ -1,0 +1,20 @@
+{
+  "files": 2, 
+  "nb_test": 1841, 
+  "nb_error": 2, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.index.property.PropertyIndexQueryTest", 
+    "org.apache.jackrabbit.oak.query.index.TraversingIndexQueryTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/AndImpl.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/AndImpl.java\nindex d0b9245535..090c265bb7 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/AndImpl.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/AndImpl.java\n@@ -110,7 +110,13 @@ public FullTextExpression getFullTextConstraint(SelectorImpl s) {\n         for (Entry<DynamicOperandImpl, Set<StaticOperandImpl>> e2 : m2.entrySet()) {\n             Set<StaticOperandImpl> s = result.get(e2.getKey());\n             if (s != null) {\n-                s.retainAll(e2.getValue());\n+                // OAK-1933\n+                // a property can have multiple values at the same time,\n+                // so that \"where a=1 and a=2\" needs to be kept and can not\n+                // be reduced to \"where false\" - in fact, we could \n+                // extend it to \"where a in (1, 2)\" so that an index can be used,\n+                // but we might as well keep it at \"where a = 1\" as that would\n+                // also use an index\n             } else {\n                 result.put(e2.getKey(), e2.getValue());\n             }\ndiff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/spi/query/QueryIndex.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/spi/query/QueryIndex.java\nindex a5cfe1019b..f3cf5ef44b 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/spi/query/QueryIndex.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/spi/query/QueryIndex.java\n@@ -194,8 +194,8 @@\n         double getCostPerEntry();\n \n         /**\n-         * The estimated number of entries. This value does not have to be\n-         * accurate.\n+         * The estimated number of entries in the cursor that is returned by the query method,\n+         * when using this plan. This value does not have to be accurate.\n          * \n          * @return the estimated number of entries\n          */\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 9, 
+  "jira_id": "1933", 
+  "nb_skipped": 9, 
+  "commit": "2e16a983", 
+  "nb_failure": 0, 
+  "linesRem": 3
+}

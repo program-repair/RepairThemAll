@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 6, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": true
+  }, 
+  "failing_tests": [
+    "org.apache.accumulo.minicluster.MiniAccumuloClusterTest"
+  ], 
+  "patch": "diff --git a/minicluster/src/main/java/org/apache/accumulo/minicluster/MiniAccumuloCluster.java b/minicluster/src/main/java/org/apache/accumulo/minicluster/MiniAccumuloCluster.java\nindex 8246c51a4..c9aa1f12a 100644\n--- a/minicluster/src/main/java/org/apache/accumulo/minicluster/MiniAccumuloCluster.java\n+++ b/minicluster/src/main/java/org/apache/accumulo/minicluster/MiniAccumuloCluster.java\n@@ -270,6 +270,7 @@ public MiniAccumuloCluster(MiniAccumuloConfig config) throws IOException {\n     mergePropWithRandomPort(siteConfig, Property.TSERV_CLIENTPORT.getKey());\n     mergePropWithRandomPort(siteConfig, Property.MONITOR_PORT.getKey());\n     mergePropWithRandomPort(siteConfig, Property.GC_PORT.getKey());\n+    mergePropWithRandomPort(siteConfig, Property.MONITOR_LOG4J_PORT.getKey());\n     \n     // since there is a small amount of memory, check more frequently for majc... setting may not be needed in 1.5\n     appendProp(fileWriter, Property.TSERV_MAJC_DELAY, \"3\", siteConfig);\n", 
+  "project": "accumulo", 
+  "linesAdd": 1, 
+  "jira_id": "3150", 
+  "nb_skipped": 0, 
+  "commit": "72fd6bec", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

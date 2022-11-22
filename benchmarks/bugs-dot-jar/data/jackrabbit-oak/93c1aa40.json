@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1843, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.index.AsyncIndexUpdateTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/AsyncIndexUpdate.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/AsyncIndexUpdate.java\nindex 88eb0f78ed..6401f23dde 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/AsyncIndexUpdate.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/AsyncIndexUpdate.java\n@@ -318,7 +318,7 @@ public NodeState processCommit(\n                     throws CommitFailedException {\n                 // check for concurrent updates by this async task\n                 NodeState async = before.getChildNode(ASYNC);\n-                if (Objects.equal(checkpoint, async.getString(name))\n+                if (checkpoint == null || Objects.equal(checkpoint, async.getString(name))\n                         && lease == async.getLong(name + \"-lease\")) {\n                     return after;\n                 } else {\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 1, 
+  "jira_id": "1959", 
+  "nb_skipped": 9, 
+  "commit": "93c1aa40", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

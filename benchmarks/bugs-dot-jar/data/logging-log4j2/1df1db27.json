@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 419, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.logging.log4j.core.web.Log4jServletContainerInitializerTest"
+  ], 
+  "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/web/Log4jServletContainerInitializer.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/web/Log4jServletContainerInitializer.java\nindex 6add448a8..50b082066 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/web/Log4jServletContainerInitializer.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/web/Log4jServletContainerInitializer.java\n@@ -23,15 +23,18 @@\n import javax.servlet.ServletContainerInitializer;\n import javax.servlet.ServletContext;\n import javax.servlet.ServletException;\n+import javax.servlet.UnavailableException;\n \n /**\n  * In a Servlet 3.0 or newer environment, this initializer is responsible for starting up Log4j logging before anything\n- * else happens in application initialization.\n+ * else happens in application initialization. For consistency across all containers, if the effective Servlet major\n+ * version of the application is less than 3.0, this initializer does nothing.\n  */\n public class Log4jServletContainerInitializer implements ServletContainerInitializer {\n \n     @Override\n     public void onStartup(final Set<Class<?>> classes, final ServletContext servletContext) throws ServletException {\n+        if (servletContext.getMajorVersion() > 2) {\n             servletContext.log(\"Log4jServletContainerInitializer starting up Log4j in Servlet 3.0+ environment.\");\n \n             final Log4jWebInitializer initializer = Log4jWebInitializerImpl.getLog4jWebInitializer(servletContext);\n@@ -40,7 +43,13 @@ public void onStartup(final Set<Class<?>> classes, final ServletContext servletC\n \n             servletContext.addListener(new Log4jServletContextListener());\n \n-        final FilterRegistration.Dynamic filter = servletContext.addFilter(\"log4jServletFilter\", new Log4jServletFilter());\n+            final FilterRegistration.Dynamic filter =\n+                    servletContext.addFilter(\"log4jServletFilter\", new Log4jServletFilter());\n+            if (filter == null) {\n+                throw new UnavailableException(\"In a Servlet 3.0+ application, you must not define a \" +\n+                        \"log4jServletFilter in web.xml. Log4j 2 defines this for you automatically.\");\n+            }\n             filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, \"/*\");\n         }\n     }\n+}\n", 
+  "project": "logging-log4j2", 
+  "linesAdd": 11, 
+  "jira_id": "359", 
+  "nb_skipped": 5, 
+  "commit": "1df1db27", 
+  "nb_failure": 8, 
+  "linesRem": 2
+}

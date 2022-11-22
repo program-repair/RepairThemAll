@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 197, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.jcr.ValueFactoryTest"
+  ], 
+  "patch": "diff --git a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/value/ValueFactoryImpl.java b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/value/ValueFactoryImpl.java\nindex eb452329e4..a72250903f 100644\n--- a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/value/ValueFactoryImpl.java\n+++ b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/value/ValueFactoryImpl.java\n@@ -37,6 +37,7 @@\n import java.io.UnsupportedEncodingException;\n import java.math.BigDecimal;\n import java.util.Calendar;\n+import java.util.UUID;\n \n /**\n  * Implementation of {@link ValueFactory} interface based on the\n@@ -185,6 +186,17 @@ public Value createValue(String value, int type) throws ValueFormatException {\n                     cv = factory.createValue(value, type);\n                     break;\n \n+                case PropertyType.REFERENCE:\n+                case PropertyType.WEAKREFERENCE:\n+                    // TODO: move to identifier/uuid management utility instead of relying on impl specific uuid-format here.\n+                    try {\n+                        UUID.fromString(value);\n+                    } catch (IllegalArgumentException e) {\n+                        throw new ValueFormatException(e);\n+                    }\n+                    cv = factory.createValue(value, type);\n+                    break;\n+\n                 case PropertyType.BINARY:\n                     cv = factory.createValue(new ByteArrayInputStream(value.getBytes(\"UTF-8\")));\n                     break;\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 12, 
+  "jira_id": "238", 
+  "nb_skipped": 2, 
+  "commit": "24ce6788", 
+  "nb_failure": 2, 
+  "linesRem": 0
+}

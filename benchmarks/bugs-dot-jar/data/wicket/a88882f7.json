@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 77, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.request.UrlTest"
+  ], 
+  "patch": "diff --git a/wicket-request/src/main/java/org/apache/wicket/request/Url.java b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\nindex d387a13c2b..acb42875d2 100755\n--- a/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n+++ b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n@@ -989,18 +989,29 @@ public void resolveRelative(final Url relative)\n \t\t\t// strip the first non-folder segment\n \t\t\tgetSegments().remove(getSegments().size() - 1);\n \t\t}\n-\t\t// remove all './' (current folder) from the relative url\n-\t\tif (!relative.getSegments().isEmpty() && \".\".equals(relative.getSegments().get(0)))\n+\n+\t\t// remove leading './' (current folder) and empty segments, process any ../ segments from the\n+\t\t// relative url\n+\t\twhile (!relative.getSegments().isEmpty())\n+\t\t{\n+\t\t\tif (\".\".equals(relative.getSegments().get(0)))\n \t\t\t{\n \t\t\t\trelative.getSegments().remove(0);\n \t\t\t}\n-\n-\t\t// process any ../ segments in the relative url\n-\t\twhile (!relative.getSegments().isEmpty() && \"..\".equals(relative.getSegments().get(0)))\n+\t\t\telse if (\"\".equals(relative.getSegments().get(0)))\n+\t\t\t{\n+\t\t\t\trelative.getSegments().remove(0);\n+\t\t\t}\n+\t\t\telse if (\"..\".equals(relative.getSegments().get(0)))\n \t\t\t{\n \t\t\t\trelative.getSegments().remove(0);\n \t\t\t\tgetSegments().remove(getSegments().size() - 1);\n \t\t\t}\n+\t\t\telse\n+\t\t\t{\n+\t\t\t\tbreak;\n+\t\t\t}\n+\t\t}\n \n \t\t// append the remaining relative segments\n \t\tgetSegments().addAll(relative.getSegments());\n", 
+  "project": "wicket", 
+  "linesAdd": 16, 
+  "jira_id": "4518", 
+  "nb_skipped": 0, 
+  "commit": "a88882f7", 
+  "nb_failure": 2, 
+  "linesRem": 5
+}

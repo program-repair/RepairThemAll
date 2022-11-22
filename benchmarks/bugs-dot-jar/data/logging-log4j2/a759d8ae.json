@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 515, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.logging.log4j.core.jmx.ServerTest"
+  ], 
+  "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/jmx/Server.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/jmx/Server.java\nindex 9c66b6315..e7af98305 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/jmx/Server.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/jmx/Server.java\n@@ -74,14 +74,18 @@ public static String escape(final String name) {\n         for (int i = 0; i < name.length(); i++) {\n             final char c = name.charAt(i);\n             switch (c) {\n-            case ',':\n-            case '=':\n-            case ':':\n             case '\\\\':\n             case '*':\n             case '?':\n-                sb.append('\\\\');\n-                needsQuotes = true;\n+            case '\\\"':\n+                sb.append('\\\\'); // quote, star, question & backslash must be escaped\n+                needsQuotes = true; // ... and can only appear in quoted value\n+                break;\n+            case ',':\n+            case '=':\n+            case ':':\n+                needsQuotes = true; // no need to escape these, but value must be quoted\n+                break;\n             }\n             sb.append(c);\n         }\n", 
+  "project": "logging-log4j2", 
+  "linesAdd": 9, 
+  "jira_id": "492", 
+  "nb_skipped": 1, 
+  "commit": "a759d8ae", 
+  "nb_failure": 4, 
+  "linesRem": 5
+}

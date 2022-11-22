@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 460, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexEditorTest"
+  ], 
+  "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexCopier.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexCopier.java\nindex e17f580836..ea6b0ed9af 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexCopier.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexCopier.java\n@@ -56,7 +56,6 @@\n import com.google.common.collect.Sets;\n import com.google.common.hash.Hashing;\n import org.apache.commons.io.FileUtils;\n-import org.apache.jackrabbit.oak.commons.IOUtils;\n import org.apache.jackrabbit.oak.commons.concurrent.NotifyingFutureTask;\n import org.apache.jackrabbit.oak.util.PerfLogger;\n import org.apache.lucene.store.Directory;\n@@ -65,6 +64,7 @@\n import org.apache.lucene.store.IOContext;\n import org.apache.lucene.store.IndexInput;\n import org.apache.lucene.store.IndexOutput;\n+import org.apache.lucene.store.NoLockFactory;\n import org.slf4j.Logger;\n import org.slf4j.LoggerFactory;\n \n@@ -147,7 +147,10 @@ protected Directory createLocalDirForIndexWriter(IndexDefinition definition) thr\n             String newVersion = String.valueOf(definition.getReindexCount());\n             indexWriterDir = getVersionedDir(indexPath, indexDir, newVersion);\n         }\n-        Directory dir = FSDirectory.open(indexWriterDir);\n+\n+        //By design indexing in Oak is single threaded so Lucene locking\n+        //can be disabled\n+        Directory dir = FSDirectory.open(indexWriterDir, NoLockFactory.getNoLockFactory());\n \n         log.debug(\"IndexWriter would use {}\", indexWriterDir);\n \n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 5, 
+  "jira_id": "3053", 
+  "nb_skipped": 3, 
+  "commit": "7552a10b", 
+  "nb_failure": 0, 
+  "linesRem": 2
+}

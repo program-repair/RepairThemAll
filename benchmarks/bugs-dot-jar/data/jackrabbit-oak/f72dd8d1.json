@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1444, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.segment.RecordTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/ListRecord.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/ListRecord.java\nindex cc591633a5..fd6e50b3c6 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/ListRecord.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/ListRecord.java\n@@ -21,7 +21,7 @@\n \r\n class ListRecord extends Record {\r\n \r\n-    static final int LEVEL_SIZE = 1 << 8; // 256\r\n+    static final int LEVEL_SIZE = Segment.SEGMENT_REFERENCE_LIMIT;\r\n \r\n     private final int size;\r\n \r\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 1, 
+  "jira_id": "1184", 
+  "nb_skipped": 6, 
+  "commit": "f72dd8d1", 
+  "nb_failure": 0, 
+  "linesRem": 1
+}

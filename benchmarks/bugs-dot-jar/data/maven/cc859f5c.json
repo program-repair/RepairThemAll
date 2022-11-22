@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 93, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.maven.project.ModelUtilsTest"
+  ], 
+  "patch": "diff --git a/maven-project/src/main/java/org/apache/maven/project/ModelUtils.java b/maven-project/src/main/java/org/apache/maven/project/ModelUtils.java\nindex 66527df42..7e6de40f6 100644\n--- a/maven-project/src/main/java/org/apache/maven/project/ModelUtils.java\n+++ b/maven-project/src/main/java/org/apache/maven/project/ModelUtils.java\n@@ -82,6 +82,11 @@ public static void mergePluginLists( PluginContainer childContainer, PluginConta\n \n                 String parentInherited = parentPlugin.getInherited();\n \n+                // only merge plugin definition from the parent if at least one \n+                // of these is true:\n+                // 1. we're not processing the plugins in an inheritance-based merge\n+                // 2. the parent's <inherited/> flag is not set\n+                // 3. the parent's <inherited/> flag is set to true\n                 if ( !handleAsInheritance || parentInherited == null ||\n                     Boolean.valueOf( parentInherited ).booleanValue() )\n                 {\n@@ -97,18 +102,21 @@ public static void mergePluginLists( PluginContainer childContainer, PluginConta\n                         mergePluginDefinitions( childPlugin, parentPlugin, handleAsInheritance );\n                     }\n \n+                    // if we're processing this as an inheritance-based merge, and\n+                    // the parent's <inherited/> flag is not set, then we need to\n+                    // clear the inherited flag in the merge result.\n                     if ( handleAsInheritance && parentInherited == null )\n                     {\n                         assembledPlugin.unsetInheritanceApplied();\n                     }\n \n                     mergedPlugins.add(assembledPlugin);\n+\n+                    // fix for MNG-2221 (assembly cache was not being populated for later reference):\n+                    assembledPlugins.put(  assembledPlugin.getKey(), assembledPlugin );\n                 }\n             }\n \n-\t    // FIXME: not sure what's intended here, but this entire\n-\t    // loop can be replaced by 'mergedPlugins.addAll( childPlugins.values() );\n-\t    // since assembledPlugins is never updated and remains empty.\n             for ( Iterator it = childPlugins.values().iterator(); it.hasNext(); )\n             {\n                 Plugin childPlugin = (Plugin) it.next();\n", 
+  "project": "maven", 
+  "linesAdd": 11, 
+  "jira_id": "2221", 
+  "nb_skipped": 0, 
+  "commit": "cc859f5c", 
+  "nb_failure": 2, 
+  "linesRem": 3
+}

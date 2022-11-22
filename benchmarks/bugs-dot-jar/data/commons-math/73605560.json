@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 4794, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math3.geometry.euclidean.threed.LineTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math3/geometry/euclidean/threed/Line.java b/src/main/java/org/apache/commons/math3/geometry/euclidean/threed/Line.java\nindex 0c3941168..7c9a28f14 100644\n--- a/src/main/java/org/apache/commons/math3/geometry/euclidean/threed/Line.java\n+++ b/src/main/java/org/apache/commons/math3/geometry/euclidean/threed/Line.java\n@@ -84,7 +84,9 @@ public void reset(final Vector3D p1, final Vector3D p2) throws MathIllegalArgume\n      * @return a new instance, with reversed direction\n      */\n     public Line revert() {\n-        return new Line(zero, zero.subtract(direction));\n+        final Line reverted = new Line(this);\n+        reverted.direction = reverted.direction.negate();\n+        return reverted;\n     }\n \n     /** Get the normalized direction vector.\n", 
+  "project": "commons-math", 
+  "linesAdd": 3, 
+  "jira_id": "938", 
+  "nb_skipped": 4, 
+  "commit": "73605560", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

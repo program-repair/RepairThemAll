@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 581, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.memory.MemoryNodeBuilderTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\nindex e514790f18..fac27d237e 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\n@@ -188,20 +188,19 @@ private MutableNodeState getWriteState(String name) {\n     }\n \n     /**\n-     * Determine whether this child has been removed.\n+     * Determine whether this child exists.\n      * Assumes {@code read()}, {@code write()} needs not be called.\n-     * @return  {@code true} iff this child has been removed\n+     * @return  {@code true} iff this child exists\n      */\n-    private boolean removed() {\n-        return !isRoot() && parent.writeState != null &&\n-                parent.hasBaseState(name) && !parent.writeState.hasChildNode(name);\n+    private boolean exists() {\n+        return isRoot() || parent.writeState == null || parent.writeState.hasChildNode(name);\n     }\n \n     @Nonnull\n     private NodeState read() {\n         if (revision != root.revision) {\n             assert(!isRoot()); // root never gets here since revision == root.revision\n-            checkState(!removed(), \"This node has already been removed\");\n+            checkState(exists(), \"This node has already been removed\");\n             parent.read();\n \n             // The builder could have been reset, need to re-get base state\n@@ -231,7 +230,7 @@ private MutableNodeState write() {\n     private MutableNodeState write(long newRevision, boolean skipRemovedCheck) {\n         // make sure that all revision numbers up to the root gets updated\n         if (!isRoot()) {\n-            checkState(skipRemovedCheck || !removed());\n+            checkState(skipRemovedCheck || exists());\n             parent.write(newRevision, skipRemovedCheck);\n         }\n \n@@ -243,7 +242,7 @@ private MutableNodeState write(long newRevision, boolean skipRemovedCheck) {\n \n             writeState = parent.getWriteState(name);\n             if (writeState == null) {\n-                if (removed()) {\n+                if (!exists()) {\n                     writeState = new MutableNodeState(null);\n                 }\n                 else {\n@@ -385,7 +384,7 @@ public NodeBuilder setNode(String name, NodeState state) {\n         MutableNodeState childState = getWriteState(name);\n         if (childState == null) {\n             writeState.nodes.remove(name);\n-            childState = createChildBuilder(name).write();\n+            childState = createChildBuilder(name).write(root.revision + 1, true);\n         }\n         childState.reset(state);\n \n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 8, 
+  "jira_id": "614", 
+  "nb_skipped": 8, 
+  "commit": "6feacf6b", 
+  "nb_failure": 2, 
+  "linesRem": 9
+}

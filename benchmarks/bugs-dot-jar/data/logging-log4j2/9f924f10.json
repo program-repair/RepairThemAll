@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 919, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.logging.log4j.core.config.properties.PropertiesConfigurationRootLoggerOnlyTest"
+  ], 
+  "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/config/properties/PropertiesConfigurationFactory.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/config/properties/PropertiesConfigurationFactory.java\nindex 50f928585..27644d8e5 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/config/properties/PropertiesConfigurationFactory.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/config/properties/PropertiesConfigurationFactory.java\n@@ -130,7 +130,7 @@ public PropertiesConfiguration getConfiguration(ConfigurationSource source) {\n             }\n         }\n         String loggerProp = properties.getProperty(\"loggers\");\n-        if (appenderProp != null) {\n+        if (loggerProp != null) {\n             String[] loggerNames = loggerProp.split(\",\");\n             for (String loggerName : loggerNames) {\n                 String name = loggerName.trim();\n@@ -343,7 +343,6 @@ private LayoutComponentBuilder createLayout(ConfigurationBuilder<PropertiesConfi\n         return componentBuilder;\n     }\n \n-    @SuppressWarnings({\"unchecked\", \"rawtypes\"})\n     private void processRemainingProperties(ComponentBuilder<?> builder, String name, Properties properties) {\n         while (properties.size() > 0) {\n             String propertyName = properties.stringPropertyNames().iterator().next();\n", 
+  "project": "logging-log4j2", 
+  "linesAdd": 1, 
+  "jira_id": "1153", 
+  "nb_skipped": 3, 
+  "commit": "9f924f10", 
+  "nb_failure": 0, 
+  "linesRem": 2
+}

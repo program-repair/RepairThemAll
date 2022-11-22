@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 74, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.maven.profiles.DefaultProfileManagerTest"
+  ], 
+  "patch": "diff --git a/maven-project/src/main/java/org/apache/maven/profiles/activation/OperatingSystemProfileActivator.java b/maven-project/src/main/java/org/apache/maven/profiles/activation/OperatingSystemProfileActivator.java\nindex 72575fe52..7b068e7dc 100644\n--- a/maven-project/src/main/java/org/apache/maven/profiles/activation/OperatingSystemProfileActivator.java\n+++ b/maven-project/src/main/java/org/apache/maven/profiles/activation/OperatingSystemProfileActivator.java\n@@ -36,14 +36,25 @@ public boolean isActive( Profile profile )\n         Activation activation = profile.getActivation();\n         ActivationOS os = activation.getOs();\n \n-        boolean hasNonNull = ensureAtLeastOneNonNull( os );\n+        boolean result = ensureAtLeastOneNonNull( os );\n \n-        boolean isFamily = determineFamilyMatch( os.getFamily() );\n-        boolean isName = determineNameMatch( os.getName() );\n-        boolean isArch = determineArchMatch( os.getArch() );\n-        boolean isVersion = determineVersionMatch( os.getVersion() );\n-        \n-        return hasNonNull && isFamily && isName && isArch && isVersion;\n+        if ( result && os.getFamily() != null )\n+        {\n+            result = determineFamilyMatch( os.getFamily() );\n+        }\n+        if ( result && os.getName() != null )\n+        {\n+            result = determineNameMatch( os.getName() );\n+        }\n+        if ( result && os.getArch() != null )\n+        {\n+            result = determineArchMatch( os.getArch() );\n+        }\n+        if ( result && os.getVersion() != null )\n+        {\n+            result = determineVersionMatch( os.getVersion() );\n+        }\n+        return result;\n     }\n \n     private boolean ensureAtLeastOneNonNull( ActivationOS os )\n", 
+  "project": "maven", 
+  "linesAdd": 18, 
+  "jira_id": "1509", 
+  "nb_skipped": 0, 
+  "commit": "4e955c05", 
+  "nb_failure": 0, 
+  "linesRem": 7
+}

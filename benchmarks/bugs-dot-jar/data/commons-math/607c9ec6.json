@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 3751, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math3.linear.RealVectorTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math3/linear/RealVector.java b/src/main/java/org/apache/commons/math3/linear/RealVector.java\nindex 89611c34c..f05ea4d77 100644\n--- a/src/main/java/org/apache/commons/math3/linear/RealVector.java\n+++ b/src/main/java/org/apache/commons/math3/linear/RealVector.java\n@@ -642,27 +642,20 @@ public RealVector mapDivideToSelf(double d){\n      * @return the matrix outer product between this instance and {@code v}.\n      */\n     public RealMatrix outerProduct(RealVector v) {\n-        RealMatrix product;\n+        final int m = this.getDimension();\n+        final int n = v.getDimension();\n+        final RealMatrix product;\n         if (v instanceof SparseRealVector || this instanceof SparseRealVector) {\n-            product = new OpenMapRealMatrix(this.getDimension(),\n-                                            v.getDimension());\n+            product = new OpenMapRealMatrix(m, n);\n         } else {\n-            product = new Array2DRowRealMatrix(this.getDimension(),\n-                                               v.getDimension());\n+            product = new Array2DRowRealMatrix(m, n);\n         }\n-        Iterator<Entry> thisIt = sparseIterator();\n-        while (thisIt.hasNext()) {\n-            final Entry thisE = thisIt.next();\n-            Iterator<Entry> otherIt = v.sparseIterator();\n-            while (otherIt.hasNext()) {\n-                final Entry otherE = otherIt.next();\n-                product.setEntry(thisE.getIndex(), otherE.getIndex(),\n-                                 thisE.getValue() * otherE.getValue());\n+        for (int i = 0; i < m; i++) {\n+            for (int j = 0; j < n; j++) {\n+                product.setEntry(i, j, this.getEntry(i) * v.getEntry(j));\n             }\n         }\n-\n         return product;\n-\n     }\n \n     /**\n", 
+  "project": "commons-math", 
+  "linesAdd": 8, 
+  "jira_id": "812", 
+  "nb_skipped": 3, 
+  "commit": "607c9ec6", 
+  "nb_failure": 2, 
+  "linesRem": 15
+}

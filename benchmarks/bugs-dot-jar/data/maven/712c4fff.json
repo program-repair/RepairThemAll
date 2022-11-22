@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 237, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.maven.plugin.PluginManagerTest"
+  ], 
+  "patch": "diff --git a/maven-core/src/main/java/org/apache/maven/plugin/DefaultPluginDescriptorCache.java b/maven-core/src/main/java/org/apache/maven/plugin/DefaultPluginDescriptorCache.java\nindex 96b82740b..8bb69095e 100644\n--- a/maven-core/src/main/java/org/apache/maven/plugin/DefaultPluginDescriptorCache.java\n+++ b/maven-core/src/main/java/org/apache/maven/plugin/DefaultPluginDescriptorCache.java\n@@ -96,6 +96,8 @@ protected static PluginDescriptor clone( PluginDescriptor original )\n             clone.setId( original.getId() );\n             clone.setIsolatedRealm( original.isIsolatedRealm() );\n             clone.setSource( original.getSource() );\n+\n+            clone.setDependencies( original.getDependencies() );\n         }\n \n         return clone;\n", 
+  "project": "maven", 
+  "linesAdd": 2, 
+  "jira_id": "5212", 
+  "nb_skipped": 0, 
+  "commit": "712c4fff", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

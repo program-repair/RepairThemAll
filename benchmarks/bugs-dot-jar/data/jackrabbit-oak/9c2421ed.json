@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1802, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": true
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.document.LastRevRecoveryAgentTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/MissingLastRevSeeker.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/MissingLastRevSeeker.java\nindex eef7c8234b..7659ec4bad 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/MissingLastRevSeeker.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/MissingLastRevSeeker.java\n@@ -94,6 +94,7 @@ public boolean acquireRecoveryLock(int clusterId){\n     public void releaseRecoveryLock(int clusterId){\n         UpdateOp update = new UpdateOp(Integer.toString(clusterId), true);\n         update.set(ClusterNodeInfo.REV_RECOVERY_LOCK, null);\n+        update.set(ClusterNodeInfo.STATE, null);\n         store.createOrUpdate(Collection.CLUSTER_NODES, update);\n     }\n \n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 1, 
+  "jira_id": "1883", 
+  "nb_skipped": 9, 
+  "commit": "9c2421ed", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

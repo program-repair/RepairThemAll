@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 187, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": true
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.util.io.ConnectionsTest"
+  ], 
+  "patch": "diff --git a/wicket-util/src/main/java/org/apache/wicket/util/io/Connections.java b/wicket-util/src/main/java/org/apache/wicket/util/io/Connections.java\nindex 5336af676f..167cefd71c 100644\n--- a/wicket-util/src/main/java/org/apache/wicket/util/io/Connections.java\n+++ b/wicket-util/src/main/java/org/apache/wicket/util/io/Connections.java\n@@ -57,7 +57,6 @@ public static Time getLastModified(final URL url) throws IOException\n \r\n \t\t// otherwise open the url and proceed\r\n \t\tURLConnection connection = url.openConnection();\r\n-\t\tconnection.setDoInput(false);\r\n \r\n \t\tfinal long milliseconds;\r\n \r\n", 
+  "project": "wicket", 
+  "linesAdd": 0, 
+  "jira_id": "5838", 
+  "nb_skipped": 2, 
+  "commit": "e93fdd5a", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

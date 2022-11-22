@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1393, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.validation.validator.RangeValidatorTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/validation/validator/AbstractRangeValidator.java b/wicket-core/src/main/java/org/apache/wicket/validation/validator/AbstractRangeValidator.java\nindex babc170a5b..f6ba851cda 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/validation/validator/AbstractRangeValidator.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/validation/validator/AbstractRangeValidator.java\n@@ -109,7 +109,8 @@ public void validate(IValidatable<V> validatable)\n \t\tfinal R max = getMaximum();\r\n \t\tif ((min != null && value.compareTo(min) < 0) || (max != null && value.compareTo(max) > 0))\r\n \t\t{\r\n-\t\t\tValidationError error = new ValidationError(this, getMode().getVariation());\r\n+\t\t\tMode mode = getMode();\r\n+\t\t\tValidationError error = new ValidationError(this, mode.getVariation());\r\n \t\t\tif (min != null)\r\n \t\t\t{\r\n \t\t\t\terror.setVariable(\"minimum\", min);\r\n@@ -118,6 +119,10 @@ public void validate(IValidatable<V> validatable)\n \t\t\t{\r\n \t\t\t\terror.setVariable(\"maximum\", max);\r\n \t\t\t}\r\n+\t\t\tif (mode == Mode.EXACT)\r\n+\t\t\t{\r\n+\t\t\t\terror.setVariable(\"exact\", max);\r\n+\t\t\t}\r\n \t\t\tvalidatable.error(decorate(error, validatable));\r\n \t\t}\r\n \t}\r\n", 
+  "project": "wicket", 
+  "linesAdd": 6, 
+  "jira_id": "4717", 
+  "nb_skipped": 5, 
+  "commit": "6a1b2f61", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

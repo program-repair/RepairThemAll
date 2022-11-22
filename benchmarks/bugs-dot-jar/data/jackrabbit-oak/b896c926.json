@@ -1,0 +1,22 @@
+{
+  "files": 1, 
+  "nb_test": 705, 
+  "nb_error": 23, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.security.authorization.AccessControlManagerImplTest", 
+    "org.apache.jackrabbit.oak.namepath.NamePathMapperImplTest", 
+    "org.apache.jackrabbit.oak.spi.security.authorization.restriction.RestrictionDefinitionImplTest", 
+    "org.apache.jackrabbit.oak.spi.security.authorization.restriction.RestrictionImplTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/namepath/LocalNameMapper.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/namepath/LocalNameMapper.java\nindex f17a69b790..eb558c555a 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/namepath/LocalNameMapper.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/namepath/LocalNameMapper.java\n@@ -40,8 +40,8 @@ private static boolean isExpandedName(String name) {\n     @Override @CheckForNull\n     public String getJcrName(String oakName) {\n         checkNotNull(oakName);\n-        checkArgument(!oakName.startsWith(\":\")); // hidden name\n-        checkArgument(isExpandedName(oakName));  // expanded name\n+        checkArgument(!oakName.startsWith(\":\"), oakName); // hidden name\n+        checkArgument(!isExpandedName(oakName), oakName); // expanded name\n \n         if (hasSessionLocalMappings()) {\n             int colon = oakName.indexOf(':');\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 2, 
+  "jira_id": "509", 
+  "nb_skipped": 1, 
+  "commit": "b896c926", 
+  "nb_failure": 0, 
+  "linesRem": 2
+}

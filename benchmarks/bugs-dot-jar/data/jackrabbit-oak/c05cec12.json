@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1720, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.namepath.NamePathMapperImplTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/namepath/NamePathMapperImpl.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/namepath/NamePathMapperImpl.java\nindex a257e6904a..910896626d 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/namepath/NamePathMapperImpl.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/namepath/NamePathMapperImpl.java\n@@ -256,6 +256,9 @@ private boolean needsFullMapping(String path) {\n             switch (path.charAt(i)) {\n                 case '{': // possibly an expanded name\n                 case '[': // possibly an index\n+                case ']': // illegal character if not part of index\n+                case '|': // illegal character\n+                case '*': // illegal character\n                     return true;\n                 case '.':\n                     if (i == slash + 1) {\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 3, 
+  "jira_id": "1168", 
+  "nb_skipped": 8, 
+  "commit": "c05cec12", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

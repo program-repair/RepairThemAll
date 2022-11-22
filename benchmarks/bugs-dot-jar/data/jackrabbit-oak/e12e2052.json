@@ -1,0 +1,20 @@
+{
+  "files": 1, 
+  "nb_test": 261, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.index.lucene.LucenePropertyIndexTest", 
+    "org.apache.jackrabbit.oak.plugins.index.lucene.IndexDefinitionTest"
+  ], 
+  "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexDefinition.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexDefinition.java\nindex 465ff12d1a..8642545ec7 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexDefinition.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexDefinition.java\n@@ -748,6 +748,12 @@ public boolean isAggregated(String nodePath) {\n          *         <code>false</code> otherwise.\n          */\n         public boolean appliesTo(Tree state) {\n+            for (String mixinName : getMixinTypeNames(state)){\n+                if (nodeTypeName.equals(mixinName)){\n+                    return true;\n+                }\n+            }\n+\n             if (!nodeTypeName.equals(getPrimaryTypeName(state))) {\n                 return false;\n             }\n@@ -1242,7 +1248,7 @@ private static String getPrimaryTypeName(Tree state) {\n     }\n \n     private static Iterable<String> getMixinTypeNames(Tree tree) {\n-        PropertyState property = tree.getProperty(JcrConstants.JCR_MIMETYPE);\n+        PropertyState property = tree.getProperty(JcrConstants.JCR_MIXINTYPES);\n         return property != null ? property.getValue(Type.NAMES) : Collections.<String>emptyList();\n     }\n \n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 7, 
+  "jira_id": "3318", 
+  "nb_skipped": 4, 
+  "commit": "e12e2052", 
+  "nb_failure": 3, 
+  "linesRem": 1
+}

@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 369, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.index.lucene.LucenePropertyIndexTest"
+  ], 
+  "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditor.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditor.java\nindex 447e41f779..44408aa0bc 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditor.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditor.java\n@@ -291,7 +291,7 @@ private Document makeDocument(String path, NodeState state, boolean isUpdate) th\n                 dirty |= addTypedOrderedFields(fields, property, pname, pd);\n             }\n \n-            dirty |= indexProperty(path, fields, state, property, pname, false, pd);\n+            dirty |= indexProperty(path, fields, state, property, pname, pd);\n         }\n \n         dirty |= indexAggregates(path, fields, state);\n@@ -335,7 +335,6 @@ private boolean indexProperty(String path,\n                                   NodeState state,\n                                   PropertyState property,\n                                   String pname,\n-                                  boolean aggregateMode,\n                                   PropertyDefinition pd) throws CommitFailedException {\n         boolean includeTypeForFullText = indexingRule.includePropertyType(property.getType().tag());\n         if (Type.BINARY.tag() == property.getType().tag()\n@@ -358,7 +357,7 @@ private boolean indexProperty(String path,\n                         fields.add(newPropertyField(analyzedPropName, value, !pd.skipTokenization(pname), pd.stored));\n                     }\n \n-                    if (pd.nodeScopeIndex && !aggregateMode) {\n+                    if (pd.nodeScopeIndex) {\n                         Field field = newFulltextField(value);\n                         field.setBoost(pd.boost);\n                         fields.add(field);\n@@ -533,7 +532,7 @@ public void onResult(Aggregate.PropertyIncludeResult result) throws CommitFailed\n                             result.propertyPath, result.pd);\n                 }\n                 dirty |= indexProperty(path, fields, state, result.propertyState,\n-                        result.propertyPath, true, result.pd);\n+                        result.propertyPath, result.pd);\n \n                 if (dirty) {\n                     dirtyFlag.set(true);\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 3, 
+  "jira_id": "2330", 
+  "nb_skipped": 1, 
+  "commit": "408a566e", 
+  "nb_failure": 1, 
+  "linesRem": 4
+}

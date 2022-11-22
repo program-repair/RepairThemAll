@@ -1,0 +1,20 @@
+{
+  "files": 1, 
+  "nb_test": 4322, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.processor.aggregator.AggregateTimeoutWithExecutorServiceTest", 
+    "org.apache.camel.builder.NotifyBuilderWhenDoneByIndexTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/builder/NotifyBuilder.java b/camel-core/src/main/java/org/apache/camel/builder/NotifyBuilder.java\nindex 547efaba79..d5a346c721 100644\n--- a/camel-core/src/main/java/org/apache/camel/builder/NotifyBuilder.java\n+++ b/camel-core/src/main/java/org/apache/camel/builder/NotifyBuilder.java\n@@ -444,7 +444,7 @@ public boolean onExchangeCreated(Exchange exchange) {\n             @Override\n             public boolean onExchangeCompleted(Exchange exchange) {\n                 if (exchange.getExchangeId().equals(id)) {\n-                    done.set(false);\n+                    done.set(true);\n                 }\n                 return true;\n             }\n", 
+  "project": "camel", 
+  "linesAdd": 1, 
+  "jira_id": "5707", 
+  "nb_skipped": 1, 
+  "commit": "3f70d612", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

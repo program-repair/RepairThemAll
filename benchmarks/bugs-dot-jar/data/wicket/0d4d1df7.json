@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1497, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.session.BindSessionOnRedirectTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/request/handler/render/WebPageRenderer.java b/wicket-core/src/main/java/org/apache/wicket/request/handler/render/WebPageRenderer.java\nindex e25142cfdd..c3899ec82f 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/handler/render/WebPageRenderer.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/handler/render/WebPageRenderer.java\n@@ -16,9 +16,14 @@\n  */\n package org.apache.wicket.request.handler.render;\n \n+import java.util.List;\n+\n import org.apache.wicket.Application;\n+import org.apache.wicket.Session;\n import org.apache.wicket.core.request.handler.RenderPageRequestHandler;\n import org.apache.wicket.core.request.handler.RenderPageRequestHandler.RedirectPolicy;\n+import org.apache.wicket.feedback.FeedbackCollector;\n+import org.apache.wicket.feedback.FeedbackMessage;\n import org.apache.wicket.protocol.http.BufferedWebResponse;\n import org.apache.wicket.protocol.http.WebApplication;\n import org.apache.wicket.request.IRequestHandler;\n@@ -145,11 +150,28 @@ protected BufferedWebResponse renderPage(Url targetUrl, RequestCycle requestCycl\n \t */\n \tprotected void redirectTo(Url url, RequestCycle requestCycle)\n \t{\n+\t\tbindSessionIfNeeded();\n+\n \t\tWebResponse response = (WebResponse)requestCycle.getResponse();\n \t\tString relativeUrl = requestCycle.getUrlRenderer().renderUrl(url);\n \t\tresponse.sendRedirect(relativeUrl);\n \t}\n \n+\t/**\n+\t * Bind the session if there are feedback messages pending.\n+\t * https://issues.apache.org/jira/browse/WICKET-5165\n+\t */\n+\tprivate void bindSessionIfNeeded()\n+\t{\n+\t\t// check for session feedback messages only\n+\t\tFeedbackCollector collector = new FeedbackCollector();\n+\t\tList<FeedbackMessage> feedbackMessages = collector.collect();\n+\t\tif (feedbackMessages.size() > 0)\n+\t\t{\n+\t\t\tSession.get().bind();\n+\t\t}\n+\t}\n+\n \t/*\n \t * TODO: simplify the code below. See WICKET-3347\n \t */\n", 
+  "project": "wicket", 
+  "linesAdd": 22, 
+  "jira_id": "5165", 
+  "nb_skipped": 3, 
+  "commit": "0d4d1df7", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

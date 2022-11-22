@@ -1,0 +1,19 @@
+{
+  "files": 3, 
+  "nb_test": 3646, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math3.linear.ArrayRealVectorTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math3/linear/ArrayRealVector.java b/src/main/java/org/apache/commons/math3/linear/ArrayRealVector.java\nindex ee67e03b2..ef02a750f 100644\n--- a/src/main/java/org/apache/commons/math3/linear/ArrayRealVector.java\n+++ b/src/main/java/org/apache/commons/math3/linear/ArrayRealVector.java\n@@ -455,16 +455,8 @@ public double dotProduct(RealVector v) {\n                 dot += data[i] * vData[i];\n             }\n             return dot;\n-        } else {\n-            checkVectorDimensions(v);\n-            double dot = 0;\n-            Iterator<Entry> it = v.sparseIterator();\n-            while (it.hasNext()) {\n-                final Entry e = it.next();\n-                dot += data[e.getIndex()] * e.getValue();\n-            }\n-            return dot;\n         }\n+        return super.dotProduct(v);\n     }\n \n     /** {@inheritDoc} */\ndiff --git a/src/main/java/org/apache/commons/math3/linear/OpenMapRealVector.java b/src/main/java/org/apache/commons/math3/linear/OpenMapRealVector.java\nindex 49e22c264..b3e04be60 100644\n--- a/src/main/java/org/apache/commons/math3/linear/OpenMapRealVector.java\n+++ b/src/main/java/org/apache/commons/math3/linear/OpenMapRealVector.java\n@@ -304,38 +304,6 @@ public OpenMapRealVector copy() {\n         return new OpenMapRealVector(this);\n     }\n \n-    /**\n-     * Optimized method to compute the dot product with an OpenMapRealVector.\n-     * It iterates over the smallest of the two.\n-     *\n-     * @param v Cector to compute the dot product with.\n-     * @return the dot product of {@code this} and {@code v}.\n-     * @throws org.apache.commons.math3.exception.DimensionMismatchException\n-     * if the dimensions do not match.\n-     */\n-    public double dotProduct(OpenMapRealVector v) {\n-        checkVectorDimensions(v.getDimension());\n-        boolean thisIsSmaller  = entries.size() < v.entries.size();\n-        Iterator iter = thisIsSmaller  ? entries.iterator() : v.entries.iterator();\n-        OpenIntToDoubleHashMap larger = thisIsSmaller  ? v.entries : entries;\n-        double d = 0;\n-        while(iter.hasNext()) {\n-            iter.advance();\n-            d += iter.value() * larger.get(iter.key());\n-        }\n-        return d;\n-    }\n-\n-    /** {@inheritDoc} */\n-    @Override\n-    public double dotProduct(RealVector v) {\n-        if(v instanceof OpenMapRealVector) {\n-            return dotProduct((OpenMapRealVector)v);\n-        } else {\n-            return super.dotProduct(v);\n-        }\n-    }\n-\n     /** {@inheritDoc} */\n     @Override\n     public OpenMapRealVector ebeDivide(RealVector v) {\ndiff --git a/src/main/java/org/apache/commons/math3/linear/RealVector.java b/src/main/java/org/apache/commons/math3/linear/RealVector.java\nindex 5dc8ddfa6..89611c34c 100644\n--- a/src/main/java/org/apache/commons/math3/linear/RealVector.java\n+++ b/src/main/java/org/apache/commons/math3/linear/RealVector.java\n@@ -303,10 +303,9 @@ public RealVector mapAddToSelf(double d) {\n     public double dotProduct(RealVector v) {\n         checkVectorDimensions(v);\n         double d = 0;\n-        Iterator<Entry> it = sparseIterator();\n-        while (it.hasNext()) {\n-            final Entry e = it.next();\n-            d += e.getValue() * v.getEntry(e.getIndex());\n+        final int n = getDimension();\n+        for (int i = 0; i < n; i++) {\n+            d += getEntry(i) * v.getEntry(i);\n         }\n         return d;\n     }\n", 
+  "project": "commons-math", 
+  "linesAdd": 4, 
+  "jira_id": "812", 
+  "nb_skipped": 7, 
+  "commit": "6eb46555", 
+  "nb_failure": 1, 
+  "linesRem": 45
+}

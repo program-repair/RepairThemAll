@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 702, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.accumulo.core.client.ZooKeeperInstanceTest"
+  ], 
+  "patch": "diff --git a/core/src/main/java/org/apache/accumulo/core/client/ClientConfiguration.java b/core/src/main/java/org/apache/accumulo/core/client/ClientConfiguration.java\nindex b64fab4b7..17ad10b8f 100644\n--- a/core/src/main/java/org/apache/accumulo/core/client/ClientConfiguration.java\n+++ b/core/src/main/java/org/apache/accumulo/core/client/ClientConfiguration.java\n@@ -107,6 +107,8 @@ public static ClientProperty getPropertyByKey(String key) {\n \n   public ClientConfiguration(List<? extends Configuration> configs) {\n     super(configs);\n+    // Don't do list interpolation\n+    this.setListDelimiter('\\0');\n   }\n \n   /**\n", 
+  "project": "accumulo", 
+  "linesAdd": 2, 
+  "jira_id": "3218", 
+  "nb_skipped": 1, 
+  "commit": "1b35d263", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

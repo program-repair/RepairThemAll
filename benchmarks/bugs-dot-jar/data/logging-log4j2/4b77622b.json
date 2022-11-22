@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 673, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": true
+  }, 
+  "failing_tests": [
+    "org.apache.logging.log4j.core.config.XIncludeTest"
+  ], 
+  "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/config/xml/XmlConfiguration.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/config/xml/XmlConfiguration.java\nindex eadcbbccc..ca72c098f 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/config/xml/XmlConfiguration.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/config/xml/XmlConfiguration.java\n@@ -131,6 +131,7 @@ public XmlConfiguration(final ConfigurationSource configSource) {\n                 configStream.close();\n             }\n             final InputSource source = new InputSource(new ByteArrayInputStream(buffer));\n+            source.setSystemId(configSource.getLocation());\n             final Document document = newDocumentBuilder().parse(source);\n             rootElement = document.getDocumentElement();\n             final Map<String, String> attrs = processAttributes(rootNode, rootElement);\n", 
+  "project": "logging-log4j2", 
+  "linesAdd": 1, 
+  "jira_id": "742", 
+  "nb_skipped": 2, 
+  "commit": "4b77622b", 
+  "nb_failure": 2, 
+  "linesRem": 0
+}

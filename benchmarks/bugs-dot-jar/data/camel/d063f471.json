@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 5297, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.management.ManagedInflightStatisticsTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/management/mbean/ManagedRoute.java b/camel-core/src/main/java/org/apache/camel/management/mbean/ManagedRoute.java\nindex d31e4e551c..c4b6d85d67 100644\n--- a/camel-core/src/main/java/org/apache/camel/management/mbean/ManagedRoute.java\n+++ b/camel-core/src/main/java/org/apache/camel/management/mbean/ManagedRoute.java\n@@ -417,8 +417,8 @@ public String getOldestInflightExchangeId() {\n \n     @Override\n     public void init(ManagementStrategy strategy) {\n-        super.init(strategy);\n         exchangesInFlightStartTimestamps.clear();\n+        super.init(strategy);\n     }\n \n     @Override\n@@ -438,14 +438,23 @@ public synchronized void completedExchange(Exchange exchange, long time) {\n         super.completedExchange(exchange, time);\n     }\n \n+    @Override\n+    public synchronized void failedExchange(Exchange exchange) {\n+        InFlightKey key = exchangesInFlightKeys.remove(exchange.getExchangeId());\n+        if (key != null) {\n+            exchangesInFlightStartTimestamps.remove(key);\n+        }\n+        super.failedExchange(exchange);\n+    }\n+\n     private static class InFlightKey implements Comparable<InFlightKey> {\n \n         private final Long timeStamp;\n         private final String exchangeId;\n \n         InFlightKey(Long timeStamp, String exchangeId) {\n-            this.exchangeId = exchangeId;\n             this.timeStamp = timeStamp;\n+            this.exchangeId = exchangeId;\n         }\n \n         @Override\n", 
+  "project": "camel", 
+  "linesAdd": 11, 
+  "jira_id": "8626", 
+  "nb_skipped": 4, 
+  "commit": "d063f471", 
+  "nb_failure": 1, 
+  "linesRem": 2
+}

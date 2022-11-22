@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1500, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.request.resource.PackageResourceReferenceTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/request/resource/PackageResourceReference.java b/wicket-core/src/main/java/org/apache/wicket/request/resource/PackageResourceReference.java\nindex cc7273173d..710eef26dc 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/resource/PackageResourceReference.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/resource/PackageResourceReference.java\n@@ -207,7 +207,14 @@ protected String getMinifiedName()\n \t\tif (idxOfExtension > -1)\n \t\t{\n \t\t\tString extension = name.substring(idxOfExtension);\n-\t\t\tminifiedName = name.substring(0, name.length() - extension.length() + 1) + \"min\" + extension;\n+            final String baseName = name.substring(0, name.length() - extension.length() + 1);\n+            if (!\".min\".equals(extension) && !baseName.endsWith(\".min.\"))\n+            {\n+                minifiedName = baseName + \"min\" + extension;\n+            } else\n+            {\n+                minifiedName = name;\n+            }\n \t\t} else\n \t\t{\n \t\t\tminifiedName = name + \".min\";\n", 
+  "project": "wicket", 
+  "linesAdd": 8, 
+  "jira_id": "5251", 
+  "nb_skipped": 3, 
+  "commit": "6ce34ccf", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

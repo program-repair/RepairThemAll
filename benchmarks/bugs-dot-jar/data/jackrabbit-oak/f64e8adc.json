@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1461, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.index.property.PropertyIndexTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/property/strategy/ContentMirrorStoreStrategy.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/property/strategy/ContentMirrorStoreStrategy.java\nindex fa01dc5840..3b0bf7b448 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/property/strategy/ContentMirrorStoreStrategy.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/property/strategy/ContentMirrorStoreStrategy.java\n@@ -344,19 +344,6 @@ public void remove() {\n          */\n         int depth;\n \n-        /**\n-         * The total number of child nodes per node, for those nodes that were\n-         * fully traversed and do have child nodes. This value is used to\n-         * calculate the average width.\n-         */\n-        long widthTotal;\n-        \n-        /**\n-         * The number of nodes that were fully traversed and do have child\n-         * nodes. This value is used to calculate the average width.\n-         */\n-        int widthCount;\n-        \n         /**\n          * The sum of the depth of all matching nodes. This value is used to\n          * calculate the average depth.\n@@ -375,20 +362,12 @@ public void visit(NodeState state) {\n             }\n             if (count < maxCount) {\n                 depth++;\n-                int width = 0;\n-                boolean finished = true;\n                 for (ChildNodeEntry entry : state.getChildNodeEntries()) {\n                     if (count >= maxCount) {\n-                        finished = false;\n                         break;\n                     }\n-                    width++;\n                     visit(entry.getNodeState());\n                 }\n-                if (finished && width > 0) {\n-                    widthTotal += width;\n-                    widthCount++;\n-                }\n                 depth--;\n             }\n         }\n@@ -415,15 +394,9 @@ int getEstimatedCount() {\n                 return count;\n             }\n             double averageDepth = (int) (depthTotal / count);\n-            double averageWidth = 2;\n-            if (widthCount > 0) {\n-                averageWidth = (int) (widthTotal / widthCount);\n-            }\n-            // calculate with an average width of at least 2\n-            averageWidth = Math.max(2, averageWidth);\n-            // the number of estimated matches is calculated as the\n-            // of a estimated\n-            long estimatedNodes = (long) Math.pow(averageWidth, 2 * averageDepth);\n+            // the number of estimated matches is higher\n+            // the higher the average depth of the first hits\n+            long estimatedNodes = (long) (count * Math.pow(1.1, averageDepth));\n             estimatedNodes = Math.min(estimatedNodes, Integer.MAX_VALUE);\n             return Math.max(count, (int) estimatedNodes);\n         }\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 3, 
+  "jira_id": "1155", 
+  "nb_skipped": 6, 
+  "commit": "f64e8adc", 
+  "nb_failure": 1, 
+  "linesRem": 30
+}

@@ -1,0 +1,19 @@
+{
+  "files": 2, 
+  "nb_test": 1194, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.wicket4066.Wicket4066Test"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/RestartResponseAtInterceptPageException.java b/wicket-core/src/main/java/org/apache/wicket/RestartResponseAtInterceptPageException.java\nindex 1a3187887f..98668ade0e 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/RestartResponseAtInterceptPageException.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/RestartResponseAtInterceptPageException.java\n@@ -165,7 +165,7 @@ static boolean continueToOriginalDestination()\n \t{\n \t\tpublic int getCompatibilityScore(Request request)\n \t\t{\n-\t\t\treturn 0;\n+\t\t\treturn matchedData(request) != null ? Integer.MAX_VALUE : 0;\n \t\t}\n \n \t\tpublic Url mapHandler(IRequestHandler requestHandler)\n@@ -175,10 +175,8 @@ public Url mapHandler(IRequestHandler requestHandler)\n \n \t\tpublic IRequestHandler mapRequest(Request request)\n \t\t{\n-\t\t\tInterceptData data = InterceptData.get();\n+\t\t\tInterceptData data = matchedData(request);\n \t\t\tif (data != null)\n-\t\t\t{\n-\t\t\t\tif (data.originalUrl.equals(request.getOriginalUrl()))\n \t\t\t{\n \t\t\t\tif (data.postParameters.isEmpty() == false &&\n \t\t\t\t\trequest.getPostParameters() instanceof IWritableRequestParameters)\n@@ -192,6 +190,15 @@ public IRequestHandler mapRequest(Request request)\n \t\t\t\t}\n \t\t\t\tInterceptData.clear();\n \t\t\t}\n+\t\t\treturn null;\n+\t\t}\n+\t\t\n+\t\tprivate InterceptData matchedData(Request request)\n+\t\t{\n+\t\t\tInterceptData data = InterceptData.get();\n+\t\t\tif(data != null && data.originalUrl.equals(request.getOriginalUrl()))\n+\t\t\t{\n+\t\t\t\treturn data;\n \t\t\t}\n \t\t\treturn null;\n \t\t}\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/SystemMapper.java b/wicket-core/src/main/java/org/apache/wicket/SystemMapper.java\nindex e0eea63735..7412737dcd 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/SystemMapper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/SystemMapper.java\n@@ -46,12 +46,12 @@\n \tpublic SystemMapper(final Application application)\r\n \t{\r\n \t\tthis.application = application;\r\n-\t\tadd(RestartResponseAtInterceptPageException.MAPPER);\r\n \t\tadd(new PageInstanceMapper());\r\n \t\tadd(new BookmarkableMapper());\r\n \t\tadd(new HomePageMapper(new HomePageProvider<Page>(application)));\r\n \t\tadd(new ResourceReferenceMapper(new PageParametersEncoder(),\r\n \t\t\tnew ParentFolderPlaceholderProvider(application), getResourceCachingStrategy()));\r\n+\t\tadd(RestartResponseAtInterceptPageException.MAPPER);\r\n \t\tadd(new BufferedResponseMapper());\r\n \t}\r\n \r\n", 
+  "project": "wicket", 
+  "linesAdd": 12, 
+  "jira_id": "4066", 
+  "nb_skipped": 2, 
+  "commit": "4d3d1f85", 
+  "nb_failure": 1, 
+  "linesRem": 5
+}

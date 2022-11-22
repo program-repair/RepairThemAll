@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 204, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.segment.CompareAgainstBaseStateTest"
+  ], 
+  "patch": "diff --git a/oak-segment/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentNodeState.java b/oak-segment/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentNodeState.java\nindex cb42af2f07..6df8c3859f 100644\n--- a/oak-segment/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentNodeState.java\n+++ b/oak-segment/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentNodeState.java\n@@ -555,9 +555,11 @@ public boolean compareAgainstBaseState(NodeState base, NodeStateDiff diff) {\n                 }\n             }\n         } else if (beforeChildName != Template.MANY_CHILD_NODES) {\n+            boolean beforeChildStillExists = false;\n             for (ChildNodeEntry entry\n                     : afterTemplate.getChildNodeEntries(afterId)) {\n                 String childName = entry.getName();\n+                beforeChildStillExists |= childName.equals(beforeChildName);\n                 NodeState afterChild = entry.getNodeState();\n                 if (beforeChildName.equals(childName)) {\n                     NodeState beforeChild =\n@@ -577,6 +579,13 @@ public boolean compareAgainstBaseState(NodeState base, NodeStateDiff diff) {\n                     return false;\n                 }\n             }\n+            if (!beforeChildStillExists) {\n+                NodeState beforeChild =\n+                        beforeTemplate.getChildNode(beforeChildName, beforeId);\n+                if (!diff.childNodeDeleted(beforeChildName, beforeChild)) {\n+                    return false;\n+                }\n+            }\n         } else {\n             MapRecord afterMap = afterTemplate.getChildNodeMap(afterId);\n             MapRecord beforeMap = beforeTemplate.getChildNodeMap(beforeId);\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 9, 
+  "jira_id": "4153", 
+  "nb_skipped": 7, 
+  "commit": "9120fd1b", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

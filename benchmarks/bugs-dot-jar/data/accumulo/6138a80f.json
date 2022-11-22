@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 635, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": true
+  }, 
+  "failing_tests": [
+    "org.apache.accumulo.core.file.rfile.RFileTest"
+  ], 
+  "patch": "diff --git a/core/src/main/java/org/apache/accumulo/core/security/crypto/CryptoModuleFactory.java b/core/src/main/java/org/apache/accumulo/core/security/crypto/CryptoModuleFactory.java\nindex 649bfc80a..4d04125a5 100644\n--- a/core/src/main/java/org/apache/accumulo/core/security/crypto/CryptoModuleFactory.java\n+++ b/core/src/main/java/org/apache/accumulo/core/security/crypto/CryptoModuleFactory.java\n@@ -258,6 +258,7 @@ public static CryptoModuleParameters fillParamsObjectFromConfiguration(CryptoMod\n     // Get all the options from the configuration\n     Map<String,String> cryptoOpts = conf.getAllPropertiesWithPrefix(Property.CRYPTO_PREFIX);\n     cryptoOpts.putAll(conf.getAllPropertiesWithPrefix(Property.INSTANCE_PREFIX));\n+    cryptoOpts.remove(Property.INSTANCE_SECRET.getKey());\n     cryptoOpts.put(Property.CRYPTO_BLOCK_STREAM_SIZE.getKey(), Integer.toString((int) conf.getMemoryInBytes(Property.CRYPTO_BLOCK_STREAM_SIZE)));\n \n     return fillParamsObjectFromStringMap(params, cryptoOpts);\n", 
+  "project": "accumulo", 
+  "linesAdd": 1, 
+  "jira_id": "2713", 
+  "nb_skipped": 1, 
+  "commit": "6138a80f", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

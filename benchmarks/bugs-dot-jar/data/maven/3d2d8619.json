@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 252, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.maven.DefaultProjectDependencyGraphTest"
+  ], 
+  "patch": "diff --git a/maven-core/src/main/java/org/apache/maven/DefaultProjectDependencyGraph.java b/maven-core/src/main/java/org/apache/maven/DefaultProjectDependencyGraph.java\nindex 84d2cc51e..4074e584d 100644\n--- a/maven-core/src/main/java/org/apache/maven/DefaultProjectDependencyGraph.java\n+++ b/maven-core/src/main/java/org/apache/maven/DefaultProjectDependencyGraph.java\n@@ -23,6 +23,7 @@\n import java.util.Collection;\n import java.util.HashSet;\n import java.util.List;\n+import java.util.Set;\n \n import org.apache.maven.execution.ProjectDependencyGraph;\n import org.apache.maven.project.DuplicateProjectException;\n@@ -48,7 +49,8 @@\n      * @throws DuplicateProjectException\n      * @throws CycleDetectedException\n      */\n-    public DefaultProjectDependencyGraph( Collection<MavenProject> projects ) throws CycleDetectedException, DuplicateProjectException\n+    public DefaultProjectDependencyGraph( Collection<MavenProject> projects )\n+        throws CycleDetectedException, DuplicateProjectException\n     {\n         this.sorter = new ProjectSorter( projects );\n     }\n@@ -65,14 +67,14 @@ public DefaultProjectDependencyGraph( Collection<MavenProject> projects ) throws\n             throw new IllegalArgumentException( \"project missing\" );\n         }\n \n-        Collection<String> projectIds = new HashSet<String>();\n+        Set<String> projectIds = new HashSet<String>();\n \n         getDownstreamProjects( ProjectSorter.getId( project ), projectIds, transitive );\n \n-        return getProjects( projectIds );\n+        return getSortedProjects( projectIds );\n     }\n \n-    private void getDownstreamProjects( String projectId, Collection<String> projectIds, boolean transitive )\n+    private void getDownstreamProjects( String projectId, Set<String> projectIds, boolean transitive )\n     {\n         for ( String id : sorter.getDependents( projectId ) )\n         {\n@@ -90,11 +92,11 @@ private void getDownstreamProjects( String projectId, Collection<String> project\n             throw new IllegalArgumentException( \"project missing\" );\n         }\n \n-        Collection<String> projectIds = new HashSet<String>();\n+        Set<String> projectIds = new HashSet<String>();\n \n         getUpstreamProjects( ProjectSorter.getId( project ), projectIds, transitive );\n \n-        return getProjects( projectIds );\n+        return getSortedProjects( projectIds );\n     }\n \n     private void getUpstreamProjects( String projectId, Collection<String> projectIds, boolean transitive )\n@@ -108,21 +110,19 @@ private void getUpstreamProjects( String projectId, Collection<String> projectId\n         }\n     }\n \n-    private List<MavenProject> getProjects( Collection<String> projectIds )\n+    private List<MavenProject> getSortedProjects( Set<String> projectIds )\n     {\n-        List<MavenProject> projects = new ArrayList<MavenProject>( projectIds.size() );\n+        List<MavenProject> result = new ArrayList<MavenProject>( projectIds.size() );\n \n-        for ( String projectId : projectIds )\n+        for ( MavenProject mavenProject : sorter.getSortedProjects() )\n         {\n-            MavenProject project = sorter.getProjectMap().get( projectId );\n-\n-            if ( project != null )\n+            if ( projectIds.contains( ProjectSorter.getId( mavenProject ) ) )\n             {\n-                projects.add( project );\n+                result.add( mavenProject );\n             }\n         }\n \n-        return projects;\n+        return result;\n     }\n \n     @Override\n", 
+  "project": "maven", 
+  "linesAdd": 14, 
+  "jira_id": "5687", 
+  "nb_skipped": 0, 
+  "commit": "3d2d8619", 
+  "nb_failure": 4, 
+  "linesRem": 14
+}

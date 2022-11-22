@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 22, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.maven.artifact.versioning.DefaultArtifactVersionTest"
+  ], 
+  "patch": "diff --git a/maven-artifact/src/main/java/org/apache/maven/artifact/versioning/DefaultArtifactVersion.java b/maven-artifact/src/main/java/org/apache/maven/artifact/versioning/DefaultArtifactVersion.java\nindex 745afddad..6a6ab7439 100644\n--- a/maven-artifact/src/main/java/org/apache/maven/artifact/versioning/DefaultArtifactVersion.java\n+++ b/maven-artifact/src/main/java/org/apache/maven/artifact/versioning/DefaultArtifactVersion.java\n@@ -21,6 +21,7 @@\n \n import java.util.StringTokenizer;\n import java.util.regex.Pattern;\n+import java.util.NoSuchElementException;\n \n /**\n  * Default implementation of artifact versioning.\n@@ -204,6 +205,7 @@ public final void parseVersion( String version )\n \n     private static Integer getNextIntegerToken( StringTokenizer tok )\n     {\n+        try {\n             String s = tok.nextToken();\n             if ( ( s.length() > 1 ) && s.startsWith( \"0\" ) )\n             {\n@@ -211,6 +213,11 @@ private static Integer getNextIntegerToken( StringTokenizer tok )\n             }\n             return Integer.valueOf( s );\n         } \n+        catch( NoSuchElementException e )\n+        {\n+            throw new NumberFormatException( \"Number is invalid\" );\n+        }\n+    }\n \n     @Override\n     public String toString()\n", 
+  "project": "maven", 
+  "linesAdd": 7, 
+  "jira_id": "5645", 
+  "nb_skipped": 0, 
+  "commit": "af1ecd5f", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

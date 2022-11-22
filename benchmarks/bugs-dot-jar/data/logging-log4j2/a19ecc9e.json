@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 466, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.logging.log4j.core.config.TestConfigurator"
+  ], 
+  "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/config/ConfigurationFactory.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/config/ConfigurationFactory.java\nindex 849019675..c9355128b 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/config/ConfigurationFactory.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/config/ConfigurationFactory.java\n@@ -37,6 +37,8 @@\n import org.apache.logging.log4j.core.config.plugins.PluginType;\n import org.apache.logging.log4j.core.helpers.FileUtils;\n import org.apache.logging.log4j.core.helpers.Loader;\n+import org.apache.logging.log4j.core.lookup.Interpolator;\n+import org.apache.logging.log4j.core.lookup.StrSubstitutor;\n import org.apache.logging.log4j.status.StatusLogger;\n import org.apache.logging.log4j.util.PropertiesUtil;\n \n@@ -104,6 +106,8 @@\n \n     private static ConfigurationFactory configFactory = new Factory();\n \n+    protected final StrSubstitutor substitutor = new StrSubstitutor(new Interpolator());\n+\n     /**\n      * Returns the ConfigurationFactory.\n      * @return the ConfigurationFactory.\n@@ -362,10 +366,19 @@ public int compareTo(final WeightedFactory wf) {\n         public Configuration getConfiguration(final String name, final URI configLocation) {\n \n             if (configLocation == null) {\n-                final String config = PropertiesUtil.getProperties().getStringProperty(CONFIGURATION_FILE_PROPERTY);\n+                final String config = this.substitutor.replace(\n+                    PropertiesUtil.getProperties().getStringProperty(CONFIGURATION_FILE_PROPERTY));\n                 if (config != null) {\n+                    ConfigurationSource source = null;\n+                    try {\n+                        source = getInputFromURI(new URI(config));\n+                    } catch (Exception ex) {\n+                        // Ignore the error and try as a String.\n+                    }\n+                    if (source == null) {\n                         final ClassLoader loader = this.getClass().getClassLoader();\n-                    final ConfigurationSource source = getInputFromString(config, loader);\n+                        source = getInputFromString(config, loader);\n+                    }\n                     if (source != null) {\n                         for (final ConfigurationFactory factory : factories) {\n                             final String[] types = factory.getSupportedTypes();\n", 
+  "project": "logging-log4j2", 
+  "linesAdd": 15, 
+  "jira_id": "395", 
+  "nb_skipped": 6, 
+  "commit": "a19ecc9e", 
+  "nb_failure": 1, 
+  "linesRem": 2
+}

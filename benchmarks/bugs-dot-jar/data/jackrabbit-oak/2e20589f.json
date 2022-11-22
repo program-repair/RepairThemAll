@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1519, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.cache.CacheTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/cache/CacheLIRS.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/cache/CacheLIRS.java\nindex 52747acb07..33561315b1 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/cache/CacheLIRS.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/cache/CacheLIRS.java\n@@ -922,8 +922,12 @@ synchronized void refresh(K key, int hash, CacheLoader<K, V> loader) throws Exec\n             V old = get(key, hash);\n             long start = System.nanoTime();\n             try {\n+                if (old == null) {\n+                    value = loader.load(key);\n+                } else {\n                     ListenableFuture<V> future = loader.reload(key, old);\n                     value = future.get();\n+                }\n                 loadSuccessCount++;\n             } catch (Exception e) {\n                 loadExceptionCount++;\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 4, 
+  "jira_id": "1094", 
+  "nb_skipped": 6, 
+  "commit": "2e20589f", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

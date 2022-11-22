@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 2887, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.blob.datastore.OakFileDataStoreTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/blob/datastore/OakFileDataStore.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/blob/datastore/OakFileDataStore.java\nindex a55d100f8b..5e8688161d 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/blob/datastore/OakFileDataStore.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/blob/datastore/OakFileDataStore.java\n@@ -38,7 +38,6 @@\n import com.google.common.io.Closeables;\n import com.google.common.io.Files;\n \n-import org.apache.commons.io.FilenameUtils;\n import org.apache.commons.io.IOUtils;\n import org.apache.commons.io.filefilter.FileFilterUtils;\n import org.apache.jackrabbit.core.data.DataIdentifier;\n@@ -50,6 +49,8 @@\n import org.slf4j.Logger;\n import org.slf4j.LoggerFactory;\n \n+import static org.apache.commons.io.FilenameUtils.normalizeNoEndSeparator;\n+\n /**\n  *  Oak specific extension of JR2 FileDataStore which enables\n  *  provisioning the signing key via OSGi config\n@@ -67,12 +68,13 @@ public OakFileDataStore() {\n \n     @Override\n     public Iterator<DataIdentifier> getAllIdentifiers() {\n-        final String path = FilenameUtils.normalizeNoEndSeparator(getPath());\n+        final String path = normalizeNoEndSeparator(getPath());\n         return Files.fileTreeTraverser().postOrderTraversal(new File(getPath()))\n                 .filter(new Predicate<File>() {\n                     @Override\n                     public boolean apply(File input) {\n-                        return input.isFile() && !input.getParent().equals(path);\n+                        return input.isFile() &&\n+                            !normalizeNoEndSeparator(input.getParent()).equals(path);\n                     }\n                 })\n                 .transform(new Function<File, DataIdentifier>() {\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 5, 
+  "jira_id": "4432", 
+  "nb_skipped": 1, 
+  "commit": "c9765c21", 
+  "nb_failure": 1, 
+  "linesRem": 3
+}

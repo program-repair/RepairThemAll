@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 794, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.markup.html.form.validation.HomePageTest"
+  ], 
+  "patch": "diff --git a/wicket/src/main/java/org/apache/wicket/markup/html/form/Form.java b/wicket/src/main/java/org/apache/wicket/markup/html/form/Form.java\nindex 521e01422d..a1d958f8d6 100644\n--- a/wicket/src/main/java/org/apache/wicket/markup/html/form/Form.java\n+++ b/wicket/src/main/java/org/apache/wicket/markup/html/form/Form.java\n@@ -1238,12 +1238,16 @@ public Object component(final Component component)\n \t\t\t}\n \t\t};\n \n-\t\tvisitChildren(FormComponent.class, new IVisitor<Component>()\n+\t\tvisitChildren(Component.class, new IVisitor<Component>()\n \t\t{\n \t\t\tpublic Object component(final Component component)\n+\t\t\t{\n+\t\t\t\tif ((component instanceof Form) || (component instanceof FormComponent))\n \t\t\t\t{\n \t\t\t\t\treturn visitor.component(component);\n \t\t\t\t}\n+\t\t\t\treturn Component.IVisitor.CONTINUE_TRAVERSAL;\n+\t\t\t}\n \t\t});\n \n \t\tif (!error[0])\n", 
+  "project": "wicket", 
+  "linesAdd": 5, 
+  "jira_id": "2202", 
+  "nb_skipped": 0, 
+  "commit": "24ac1a35", 
+  "nb_failure": 2, 
+  "linesRem": 1
+}

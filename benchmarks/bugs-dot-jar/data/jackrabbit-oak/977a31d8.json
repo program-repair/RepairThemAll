@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 399, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.index.lucene.NodeStateAnalyzerFactoryTest"
+  ], 
+  "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/NodeStateAnalyzerFactory.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/NodeStateAnalyzerFactory.java\nindex dce4d4f8f5..589fc63163 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/NodeStateAnalyzerFactory.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/NodeStateAnalyzerFactory.java\n@@ -32,6 +32,7 @@\n \n import com.google.common.collect.ImmutableSet;\n import com.google.common.collect.Maps;\n+import org.apache.jackrabbit.JcrConstants;\n import org.apache.jackrabbit.oak.api.Blob;\n import org.apache.jackrabbit.oak.api.PropertyState;\n import org.apache.jackrabbit.oak.api.Tree;\n@@ -67,7 +68,11 @@\n final class NodeStateAnalyzerFactory{\n     private static final AtomicBoolean versionWarningAlreadyLogged = new AtomicBoolean(false);\n \n-    private static final Set<String> IGNORE_PROP_NAMES = ImmutableSet.of(LuceneIndexConstants.ANL_CLASS, LuceneIndexConstants.ANL_NAME);\n+    private static final Set<String> IGNORE_PROP_NAMES = ImmutableSet.of(\n+            LuceneIndexConstants.ANL_CLASS,\n+            LuceneIndexConstants.ANL_NAME,\n+            JcrConstants.JCR_PRIMARYTYPE\n+    );\n \n     private static final Logger log = LoggerFactory.getLogger(NodeStateAnalyzerFactory.class);\n \n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 6, 
+  "jira_id": "2524", 
+  "nb_skipped": 2, 
+  "commit": "977a31d8", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

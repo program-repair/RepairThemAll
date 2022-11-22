@@ -1,0 +1,21 @@
+{
+  "files": 2, 
+  "nb_test": 1636, 
+  "nb_error": 3, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.dontstoreunrendered.DontStoreNotRenderedPageOnePassRenderTest", 
+    "org.apache.wicket.dontstoreunrendered.DontStoreNotRenderedPageRedirectToRenderTest", 
+    "org.apache.wicket.dontstoreunrendered.DontStoreNotRenderedPageRedirectToBufferTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/Component.java b/wicket-core/src/main/java/org/apache/wicket/Component.java\nindex c7d38f1028..3ac6f5984d 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/Component.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/Component.java\n@@ -680,6 +680,9 @@ public Component(final String id)\n \tpublic Component(final String id, final IModel<?> model)\n \t{\n \t\tsetId(id);\n+\n+\t\tinit();\n+\n \t\tgetApplication().getComponentInstantiationListeners().onInstantiation(this);\n \n \t\tfinal DebugSettings debugSettings = getApplication().getDebugSettings();\n@@ -695,6 +698,15 @@ public Component(final String id, final IModel<?> model)\n \t\t}\n \t}\n \n+\t/**\n+\t * Let subclasses initialize this instance, before constructors are executed. <br>\n+\t * This method is intentionally <b>not</b> declared protected, to limit overriding to classes in\n+\t * this package.\n+\t */\n+\tvoid init()\n+\t{\n+\t}\n+\n \t/**\n \t * Get the Markup associated with the Component. If not subclassed, the parent container is\n \t * asked to return the markup of this child component.\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/Page.java b/wicket-core/src/main/java/org/apache/wicket/Page.java\nindex ea1dad2326..0935942545 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/Page.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/Page.java\n@@ -177,7 +177,6 @@ private Page(final PageParameters parameters, IModel<?> model)\n \t\t{\n \t\t\tpageParameters = parameters;\n \t\t}\n-\t\tinit();\n \t}\n \n \t/**\n@@ -703,7 +702,8 @@ private boolean hasInvisibleTransparentChild(final MarkupContainer root, final C\n \t/**\n \t * Initializes Page by adding it to the Session and initializing it.\n \t */\n-\tprivate void init()\n+\t@Override\n+\tvoid init()\n \t{\n \t\tif (isBookmarkable() == false)\n \t\t{\n", 
+  "project": "wicket", 
+  "linesAdd": 14, 
+  "jira_id": "5546", 
+  "nb_skipped": 2, 
+  "commit": "f1af9e03", 
+  "nb_failure": 0, 
+  "linesRem": 2
+}

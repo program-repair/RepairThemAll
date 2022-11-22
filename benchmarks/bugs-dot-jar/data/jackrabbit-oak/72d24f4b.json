@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 418, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.index.lucene.IndexCopierTest"
+  ], 
+  "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexCopier.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexCopier.java\nindex 6f67427a5a..47e57d5d0b 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexCopier.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexCopier.java\n@@ -188,9 +188,12 @@ private void copy(final FileReference reference) {\n                 @Override\n                 public void run() {\n                     String name = reference.name;\n+                    boolean success = false;\n+                    boolean copyAttempted = false;\n                     try {\n                         if (!local.fileExists(name)) {\n                             long start = System.currentTimeMillis();\n+                            copyAttempted = true;\n                             remote.copy(local, name, name, IOContext.READ);\n                             reference.markValid();\n                             downloadTime.addAndGet(System.currentTimeMillis() - start);\n@@ -210,11 +213,22 @@ public void run() {\n                                 reference.markValid();\n                             }\n                         }\n+                        success = true;\n                     } catch (IOException e) {\n                         //TODO In case of exception there would not be any other attempt\n                         //to download the file. Look into support for retry\n                         log.warn(\"Error occurred while copying file [{}] \" +\n                                 \"from {} to {}\", name, remote, local, e);\n+                    } finally {\n+                        if (copyAttempted && !success){\n+                            try {\n+                                if (local.fileExists(name)) {\n+                                    local.deleteFile(name);\n+                                }\n+                            } catch (IOException e) {\n+                                log.warn(\"Error occurred while deleting corrupted file [{}] from [{}]\", name, local, e);\n+                            }\n+                        }\n                     }\n                 }\n             });\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 14, 
+  "jira_id": "2649", 
+  "nb_skipped": 2, 
+  "commit": "72d24f4b", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 4621, 
+  "nb_error": 2, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.processor.WireTapTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/model/ProcessorDefinition.java b/camel-core/src/main/java/org/apache/camel/model/ProcessorDefinition.java\nindex ff1615098b..9b93a1a7d1 100644\n--- a/camel-core/src/main/java/org/apache/camel/model/ProcessorDefinition.java\n+++ b/camel-core/src/main/java/org/apache/camel/model/ProcessorDefinition.java\n@@ -1027,7 +1028,12 @@ public Type id(String id) {\n                     }\n                 }\n             }\n+            if (!getOutputs().isEmpty()) {\n                 outputs.get(outputs.size() - 1).setId(id);\n+            } else {\n+                // the output could be empty\n+                setId(id);\n+            }\n         }\n \n         return (Type) this;\n", 
+  "project": "camel", 
+  "linesAdd": 5, 
+  "jira_id": "6610", 
+  "nb_skipped": 1, 
+  "commit": "ed7e7c9f", 
+  "nb_failure": 0, 
+  "linesRem": 0
+}

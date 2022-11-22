@@ -1,0 +1,20 @@
+{
+  "files": 2, 
+  "nb_test": 4959, 
+  "nb_error": 2, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.processor.BeanOgnMethodWithXPathInjectionTest", 
+    "org.apache.camel.language.BeanLanguageOGNLTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java b/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java\nindex 53c1254ba0..5b8804d567 100644\n--- a/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java\n+++ b/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java\n@@ -228,6 +228,8 @@ private MethodInvocation createInvocation(Object pojo, Exchange exchange, Method\n                     List<ParameterInfo> lpi = new ArrayList<ParameterInfo>(1);\n                     lpi.add(pi);\n                     methodInfo = new MethodInfo(exchange.getContext(), pojo.getClass(), method, lpi, lpi, false, false);\n+                    // Need to update the message body to be pojo for the invocation\n+                    exchange.getIn().setBody(pojo);\n                 } catch (NoSuchMethodException e) {\n                     throw new MethodNotFoundException(exchange, pojo, \"getClass\");\n                 }\ndiff --git a/camel-core/src/main/java/org/apache/camel/language/bean/BeanExpression.java b/camel-core/src/main/java/org/apache/camel/language/bean/BeanExpression.java\nindex 1092f6e5df..3cbc2fae39 100644\n--- a/camel-core/src/main/java/org/apache/camel/language/bean/BeanExpression.java\n+++ b/camel-core/src/main/java/org/apache/camel/language/bean/BeanExpression.java\n@@ -300,8 +300,6 @@ public void process(Exchange exchange) throws Exception {\n \n                 // prepare for next bean to invoke\n                 beanToCall = result;\n-                // we need to set the result to the exchange for further processing\n-                resultExchange.getIn().setBody(result);\n             }\n         }\n \n", 
+  "project": "camel", 
+  "linesAdd": 2, 
+  "jira_id": "7478", 
+  "nb_skipped": 3, 
+  "commit": "69b00a31", 
+  "nb_failure": 1, 
+  "linesRem": 2
+}

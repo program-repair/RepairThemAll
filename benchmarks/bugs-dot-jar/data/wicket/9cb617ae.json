@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1260, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.protocol.http.mock.MockHttpServletResponseTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/protocol/http/mock/MockHttpServletResponse.java b/wicket-core/src/main/java/org/apache/wicket/protocol/http/mock/MockHttpServletResponse.java\nindex eb8262ac10..01581ef201 100755\n--- a/wicket-core/src/main/java/org/apache/wicket/protocol/http/mock/MockHttpServletResponse.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/protocol/http/mock/MockHttpServletResponse.java\n@@ -27,6 +27,7 @@\n import java.util.Collections;\n import java.util.Date;\n import java.util.GregorianCalendar;\n+import java.util.Iterator;\n import java.util.List;\n import java.util.Locale;\n import java.util.Set;\n@@ -102,7 +103,18 @@ public MockHttpServletResponse(MockHttpServletRequest servletRequest)\n \tpublic void addCookie(final Cookie cookie)\n \t{\n \t\t// remove any potential duplicates\n-\t\tcookies.remove(cookie);\n+\t\t// see http://www.ietf.org/rfc/rfc2109.txt, p.4.3.3\n+\t\tIterator<Cookie> iterator = cookies.iterator();\n+\t\twhile (iterator.hasNext())\n+\t\t{\n+\t\t\tCookie old = iterator.next();\n+\t\t\tif (cookie.getName().equals(old.getName()) &&\n+\t\t\t\t((cookie.getPath() == null && old.getPath() == null) || (cookie.getPath().equals(old.getPath()))) &&\n+\t\t\t\t((cookie.getDomain() == null && old.getDomain() == null) || (cookie.getDomain().equals(old.getDomain()))))\n+\t\t\t{\n+\t\t\t\titerator.remove();\n+\t\t\t}\n+\t\t}\n \t\tcookies.add(cookie);\n \t}\n \n", 
+  "project": "wicket", 
+  "linesAdd": 13, 
+  "jira_id": "4292", 
+  "nb_skipped": 3, 
+  "commit": "9cb617ae", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

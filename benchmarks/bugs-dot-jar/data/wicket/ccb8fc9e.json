@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1333, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.markup.html.internal.InlineEnclosureTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/parser/filter/InlineEnclosureHandler.java b/wicket-core/src/main/java/org/apache/wicket/markup/parser/filter/InlineEnclosureHandler.java\nindex 06a193aaa6..e0596579d1 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/parser/filter/InlineEnclosureHandler.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/parser/filter/InlineEnclosureHandler.java\n@@ -176,11 +176,7 @@ public Component resolve(final MarkupContainer container, final MarkupStream mar\n \t\tString inlineEnclosureChildId = getInlineEnclosureAttribute(tag);\r\n \t\tif (Strings.isEmpty(inlineEnclosureChildId) == false)\r\n \t\t{\r\n-\t\t\tString id = tag.getId();\r\n-\t\t\tif (id.equals(INLINE_ENCLOSURE_ID_PREFIX))\r\n-\t\t\t{\r\n-\t\t\t\tid = id + container.getPage().getAutoIndex();\r\n-\t\t\t}\r\n+\t\t\tString id = tag.getId() + container.getPage().getAutoIndex();\r\n \t\t\t// Yes, we handled the tag\r\n \t\t\treturn new InlineEnclosure(id, inlineEnclosureChildId);\r\n \t\t}\r\n", 
+  "project": "wicket", 
+  "linesAdd": 1, 
+  "jira_id": "4520", 
+  "nb_skipped": 8, 
+  "commit": "ccb8fc9e", 
+  "nb_failure": 3, 
+  "linesRem": 5
+}

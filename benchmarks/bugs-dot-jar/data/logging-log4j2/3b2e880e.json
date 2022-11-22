@@ -1,0 +1,20 @@
+{
+  "files": 1, 
+  "nb_test": 9, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "", 
+    "org.apache.logging.log4j.nosql.appender.NoSQLDatabaseManagerTest"
+  ], 
+  "patch": "diff --git a/log4j-nosql/src/main/java/org/apache/logging/log4j/nosql/appender/NoSQLDatabaseManager.java b/log4j-nosql/src/main/java/org/apache/logging/log4j/nosql/appender/NoSQLDatabaseManager.java\nindex 6f2ea2620..d3c5b37ca 100644\n--- a/log4j-nosql/src/main/java/org/apache/logging/log4j/nosql/appender/NoSQLDatabaseManager.java\n+++ b/log4j-nosql/src/main/java/org/apache/logging/log4j/nosql/appender/NoSQLDatabaseManager.java\n@@ -51,6 +51,7 @@ protected void startupInternal() {\n \n     @Override\n     protected void shutdownInternal() {\n+        // NoSQL doesn't use transactions, so all we need to do here is simply close the client\n         Closer.closeSilent(this.connection);\n     }\n \n@@ -155,13 +156,10 @@ protected void writeInternal(final LogEvent event) {\n \n     @Override\n     protected void commitAndClose() {\n-        try {\n-            if (this.connection != null && !this.connection.isClosed()) {\n-                this.connection.close();\n-            }\n-        } catch (Exception e) {\n-            throw new AppenderLoggingException(\"Failed to commit and close NoSQL connection in manager.\", e);\n-        }\n+        // all NoSQL drivers auto-commit (since NoSQL doesn't generally use the concept of transactions).\n+        // also, all our NoSQL drivers use internal connection pooling and provide clients, not connections.\n+        // thus, we should not be closing the client until shutdown as NoSQL is very different from SQL.\n+        // see LOG4J2-591 and LOG4J2-676\n     }\n \n     private NoSQLObject<W>[] convertStackTrace(final StackTraceElement[] stackTrace) {\n", 
+  "project": "logging-log4j2", 
+  "linesAdd": 5, 
+  "jira_id": "676", 
+  "nb_skipped": 0, 
+  "commit": "3b2e880e", 
+  "nb_failure": 1, 
+  "linesRem": 7
+}
