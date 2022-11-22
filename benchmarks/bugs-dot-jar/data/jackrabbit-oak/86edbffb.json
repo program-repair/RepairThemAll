@@ -1,0 +1,19 @@
+{
+  "files": 2, 
+  "nb_test": 252, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexQueryTest"
+  ], 
+  "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexConstants.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexConstants.java\nindex cfdf7c4e17..fb0d8f3601 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexConstants.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexConstants.java\n@@ -25,7 +25,7 @@\n \n     String INDEX_DATA_CHILD_NAME = \":data\";\n \n-    Version VERSION = Version.LUCENE_46;\n+    Version VERSION = Version.LUCENE_47;\n \n     Analyzer ANALYZER = new OakAnalyzer(VERSION);\n \ndiff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/OakAnalyzer.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/OakAnalyzer.java\nindex 3fbc602e83..6368a8569f 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/OakAnalyzer.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/OakAnalyzer.java\n@@ -21,8 +21,8 @@\n import org.apache.lucene.analysis.Analyzer;\n import org.apache.lucene.analysis.TokenStream;\n import org.apache.lucene.analysis.core.LowerCaseFilter;\n-import org.apache.lucene.analysis.core.WhitespaceTokenizer;\n import org.apache.lucene.analysis.miscellaneous.WordDelimiterFilter;\n+import org.apache.lucene.analysis.standard.ClassicTokenizer;\n import org.apache.lucene.util.Version;\n \n public class OakAnalyzer extends Analyzer {\n@@ -43,7 +43,7 @@ public OakAnalyzer(Version matchVersion) {\n     @Override\n     protected TokenStreamComponents createComponents(final String fieldName,\n             final Reader reader) {\n-        WhitespaceTokenizer src = new WhitespaceTokenizer(matchVersion, reader);\n+        ClassicTokenizer src = new ClassicTokenizer(matchVersion, reader);\n         TokenStream tok = new LowerCaseFilter(matchVersion, src);\n         tok = new WordDelimiterFilter(tok,\n                 WordDelimiterFilter.GENERATE_WORD_PARTS\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 3, 
+  "jira_id": "1614", 
+  "nb_skipped": 1, 
+  "commit": "86edbffb", 
+  "nb_failure": 1, 
+  "linesRem": 3
+}

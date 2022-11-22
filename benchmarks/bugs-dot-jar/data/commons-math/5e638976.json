@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 3026, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math.linear.OpenMapRealMatrixTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math/linear/OpenMapRealMatrix.java b/src/main/java/org/apache/commons/math/linear/OpenMapRealMatrix.java\nindex 4369db778..f05c8783a 100644\n--- a/src/main/java/org/apache/commons/math/linear/OpenMapRealMatrix.java\n+++ b/src/main/java/org/apache/commons/math/linear/OpenMapRealMatrix.java\n@@ -19,6 +19,7 @@\n \n import java.io.Serializable;\n \n+import org.apache.commons.math.exception.NumberIsTooLargeException;\n import org.apache.commons.math.util.OpenIntToDoubleHashMap;\n \n /**\n@@ -46,6 +47,11 @@\n      */\n     public OpenMapRealMatrix(int rowDimension, int columnDimension) {\n         super(rowDimension, columnDimension);\n+        long lRow = (long) rowDimension;\n+        long lCol = (long) columnDimension;\n+        if (lRow * lCol >= (long) Integer.MAX_VALUE) {\n+            throw new NumberIsTooLargeException(lRow * lCol, Integer.MAX_VALUE, false);\n+        }\n         this.rows = rowDimension;\n         this.columns = columnDimension;\n         this.entries = new OpenIntToDoubleHashMap(0.0);\n", 
+  "project": "commons-math", 
+  "linesAdd": 6, 
+  "jira_id": "679", 
+  "nb_skipped": 1, 
+  "commit": "5e638976", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

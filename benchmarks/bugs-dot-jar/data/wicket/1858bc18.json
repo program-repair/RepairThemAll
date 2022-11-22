@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 8, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": true
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.request.UrlEncoderTest"
+  ], 
+  "patch": "diff --git a/wicket-request/src/main/java/org/apache/wicket/request/UrlEncoder.java b/wicket-request/src/main/java/org/apache/wicket/request/UrlEncoder.java\nindex 3bfc78af7a..aadac5ef2e 100644\n--- a/wicket-request/src/main/java/org/apache/wicket/request/UrlEncoder.java\n+++ b/wicket-request/src/main/java/org/apache/wicket/request/UrlEncoder.java\n@@ -174,7 +174,6 @@ protected UrlEncoder(final Type type, final char stopChar)\n \t\tdontNeedEncoding.set('!');\r\n \t\tdontNeedEncoding.set('$');\r\n \t\t// \"&\" needs to be encoded for query stings\r\n-\t\tdontNeedEncoding.set('\\'');\r\n \t\t// \"(\" and \")\" probably don't need encoding, but we'll be conservative\r\n \t\tdontNeedEncoding.set('*');\r\n \t\t// \"+\" needs to be encoded for query strings (since it means =\r\n", 
+  "project": "wicket", 
+  "linesAdd": 0, 
+  "jira_id": "3721", 
+  "nb_skipped": 0, 
+  "commit": "1858bc18", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

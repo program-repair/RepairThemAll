@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 2042, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math.optimization.linear.SimplexSolverTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math/optimization/linear/SimplexTableau.java b/src/main/java/org/apache/commons/math/optimization/linear/SimplexTableau.java\nindex b38776718..97d80619d 100644\n--- a/src/main/java/org/apache/commons/math/optimization/linear/SimplexTableau.java\n+++ b/src/main/java/org/apache/commons/math/optimization/linear/SimplexTableau.java\n@@ -69,7 +69,7 @@\n     private final LinearObjectiveFunction f;\n \n     /** Linear constraints. */\n-    private final Collection<LinearConstraint> constraints;\n+    private final List<LinearConstraint> constraints;\n \n     /** Whether to restrict the variables to non-negative values. */\n     private final boolean restrictToNonNegative;\n@@ -103,7 +103,7 @@\n                    final GoalType goalType, final boolean restrictToNonNegative,\n                    final double epsilon) {\n         this.f                      = f;\n-        this.constraints            = constraints;\n+        this.constraints            = normalizeConstraints(constraints);\n         this.restrictToNonNegative  = restrictToNonNegative;\n         this.epsilon                = epsilon;\n         this.numDecisionVariables   = getNumVariables() + (restrictToNonNegative ? 0 : 1);\n@@ -123,7 +123,6 @@\n     protected double[][] createTableau(final boolean maximize) {\n \n         // create a matrix of the correct size\n-        List<LinearConstraint> constraints = getNormalizedConstraints();\n         int width = numDecisionVariables + numSlackVariables +\n         numArtificialVariables + getNumObjectiveFunctions() + 1; // + 1 is for RHS\n         int height = constraints.size() + getNumObjectiveFunctions();\n@@ -192,9 +191,10 @@ public int getNumVariables() {\n \n     /**\n      * Get new versions of the constraints which have positive right hand sides.\n+     * @param constraints original (not normalized) constraints\n      * @return new versions of the constraints\n      */\n-    public List<LinearConstraint> getNormalizedConstraints() {\n+    public List<LinearConstraint> normalizeConstraints(Collection<LinearConstraint> constraints) {\n         List<LinearConstraint> normalized = new ArrayList<LinearConstraint>();\n         for (LinearConstraint constraint : constraints) {\n             normalized.add(normalize(constraint));\n", 
+  "project": "commons-math", 
+  "linesAdd": 4, 
+  "jira_id": "290", 
+  "nb_skipped": 0, 
+  "commit": "b01fcc31", 
+  "nb_failure": 0, 
+  "linesRem": 4
+}

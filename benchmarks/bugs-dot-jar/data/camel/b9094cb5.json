@@ -1,0 +1,20 @@
+{
+  "files": 1, 
+  "nb_test": 3316, 
+  "nb_error": 2, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.issues.StopRouteShouldNotStopContextScopedErrorHandlerIssueTest", 
+    "org.apache.camel.issues.StopRouteImpactsErrorHandlerTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/RedeliveryErrorHandler.java b/camel-core/src/main/java/org/apache/camel/processor/RedeliveryErrorHandler.java\nindex eb31c6b1ba..efbaa173f5 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/RedeliveryErrorHandler.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/RedeliveryErrorHandler.java\n@@ -840,7 +840,13 @@ protected void doStart() throws Exception {\n \n     @Override\n     protected void doStop() throws Exception {\n-        ServiceHelper.stopServices(deadLetter, output, outputAsync);\n+        // noop, do not stop any services which we only do when shutting down\n+        // as the error handler can be context scoped, and should not stop in case\n+        // a route stops\n     }\n \n+    @Override\n+    protected void doShutdown() throws Exception {\n+        ServiceHelper.stopServices(deadLetter, output, outputAsync);\n+    }\n }\n", 
+  "project": "camel", 
+  "linesAdd": 7, 
+  "jira_id": "3878", 
+  "nb_skipped": 0, 
+  "commit": "b9094cb5", 
+  "nb_failure": 0, 
+  "linesRem": 1
+}

@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 5469, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.builder.NotifyBuilderFromRouteTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/builder/NotifyBuilder.java b/camel-core/src/main/java/org/apache/camel/builder/NotifyBuilder.java\nindex 1c42ad90ad..e5933494d6 100644\n--- a/camel-core/src/main/java/org/apache/camel/builder/NotifyBuilder.java\n+++ b/camel-core/src/main/java/org/apache/camel/builder/NotifyBuilder.java\n@@ -154,6 +154,11 @@ public boolean isAbstract() {\n             @Override\n             public boolean onExchange(Exchange exchange) {\n                 String id = EndpointHelper.getRouteIdFromEndpoint(exchange.getFromEndpoint());\n+\n+                if (id == null) {\n+                    id = exchange.getFromRouteId();\n+                }\n+\n                 // filter non matching exchanges\n                 return EndpointHelper.matchPattern(id, routeId);\n             }\n", 
+  "project": "camel", 
+  "linesAdd": 5, 
+  "jira_id": "9269", 
+  "nb_skipped": 4, 
+  "commit": "62b2042b", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

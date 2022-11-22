@@ -1,0 +1,21 @@
+{
+  "files": 1, 
+  "nb_test": 4289, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.processor.aggregator.AggregateTimeoutTest", 
+    "org.apache.camel.issues.RedeliveryPolicyOnExceptionWhileRedeliveringIssueTest", 
+    "org.apache.camel.component.file.AntPathMatcherGenericFileFilterTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/model/OnExceptionDefinition.java b/camel-core/src/main/java/org/apache/camel/model/OnExceptionDefinition.java\nindex 50a41a3125..f8e42b9b7f 100644\n--- a/camel-core/src/main/java/org/apache/camel/model/OnExceptionDefinition.java\n+++ b/camel-core/src/main/java/org/apache/camel/model/OnExceptionDefinition.java\n@@ -144,7 +144,7 @@ public RedeliveryPolicy createRedeliveryPolicy(CamelContext context, RedeliveryP\n             return CamelContextHelper.mandatoryLookup(context, redeliveryPolicyRef, RedeliveryPolicy.class);\n         } else if (redeliveryPolicy != null) {\n             return redeliveryPolicy.createRedeliveryPolicy(context, parentPolicy);\n-        } else if (!outputs.isEmpty() && parentPolicy.getMaximumRedeliveries() > 0) {\n+        } else if (!outputs.isEmpty() && parentPolicy.getMaximumRedeliveries() != 0) {\n             // if we have outputs, then do not inherit parent maximumRedeliveries\n             // as you would have to explicit configure maximumRedeliveries on this onException to use it\n             // this is the behavior Camel has always had\n", 
+  "project": "camel", 
+  "linesAdd": 1, 
+  "jira_id": "5570", 
+  "nb_skipped": 1, 
+  "commit": "a57830ed", 
+  "nb_failure": 3, 
+  "linesRem": 1
+}

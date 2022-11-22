@@ -1,0 +1,21 @@
+{
+  "files": 1, 
+  "nb_test": 2911, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.component.vm.VmWaitForTaskCompleteTest", 
+    "org.apache.camel.component.seda.SedaWaitForTaskCompleteTest", 
+    "org.apache.camel.issues.MulticastPipelineAggregateIssueTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/util/ExchangeHelper.java b/camel-core/src/main/java/org/apache/camel/util/ExchangeHelper.java\nindex 0aa9501..7b59811 100644\n--- a/camel-core/src/main/java/org/apache/camel/util/ExchangeHelper.java\n+++ b/camel-core/src/main/java/org/apache/camel/util/ExchangeHelper.java\n@@ -208,11 +208,15 @@ public static void copyResults(Exchange result, Exchange source) {\n                 // have created any OUT; such as a mock:endpoint\n                 // so lets assume the last IN is the OUT\n                 if (result.getPattern().isOutCapable()) {\n-                    // only set OUT if its OUT capable\n+                    // only set OUT if its OUT capable or already has OUT\n                     result.getOut().copyFrom(source.getIn());\n                 } else {\n                     // if not replace IN instead to keep the MEP\n                     result.getIn().copyFrom(source.getIn());\n+                    // clear any existing OUT as the result is on the IN\n+                    if (result.hasOut()) {\n+                        result.setOut(null);\n+                    }\n                 }\n             }\n \n", 
+  "project": "camel", 
+  "linesAdd": 5, 
+  "jira_id": "3276", 
+  "nb_skipped": 0, 
+  "commit": "205420e2", 
+  "nb_failure": 2, 
+  "linesRem": 1
+}

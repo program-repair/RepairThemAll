@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 434, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.accumulo.core.data.MutationTest"
+  ], 
+  "patch": "diff --git a/core/src/main/java/org/apache/accumulo/core/data/Mutation.java b/core/src/main/java/org/apache/accumulo/core/data/Mutation.java\nindex 0861cc4f2..81ad5316d 100644\n--- a/core/src/main/java/org/apache/accumulo/core/data/Mutation.java\n+++ b/core/src/main/java/org/apache/accumulo/core/data/Mutation.java\n@@ -191,6 +191,20 @@ private void serialize() {\n     }\n   }\n \n+  /* This is so hashCode & equals can be called without changing this object.\n+   *\n+   * It will return a copy of the current data buffer if serialized has not been\n+   * called previously. Otherwise, this.data will be returned since the buffer is\n+   * null and will not change.\n+   */\n+  private byte[] serializedSnapshot() {\n+    if (buffer != null) {\n+      return buffer.toArray();\n+    } else {\n+      return this.data;\n+    }\n+  }\n+\n   /**\n    * @since 1.5.0\n    */\n@@ -691,13 +705,13 @@ public boolean equals(Object o) {\n \n   @Override\n   public int hashCode() {\n-    return toThrift().hashCode();\n+    return toThrift(false).hashCode();\n   }\n \n   public boolean equals(Mutation m) {\n-    serialize();\n-    m.serialize();\n-    if (Arrays.equals(row, m.row) && entries == m.entries && Arrays.equals(data, m.data)) {\n+    byte[] myData = serializedSnapshot();\n+    byte[] otherData = m.serializedSnapshot();\n+    if (Arrays.equals(row, m.row) && entries == m.entries && Arrays.equals(myData, otherData)) {\n       if (values == null && m.values == null)\n         return true;\n \n@@ -716,7 +730,17 @@ public boolean equals(Mutation m) {\n   }\n \n   public TMutation toThrift() {\n-    serialize();\n+    return toThrift(true);\n+  }\n+\n+  private TMutation toThrift(boolean serialize) {\n+    byte[] data;\n+    if (serialize) {\n+      this.serialize();\n+      data = this.data;\n+    } else {\n+      data = serializedSnapshot();\n+    }\n     return new TMutation(java.nio.ByteBuffer.wrap(row), java.nio.ByteBuffer.wrap(data), ByteBufferUtil.toByteBuffers(values), entries);\n   }\n \n", 
+  "project": "accumulo", 
+  "linesAdd": 29, 
+  "jira_id": "3718", 
+  "nb_skipped": 0, 
+  "commit": "73ce9cfb", 
+  "nb_failure": 2, 
+  "linesRem": 5
+}

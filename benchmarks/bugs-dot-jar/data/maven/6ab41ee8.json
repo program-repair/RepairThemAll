@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 259, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.maven.plugin.PluginManagerTest"
+  ], 
+  "patch": "diff --git a/maven-core/src/main/java/org/apache/maven/plugin/internal/DefaultMavenPluginManager.java b/maven-core/src/main/java/org/apache/maven/plugin/internal/DefaultMavenPluginManager.java\nindex c81592080..570427656 100644\n--- a/maven-core/src/main/java/org/apache/maven/plugin/internal/DefaultMavenPluginManager.java\n+++ b/maven-core/src/main/java/org/apache/maven/plugin/internal/DefaultMavenPluginManager.java\n@@ -390,8 +390,6 @@ private void createPluginRealm( PluginDescriptor pluginDescriptor, MavenSession\n         RepositorySystemSession repositorySession = session.getRepositorySession();\n         if ( plugin.isExtensions() )\n         {\n-            // TODO discover components in #setupExtensionsRealm\n-\n             ExtensionRealmCache.CacheRecord extensionRecord;\n             try\n             {\n@@ -406,6 +404,11 @@ private void createPluginRealm( PluginDescriptor pluginDescriptor, MavenSession\n \n             pluginRealm = extensionRecord.realm;\n             pluginArtifacts = extensionRecord.artifacts;\n+\n+            for ( ComponentDescriptor<?> componentDescriptor : pluginDescriptor.getComponents() )\n+            {\n+                componentDescriptor.setRealm( pluginRealm );\n+            }\n         }\n         else\n         {\n@@ -877,6 +880,8 @@ public void releaseMojo( Object mojo, MojoExecution mojoExecution )\n         {\n             ClassRealm extensionRealm = classRealmManager.createExtensionRealm( plugin, toAetherArtifacts( artifacts ) );\n \n+            // TODO figure out how to use the same PluginDescriptor when running mojos\n+\n             PluginDescriptor pluginDescriptor = null;\n             if ( plugin.isExtensions() && !artifacts.isEmpty() )\n             {\n", 
+  "project": "maven", 
+  "linesAdd": 7, 
+  "jira_id": "5742", 
+  "nb_skipped": 0, 
+  "commit": "6ab41ee8", 
+  "nb_failure": 1, 
+  "linesRem": 2
+}

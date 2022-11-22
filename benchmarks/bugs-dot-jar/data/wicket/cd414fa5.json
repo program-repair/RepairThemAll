@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1638, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.queueing.transparentresolvers.DequeueingTransparentWebMarkupContainerTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java b/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java\nindex 30293fb45b..55e3184ba9 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java\n@@ -2178,9 +2178,13 @@ else if (wicketTag.isFragmentTag())\n \t\t\t{\n \t\t\t\treturn DequeueTagAction.SKIP;\n \t\t\t}\n+\t\t\telse if (wicketTag.isChildTag())\n+\t\t\t{\n+\t\t\t\treturn DequeueTagAction.DEQUEUE;\n+\t\t\t}\n \t\t\telse\n \t\t\t{\n-\t\t\t\treturn null; // dont know\n+\t\t\t\treturn null; // don't know\n \t\t\t}\n \t\t}\n \t\treturn DequeueTagAction.DEQUEUE;\n", 
+  "project": "wicket", 
+  "linesAdd": 5, 
+  "jira_id": "5572", 
+  "nb_skipped": 2, 
+  "commit": "cd414fa5", 
+  "nb_failure": 0, 
+  "linesRem": 1
+}

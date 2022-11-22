@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 87, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.logging.log4j.core.lookup.InterpolatorTest"
+  ], 
+  "patch": "diff --git a/core/src/main/java/org/apache/logging/log4j/core/lookup/Interpolator.java b/core/src/main/java/org/apache/logging/log4j/core/lookup/Interpolator.java\nindex 0819211d9..13cf5bb78 100644\n--- a/core/src/main/java/org/apache/logging/log4j/core/lookup/Interpolator.java\n+++ b/core/src/main/java/org/apache/logging/log4j/core/lookup/Interpolator.java\n@@ -107,7 +107,7 @@ public String lookup(LogEvent event, String var) {\n             if (value != null) {\n                 return value;\n             }\n-            var = var.substring(prefixPos);\n+            var = var.substring(prefixPos + 1);\n         }\n         if (defaultLookup != null) {\n             return event == null ? defaultLookup.lookup(var) : defaultLookup.lookup(event, var);\n", 
+  "project": "logging-log4j2", 
+  "linesAdd": 1, 
+  "jira_id": "94", 
+  "nb_skipped": 0, 
+  "commit": "d8af1c93", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

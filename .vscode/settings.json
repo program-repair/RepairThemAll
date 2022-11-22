@@ -1,0 +1,12 @@
+{
+    "python.defaultInterpreterPath": "/Users/pengyu/.local/share/virtualenvs/plm-repair-them-all-mcOshUSO",
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/*.pyc": true,
+        "**/__pycache__": true
+    }
+}

@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1438, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.core.request.mapper.CryptoMapperTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/CryptoMapper.java b/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/CryptoMapper.java\nindex 86c551a50b..bb65517056 100755\n--- a/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/CryptoMapper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/CryptoMapper.java\n@@ -234,6 +234,8 @@ private Url decryptUrl(final Request request, final Url encryptedUrl)\n \t\t\t}\r\n \r\n \t\t\turl.getQueryParameters().addAll(originalUrl.getQueryParameters());\r\n+\t\t\t// WICKET-4923 additional parameters\r\n+\t\t\turl.getQueryParameters().addAll(encryptedUrl.getQueryParameters());\r\n \t\t}\r\n \t\tcatch (Exception e)\r\n \t\t{\r\n", 
+  "project": "wicket", 
+  "linesAdd": 2, 
+  "jira_id": "4923", 
+  "nb_skipped": 5, 
+  "commit": "d78132be", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

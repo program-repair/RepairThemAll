@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1181, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.request.mapper.ResourceMapperTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/request/mapper/ResourceMapper.java b/wicket-core/src/main/java/org/apache/wicket/request/mapper/ResourceMapper.java\nindex 9e15ba48c5..bc39efb028 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/mapper/ResourceMapper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/mapper/ResourceMapper.java\n@@ -237,11 +237,23 @@ protected void removeCachingDecoration(Url url, PageParameters parameters)\n \n \t\tif (segments.isEmpty() == false)\n \t\t{\n+\t\t\t// get filename (the last segment)\n \t\t\tfinal int lastSegmentAt = segments.size() - 1;\n-\t\t\tfinal ResourceUrl resourceUrl = new ResourceUrl(segments.get(lastSegmentAt), parameters);\n+\t\t\tString filename = segments.get(lastSegmentAt);\n \t\t\t\n+\t\t\t// ignore requests with empty filename\n+\t\t\tif(Strings.isEmpty(filename))\n+\t\t\t{\n+\t\t\t\treturn;\n+\t\t\t}\n+\t\t\t\n+\t\t\t// create resource url from filename and query parameters\n+\t\t\tfinal ResourceUrl resourceUrl = new ResourceUrl(filename, parameters);\n+\n+\t\t\t// remove caching information from request\n \t\t\tgetCachingStrategy().undecorateUrl(resourceUrl);\n \t\t\t\n+\t\t\t// check for broken caching strategy (this must never happen)\n \t\t\tif (Strings.isEmpty(resourceUrl.getFileName()))\n \t\t\t{\n \t\t\t\tthrow new IllegalStateException(\"caching strategy returned empty name for \" + resourceUrl);\n", 
+  "project": "wicket", 
+  "linesAdd": 13, 
+  "jira_id": "4020", 
+  "nb_skipped": 2, 
+  "commit": "081cdeb2", 
+  "nb_failure": 0, 
+  "linesRem": 1
+}

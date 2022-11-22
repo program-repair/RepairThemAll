@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 4901, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math3.ode.nonstiff.DormandPrince853IntegratorTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math3/ode/AbstractIntegrator.java b/src/main/java/org/apache/commons/math3/ode/AbstractIntegrator.java\nindex 00827db20..6e0237f9f 100644\n--- a/src/main/java/org/apache/commons/math3/ode/AbstractIntegrator.java\n+++ b/src/main/java/org/apache/commons/math3/ode/AbstractIntegrator.java\n@@ -338,11 +338,15 @@ public int compare(EventState es0, EventState es1) {\n                 interpolator.setSoftPreviousTime(previousT);\n                 interpolator.setSoftCurrentTime(eventT);\n \n-                // trigger the event\n+                // get state at event time\n                 interpolator.setInterpolatedTime(eventT);\n                 final double[] eventY = interpolator.getInterpolatedState().clone();\n-                currentEvent.stepAccepted(eventT, eventY);\n-                isLastStep = currentEvent.stop();\n+\n+                // advance all event states to current time\n+                for (final EventState state : eventsStates) {\n+                    state.stepAccepted(eventT, eventY);\n+                    isLastStep = isLastStep || state.stop();\n+                }\n \n                 // handle the first part of the step, up to the event\n                 for (final StepHandler handler : stepHandlers) {\n@@ -352,21 +356,19 @@ public int compare(EventState es0, EventState es1) {\n                 if (isLastStep) {\n                     // the event asked to stop integration\n                     System.arraycopy(eventY, 0, y, 0, y.length);\n-                    for (final EventState remaining : occuringEvents) {\n-                        remaining.stepAccepted(eventT, eventY);\n-                    }\n                     return eventT;\n                 }\n \n-                if (currentEvent.reset(eventT, eventY)) {\n+                boolean needReset = false;\n+                for (final EventState state : eventsStates) {\n+                    needReset =  needReset || state.reset(eventT, eventY);\n+                }\n+                if (needReset) {\n                     // some event handler has triggered changes that\n                     // invalidate the derivatives, we need to recompute them\n                     System.arraycopy(eventY, 0, y, 0, y.length);\n                     computeDerivatives(eventT, y, yDot);\n                     resetOccurred = true;\n-                    for (final EventState remaining : occuringEvents) {\n-                        remaining.stepAccepted(eventT, eventY);\n-                    }\n                     return eventT;\n                 }\n \n@@ -383,6 +385,7 @@ public int compare(EventState es0, EventState es1) {\n \n             }\n \n+            // last part of the step, after the last event\n             interpolator.setInterpolatedTime(currentT);\n             final double[] currentY = interpolator.getInterpolatedState();\n             for (final EventState state : eventsStates) {\n", 
+  "project": "commons-math", 
+  "linesAdd": 13, 
+  "jira_id": "950", 
+  "nb_skipped": 4, 
+  "commit": "424cbd20", 
+  "nb_failure": 1, 
+  "linesRem": 10
+}

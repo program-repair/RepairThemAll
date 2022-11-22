@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1404, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.markup.html.link.DownloadLinkTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/html/link/DownloadLink.java b/wicket-core/src/main/java/org/apache/wicket/markup/html/link/DownloadLink.java\nindex 3974b186cf..293a239592 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/html/link/DownloadLink.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/html/link/DownloadLink.java\n@@ -135,7 +135,18 @@ public DownloadLink(String id, File file, String fileName)\n \tpublic DownloadLink(String id, IModel<File> fileModel, IModel<String> fileNameModel)\n \t{\n \t\tsuper(id, fileModel);\n-\t\tthis.fileNameModel = fileNameModel;\n+\t\tthis.fileNameModel = wrap(fileNameModel);\n+\t}\n+\n+\t@Override\n+\tpublic void detachModels()\n+\t{\n+\t\tsuper.detachModels();\n+\n+\t\tif (fileNameModel != null)\n+\t\t{\n+\t\t\tfileNameModel.detach();\n+\t\t}\n \t}\n \n \t@Override\n", 
+  "project": "wicket", 
+  "linesAdd": 12, 
+  "jira_id": "4738", 
+  "nb_skipped": 5, 
+  "commit": "a7ce7f91", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

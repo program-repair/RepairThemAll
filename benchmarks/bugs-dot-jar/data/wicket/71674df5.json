@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1706, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.core.request.mapper.AbstractBookmarkableMapperTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/AbstractBookmarkableMapper.java b/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/AbstractBookmarkableMapper.java\nindex 658c98f28c..0a047ac74a 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/AbstractBookmarkableMapper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/AbstractBookmarkableMapper.java\n@@ -265,7 +265,12 @@ protected IRequestHandler processHybrid(PageInfo pageInfo,\n \t\t}\n \t\telse\n \t\t{\n-\t\t\tPageParameters constructionPageParameters = provider.getPageInstance().getPageParameters();\n+\t\t\t/** \n+\t\t\t * https://issues.apache.org/jira/browse/WICKET-5734\n+\t\t\t * */\n+\t\t\tPageParameters constructionPageParameters = provider.hasPageInstance() ? \n+\t\t\t\tprovider.getPageInstance().getPageParameters() : new PageParameters();\n+\n \t\t\tif (PageParameters.equals(constructionPageParameters, pageParameters) == false)\n \t\t\t{\n \t\t\t\t// create a fresh page instance because the request page parameters are different than the ones\n", 
+  "project": "wicket", 
+  "linesAdd": 6, 
+  "jira_id": "5734", 
+  "nb_skipped": 1, 
+  "commit": "71674df5", 
+  "nb_failure": 0, 
+  "linesRem": 1
+}

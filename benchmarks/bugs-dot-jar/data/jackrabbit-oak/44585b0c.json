@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 2101, 
+  "nb_error": 2, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.security.authorization.evaluation.MoveWithoutEntryCacheTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/security/authorization/permission/MoveAwarePermissionValidator.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/security/authorization/permission/MoveAwarePermissionValidator.java\nindex 3f2382a2a5..cee534a18d 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/security/authorization/permission/MoveAwarePermissionValidator.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/security/authorization/permission/MoveAwarePermissionValidator.java\n@@ -75,10 +75,11 @@ PermissionValidator createValidator(@Nullable Tree parentBefore,\n     private Validator visibleValidator(@Nonnull Tree source,\n                                        @Nonnull Tree dest) {\n         // TODO improve: avoid calculating the 'before' permissions in case the current parent permissions already point to the correct tree.\n-        ImmutableTree parent = (ImmutableTree) moveCtx.rootBefore.getTree(\"/\");\n-        TreePermission tp = getPermissionProvider().getTreePermission(parent, TreePermission.EMPTY);\n+        ImmutableTree immutableTree = (ImmutableTree) moveCtx.rootBefore.getTree(\"/\");\n+        TreePermission tp = getPermissionProvider().getTreePermission(immutableTree, TreePermission.EMPTY);\n         for (String n : PathUtils.elements(source.getPath())) {\n-            tp = tp.getChildPermission(n, parent.getChild(n).getNodeState());\n+            immutableTree = immutableTree.getChild(n);\n+            tp = tp.getChildPermission(n, immutableTree.getNodeState());\n         }\n         Validator validator = createValidator(source, dest, tp, this);\n         return new VisibleValidator(validator, true, false);\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 4, 
+  "jira_id": "2933", 
+  "nb_skipped": 9, 
+  "commit": "44585b0c", 
+  "nb_failure": 0, 
+  "linesRem": 3
+}

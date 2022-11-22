@@ -1,0 +1,20 @@
+{
+  "files": 2, 
+  "nb_test": 150, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.flink.streaming.api.windowing.windowbuffer.SlidingTimeGroupedPreReducerTest", 
+    "org.apache.flink.streaming.api.windowing.windowbuffer.SlidingTimePreReducerTest"
+  ], 
+  "patch": "diff --git a/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/api/windowing/windowbuffer/SlidingGroupedPreReducer.java b/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/api/windowing/windowbuffer/SlidingGroupedPreReducer.java\nindex 0872c6e04a..09fadf9b0e 100644\n--- a/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/api/windowing/windowbuffer/SlidingGroupedPreReducer.java\n+++ b/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/api/windowing/windowbuffer/SlidingGroupedPreReducer.java\n@@ -143,6 +143,7 @@ protected void addCurrentToBuffer(T element) throws Exception {\n \t@Override\n \tprotected void resetCurrent() {\n \t\tcurrentReducedMap = null;\n+\t\telementsSinceLastPreAggregate = 0;\n \t}\n \n \t@Override\ndiff --git a/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/api/windowing/windowbuffer/SlidingTimePreReducer.java b/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/api/windowing/windowbuffer/SlidingTimePreReducer.java\nindex 7652d810c2..d84505c4a2 100644\n--- a/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/api/windowing/windowbuffer/SlidingTimePreReducer.java\n+++ b/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/api/windowing/windowbuffer/SlidingTimePreReducer.java\n@@ -89,6 +89,7 @@ public void evict(int n) {\n \n \t\tif (toRemove > 0 && lastPreAggregateSize == null) {\n \t\t\tcurrentReduced = null;\n+\t\t\telementsSinceLastPreAggregate = 0;\n \t\t\ttoRemove = 0;\n \t\t}\n \t}\n", 
+  "project": "flink", 
+  "linesAdd": 2, 
+  "jira_id": "2074", 
+  "nb_skipped": 1, 
+  "commit": "6bc6dbec", 
+  "nb_failure": 2, 
+  "linesRem": 0
+}

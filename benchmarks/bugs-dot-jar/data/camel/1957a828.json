@@ -1,0 +1,23 @@
+{
+  "files": 1, 
+  "nb_test": 5464, 
+  "nb_error": 3, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.component.vm.VmQueueTest", 
+    "org.apache.camel.component.vm.VmShouldNotUseSameThreadTest", 
+    "org.apache.camel.component.vm.VmMultipleConsumersMultipleContextTest", 
+    "org.apache.camel.component.vm.VmMultipleContextsStartStopTest", 
+    "org.apache.camel.component.bean.BeanHandlerMethodTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java b/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java\nindex d3c72141a1..a2f6ce8243 100644\n--- a/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java\n+++ b/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java\n@@ -987,7 +987,9 @@ private void removeAllAbstractMethods(List<MethodInfo> methods) {\n         Iterator<MethodInfo> it = methods.iterator();\n         while (it.hasNext()) {\n             MethodInfo info = it.next();\n-            if (Modifier.isAbstract(info.getMethod().getModifiers())) {\n+            // if the class is an interface then keep the method\n+            boolean isFromInterface = Modifier.isInterface(info.getMethod().getDeclaringClass().getModifiers());\n+            if (!isFromInterface && Modifier.isAbstract(info.getMethod().getModifiers())) {\n                 // we cannot invoke an abstract method\n                 it.remove();\n             }\n", 
+  "project": "camel", 
+  "linesAdd": 3, 
+  "jira_id": "9243", 
+  "nb_skipped": 4, 
+  "commit": "1957a828", 
+  "nb_failure": 2, 
+  "linesRem": 1
+}

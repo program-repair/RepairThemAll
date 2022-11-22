@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 2992, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.component.bean.BeanWithHeadersAndBodyInject3Test"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/builder/ExpressionBuilder.java b/camel-core/src/main/java/org/apache/camel/builder/ExpressionBuilder.java\nindex cdcfa6adde..5f73fe310b 100644\n--- a/camel-core/src/main/java/org/apache/camel/builder/ExpressionBuilder.java\n+++ b/camel-core/src/main/java/org/apache/camel/builder/ExpressionBuilder.java\n@@ -254,12 +254,18 @@ public String toString() {\n     /**\n      * Returns an expression for the outbound message headers\n      *\n-     * @return an expression object which will return the headers\n+     * @return an expression object which will return the headers, will be <tt>null</tt> if the\n+     * exchange is not out capable.\n      */\n     public static Expression outHeadersExpression() {\n         return new ExpressionAdapter() {\n             public Object evaluate(Exchange exchange) {\n+                // only get out headers if the MEP is out capable\n+                if (ExchangeHelper.isOutCapable(exchange)) {\n                     return exchange.getOut().getHeaders();\n+                } else {\n+                    return null;\n+                }\n             }\n \n             @Override\n", 
+  "project": "camel", 
+  "linesAdd": 7, 
+  "jira_id": "3388", 
+  "nb_skipped": 0, 
+  "commit": "0919a0f6", 
+  "nb_failure": 0, 
+  "linesRem": 1
+}

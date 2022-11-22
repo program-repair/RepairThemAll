@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 7, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.commons.PathUtilsTest"
+  ], 
+  "patch": "diff --git a/oak-commons/src/main/java/org/apache/jackrabbit/oak/commons/PathUtils.java b/oak-commons/src/main/java/org/apache/jackrabbit/oak/commons/PathUtils.java\nindex 6e68cb07ba..f82ec9339d 100644\n--- a/oak-commons/src/main/java/org/apache/jackrabbit/oak/commons/PathUtils.java\n+++ b/oak-commons/src/main/java/org/apache/jackrabbit/oak/commons/PathUtils.java\n@@ -185,6 +185,9 @@ public static String dropIndexFromName(@Nonnull String name) {\n     public static int getDepth(String path) {\n         assert isValid(path);\n \n+        if (path.isEmpty()) {\n+            return 0;\n+        }\n         int count = 1, i = 0;\n         if (isAbsolutePath(path)) {\n             if (denotesRootPath(path)) {\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 3, 
+  "jira_id": "888", 
+  "nb_skipped": 0, 
+  "commit": "6d82cb64", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

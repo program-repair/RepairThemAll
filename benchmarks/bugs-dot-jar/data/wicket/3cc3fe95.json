@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1705, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.queueing.transparentresolvers.DequeueingTransparentWebMarkupContainerTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java b/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java\nindex 0a3cab4e84..3eef517b1c 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java\n@@ -2096,7 +2096,7 @@ public void dequeue(DequeueContext dequeue)\n \t\t\t{\n \t\t\t\t// could not dequeue, or does not contain children\n \t\n-\t\t\t\tif (tag.isOpen())\n+\t\t\t\tif (tag.isOpen() && !tag.hasNoCloseTag())\n \t\t\t\t{\n \t\t\t\t\tdequeue.skipToCloseTag();\n \t\t\t\t}\n", 
+  "project": "wicket", 
+  "linesAdd": 1, 
+  "jira_id": "5728", 
+  "nb_skipped": 1, 
+  "commit": "3cc3fe95", 
+  "nb_failure": 0, 
+  "linesRem": 1
+}

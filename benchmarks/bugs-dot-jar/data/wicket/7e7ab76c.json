@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1046, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.markup.html.form.TextFieldTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/AbstractTextComponent.java b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/AbstractTextComponent.java\nindex 845187ca08..b9a424485f 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/AbstractTextComponent.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/AbstractTextComponent.java\n@@ -21,7 +21,6 @@\n import org.apache.wicket.Component;\n import org.apache.wicket.model.IModel;\n import org.apache.wicket.model.IObjectClassAwareModel;\n-import org.apache.wicket.util.convert.ConversionException;\n import org.apache.wicket.util.string.Strings;\n import org.slf4j.Logger;\n import org.slf4j.LoggerFactory;\n@@ -109,6 +108,8 @@ public boolean isInputNullable()\n \t}\n \n \t/**\n+\t * Convert the input respecting the flag convertEmptyInputStringToNull. Subclasses that override\n+\t * this method should test this flag also.\n \t * \n \t * @see org.apache.wicket.markup.html.form.FormComponent#convertInput()\n \t */\n@@ -118,8 +119,17 @@ protected void convertInput()\n \t\t// Stateless forms don't have to be rendered first, convertInput could be called before\n \t\t// onBeforeRender calling resolve type here again to check if the type is correctly set.\n \t\tresolveType();\n+\t\tString[] value = getInputAsArray();\n+\t\tString tmp = value != null && value.length > 0 ? value[0] : null;\n+\t\tif (getConvertEmptyInputStringToNull() && Strings.isEmpty(tmp))\n+\t\t{\n+\t\t\tsetConvertedInput(null);\n+\t\t}\n+\t\telse\n+\t\t{\n \t\t\tsuper.convertInput();\n \t\t}\n+\t}\n \n \t/**\n \t * If the type is not set try to guess it if the model supports it.\n@@ -140,13 +150,8 @@ private void resolveType()\n \t{\n \t\tif (!getFlag(TYPE_RESOLVED) && getType() == null)\n \t\t{\n-\t\t\t// Set the type, but only if it's not a String (see WICKET-606).\n-\t\t\t// Otherwise, getConvertEmptyInputStringToNull() won't work.\n \t\t\tClass<?> type = getModelType(getDefaultModel());\n-\t\t\tif (!String.class.equals(type))\n-\t\t\t{\n \t\t\tsetType(type);\n-\t\t\t}\n \t\t\tsetFlag(TYPE_RESOLVED, true);\n \t\t}\n \t}\n@@ -186,18 +191,4 @@ private void resolveType()\n \t\tsetFlag(FLAG_CONVERT_EMPTY_INPUT_STRING_TO_NULL, flag);\n \t\treturn this;\n \t}\n-\n-\t/**\n-\t * @see org.apache.wicket.markup.html.form.FormComponent#convertValue(String[])\n-\t */\n-\t@Override\n-\tprotected T convertValue(String[] value) throws ConversionException\n-\t{\n-\t\tString tmp = value != null && value.length > 0 ? value[0] : null;\n-\t\tif (getConvertEmptyInputStringToNull() && Strings.isEmpty(tmp))\n-\t\t{\n-\t\t\treturn null;\n-\t\t}\n-\t\treturn super.convertValue(value);\n-\t}\n }\n", 
+  "project": "wicket", 
+  "linesAdd": 11, 
+  "jira_id": "3304", 
+  "nb_skipped": 0, 
+  "commit": "7e7ab76c", 
+  "nb_failure": 1, 
+  "linesRem": 20
+}

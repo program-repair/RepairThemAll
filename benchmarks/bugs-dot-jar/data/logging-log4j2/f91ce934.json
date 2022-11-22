@@ -1,0 +1,19 @@
+{
+  "files": 2, 
+  "nb_test": 119, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.logging.log4j.core.net.SocketReconnectTest"
+  ], 
+  "patch": "diff --git a/core/src/main/java/org/apache/logging/log4j/core/appender/OutputStreamManager.java b/core/src/main/java/org/apache/logging/log4j/core/appender/OutputStreamManager.java\nindex 8d6b3a332..54fde20be 100644\n--- a/core/src/main/java/org/apache/logging/log4j/core/appender/OutputStreamManager.java\n+++ b/core/src/main/java/org/apache/logging/log4j/core/appender/OutputStreamManager.java\n@@ -28,6 +28,7 @@\n     private OutputStream os;\n \n     private byte[] footer = null;\n+    private byte[] header = null;\n \n     protected OutputStreamManager(final OutputStream os, final String streamName) {\n         super(streamName);\n@@ -54,6 +55,7 @@ protected OutputStreamManager(final OutputStream os, final String streamName) {\n      */\n     public synchronized void setHeader(final byte[] header) {\n         if (header != null) {\n+            this.header = header;\n             try {\n                 this.os.write(header, 0, header.length);\n             } catch (final IOException ioe) {\n@@ -97,6 +99,13 @@ protected OutputStream getOutputStream() {\n \n     protected void setOutputStream(final OutputStream os) {\n         this.os = os;\n+        if (header != null) {\n+            try {\n+                this.os.write(header, 0, header.length);\n+            } catch (final IOException ioe) {\n+                LOGGER.error(\"Unable to write header\", ioe);\n+            }\n+        }\n     }\n \n     /**\ndiff --git a/core/src/main/java/org/apache/logging/log4j/core/net/DatagramOutputStream.java b/core/src/main/java/org/apache/logging/log4j/core/net/DatagramOutputStream.java\nindex bf2a2e6c0..2fe3d9a1b 100644\n--- a/core/src/main/java/org/apache/logging/log4j/core/net/DatagramOutputStream.java\n+++ b/core/src/main/java/org/apache/logging/log4j/core/net/DatagramOutputStream.java\n@@ -89,7 +89,7 @@ public synchronized void write(final byte[] bytes) throws IOException {\n \n     @Override\n     public synchronized void flush() throws IOException {\n-        if (this.ds != null && this.address != null) {\n+        if (this.data != null && this.ds != null && this.address != null) {\n             final DatagramPacket packet = new DatagramPacket(data, data.length, address, port);\n             ds.send(packet);\n         }\n", 
+  "project": "logging-log4j2", 
+  "linesAdd": 10, 
+  "jira_id": "177", 
+  "nb_skipped": 0, 
+  "commit": "f91ce934", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

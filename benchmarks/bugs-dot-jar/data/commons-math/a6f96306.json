@@ -1,0 +1,23 @@
+{
+  "files": 3, 
+  "nb_test": 5909, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquardtOptimizerTest", 
+    "org.apache.commons.math3.fitting.leastsquares.EvaluationTest", 
+    "org.apache.commons.math3.fitting.leastsquares.GaussNewtonOptimizerWithCholeskyTest", 
+    "org.apache.commons.math3.fitting.leastsquares.GaussNewtonOptimizerWithQRTest", 
+    "org.apache.commons.math3.fitting.leastsquares.GaussNewtonOptimizerWithLUTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math3/fitting/leastsquares/GaussNewtonOptimizer.java b/src/main/java/org/apache/commons/math3/fitting/leastsquares/GaussNewtonOptimizer.java\nindex 924085687..c17c870c4 100644\n--- a/src/main/java/org/apache/commons/math3/fitting/leastsquares/GaussNewtonOptimizer.java\n+++ b/src/main/java/org/apache/commons/math3/fitting/leastsquares/GaussNewtonOptimizer.java\n@@ -197,9 +197,7 @@ public Optimum optimize(final LeastSquaresProblem lsp) {\n             throw new NullArgumentException();\n         }\n \n-        final int nC = lsp.getParameterSize();\n-\n-        final RealVector currentPoint = lsp.getStart();\n+        RealVector currentPoint = lsp.getStart();\n \n         // iterate until convergence is reached\n         Evaluation current = null;\n@@ -227,9 +225,7 @@ public Optimum optimize(final LeastSquaresProblem lsp) {\n             // solve the linearized least squares problem\n             final RealVector dX = this.decomposition.solve(weightedJacobian, currentResiduals);\n             // update the estimated parameters\n-            for (int i = 0; i < nC; ++i) {\n-                currentPoint.setEntry(i, currentPoint.getEntry(i) + dX.getEntry(i));\n-            }\n+            currentPoint = currentPoint.add(dX);\n         }\n     }\n \ndiff --git a/src/main/java/org/apache/commons/math3/fitting/leastsquares/LeastSquaresFactory.java b/src/main/java/org/apache/commons/math3/fitting/leastsquares/LeastSquaresFactory.java\nindex 0853d0355..16ac659c5 100644\n--- a/src/main/java/org/apache/commons/math3/fitting/leastsquares/LeastSquaresFactory.java\n+++ b/src/main/java/org/apache/commons/math3/fitting/leastsquares/LeastSquaresFactory.java\n@@ -332,7 +332,8 @@ public Evaluation evaluate(final RealVector point) {\n                     value.getFirst(),\n                     value.getSecond(),\n                     this.target,\n-                    point);\n+                    // copy so optimizer can change point without changing our instance\n+                    point.copy());\n         }\n \n         /**\ndiff --git a/src/main/java/org/apache/commons/math3/fitting/leastsquares/LevenbergMarquardtOptimizer.java b/src/main/java/org/apache/commons/math3/fitting/leastsquares/LevenbergMarquardtOptimizer.java\nindex 1cd4e51f7..5f0527c33 100644\n--- a/src/main/java/org/apache/commons/math3/fitting/leastsquares/LevenbergMarquardtOptimizer.java\n+++ b/src/main/java/org/apache/commons/math3/fitting/leastsquares/LevenbergMarquardtOptimizer.java\n@@ -328,7 +328,7 @@ public Optimum optimize(final LeastSquaresProblem problem) {\n         // Evaluate the function at the starting point and calculate its norm.\n         evaluationCounter.incrementCount();\n         //value will be reassigned in the loop\n-        Evaluation current = problem.evaluate(new ArrayRealVector(currentPoint, false));\n+        Evaluation current = problem.evaluate(new ArrayRealVector(currentPoint));\n         double[] currentResiduals = current.getResiduals().toArray();\n         double currentCost = current.getCost();\n \n@@ -445,7 +445,7 @@ public Optimum optimize(final LeastSquaresProblem problem) {\n \n                 // Evaluate the function at x + p and calculate its norm.\n                 evaluationCounter.incrementCount();\n-                current = problem.evaluate(new ArrayRealVector(currentPoint,false));\n+                current = problem.evaluate(new ArrayRealVector(currentPoint));\n                 currentResiduals = current.getResiduals().toArray();\n                 currentCost = current.getCost();\n \n", 
+  "project": "commons-math", 
+  "linesAdd": 6, 
+  "jira_id": "1103", 
+  "nb_skipped": 3, 
+  "commit": "a6f96306", 
+  "nb_failure": 5, 
+  "linesRem": 9
+}

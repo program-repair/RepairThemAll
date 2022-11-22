@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 697, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.accumulo.core.util.shell.ShellConfigTest"
+  ], 
+  "patch": "diff --git a/core/src/main/java/org/apache/accumulo/core/util/shell/Shell.java b/core/src/main/java/org/apache/accumulo/core/util/shell/Shell.java\nindex b187a763c..a7ab8db2f 100644\n--- a/core/src/main/java/org/apache/accumulo/core/util/shell/Shell.java\n+++ b/core/src/main/java/org/apache/accumulo/core/util/shell/Shell.java\n@@ -286,8 +286,7 @@ public boolean config(String... args) {\n \n     // process default parameters if unspecified\n     try {\n-      boolean hasToken = (token != null);\n-      boolean hasTokenOptions = !loginOptions.isEmpty();\n+      final boolean hasToken = (token != null);\n \n       if (hasToken && password != null) {\n         throw new ParameterException(\"Can not supply '--pass' option with '--tokenClass' option\");\n@@ -300,16 +299,15 @@ public void run() {\n         }\n       });\n \n-      // Need either both a token and options, or neither, but not just one.\n-      if (hasToken != hasTokenOptions) {\n-        throw new ParameterException(\"Must supply either both or neither of '--tokenClass' and '--tokenProperty'\");\n-      } else if (hasToken) { // implied hasTokenOptions\n+      if (hasToken) { // implied hasTokenOptions\n         // Fully qualified name so we don't shadow java.util.Properties\n         org.apache.accumulo.core.client.security.tokens.AuthenticationToken.Properties props;\n         // and line wrap it because the package name is so long\n         props = new org.apache.accumulo.core.client.security.tokens.AuthenticationToken.Properties();\n \n+        if (!loginOptions.isEmpty()) {\n           props.putAllStrings(loginOptions);\n+        }\n         token.init(props);\n       } else {\n         // Read password if the user explicitly asked for it, or didn't specify anything at all\n", 
+  "project": "accumulo", 
+  "linesAdd": 4, 
+  "jira_id": "3424", 
+  "nb_skipped": 2, 
+  "commit": "27d4ee21", 
+  "nb_failure": 1, 
+  "linesRem": 6
+}

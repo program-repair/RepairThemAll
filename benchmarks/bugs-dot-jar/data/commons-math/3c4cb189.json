@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 3524, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math3.optimization.linear.SimplexSolverTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math3/optimization/linear/SimplexTableau.java b/src/main/java/org/apache/commons/math3/optimization/linear/SimplexTableau.java\nindex 9a6993a55..327b2ae65 100644\n--- a/src/main/java/org/apache/commons/math3/optimization/linear/SimplexTableau.java\n+++ b/src/main/java/org/apache/commons/math3/optimization/linear/SimplexTableau.java\n@@ -335,7 +335,7 @@ protected void dropPhase1Objective() {\n         // positive cost non-artificial variables\n         for (int i = getNumObjectiveFunctions(); i < getArtificialVariableOffset(); i++) {\n             final double entry = tableau.getEntry(0, i);\n-            if (Precision.compareTo(entry, 0d, maxUlps) > 0) {\n+            if (Precision.compareTo(entry, 0d, epsilon) > 0) {\n                 columnsToDrop.add(i);\n             }\n         }\n", 
+  "project": "commons-math", 
+  "linesAdd": 1, 
+  "jira_id": "781", 
+  "nb_skipped": 1, 
+  "commit": "3c4cb189", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

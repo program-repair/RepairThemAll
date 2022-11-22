@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1067, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": true
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.markup.RefreshingViewOnRemoveTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java b/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java\nindex 422dc3f075..beca6b15b2 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java\n@@ -631,6 +631,7 @@ public final void removeAll()\n \n \t\t\t\t\t// Do not call remove() because the state change would than be\n \t\t\t\t\t// recorded twice.\n+\t\t\t\t\tchild.internalOnRemove();\n \t\t\t\t\tchild.detachModel();\n \t\t\t\t\tchild.setParent(null);\n \t\t\t\t}\n", 
+  "project": "wicket", 
+  "linesAdd": 1, 
+  "jira_id": "3455", 
+  "nb_skipped": 0, 
+  "commit": "f30bd1cb", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

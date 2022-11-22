@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 2125, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math.stat.FrequencyTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math/stat/Frequency.java b/src/main/java/org/apache/commons/math/stat/Frequency.java\nindex c45d72883..68c8bf2de 100644\n--- a/src/main/java/org/apache/commons/math/stat/Frequency.java\n+++ b/src/main/java/org/apache/commons/math/stat/Frequency.java\n@@ -300,7 +300,7 @@ public long getCount(char v) {\n      */\n     @Deprecated\n     public double getPct(Object v) {\n-        return getCumPct((Comparable<?>) v);\n+        return getPct((Comparable<?>) v);\n     }\n \n     /**\n", 
+  "project": "commons-math", 
+  "linesAdd": 1, 
+  "jira_id": "329", 
+  "nb_skipped": 0, 
+  "commit": "6dd3724b", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

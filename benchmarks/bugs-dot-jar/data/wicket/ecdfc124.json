@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1566, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.request.handler.render.WebPageRendererTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/request/handler/render/WebPageRenderer.java b/wicket-core/src/main/java/org/apache/wicket/request/handler/render/WebPageRenderer.java\nindex 4b95e32893..8c99c13832 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/handler/render/WebPageRenderer.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/handler/render/WebPageRenderer.java\n@@ -332,10 +332,16 @@ protected boolean shouldRedirectToTargetUrl(RequestCycle cycle, Url currentUrl,\n \tprotected boolean shouldRenderPageAndWriteResponse(RequestCycle cycle, Url currentUrl,\n \t\tUrl targetUrl)\n \t{\n+\t\t// WICKET-5484 never render and write for Ajax requests\n+\t\tif (isAjax(cycle))\n+\t\t{\n+\t\t\treturn false;\n+\t\t}\n+\n \t\treturn neverRedirect(getRedirectPolicy())\n-\t\t\t|| (!isAjax(cycle) && ((isOnePassRender() && notForcedRedirect(getRedirectPolicy())) || (targetUrl\n+\t\t\t|| ((isOnePassRender() && notForcedRedirect(getRedirectPolicy())) || (targetUrl\n \t\t\t\t.equals(currentUrl) && notNewAndNotStatelessPage(isNewPageInstance(),\n-\t\t\t\tisPageStateless())))) || (targetUrl.equals(currentUrl) && isRedirectToRender())\n+\t\t\t\tisPageStateless()))) || (targetUrl.equals(currentUrl) && isRedirectToRender())\n \t\t\t|| shouldPreserveClientUrl(cycle);\n \t}\n \n", 
+  "project": "wicket", 
+  "linesAdd": 8, 
+  "jira_id": "5484", 
+  "nb_skipped": 2, 
+  "commit": "ecdfc124", 
+  "nb_failure": 2, 
+  "linesRem": 2
+}

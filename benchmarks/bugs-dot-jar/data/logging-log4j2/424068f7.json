@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 77, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.logging.log4j.jul.BracketInNotInterpolatedMessageTest"
+  ], 
+  "patch": "diff --git a/log4j-jul/src/main/java/org/apache/logging/log4j/jul/ApiLogger.java b/log4j-jul/src/main/java/org/apache/logging/log4j/jul/ApiLogger.java\nindex adac9be60..92b2dffe1 100644\n--- a/log4j-jul/src/main/java/org/apache/logging/log4j/jul/ApiLogger.java\n+++ b/log4j-jul/src/main/java/org/apache/logging/log4j/jul/ApiLogger.java\n@@ -23,6 +23,7 @@\n import java.util.logging.Logger;\n \n import org.apache.logging.log4j.message.Message;\n+import org.apache.logging.log4j.message.MessageFactory;\n import org.apache.logging.log4j.spi.ExtendedLogger;\n \n /**\n@@ -56,7 +57,11 @@ public void log(final LogRecord record) {\n             return;\n         }\n         final org.apache.logging.log4j.Level level = LevelTranslator.toLevel(record.getLevel());\n-        final Message message = logger.getMessageFactory().newMessage(record.getMessage(), record.getParameters());\n+        final Object[] parameters = record.getParameters();\n+        final MessageFactory messageFactory = logger.getMessageFactory();\n+        final Message message = parameters == null ?\n+            messageFactory.newMessage(record.getMessage()) /* LOG4J2-1251: not formatted case */ :\n+            messageFactory.newMessage(record.getMessage(), parameters);\n         final Throwable thrown = record.getThrown();\n         logger.logIfEnabled(FQCN, level, null, message, thrown);\n     }\n@@ -94,6 +99,7 @@ protected void doSetLevel(final Level newLevel) throws SecurityException {\n \n     /**\n      * Unsupported operation.\n+     *\n      * @throws UnsupportedOperationException always\n      */\n     @Override\n", 
+  "project": "logging-log4j2", 
+  "linesAdd": 7, 
+  "jira_id": "1251", 
+  "nb_skipped": 0, 
+  "commit": "424068f7", 
+  "nb_failure": 0, 
+  "linesRem": 1
+}

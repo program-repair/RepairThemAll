@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 379, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.index.lucene.IndexPlannerTest"
+  ], 
+  "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexPlanner.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexPlanner.java\nindex a2189a0400..9a413dce32 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexPlanner.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexPlanner.java\n@@ -36,6 +36,7 @@\n import org.apache.jackrabbit.oak.query.fulltext.FullTextTerm;\n import org.apache.jackrabbit.oak.query.fulltext.FullTextVisitor;\n import org.apache.jackrabbit.oak.spi.query.Filter;\n+import org.apache.jackrabbit.oak.spi.query.QueryIndex;\n import org.apache.lucene.index.IndexReader;\n import org.slf4j.Logger;\n import org.slf4j.LoggerFactory;\n@@ -43,6 +44,7 @@\n import static com.google.common.collect.Lists.newArrayList;\n import static com.google.common.collect.Lists.newArrayListWithCapacity;\n import static com.google.common.collect.Maps.newHashMap;\n+import static org.apache.jackrabbit.JcrConstants.JCR_SCORE;\n import static org.apache.jackrabbit.oak.commons.PathUtils.getAncestorPath;\n import static org.apache.jackrabbit.oak.commons.PathUtils.getDepth;\n import static org.apache.jackrabbit.oak.commons.PathUtils.getParentPath;\n@@ -156,7 +158,8 @@ public String toString() {\n         //Fulltext expression can also be like jcr:contains(jcr:content/metadata/@format, 'image')\n \n         List<OrderEntry> sortOrder = createSortOrder(indexingRule);\n-        if (!indexedProps.isEmpty() || !sortOrder.isEmpty() || ft != null || evalPathRestrictions) {\n+        boolean canSort = canHandleSorting(sortOrder);\n+        if (!indexedProps.isEmpty() || canSort || ft != null || evalPathRestrictions) {\n             //TODO Need a way to have better cost estimate to indicate that\n             //this index can evaluate more propertyRestrictions natively (if more props are indexed)\n             //For now we reduce cost per entry\n@@ -191,6 +194,20 @@ public String toString() {\n         return null;\n     }\n \n+    private boolean canHandleSorting(List<OrderEntry> sortOrder) {\n+        if (sortOrder.isEmpty()){\n+            return false;\n+        }\n+\n+        //If jcr:score is the only sort order then opt out\n+        if (sortOrder.size() == 1\n+                && JCR_SCORE.equals(sortOrder.get(0).getPropertyName())){\n+            return false;\n+        }\n+\n+        return true;\n+    }\n+\n     private boolean canEvalAllFullText(final IndexingRule indexingRule, FullTextExpression ft) {\n         if (ft == null){\n             return false;\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 18, 
+  "jira_id": "2439", 
+  "nb_skipped": 3, 
+  "commit": "beaca1a4", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

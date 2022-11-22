@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 22, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.extensions.ajax.markup.html.AjaxEditableTest"
+  ], 
+  "patch": "diff --git a/wicket-extensions/src/main/java/org/apache/wicket/extensions/ajax/markup/html/AjaxEditableLabel.java b/wicket-extensions/src/main/java/org/apache/wicket/extensions/ajax/markup/html/AjaxEditableLabel.java\nindex 15dc1c1291..ee3006e6b1 100644\n--- a/wicket-extensions/src/main/java/org/apache/wicket/extensions/ajax/markup/html/AjaxEditableLabel.java\n+++ b/wicket-extensions/src/main/java/org/apache/wicket/extensions/ajax/markup/html/AjaxEditableLabel.java\n@@ -30,6 +30,7 @@\n import org.apache.wicket.markup.html.form.TextField;\n import org.apache.wicket.markup.html.panel.Panel;\n import org.apache.wicket.model.IModel;\n+import org.apache.wicket.model.IObjectClassAwareModel;\n import org.apache.wicket.request.cycle.RequestCycle;\n import org.apache.wicket.util.convert.IConverter;\n import org.apache.wicket.util.string.JavaScriptUtils;\n@@ -391,7 +392,7 @@ protected String getLabelAjaxEvent()\n \t{\n \t\tif (editor == null)\n \t\t{\n-\t\t\tinitLabelAndEditor(getDelegatingParentModel());\n+\t\t\tinitLabelAndEditor(new WrapperModel());\n \t\t}\n \t\treturn editor;\n \t}\n@@ -405,7 +406,7 @@ protected final Component getLabel()\n \t{\n \t\tif (label == null)\n \t\t{\n-\t\t\tinitLabelAndEditor(getDelegatingParentModel());\n+\t\t\tinitLabelAndEditor(new WrapperModel());\n \t\t}\n \t\treturn label;\n \t}\n@@ -420,7 +421,7 @@ protected void onBeforeRender()\n \t\t// lazily add label and editor\n \t\tif (editor == null)\n \t\t{\n-\t\t\tinitLabelAndEditor(getDelegatingParentModel());\n+\t\t\tinitLabelAndEditor(new WrapperModel());\n \t\t}\n \t\t// obsolete with WICKET-1919\n \t\t// label.setEnabled(isEnabledInHierarchy());\n@@ -510,16 +511,11 @@ private void initLabelAndEditor(final IModel<T> model)\n \t}\n \n \t/**\n-\t * get a model that accesses the parent model lazily. this is required since we eventually\n-\t * request the parents model before the component is added to the parent.\n-\t * \n-\t * @return model\n+\t * Model that accesses the parent model lazily. this is required since we eventually request the\n+\t * parents model before the component is added to the parent.\n \t */\n-\tprivate IModel<T> getDelegatingParentModel()\n-\t{\n-\t\treturn new IModel<T>()\n+\tprivate class WrapperModel implements IModel<T>, IObjectClassAwareModel<T>\n \t{\n-\t\t\tprivate static final long serialVersionUID = 1L;\n \n \t\tpublic T getObject()\n \t\t{\n@@ -534,10 +530,21 @@ public void setObject(final T object)\n \t\tpublic void detach()\n \t\t{\n \t\t\tgetParentModel().detach();\n-\t\t\t}\n-\t\t};\n+\n \t\t}\n \n+\t\tpublic Class<T> getObjectClass()\n+\t\t{\n+\t\t\tif (getParentModel() instanceof IObjectClassAwareModel)\n+\t\t\t{\n+\t\t\t\treturn ((IObjectClassAwareModel)getParentModel()).getObjectClass();\n+\t\t\t}\n+\t\t\telse\n+\t\t\t{\n+\t\t\t\treturn null;\n+\t\t\t}\n+\t\t}\n+\t}\n \n \t/**\n \t * @return Gets the parent model in case no explicit model was specified.\n", 
+  "project": "wicket", 
+  "linesAdd": 20, 
+  "jira_id": "4259", 
+  "nb_skipped": 0, 
+  "commit": "1f128536", 
+  "nb_failure": 1, 
+  "linesRem": 13
+}

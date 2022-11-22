@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 154, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.util.visit.ClassVisitFilterTest"
+  ], 
+  "patch": "diff --git a/wicket-util/src/main/java/org/apache/wicket/util/visit/ClassVisitFilter.java b/wicket-util/src/main/java/org/apache/wicket/util/visit/ClassVisitFilter.java\nindex c94e069831..0a7d0b1a5d 100644\n--- a/wicket-util/src/main/java/org/apache/wicket/util/visit/ClassVisitFilter.java\n+++ b/wicket-util/src/main/java/org/apache/wicket/util/visit/ClassVisitFilter.java\n@@ -45,6 +45,6 @@ public boolean visitChildren(final Object object)\n \t/** {@inheritDoc} */\r\n \tpublic boolean visitObject(final Object object)\r\n \t{\r\n-\t\treturn clazz.isAssignableFrom(object.getClass());\r\n+\t\treturn clazz == null || clazz.isAssignableFrom(object.getClass());\r\n \t}\r\n }\r\n", 
+  "project": "wicket", 
+  "linesAdd": 1, 
+  "jira_id": "4519", 
+  "nb_skipped": 0, 
+  "commit": "e62ded51", 
+  "nb_failure": 0, 
+  "linesRem": 1
+}

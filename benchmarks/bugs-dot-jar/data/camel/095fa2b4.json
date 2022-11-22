@@ -1,0 +1,20 @@
+{
+  "files": 1, 
+  "nb_test": 4788, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.processor.ThrottlerTest", 
+    "org.apache.camel.management.ManagedThrottlerTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/Throttler.java b/camel-core/src/main/java/org/apache/camel/processor/Throttler.java\nindex ae6bc26391..6b51a2ce09 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/Throttler.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/Throttler.java\n@@ -116,6 +116,9 @@ protected long calculateDelay(Exchange exchange) {\n             if (maximumRequestsPerPeriod > 0 && longValue.longValue() != maximumRequestsPerPeriod) {\n                 log.debug(\"Throttler changed maximum requests per period from {} to {}\", maximumRequestsPerPeriod, longValue);\n             }\n+            if (maximumRequestsPerPeriod > longValue) {\n+                slot.capacity = 0;\n+            }\n             maximumRequestsPerPeriod = longValue;\n         }\n \n@@ -139,7 +142,7 @@ protected synchronized TimeSlot nextSlot() {\n         if (slot == null) {\n             slot = new TimeSlot();\n         }\n-        if (slot.isFull() || !slot.isActive()) {\n+        if (slot.isFull() || !slot.isPast()) {\n             slot = slot.next();\n         }\n         slot.assign();\n@@ -175,6 +178,11 @@ protected TimeSlot next() {\n             return new TimeSlot(Math.max(System.currentTimeMillis(), this.startTime + this.duration));\n         }\n \n+        protected boolean isPast() {\n+            long current = System.currentTimeMillis();\n+            return current < (startTime + duration);\n+        }\n+\n         protected boolean isActive() {\n             long current = System.currentTimeMillis();\n             return startTime <= current && current < (startTime + duration);\n", 
+  "project": "camel", 
+  "linesAdd": 9, 
+  "jira_id": "7160", 
+  "nb_skipped": 3, 
+  "commit": "095fa2b4", 
+  "nb_failure": 2, 
+  "linesRem": 1
+}

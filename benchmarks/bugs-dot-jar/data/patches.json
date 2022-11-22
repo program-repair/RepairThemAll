@@ -1,0 +1,57 @@
+{
+	"accumulo": {
+		"b007b22eebe713a3d96f564864aeb29a336b6a0e": ["Elixir"]
+	},
+	"camel": {
+		"708e756d2a28c1a52cac5ac4a919f87231d07185": ["Elixir"],
+		"3f70d6128a7ffd5006a6f2495658c48a5adcc209": ["Elixir"],
+		"5f78c646c2b305d5373629a448efc953cd793cd9": ["Elixir"]
+	},
+	"commons-math": {
+		"cc4ab51ee9e001a0a999a2a43ad5bd323494b800": ["Elixir"],
+		"a56d4998cf16ff08f5593fb7d4dda66ca05dc269": ["Elixir"],
+		"09fe956a62e19c160d0093f8fecf254c2bb6f0cb": ["Elixir"],
+		"fb0078159d2463da149de54018fca79a9447153e": ["Elixir"],
+		"0596e3145c1a8a9c42185fe688c42b0830b64516": ["Elixir"],
+		"6dd3724b9b5e29a9bd9f404d28d0cf6d43ccfe95": ["Elixir"],
+		"6d6649ef6932053a9cb1854cec65b60b1e445999": ["Elixir"],
+		"ebadb558aaac32dd82e1355a915d42c521a3e740": ["Elixir"],
+		"3c4cb189cc91c5ca78cab3ba95dc82bee715d39a": ["Elixir"],
+		"ce126bdbc6d3dbc8a3e83e1884999afadee76866": ["Elixir"],
+		"724795b5513651e1e34fae3904d1b58229ce9c17": ["Elixir"]
+	},
+	"flink": {
+		"937963e339ddd57cc65e3da8af5398600e4d9ad2": ["Elixir"],
+		"a5b05566ebeb1504da6579b21f424fbb45a56148": ["Elixir"]
+	},
+	"jackrabbit-oak": {
+		"b2ca8baa25cc8b6bf8a92257bf31f2238a709fbc": ["Elixir"],
+		"2f95b81fbbb914955e7bf8abf5ea9b2757745050": ["Elixir"],
+		"74f22886ec12f211143222677e9a507b1b2416aa": ["Elixir"],
+		"ba38c380d4bc5f14b35d20f70bac2b1551ffadaa": ["Elixir"],
+		"94110f216c6ca57e86532c1cf5365aa0a9e8fe33": ["Elixir"],
+		"36e70bd72c45b8fc47fa791e4d3aa109fb74763b": ["Elixir"],
+		"00df38d2fb6ae8df6fb41ed6a8c8766b7d39f22a": ["Elixir"],
+		"b896c926558ab3696f63088c6fea9f008a48252e": ["Elixir"],
+		"35a7f014668fec3b1752acd8a4f23e7bba7b2ac4": ["Elixir"]
+	},
+	"logging-log4j2": {
+	},
+	"maven": {
+	},
+	"wicket": {
+		"d1b626391e1c2df7b22167aacd2859e0911cc404": ["Elixir"],
+		"121249027def27a460fe27bbdcdbe06c5f6f6cb8": ["Elixir"],
+		"1858bc18f8b8efaef0e67b837e4ddac0bc025993": ["Elixir"],
+		"3feb0e3ad4aab3f12e0d0a291b3791c26cd2cb26": ["Elixir"],
+		"b76f9c44bfd288c75dc9894374f60873c3b4acfb": ["Elixir"],
+		"081cdeb2bc5c0bdb0e4d5b92ce51c114075dfe8b": ["Elixir"],
+		"c250db9c324da4158f55831931401357ac7b1124": ["Elixir"],
+		"32c76c4ad6b52c29c76b5aa3e2cea510afdebf8e": ["Elixir"],
+		"35843c19628b0346acec2867cc88fbabb81e8a4f": ["Elixir"],
+		"8e518d884ee35a118d6f7772ce3900abd07206f9": ["Elixir"],
+		"61122bab26db4ae3ad651f8d9794f4e0e865e6e2": ["Elixir"],
+		"8e794fc468c1142b218d33ea3cbb67584d6c1441": ["Elixir"],
+		"e93fdd5ab088d8638c5f1f58e2d337823cbcc020": ["Elixir"]
+	}
+}

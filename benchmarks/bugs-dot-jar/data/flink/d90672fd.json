@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 274, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.flink.streaming.graph.StreamingJobGraphGeneratorNodeHashTest"
+  ], 
+  "patch": "diff --git a/flink-streaming-java/src/main/java/org/apache/flink/streaming/api/graph/StreamingJobGraphGenerator.java b/flink-streaming-java/src/main/java/org/apache/flink/streaming/api/graph/StreamingJobGraphGenerator.java\nindex da46424309..e3e1ac612d 100644\n--- a/flink-streaming-java/src/main/java/org/apache/flink/streaming/api/graph/StreamingJobGraphGenerator.java\n+++ b/flink-streaming-java/src/main/java/org/apache/flink/streaming/api/graph/StreamingJobGraphGenerator.java\n@@ -736,8 +736,6 @@ private void generateNodeLocalHash(StreamNode node, Hasher hasher, int id) {\n \n \t\thasher.putInt(node.getParallelism());\n \n-\t\thasher.putString(node.getOperatorName(), Charset.forName(\"UTF-8\"));\n-\n \t\tif (node.getOperator() instanceof AbstractUdfStreamOperator) {\n \t\t\tString udfClassName = ((AbstractUdfStreamOperator<?, ?>) node.getOperator())\n \t\t\t\t\t.getUserFunction().getClass().getName();\n", 
+  "project": "flink", 
+  "linesAdd": 0, 
+  "jira_id": "3513", 
+  "nb_skipped": 1, 
+  "commit": "d90672fd", 
+  "nb_failure": 1, 
+  "linesRem": 2
+}

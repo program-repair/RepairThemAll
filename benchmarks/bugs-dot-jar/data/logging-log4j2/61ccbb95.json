@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 527, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.logging.log4j.core.jmx.ServerTest"
+  ], 
+  "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/jmx/Server.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/jmx/Server.java\nindex 898e5e177..e2c03f99a 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/jmx/Server.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/jmx/Server.java\n@@ -88,12 +88,12 @@ public static String escape(final String name) {\n                 needsQuotes = true;\n                 break;\n             case '\\r':\n-                // replace by \\\\r, no need to quote\n-                sb.append(\"\\\\r\");\n+                // drop \\r characters: \\\\r gives \"invalid escape sequence\"\n                 continue;\n             case '\\n':\n-                // replace by \\\\n, no need to quote\n+                // replace \\n characters with \\\\n sequence\n                 sb.append(\"\\\\n\");\n+                needsQuotes = true;\n                 continue;\n             }\n             sb.append(c);\n@@ -260,13 +260,14 @@ public static void unregisterContext(String loggerContextName) {\n      */\n     public static void unregisterContext(String contextName, MBeanServer mbs) {\n         final String pattern = LoggerContextAdminMBean.PATTERN;\n-        final String search = String.format(pattern, contextName, \"*\");\n+        final String safeContextName = escape(contextName);\n+        final String search = String.format(pattern, safeContextName, \"*\");\n         unregisterAllMatching(search, mbs); // unregister context mbean\n-        unregisterLoggerConfigs(contextName, mbs);\n-        unregisterAppenders(contextName, mbs);\n-        unregisterAsyncAppenders(contextName, mbs);\n-        unregisterAsyncLoggerRingBufferAdmins(contextName, mbs);\n-        unregisterAsyncLoggerConfigRingBufferAdmins(contextName, mbs);\n+        unregisterLoggerConfigs(safeContextName, mbs);\n+        unregisterAppenders(safeContextName, mbs);\n+        unregisterAsyncAppenders(safeContextName, mbs);\n+        unregisterAsyncLoggerRingBufferAdmins(safeContextName, mbs);\n+        unregisterAsyncLoggerConfigRingBufferAdmins(safeContextName, mbs);\n     }\n \n     private static void registerStatusLogger(final MBeanServer mbs, final Executor executor)\n", 
+  "project": "logging-log4j2", 
+  "linesAdd": 10, 
+  "jira_id": "492", 
+  "nb_skipped": 1, 
+  "commit": "61ccbb95", 
+  "nb_failure": 2, 
+  "linesRem": 9
+}

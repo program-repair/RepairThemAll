@@ -1,0 +1,19 @@
+{
+  "files": 2, 
+  "nb_test": 782, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "typeutils.runtime.KryoGenericTypeSerializerTest"
+  ], 
+  "patch": "diff --git a/flink-java/src/main/java/org/apache/flink/api/java/typeutils/runtime/KryoSerializer.java b/flink-java/src/main/java/org/apache/flink/api/java/typeutils/runtime/KryoSerializer.java\nindex 133dd57635..d8411a02bd 100644\n--- a/flink-java/src/main/java/org/apache/flink/api/java/typeutils/runtime/KryoSerializer.java\n+++ b/flink-java/src/main/java/org/apache/flink/api/java/typeutils/runtime/KryoSerializer.java\n@@ -195,7 +195,18 @@ public T deserialize(DataInputView source) throws IOException {\n \t\t\tinput = new NoFetchingInput(inputStream);\n \t\t\tpreviousIn = source;\n \t\t}\n+\n+\t\ttry {\n \t\t\treturn (T) kryo.readClassAndObject(input);\n+\t\t} catch (KryoException ke) {\n+\t\t\tThrowable cause = ke.getCause();\n+\n+\t\t\tif(cause instanceof EOFException) {\n+\t\t\t\tthrow (EOFException) cause;\n+\t\t\t} else {\n+\t\t\t\tthrow ke;\n+\t\t\t}\n+\t\t}\n \t}\n \t\n \t@Override\ndiff --git a/flink-java/src/main/java/org/apache/flink/api/java/typeutils/runtime/NoFetchingInput.java b/flink-java/src/main/java/org/apache/flink/api/java/typeutils/runtime/NoFetchingInput.java\nindex 524347c914..0f4fe94d84 100644\n--- a/flink-java/src/main/java/org/apache/flink/api/java/typeutils/runtime/NoFetchingInput.java\n+++ b/flink-java/src/main/java/org/apache/flink/api/java/typeutils/runtime/NoFetchingInput.java\n@@ -21,6 +21,7 @@\n import com.esotericsoftware.kryo.KryoException;\n import com.esotericsoftware.kryo.io.Input;\n \n+import java.io.EOFException;\n import java.io.IOException;\n import java.io.InputStream;\n \n@@ -73,7 +74,7 @@ protected int require(int required) throws KryoException {\n \t\t\tcount = fill(buffer, bytesRead, required - bytesRead);\n \n \t\t\tif(count == -1){\n-\t\t\t\tthrow new KryoException(\"Buffer underflow\");\n+\t\t\t\tthrow new KryoException(new EOFException(\"No more bytes left.\"));\n \t\t\t}\n \n \t\t\tbytesRead += count;\n@@ -121,7 +122,7 @@ public void readBytes(byte[] bytes, int offset, int count) throws KryoException\n \t\t\t\tc = inputStream.read(bytes, offset+bytesRead, count-bytesRead);\n \n \t\t\t\tif(c == -1){\n-\t\t\t\t\tthrow new KryoException(\"Buffer underflow\");\n+\t\t\t\t\tthrow new KryoException(new EOFException(\"No more bytes left.\"));\n \t\t\t\t}\n \n \t\t\t\tbytesRead += c;\n", 
+  "project": "flink", 
+  "linesAdd": 14, 
+  "jira_id": "1531", 
+  "nb_skipped": 0, 
+  "commit": "21f47d9c", 
+  "nb_failure": 1, 
+  "linesRem": 2
+}

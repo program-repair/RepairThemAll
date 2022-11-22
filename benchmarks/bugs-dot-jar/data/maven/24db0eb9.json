@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 31, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.maven.artifact.resolver.DefaultArtifactCollectorTest"
+  ], 
+  "patch": "diff --git a/maven-artifact/src/main/java/org/apache/maven/artifact/resolver/DefaultArtifactCollector.java b/maven-artifact/src/main/java/org/apache/maven/artifact/resolver/DefaultArtifactCollector.java\nindex c467098de..b6d379ec2 100644\n--- a/maven-artifact/src/main/java/org/apache/maven/artifact/resolver/DefaultArtifactCollector.java\n+++ b/maven-artifact/src/main/java/org/apache/maven/artifact/resolver/DefaultArtifactCollector.java\n@@ -201,15 +201,16 @@ else if ( currentRange == null )\n                     if ( checkScopeUpdate( farthest, nearest, listeners ) )\n                     {\n                         fireEvent( ResolutionListener.UPDATE_SCOPE, listeners, nearest, farthest.getArtifact() );\n-\n-                        // previously we cloned the artifact, but it is more effecient to just update the scope\n-                        // if problems are later discovered that the original object needs its original scope value, cloning may\n-                        // again be appropriate\n-                        nearest.getArtifact().setScope( farthest.getArtifact().getScope() );\n+                        /* we need nearest version but farthest scope */\n+                        nearest.disable();\n+                        farthest.getArtifact().setVersion( nearest.getArtifact().getVersion() );\n                     }\n-                    fireEvent( ResolutionListener.OMIT_FOR_NEARER, listeners, farthest, nearest.getArtifact() );\n+                    else\n+                    {\n                         farthest.disable();\n                     }\n+                    fireEvent( ResolutionListener.OMIT_FOR_NEARER, listeners, farthest, nearest.getArtifact() );\n+                }\n             }\n         }\n         else\n", 
+  "project": "maven", 
+  "linesAdd": 7, 
+  "jira_id": "1895", 
+  "nb_skipped": 0, 
+  "commit": "24db0eb9", 
+  "nb_failure": 1, 
+  "linesRem": 6
+}

@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 13, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.extensions.markup.html.repeater.data.table.DataTableTest"
+  ], 
+  "patch": "diff --git a/wicket-extensions/src/main/java/org/apache/wicket/extensions/markup/html/repeater/data/table/HeadersToolbar.java b/wicket-extensions/src/main/java/org/apache/wicket/extensions/markup/html/repeater/data/table/HeadersToolbar.java\nindex 4fbeab2733..9935c68b61 100644\n--- a/wicket-extensions/src/main/java/org/apache/wicket/extensions/markup/html/repeater/data/table/HeadersToolbar.java\n+++ b/wicket-extensions/src/main/java/org/apache/wicket/extensions/markup/html/repeater/data/table/HeadersToolbar.java\n@@ -21,6 +21,7 @@\n import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;\n import org.apache.wicket.extensions.markup.html.repeater.data.sort.OrderByBorder;\n import org.apache.wicket.markup.html.WebMarkupContainer;\n+import org.apache.wicket.markup.html.border.Border;\n import org.apache.wicket.markup.html.list.AbstractItem;\n import org.apache.wicket.markup.repeater.RepeatingView;\n \n@@ -87,7 +88,14 @@ protected String getCssClass()\n \n \t\t\titem.add(header);\n \t\t\titem.setRenderBodyOnly(true);\n+\t\t\tif (header instanceof Border)\n+\t\t\t{\n+\t\t\t\t((Border)header).addToBody(column.getHeader(\"label\"));\n+\t\t\t}\n+\t\t\telse\n+\t\t\t{\n \t\t\t\theader.add(column.getHeader(\"label\"));\n+\t\t\t}\n \n \t\t}\n \t}\n", 
+  "project": "wicket", 
+  "linesAdd": 8, 
+  "jira_id": "3702", 
+  "nb_skipped": 0, 
+  "commit": "a08562a7", 
+  "nb_failure": 0, 
+  "linesRem": 0
+}

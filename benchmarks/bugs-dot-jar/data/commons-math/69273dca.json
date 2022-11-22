@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 6153, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegratorTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math3/ode/nonstiff/RungeKuttaIntegrator.java b/src/main/java/org/apache/commons/math3/ode/nonstiff/RungeKuttaIntegrator.java\nindex 68bd8b029..5f7d5d88a 100644\n--- a/src/main/java/org/apache/commons/math3/ode/nonstiff/RungeKuttaIntegrator.java\n+++ b/src/main/java/org/apache/commons/math3/ode/nonstiff/RungeKuttaIntegrator.java\n@@ -119,7 +119,19 @@ public void integrate(final ExpandableStatefulODE equations, final double t)\n \n     // set up integration control objects\n     stepStart = equations.getTime();\n-    stepSize  = forward ? step : -step;\n+    if (forward) {\n+        if (stepStart + step >= t) {\n+            stepSize = t - stepStart;\n+        } else {\n+            stepSize = step;\n+        }\n+    } else {\n+        if (stepStart - step <= t) {\n+            stepSize = t - stepStart;\n+        } else {\n+            stepSize = -step;\n+        }\n+    }\n     initIntegration(equations.getTime(), y0, t);\n \n     // main integration loop\n", 
+  "project": "commons-math", 
+  "linesAdd": 13, 
+  "jira_id": "727", 
+  "nb_skipped": 3, 
+  "commit": "69273dca", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

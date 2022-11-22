@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 892, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.flink.runtime.executiongraph.ExecutionGraphRestartTest"
+  ], 
+  "patch": "diff --git a/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionGraph.java b/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionGraph.java\nindex 9430d802d4..aae0b7ce69 100755\n--- a/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionGraph.java\n+++ b/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionGraph.java\n@@ -746,12 +746,6 @@ else if (transitionState(current, JobStatus.FAILING, t)) {\n \n \tpublic void restart() {\n \t\ttry {\n-\t\t\tif (state == JobStatus.FAILED) {\n-\t\t\t\tif (!transitionState(JobStatus.FAILED, JobStatus.RESTARTING)) {\n-\t\t\t\t\tthrow new IllegalStateException(\"Execution Graph left the state FAILED while trying to restart.\");\n-\t\t\t\t}\n-\t\t\t}\n-\n \t\t\tsynchronized (progressLock) {\n \t\t\t\tif (state != JobStatus.RESTARTING) {\n \t\t\t\t\tthrow new IllegalStateException(\"Can only restart job from state restarting.\");\n", 
+  "project": "flink", 
+  "linesAdd": 0, 
+  "jira_id": "3011", 
+  "nb_skipped": 1, 
+  "commit": "a402002d", 
+  "nb_failure": 0, 
+  "linesRem": 6
+}

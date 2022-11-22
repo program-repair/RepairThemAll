@@ -1,0 +1,20 @@
+{
+  "files": 1, 
+  "nb_test": 5014, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.util.KeyValueHolderTest", 
+    "org.apache.camel.management.ManagedThrottlerTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/util/KeyValueHolder.java b/camel-core/src/main/java/org/apache/camel/util/KeyValueHolder.java\nindex 3cf5bf9b49..a9baf00eaf 100644\n--- a/camel-core/src/main/java/org/apache/camel/util/KeyValueHolder.java\n+++ b/camel-core/src/main/java/org/apache/camel/util/KeyValueHolder.java\n@@ -53,6 +53,8 @@ public boolean equals(Object o) {\n \n         if (key != null ? !key.equals(that.key) : that.key != null) {\n             return false;\n+        } else if (value != null ? !value.equals(that.value) : that.value != null) {\n+            return false;\n         }\n \n         return true;\n", 
+  "project": "camel", 
+  "linesAdd": 2, 
+  "jira_id": "7611", 
+  "nb_skipped": 3, 
+  "commit": "e30f1c53", 
+  "nb_failure": 2, 
+  "linesRem": 0
+}

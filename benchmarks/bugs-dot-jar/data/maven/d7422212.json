@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 40, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.maven.artifact.resolver.DefaultArtifactCollectorTest"
+  ], 
+  "patch": "diff --git a/maven-artifact/src/main/java/org/apache/maven/artifact/resolver/DefaultArtifactCollector.java b/maven-artifact/src/main/java/org/apache/maven/artifact/resolver/DefaultArtifactCollector.java\nindex 47e7acfa4..9a923d82b 100644\n--- a/maven-artifact/src/main/java/org/apache/maven/artifact/resolver/DefaultArtifactCollector.java\n+++ b/maven-artifact/src/main/java/org/apache/maven/artifact/resolver/DefaultArtifactCollector.java\n@@ -69,8 +69,7 @@ public ArtifactResolutionResult collect( Set artifacts, Artifact originatingArti\n \n         root.addDependencies( artifacts, remoteRepositories, filter );\n \n-        ManagedVersionMap versionMap = (managedVersions != null && managedVersions instanceof ManagedVersionMap) ?\n-            (ManagedVersionMap)managedVersions : new ManagedVersionMap(managedVersions);\n+        ManagedVersionMap versionMap = getManagedVersionsMap( originatingArtifact, managedVersions );\n \n         recurse( root, resolvedArtifacts, versionMap, localRepository, remoteRepositories, source, filter,\n                  listeners );\n@@ -107,6 +106,45 @@ public ArtifactResolutionResult collect( Set artifacts, Artifact originatingArti\n         return result;\n     }\n \n+    /**\n+     * Get the map of managed versions, removing the originating artifact if it is also in managed versions\n+     * @param originatingArtifact artifact we are processing\n+     * @param managedVersions original managed versions\n+     */\n+    private ManagedVersionMap getManagedVersionsMap( Artifact originatingArtifact, Map managedVersions )\n+    {\n+        ManagedVersionMap versionMap;\n+        if ( managedVersions != null && managedVersions instanceof ManagedVersionMap )\n+        {\n+            versionMap = (ManagedVersionMap) managedVersions;\n+        }\n+        else\n+        {\n+            versionMap = new ManagedVersionMap( managedVersions );\n+        }\n+\n+        /* remove the originating artifact if it is also in managed versions to avoid being modified during resolution */\n+        Artifact managedOriginatingArtifact = (Artifact) versionMap.get( originatingArtifact.getDependencyConflictId() );\n+        if ( managedOriginatingArtifact != null )\n+        {\n+            String managedVersion = managedOriginatingArtifact.getVersion();\n+            String version = originatingArtifact.getVersion();\n+            if ( !managedVersion.equals( version ) )\n+            {\n+                // TODO we probably want to warn the user that he is building and artifact with a\n+                // different version than in dependencyManagement \n+                if ( managedVersions instanceof ManagedVersionMap )\n+                {\n+                    /* avoid modifying the managedVersions parameter creating a new map */\n+                    versionMap = new ManagedVersionMap( managedVersions );\n+                }\n+                versionMap.remove( originatingArtifact.getDependencyConflictId() );\n+            }\n+        }\n+\n+        return versionMap;\n+    }\n+\n     private void recurse( ResolutionNode node, Map resolvedArtifacts, ManagedVersionMap managedVersions,\n                           ArtifactRepository localRepository, List remoteRepositories, ArtifactMetadataSource source,\n                           ArtifactFilter filter, List listeners )\n", 
+  "project": "maven", 
+  "linesAdd": 40, 
+  "jira_id": "2931", 
+  "nb_skipped": 0, 
+  "commit": "d7422212", 
+  "nb_failure": 1, 
+  "linesRem": 2
+}

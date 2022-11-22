@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 794, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.stateless.pages.StatelessFormTest"
+  ], 
+  "patch": "diff --git a/wicket/src/main/java/org/apache/wicket/request/target/component/BookmarkableListenerInterfaceRequestTarget.java b/wicket/src/main/java/org/apache/wicket/request/target/component/BookmarkableListenerInterfaceRequestTarget.java\nindex 097d44bca8..892b17ae94 100644\n--- a/wicket/src/main/java/org/apache/wicket/request/target/component/BookmarkableListenerInterfaceRequestTarget.java\n+++ b/wicket/src/main/java/org/apache/wicket/request/target/component/BookmarkableListenerInterfaceRequestTarget.java\n@@ -117,11 +117,11 @@ public void processEvents(RequestCycle requestCycle)\n \t\tif (page == null)\r\n \t\t{\r\n \t\t\tpage = Session.get().getPage(getPageMapName(), componentPath, -1);\r\n-\t\t\tif (page != null)\n+\t\t\tif (page != null && page.getClass() == getPageClass())\r\n \t\t\t{\r\n \t\t\t\tsetPage(page);\r\n \t\t\t}\r\n-\t\t\telse if (page == null)\n+\t\t\telse\r\n \t\t\t{\r\n \t\t\t\tpage = getPage(requestCycle);\r\n \t\t\t}\r\n", 
+  "project": "wicket", 
+  "linesAdd": 2, 
+  "jira_id": "1897", 
+  "nb_skipped": 0, 
+  "commit": "8ee095bf", 
+  "nb_failure": 0, 
+  "linesRem": 2
+}

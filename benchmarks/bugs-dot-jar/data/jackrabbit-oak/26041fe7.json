@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1845, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.document.RevisionTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Revision.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Revision.java\nindex db6a698cbc..79043e9fd9 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Revision.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Revision.java\n@@ -521,9 +521,14 @@ public int compare(Revision o1, Revision o2) {\n             if (range1 == FUTURE && range2 == FUTURE) {\n                 return o1.compareRevisionTimeThenClusterId(o2);\n             }\n-            if (range1 == null || range2 == null) {\n+            if (range1 == null && range2 == null) {\n                 return o1.compareRevisionTimeThenClusterId(o2);\n             }\n+            if (range1 == null) {\n+                return -1;\n+            } else if (range2 == null) {\n+                return 1;\n+            }\n             int comp = range1.compareRevisionTimeThenClusterId(range2);\n             if (comp != 0) {\n                 return comp;\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 6, 
+  "jira_id": "1727", 
+  "nb_skipped": 9, 
+  "commit": "26041fe7", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

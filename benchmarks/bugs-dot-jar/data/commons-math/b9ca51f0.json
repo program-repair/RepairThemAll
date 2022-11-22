@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 3499, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math3.genetics.ElitisticListPopulationTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math3/genetics/ElitisticListPopulation.java b/src/main/java/org/apache/commons/math3/genetics/ElitisticListPopulation.java\nindex a3090806c..829c97d3b 100644\n--- a/src/main/java/org/apache/commons/math3/genetics/ElitisticListPopulation.java\n+++ b/src/main/java/org/apache/commons/math3/genetics/ElitisticListPopulation.java\n@@ -24,7 +24,7 @@\n import org.apache.commons.math3.util.FastMath;\n \n /**\n- * Population of chromosomes which uses elitism (certain percentace of the best\n+ * Population of chromosomes which uses elitism (certain percentage of the best\n  * chromosomes is directly copied to the next generation).\n  *\n  * @version $Id$\n@@ -42,12 +42,13 @@\n      * @param populationLimit maximal size of the population\n      * @param elitismRate how many best chromosomes will be directly transferred to the\n      *                    next generation [in %]\n+     * @throws OutOfRangeException if the elitism rate is outside the [0, 1] range\n      */\n     public ElitisticListPopulation(final List<Chromosome> chromosomes,\n                                    final int populationLimit,\n                                    final double elitismRate) {\n         super(chromosomes, populationLimit);\n-        this.elitismRate = elitismRate;\n+        setElitismRate(elitismRate);\n     }\n \n     /**\n@@ -57,10 +58,11 @@ public ElitisticListPopulation(final List<Chromosome> chromosomes,\n      * @param populationLimit maximal size of the population\n      * @param elitismRate how many best chromosomes will be directly transferred to the\n      *                    next generation [in %]\n+     * @throws OutOfRangeException if the elitism rate is outside the [0, 1] range\n      */\n     public ElitisticListPopulation(final int populationLimit, final double elitismRate) {\n         super(populationLimit);\n-        this.elitismRate = elitismRate;\n+        setElitismRate(elitismRate);\n     }\n \n     /**\n", 
+  "project": "commons-math", 
+  "linesAdd": 5, 
+  "jira_id": "776", 
+  "nb_skipped": 1, 
+  "commit": "b9ca51f0", 
+  "nb_failure": 4, 
+  "linesRem": 3
+}

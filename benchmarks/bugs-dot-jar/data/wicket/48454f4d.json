@@ -1,0 +1,20 @@
+{
+  "files": 2, 
+  "nb_test": 1210, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.behavior.ImmutableBehaviorIdsTest", 
+    "org.apache.wicket.markup.html.basic.SimplePageTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/Behaviors.java b/wicket-core/src/main/java/org/apache/wicket/Behaviors.java\nindex 2e358e25cf..627d4e668c 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/Behaviors.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/Behaviors.java\n@@ -70,7 +70,7 @@ public void add(Behavior... behaviors)\n \tprivate void internalAdd(final Behavior behavior)\r\n \t{\r\n \t\tcomponent.data_add(behavior);\r\n-\t\tif (behavior.isStateless(component))\r\n+\t\tif (behavior.getStatelessHint(component))\r\n \t\t{\r\n \t\t\tgetBehaviorId(behavior);\r\n \t\t}\r\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/behavior/Behavior.java b/wicket-core/src/main/java/org/apache/wicket/behavior/Behavior.java\nindex ff2e04a2bb..a809405335 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/behavior/Behavior.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/behavior/Behavior.java\n@@ -177,23 +177,6 @@ public boolean isTemporary(Component component)\n \t\treturn false;\n \t}\n \n-\t/**\n-\t * Returns whether or not this behavior is stateless. Most behaviors should either not override\n-\t * this method or return {@code false} because most behavior are not stateless.\n-\t * \n-\t * A small subset of behaviors are made specifically to be stateless and as such should override\n-\t * this method and return {@code true}. One sideeffect of this method is that the behavior id\n-\t * will be generated eagerly when the behavior is added to the component instead of before\n-\t * render when a method to create the url is called - this allows for stateless callback urls.\n-\t * \n-\t * @param component\n-\t * @return whether or not this behavior is stateless\n-\t */\n-\tpublic boolean isStateless(Component component)\n-\t{\n-\t\treturn false;\n-\t}\n-\n \t/**\n \t * Checks if a listener can be invoked on this behavior\n \t * \n", 
+  "project": "wicket", 
+  "linesAdd": 1, 
+  "jira_id": "3764", 
+  "nb_skipped": 1, 
+  "commit": "48454f4d", 
+  "nb_failure": 2, 
+  "linesRem": 18
+}

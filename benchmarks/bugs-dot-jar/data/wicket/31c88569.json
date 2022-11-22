@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1861, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.queueing.ComponentQueueingTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/parser/filter/HtmlHeaderSectionHandler.java b/wicket-core/src/main/java/org/apache/wicket/markup/parser/filter/HtmlHeaderSectionHandler.java\nindex 0ea0002cf1..5b79f80d43 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/parser/filter/HtmlHeaderSectionHandler.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/parser/filter/HtmlHeaderSectionHandler.java\n@@ -18,11 +18,16 @@\n \n import java.text.ParseException;\n \n+import org.apache.wicket.Component;\n+import org.apache.wicket.MarkupContainer;\n import org.apache.wicket.markup.ComponentTag;\n+import org.apache.wicket.markup.ComponentTag.IAutoComponentFactory;\n import org.apache.wicket.markup.Markup;\n import org.apache.wicket.markup.MarkupElement;\n import org.apache.wicket.markup.MarkupException;\n import org.apache.wicket.markup.MarkupStream;\n+import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;\n+import org.apache.wicket.markup.html.internal.HtmlHeaderItemsContainer;\n import org.apache.wicket.markup.parser.AbstractMarkupFilter;\n import org.apache.wicket.markup.parser.XmlTag.TagType;\n import org.apache.wicket.markup.resolver.HtmlHeaderResolver;\n@@ -72,6 +77,24 @@\n \t/** The Markup available so far for the resource */\n \tprivate final Markup markup;\n \n+\tprivate static final IAutoComponentFactory HTML_HEADER_FACTORY = new IAutoComponentFactory()\n+\t{\n+\t\t@Override\n+\t\tpublic Component newComponent(MarkupContainer container, ComponentTag tag)\n+\t\t{\n+\t\t\treturn new HtmlHeaderContainer(tag.getId());\n+\t\t}\n+\t};\n+\t\n+\tprivate static final IAutoComponentFactory HTML_HEADER_ITEMS_FACTORY = new IAutoComponentFactory()\n+\t{\n+\t\t@Override\n+\t\tpublic Component newComponent(MarkupContainer container, ComponentTag tag)\n+\t\t{\n+\t\t\treturn new HtmlHeaderItemsContainer(tag.getId());\n+\t\t}\n+\t};\n+\t\n \t/**\n \t * Construct.\n \t * \n@@ -164,6 +187,7 @@ else if (foundClosingHead)\n \t\ttag.setId(HEADER_ID);\n \t\ttag.setAutoComponentTag(true);\n \t\ttag.setModified(true);\n+\t\ttag.setAutoComponentFactory(HTML_HEADER_ITEMS_FACTORY);\n \t}\n \n \t/**\n@@ -188,6 +212,7 @@ private void handleHeadTag(ComponentTag tag)\n \t\t\t\ttag.setId(HEADER_ID);\n \t\t\t\ttag.setAutoComponentTag(true);\n \t\t\t\ttag.setModified(true);\n+\t\t\t\ttag.setAutoComponentFactory(HTML_HEADER_FACTORY);\n \t\t\t}\n \t\t}\n \t\telse if (tag.isClose())\n@@ -201,6 +226,7 @@ else if (tag.isClose())\n \t\t\t\theadOpenTag.setAutoComponentTag(false);\n \t\t\t\theadOpenTag.setModified(false);\n \t\t\t\theadOpenTag.setFlag(ComponentTag.RENDER_RAW, true);\n+\t\t\t\theadOpenTag.setAutoComponentFactory(null);\n \t\t\t}\n \n \t\t\tfoundClosingHead = true;\n@@ -217,6 +243,7 @@ private void insertHeadTag()\n \t\topenTag.setId(HEADER_ID);\n \t\topenTag.setAutoComponentTag(true);\n \t\topenTag.setModified(true);\n+\t\topenTag.setAutoComponentFactory(HTML_HEADER_FACTORY);\n \n \t\tfinal ComponentTag closeTag = new ComponentTag(HEAD, TagType.CLOSE);\n \t\tcloseTag.setOpenTag(openTag);\n", 
+  "project": "wicket", 
+  "linesAdd": 27, 
+  "jira_id": "5965", 
+  "nb_skipped": 1, 
+  "commit": "31c88569", 
+  "nb_failure": 0, 
+  "linesRem": 0
+}

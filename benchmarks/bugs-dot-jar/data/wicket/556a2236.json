@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1369, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.markup.html.link.MountedPageLinkTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/core/request/handler/PageProvider.java b/wicket-core/src/main/java/org/apache/wicket/core/request/handler/PageProvider.java\nindex 50402f65ee..a5ae4f2f2b 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/core/request/handler/PageProvider.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/core/request/handler/PageProvider.java\n@@ -265,7 +265,17 @@ private void resolvePageInstance(Integer pageId, Class<? extends IRequestablePag\n \t\t{\n \t\t\tif (pageClass != null)\n \t\t\t{\n-\t\t\t\tpage = getPageSource().newPageInstance(pageClass, pageParameters);\n+\t\t\t\tPageParameters parameters;\n+\t\t\t\tif (pageId != null)\n+\t\t\t\t{\n+\t\t\t\t\t// WICKET-4594 - re-creating an expired page. Ignore the parsed parameters for the callback url\n+\t\t\t\t\tparameters = new PageParameters();\n+\t\t\t\t}\n+\t\t\t\telse\n+\t\t\t\t{\n+\t\t\t\t\tparameters = pageParameters;\n+\t\t\t\t}\n+\t\t\t\tpage = getPageSource().newPageInstance(pageClass, parameters);\n \t\t\t\tfreshCreated = true;\n \t\t\t}\n \t\t}\n", 
+  "project": "wicket", 
+  "linesAdd": 11, 
+  "jira_id": "4594", 
+  "nb_skipped": 8, 
+  "commit": "556a2236", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

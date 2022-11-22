@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 535, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "type.extractor.PojoTypeExtractionTest"
+  ], 
+  "patch": "diff --git a/flink-java/src/main/java/org/apache/flink/api/java/typeutils/TypeExtractor.java b/flink-java/src/main/java/org/apache/flink/api/java/typeutils/TypeExtractor.java\nindex 7836e74e61..6a56e46aa0 100644\n--- a/flink-java/src/main/java/org/apache/flink/api/java/typeutils/TypeExtractor.java\n+++ b/flink-java/src/main/java/org/apache/flink/api/java/typeutils/TypeExtractor.java\n@@ -975,10 +974,10 @@ private boolean isValidPojoField(Field f, Class<?> clazz, ArrayList<Type> typeHi\n \t\t\t\t\t// no arguments for the getter\n \t\t\t\t\tm.getParameterTypes().length == 0 &&\n \t\t\t\t\t// return type is same as field type (or the generic variant of it)\n-\t\t\t\t\tm.getReturnType().equals( fieldType ) || (fieldTypeGeneric != null && m.getGenericReturnType().equals(fieldTypeGeneric) )\n+\t\t\t\t\t(m.getReturnType().equals( fieldType ) || (fieldTypeGeneric != null && m.getGenericReturnType().equals(fieldTypeGeneric)) )\n \t\t\t\t) {\n \t\t\t\t\tif(hasGetter) {\n-\t\t\t\t\t\tthrow new IllegalStateException(\"Detected more than one getters\");\n+\t\t\t\t\t\tthrow new IllegalStateException(\"Detected more than one getter\");\n \t\t\t\t\t}\n \t\t\t\t\thasGetter = true;\n \t\t\t\t}\n@@ -990,7 +989,7 @@ private boolean isValidPojoField(Field f, Class<?> clazz, ArrayList<Type> typeHi\n \t\t\t\t\tm.getReturnType().equals(Void.TYPE)\n \t\t\t\t) {\n \t\t\t\t\tif(hasSetter) {\n-\t\t\t\t\t\tthrow new IllegalStateException(\"Detected more than one getters\");\n+\t\t\t\t\t\tthrow new IllegalStateException(\"Detected more than one setter\");\n \t\t\t\t\t}\n \t\t\t\t\thasSetter = true;\n \t\t\t\t}\n", 
+  "project": "flink", 
+  "linesAdd": 3, 
+  "jira_id": "1145", 
+  "nb_skipped": 2, 
+  "commit": "22c370d9", 
+  "nb_failure": 0, 
+  "linesRem": 3
+}

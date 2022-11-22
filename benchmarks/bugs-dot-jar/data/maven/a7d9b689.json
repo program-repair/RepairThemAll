@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 236, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.maven.plugin.PluginManagerTest"
+  ], 
+  "patch": "diff --git a/maven-core/src/main/java/org/apache/maven/plugin/internal/DefaultMavenPluginManager.java b/maven-core/src/main/java/org/apache/maven/plugin/internal/DefaultMavenPluginManager.java\nindex 0c541b1d9..603e67040 100644\n--- a/maven-core/src/main/java/org/apache/maven/plugin/internal/DefaultMavenPluginManager.java\n+++ b/maven-core/src/main/java/org/apache/maven/plugin/internal/DefaultMavenPluginManager.java\n@@ -311,6 +311,10 @@ public synchronized void setupPluginRealm( PluginDescriptor pluginDescriptor, Ma\n         {\n             pluginDescriptor.setClassRealm( cacheRecord.realm );\n             pluginDescriptor.setArtifacts( new ArrayList<Artifact>( cacheRecord.artifacts ) );\n+            for ( ComponentDescriptor<?> componentDescriptor : pluginDescriptor.getComponents() )\n+            {\n+                componentDescriptor.setRealm( cacheRecord.realm );\n+            }\n         }\n         else\n         {\n", 
+  "project": "maven", 
+  "linesAdd": 4, 
+  "jira_id": "5003", 
+  "nb_skipped": 0, 
+  "commit": "a7d9b689", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

@@ -1,0 +1,19 @@
+{
+  "files": 2, 
+  "nb_test": 1133, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.MarkupContainerTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/Component.java b/wicket-core/src/main/java/org/apache/wicket/Component.java\nindex 33c515d576..13b32cb054 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/Component.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/Component.java\n@@ -941,6 +941,11 @@ public final void afterRender()\n \t\ttry\n \t\t{\n \t\t\tsetFlag(FLAG_AFTER_RENDERING, true);\n+\n+\t\t\t// always detach children because components can be attached\n+\t\t\t// independently of their parents\n+\t\t\tonAfterRenderChildren();\n+\n \t\t\tonAfterRender();\n \t\t\tgetApplication().getComponentOnAfterRenderListeners().onAfterRender(this);\n \t\t\tif (getFlag(FLAG_AFTER_RENDERING))\n@@ -950,9 +955,6 @@ public final void afterRender()\n \t\t\t\t\tgetClass().getName() +\n \t\t\t\t\t\" has not called super.onAfterRender() in the override of onAfterRender() method\");\n \t\t\t}\n-\t\t\t// always detach children because components can be attached\n-\t\t\t// independently of their parents\n-\t\t\tonAfterRenderChildren();\n \t\t}\n \t\tfinally\n \t\t{\n@@ -2852,10 +2854,7 @@ final void setMarkupId(Component comp)\n \t */\n \tpublic Component setMarkupId(String markupId)\n \t{\n-\t\tif (markupId != null && Strings.isEmpty(markupId))\n-\t\t{\n-\t\t\tthrow new IllegalArgumentException(\"Markup id cannot be an empty string\");\n-\t\t}\n+\t\tArgs.notEmpty(markupId, \"markupId\");\n \n \t\t// TODO check if an automatic id has already been generated or getmarkupid() called\n \t\t// previously and throw an illegalstateexception because something else might be depending\n@@ -4112,6 +4111,10 @@ void internalMarkRendering(boolean setRenderingFlag)\n \t\t\tsetFlag(FLAG_PREPARED_FOR_RENDER, false);\n \t\t\tsetFlag(FLAG_RENDERING, true);\n \t\t}\n+\t\telse\n+\t\t{\n+\t\t\tsetFlag(FLAG_RENDERING, false);\n+\t\t}\n \t}\n \n \t/**\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java b/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java\nindex 37986ff17a..056d48365d 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java\n@@ -1835,13 +1835,11 @@ public void component(Component component, IVisit<Void> visit)\n \t@Override\n \tprotected void onAfterRenderChildren()\n \t{\n-\t\t// Loop through child components\n \t\tfor (Component child : this)\n \t\t{\n-\t\t\t// Call end request on the child\n-\t\t\tchild.afterRender();\n+\t\t\t// set RENDERING_FLAG to false for auto-component's children (like Enclosure)\n+\t\t\tchild.markRendering(false);\n \t\t}\n-\n \t\tsuper.onAfterRenderChildren();\n \t}\n \n", 
+  "project": "wicket", 
+  "linesAdd": 12, 
+  "jira_id": "4012", 
+  "nb_skipped": 2, 
+  "commit": "d35d2d85", 
+  "nb_failure": 1, 
+  "linesRem": 11
+}

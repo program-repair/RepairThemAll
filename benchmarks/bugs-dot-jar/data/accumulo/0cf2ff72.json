@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 4, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.accumulo.minicluster.MiniAccumuloClusterTest"
+  ], 
+  "patch": "diff --git a/minicluster/src/main/java/org/apache/accumulo/minicluster/MiniAccumuloCluster.java b/minicluster/src/main/java/org/apache/accumulo/minicluster/MiniAccumuloCluster.java\nindex 7c27dd817..43fa6cbf7 100644\n--- a/minicluster/src/main/java/org/apache/accumulo/minicluster/MiniAccumuloCluster.java\n+++ b/minicluster/src/main/java/org/apache/accumulo/minicluster/MiniAccumuloCluster.java\n@@ -337,7 +337,7 @@ public void run() {\n     if (!initialized) {\n       // sleep a little bit to let zookeeper come up before calling init, seems to work better\n       UtilWaitThread.sleep(250);\n-      Process initProcess = exec(Initialize.class, \"--instance-name\", config.getInstanceName(), \"--password\", config.getRootPassword(), \"--username\", \"root\");\n+      Process initProcess = exec(Initialize.class, \"--instance-name\", config.getInstanceName(), \"--password\", config.getRootPassword());\n       int ret = initProcess.waitFor();\n       if (ret != 0) {\n         throw new RuntimeException(\"Initialize process returned \" + ret);\n", 
+  "project": "accumulo", 
+  "linesAdd": 1, 
+  "jira_id": "1544", 
+  "nb_skipped": 0, 
+  "commit": "0cf2ff72", 
+  "nb_failure": 0, 
+  "linesRem": 1
+}

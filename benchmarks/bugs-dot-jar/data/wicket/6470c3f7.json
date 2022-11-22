@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 89, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.request.UrlTest"
+  ], 
+  "patch": "diff --git a/wicket-request/src/main/java/org/apache/wicket/request/Url.java b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\nindex 9fb454cb63..191ebbef11 100755\n--- a/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n+++ b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n@@ -232,8 +232,11 @@ public static Url parse(CharSequence _url, Charset charset)\n \t\t\tfinal String afterProto = absoluteUrl.substring(protocolAt + 3);\n \t\t\tfinal String hostAndPort;\n \n-\t\t\tfinal int relativeAt = afterProto.indexOf('/');\n-\n+\t\t\tint relativeAt = afterProto.indexOf('/');\n+\t\t\tif (relativeAt == -1)\n+\t\t\t{\n+\t\t\t\trelativeAt = afterProto.indexOf(';');\n+\t\t\t}\n \t\t\tif (relativeAt == -1)\n \t\t\t{\n \t\t\t\trelativeUrl = \"\";\n", 
+  "project": "wicket", 
+  "linesAdd": 5, 
+  "jira_id": "4877", 
+  "nb_skipped": 0, 
+  "commit": "6470c3f7", 
+  "nb_failure": 0, 
+  "linesRem": 2
+}

@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1184, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.DefaultExceptionMapperTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/DefaultExceptionMapper.java b/wicket-core/src/main/java/org/apache/wicket/DefaultExceptionMapper.java\nindex 2f712179fe..8d66d8af11 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/DefaultExceptionMapper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/DefaultExceptionMapper.java\n@@ -121,7 +121,7 @@ else if (IExceptionSettings.SHOW_INTERNAL_ERROR_PAGE.equals(unexpectedExceptionD\n \t\t\telse\n \t\t\t{\n \t\t\t\t// IExceptionSettings.SHOW_NO_EXCEPTION_PAGE\n-\t\t\t\treturn new EmptyRequestHandler();\n+\t\t\t\treturn new ErrorCodeRequestHandler(500);\n \t\t\t}\n \t\t}\n \t}\n", 
+  "project": "wicket", 
+  "linesAdd": 1, 
+  "jira_id": "3520", 
+  "nb_skipped": 1, 
+  "commit": "d1b62639", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

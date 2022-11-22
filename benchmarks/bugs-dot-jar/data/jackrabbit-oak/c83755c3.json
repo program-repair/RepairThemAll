@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 84, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.security.authentication.ldap.LdapProviderTest"
+  ], 
+  "patch": "diff --git a/oak-auth-ldap/src/main/java/org/apache/jackrabbit/oak/security/authentication/ldap/impl/LdapIdentityProvider.java b/oak-auth-ldap/src/main/java/org/apache/jackrabbit/oak/security/authentication/ldap/impl/LdapIdentityProvider.java\nindex e6b2ba4710..512a1bf1c9 100644\n--- a/oak-auth-ldap/src/main/java/org/apache/jackrabbit/oak/security/authentication/ldap/impl/LdapIdentityProvider.java\n+++ b/oak-auth-ldap/src/main/java/org/apache/jackrabbit/oak/security/authentication/ldap/impl/LdapIdentityProvider.java\n@@ -702,7 +702,13 @@ private ExternalUser createUser(@Nonnull Entry entry, @CheckForNull String id)\n             throws LdapInvalidAttributeValueException {\n         ExternalIdentityRef ref = new ExternalIdentityRef(entry.getDn().getName(), this.getName());\n         if (id == null) {\n-            id = entry.get(config.getUserConfig().getIdAttribute()).getString();\n+            String idAttribute = config.getUserConfig().getIdAttribute();\n+            Attribute attr = entry.get(idAttribute);\n+            if (attr == null) {\n+                throw new LdapInvalidAttributeValueException(ResultCodeEnum.CONSTRAINT_VIOLATION,\n+                        \"no value found for attribute '\" + idAttribute + \"' for entry \" + entry);\n+            }\n+            id = attr.getString();\n         }\n         String path = config.getUserConfig().makeDnPath()\n                 ? createDNPath(entry.getDn())\n@@ -718,7 +724,13 @@ private ExternalGroup createGroup(@Nonnull Entry entry, @CheckForNull String nam\n             throws LdapInvalidAttributeValueException {\n         ExternalIdentityRef ref = new ExternalIdentityRef(entry.getDn().getName(), this.getName());\n         if (name == null) {\n-            name = entry.get(config.getGroupConfig().getIdAttribute()).getString();\n+            String idAttribute = config.getGroupConfig().getIdAttribute();\n+            Attribute attr = entry.get(idAttribute);\n+            if (attr == null) {\n+                throw new LdapInvalidAttributeValueException(ResultCodeEnum.CONSTRAINT_VIOLATION,\n+                        \"no value found for attribute '\" + idAttribute + \"' for entry \" + entry);\n+            }\n+            name = attr.getString();\n         }\n         String path = config.getGroupConfig().makeDnPath()\n                 ? createDNPath(entry.getDn())\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 14, 
+  "jira_id": "3396", 
+  "nb_skipped": 1, 
+  "commit": "c83755c3", 
+  "nb_failure": 0, 
+  "linesRem": 2
+}

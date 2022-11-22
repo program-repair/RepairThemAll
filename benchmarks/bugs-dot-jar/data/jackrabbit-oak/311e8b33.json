@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 2209, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.segment.file.ExternalBlobReferenceTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentWriter.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentWriter.java\nindex abab3d489f..ab762f7bd4 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentWriter.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentWriter.java\n@@ -595,7 +595,12 @@ private synchronized RecordId writeValueRecord(String reference) {\n         byte[] data = reference.getBytes(Charsets.UTF_8);\n         int length = data.length;\n \n-        checkArgument(length < 8192);\n+        // When writing a binary ID, the four most significant bits of the\n+        // length field should be \"1110\", leaving 12 other bits to store the\n+        // length itself. This means that the values of the length field can\n+        // only range between 0 and 2^12 - 1.\n+\n+        checkArgument(length < 4096);\n \n         RecordId id = prepare(RecordType.VALUE, 2 + length);\n         int len = length | 0xE000;\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 6, 
+  "jira_id": "3105", 
+  "nb_skipped": 1, 
+  "commit": "311e8b33", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

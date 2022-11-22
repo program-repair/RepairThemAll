@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 98, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.maven.model.interpolation.StringSearchModelInterpolatorTest"
+  ], 
+  "patch": "diff --git a/maven-model-builder/src/main/java/org/apache/maven/model/interpolation/MavenBuildTimestamp.java b/maven-model-builder/src/main/java/org/apache/maven/model/interpolation/MavenBuildTimestamp.java\nindex d3425667b..447f0efee 100644\n--- a/maven-model-builder/src/main/java/org/apache/maven/model/interpolation/MavenBuildTimestamp.java\n+++ b/maven-model-builder/src/main/java/org/apache/maven/model/interpolation/MavenBuildTimestamp.java\n@@ -26,7 +26,8 @@\n \n public class MavenBuildTimestamp\n {\n-    public static final String DEFAULT_BUILD_TIMESTAMP_FORMAT = \"yyyyMMdd-HHmm\";\n+    // ISO 8601-compliant timestamp for machine readability\n+    public static final String DEFAULT_BUILD_TIMESTAMP_FORMAT = \"yyyy-MM-dd'T'HH:mm:ss'Z'\";\n \n     public static final String BUILD_TIMESTAMP_FORMAT_PROPERTY = \"maven.build.timestamp.format\";\n \n", 
+  "project": "maven", 
+  "linesAdd": 2, 
+  "jira_id": "5647", 
+  "nb_skipped": 0, 
+  "commit": "cdb8ad6d", 
+  "nb_failure": 2, 
+  "linesRem": 1
+}

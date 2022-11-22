@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 362, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "wicket.protocol.http.request.WebRequestCodingStrategyTest"
+  ], 
+  "patch": "diff --git a/wicket/src/main/java/wicket/protocol/http/request/WebRequestCodingStrategy.java b/wicket/src/main/java/wicket/protocol/http/request/WebRequestCodingStrategy.java\nindex 7d452664c8..93d5d9696e 100644\n--- a/wicket/src/main/java/wicket/protocol/http/request/WebRequestCodingStrategy.java\n+++ b/wicket/src/main/java/wicket/protocol/http/request/WebRequestCodingStrategy.java\n@@ -563,7 +563,25 @@ protected CharSequence encode(RequestCycle requestCycle,\n \n \n \t\t\t// Add <page-map-name>:<bookmarkable-page-class>\n-\t\t\turl.append(pageMapName + Component.PATH_SEPARATOR + pageClass.getName());\n+\t\t\tString pageClassName = pageClass.getName();\n+\t\t\t/*\n+\t\t\t * Encode the url so it is correct even for class names containing\n+\t\t\t * non ASCII characters, like \u00e4, \u00e6, \u00f8, \u00e5 etc.\n+\t\t\t * \n+\t\t\t * The reason for this is that when redirecting to these\n+\t\t\t * bookmarkable pages, we need to have the url encoded correctly\n+\t\t\t * because we can't rely on the browser to interpret the unencoded\n+\t\t\t * url correctly.\n+\t\t\t */\n+\t\t\ttry\n+\t\t\t{\n+\t\t\t\tpageClassName = URLEncoder.encode(pageClassName, \"UTF-8\");\n+\t\t\t}\n+\t\t\tcatch (UnsupportedEncodingException e)\n+\t\t\t{\n+\t\t\t\tthrow new RuntimeException(e);\n+\t\t\t}\n+\t\t\turl.append(pageMapName + Component.PATH_SEPARATOR + pageClassName);\n \t\t}\n \n \t\t// Get page parameters\n", 
+  "project": "wicket", 
+  "linesAdd": 19, 
+  "jira_id": "16", 
+  "nb_skipped": 0, 
+  "commit": "6c5083b4", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

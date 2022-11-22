@@ -1,0 +1,21 @@
+{
+  "files": 1, 
+  "nb_test": 5134, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.processor.MulticastParallelAllTimeoutAwareTest", 
+    "org.apache.camel.processor.MulticastParallelTwoTimeoutMiddleTest", 
+    "org.apache.camel.management.ManagedThrottlerTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/MulticastProcessor.java b/camel-core/src/main/java/org/apache/camel/processor/MulticastProcessor.java\nindex 1d579cdfb5..38e70bb04c 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/MulticastProcessor.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/MulticastProcessor.java\n@@ -442,10 +442,7 @@ private void aggregateOnTheFly() throws InterruptedException, ExecutionException\n                     }\n                 }\n \n-                if (future == null && timedOut) {\n-                    // we are timed out and no more tasks complete so break out\n-                    break;\n-                } else if (future == null) {\n+                if (future == null) {\n                     // timeout occurred\n                     AggregationStrategy strategy = getAggregationStrategy(null);\n                     if (strategy instanceof TimeoutAwareAggregationStrategy) {\n", 
+  "project": "camel", 
+  "linesAdd": 1, 
+  "jira_id": "8081", 
+  "nb_skipped": 3, 
+  "commit": "2e985f9b", 
+  "nb_failure": 3, 
+  "linesRem": 4
+}

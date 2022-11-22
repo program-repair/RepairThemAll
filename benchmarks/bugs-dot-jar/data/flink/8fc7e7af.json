@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 243, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.flink.streaming.runtime.tasks.StreamTaskTest"
+  ], 
+  "patch": "diff --git a/flink-streaming-java/src/main/java/org/apache/flink/streaming/runtime/tasks/StreamTask.java b/flink-streaming-java/src/main/java/org/apache/flink/streaming/runtime/tasks/StreamTask.java\nindex 9ab6c10660..c9624fca22 100644\n--- a/flink-streaming-java/src/main/java/org/apache/flink/streaming/runtime/tasks/StreamTask.java\n+++ b/flink-streaming-java/src/main/java/org/apache/flink/streaming/runtime/tasks/StreamTask.java\n@@ -147,6 +147,9 @@\n \t * needs to be initialized to true, so that early cancel() before invoke() behaves correctly */\n \tprivate volatile boolean isRunning;\n \t\n+\t/** Flag to mark this task as canceled */\n+\tprivate volatile boolean canceled;\n+\n \tprivate long recoveryTimestamp;\n \n \t// ------------------------------------------------------------------------\n@@ -191,6 +194,11 @@ public final void invoke() throws Exception {\n \t\t\t// task specific initialization\n \t\t\tinit();\n \t\t\t\n+\t\t\t// save the work of reloadig state, etc, if the task is already canceled\n+\t\t\tif (canceled) {\n+\t\t\t\tthrow new CancelTaskException();\n+\t\t\t}\n+\t\t\t\n \t\t\t// -------- Invoke --------\n \t\t\tLOG.debug(\"Invoking {}\", getName());\n \t\t\t\n@@ -205,6 +213,11 @@ public final void invoke() throws Exception {\n \t\t\t\topenAllOperators();\n \t\t\t}\n \n+\t\t\t// final check to exit early before starting to run\n+\t\t\tif (canceled) {\n+\t\t\t\tthrow new CancelTaskException();\n+\t\t\t}\n+\n \t\t\t\t// let the task do its work\n \t\t\tisRunning = true;\n \t\t\trun();\n@@ -290,6 +303,7 @@ public final void invoke() throws Exception {\n \t@Override\n \tpublic final void cancel() throws Exception {\n \t\tisRunning = false;\n+\t\tcanceled = true;\n \t\tcancelTask();\n \t}\n \n@@ -297,6 +311,10 @@ public final boolean isRunning() {\n \t\treturn isRunning;\n \t}\n \t\n+\tpublic final boolean isCanceled() {\n+\t\treturn canceled;\n+\t}\n+\t\n \tprivate void openAllOperators() throws Exception {\n \t\tfor (StreamOperator<?> operator : operatorChain.getAllOperators()) {\n \t\t\tif (operator != null) {\n", 
+  "project": "flink", 
+  "linesAdd": 18, 
+  "jira_id": "3314", 
+  "nb_skipped": 5, 
+  "commit": "8fc7e7af", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

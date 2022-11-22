@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 2378, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math.util.MathUtilsTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math/util/MathUtils.java b/src/main/java/org/apache/commons/math/util/MathUtils.java\nindex 06c87c6c4..e061a351a 100644\n--- a/src/main/java/org/apache/commons/math/util/MathUtils.java\n+++ b/src/main/java/org/apache/commons/math/util/MathUtils.java\n@@ -515,10 +515,6 @@ public static boolean equalsIncludingNaN(float x, float y, float eps) {\n      * @since 2.2\n      */\n     public static boolean equals(float x, float y, int maxUlps) {\n-        // Check that \"maxUlps\" is non-negative and small enough so that\n-        // NaN won't compare as equal to anything (except another NaN).\n-        assert maxUlps > 0 && maxUlps < NAN_GAP;\n-\n         int xInt = Float.floatToIntBits(x);\n         int yInt = Float.floatToIntBits(y);\n \n@@ -675,10 +671,6 @@ public static boolean equalsIncludingNaN(double x, double y, double eps) {\n      * point values between {@code x} and {@code y}.\n      */\n     public static boolean equals(double x, double y, int maxUlps) {\n-        // Check that \"maxUlps\" is non-negative and small enough so that\n-        // NaN won't compare as equal to anything (except another NaN).\n-        assert maxUlps > 0 && maxUlps < NAN_GAP;\n-\n         long xInt = Double.doubleToLongBits(x);\n         long yInt = Double.doubleToLongBits(y);\n \n", 
+  "project": "commons-math", 
+  "linesAdd": 0, 
+  "jira_id": "559", 
+  "nb_skipped": 1, 
+  "commit": "fc409e88", 
+  "nb_failure": 1, 
+  "linesRem": 8
+}

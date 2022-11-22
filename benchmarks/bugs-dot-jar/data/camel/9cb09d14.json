@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 4887, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.language.simple.SimpleTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/language/simple/ast/SimpleFunctionExpression.java b/camel-core/src/main/java/org/apache/camel/language/simple/ast/SimpleFunctionExpression.java\nindex 32a22b2019..4eedcba8a4 100644\n--- a/camel-core/src/main/java/org/apache/camel/language/simple/ast/SimpleFunctionExpression.java\n+++ b/camel-core/src/main/java/org/apache/camel/language/simple/ast/SimpleFunctionExpression.java\n@@ -238,7 +238,8 @@ private Expression createSimpleExpressionBodyOrHeader(String function, boolean s\n \n             String key = ObjectHelper.before(keyAndType, \",\");\n             String type = ObjectHelper.after(keyAndType, \",\");\n-            if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type)) {\n+            remainder = ObjectHelper.after(remainder, \")\");\n+            if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type) || ObjectHelper.isNotEmpty(remainder)) {\n                 throw new SimpleParserException(\"Valid syntax: ${headerAs(key, type)} was: \" + function, token.getIndex());\n             }\n             key = StringHelper.removeQuotes(key);\n", 
+  "project": "camel", 
+  "linesAdd": 2, 
+  "jira_id": "7359", 
+  "nb_skipped": 3, 
+  "commit": "9cb09d14", 
+  "nb_failure": 1, 
+  "linesRem": 1
+}

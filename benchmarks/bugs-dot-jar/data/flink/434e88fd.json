@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1774, 
+  "nb_error": 2, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "typeutils.TypeExtractorTest"
+  ], 
+  "patch": "diff --git a/flink-core/src/main/java/org/apache/flink/api/java/typeutils/TypeExtractor.java b/flink-core/src/main/java/org/apache/flink/api/java/typeutils/TypeExtractor.java\nindex 01afe14bec..dd4b1326c3 100644\n--- a/flink-core/src/main/java/org/apache/flink/api/java/typeutils/TypeExtractor.java\n+++ b/flink-core/src/main/java/org/apache/flink/api/java/typeutils/TypeExtractor.java\n@@ -890,8 +890,8 @@ private static void validateInfo(ArrayList<Type> typeHierarchy, Type type, TypeI\n \t\t}\n \t\t\n \t\tif (!(type instanceof TypeVariable<?>)) {\n-\t\t\t// check for basic type\n-\t\t\tif (typeInfo.isBasicType()) {\n+\t\t\t// check for Java Basic Types\n+\t\t\tif (typeInfo instanceof BasicTypeInfo) {\n \t\t\t\t\n \t\t\t\tTypeInformation<?> actual;\n \t\t\t\t// check if basic type at all\n@@ -904,8 +904,8 @@ private static void validateInfo(ArrayList<Type> typeHierarchy, Type type, TypeI\n \t\t\t\t}\n \t\t\t\t\n \t\t\t}\n-\t\t\t// check for tuple\n-\t\t\telse if (typeInfo.isTupleType()) {\n+\t\t\t// check for Java Tuples\n+\t\t\telse if (typeInfo instanceof TupleTypeInfo) {\n \t\t\t\t// check if tuple at all\n \t\t\t\tif (!(isClassType(type) && Tuple.class.isAssignableFrom(typeToClass(type)))) {\n \t\t\t\t\tthrow new InvalidTypesException(\"Tuple type expected.\");\n@@ -1079,9 +1079,9 @@ else if (typeInfo instanceof EnumTypeInfo) {\n \t\t\t// check for generic object\n \t\t\telse if (typeInfo instanceof GenericTypeInfo<?>) {\n \t\t\t\tClass<?> clazz = null;\n-\t\t\t\tif (!(isClassType(type) && ((GenericTypeInfo<?>) typeInfo).getTypeClass() == (clazz = typeToClass(type)))) {\n-\t\t\t\t\tthrow new InvalidTypesException(\"Generic object type '\"\n-\t\t\t\t\t\t\t+ ((GenericTypeInfo<?>) typeInfo).getTypeClass().getCanonicalName() + \"' expected but was '\"\n+\t\t\t\tif (!(isClassType(type) && (clazz = typeToClass(type)).isAssignableFrom(((GenericTypeInfo<?>) typeInfo).getTypeClass()))) {\n+\t\t\t\t\tthrow new InvalidTypesException(\"Generic type '\"\n+\t\t\t\t\t\t\t+ ((GenericTypeInfo<?>) typeInfo).getTypeClass().getCanonicalName() + \"' or a subclass of it expected but was '\"\n \t\t\t\t\t\t\t+ clazz.getCanonicalName() + \"'.\");\n \t\t\t\t}\n \t\t\t}\n", 
+  "project": "flink", 
+  "linesAdd": 7, 
+  "jira_id": "3566", 
+  "nb_skipped": 0, 
+  "commit": "434e88fd", 
+  "nb_failure": 0, 
+  "linesRem": 7
+}

@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 5714, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math3.distribution.EnumeratedRealDistributionTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math3/distribution/EnumeratedRealDistribution.java b/src/main/java/org/apache/commons/math3/distribution/EnumeratedRealDistribution.java\nindex d4574342e..270764fd4 100644\n--- a/src/main/java/org/apache/commons/math3/distribution/EnumeratedRealDistribution.java\n+++ b/src/main/java/org/apache/commons/math3/distribution/EnumeratedRealDistribution.java\n@@ -23,6 +24,7 @@\n import org.apache.commons.math3.exception.NotANumberException;\n import org.apache.commons.math3.exception.NotFiniteNumberException;\n import org.apache.commons.math3.exception.NotPositiveException;\n+import org.apache.commons.math3.exception.OutOfRangeException;\n import org.apache.commons.math3.random.RandomGenerator;\n import org.apache.commons.math3.random.Well19937c;\n import org.apache.commons.math3.util.Pair;\n@@ -136,6 +138,33 @@ public double cumulativeProbability(final double x) {\n         return probability;\n     }\n \n+    /**\n+     * {@inheritDoc}\n+     */\n+    @Override\n+    public double inverseCumulativeProbability(final double p) throws OutOfRangeException {\n+        if (p < 0.0 || p > 1.0) {\n+            throw new OutOfRangeException(p, 0, 1);\n+        }\n+\n+        double probability = 0;\n+        double x = getSupportLowerBound();\n+        for (final Pair<Double, Double> sample : innerDistribution.getPmf()) {\n+            if (sample.getValue() == 0.0) {\n+                continue;\n+            }\n+\n+            probability += sample.getValue();\n+            x = sample.getKey();\n+\n+            if (probability >= p) {\n+                break;\n+            }\n+        }\n+\n+        return x;\n+    }\n+\n     /**\n      * {@inheritDoc}\n      *\n", 
+  "project": "commons-math", 
+  "linesAdd": 28, 
+  "jira_id": "1065", 
+  "nb_skipped": 5, 
+  "commit": "996c0c16", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

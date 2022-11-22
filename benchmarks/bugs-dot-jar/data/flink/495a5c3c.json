@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 149, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.flink.streaming.api.graph.StreamingJobGraphGeneratorTest"
+  ], 
+  "patch": "diff --git a/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/api/graph/StreamingJobGraphGenerator.java b/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/api/graph/StreamingJobGraphGenerator.java\nindex 6bad4c802b..d16ee58633 100644\n--- a/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/api/graph/StreamingJobGraphGenerator.java\n+++ b/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/api/graph/StreamingJobGraphGenerator.java\n@@ -17,6 +17,7 @@\n \n package org.apache.flink.streaming.api.graph;\n \n+import java.io.IOException;\n import java.util.ArrayList;\n import java.util.Collection;\n import java.util.HashMap;\n@@ -26,6 +27,7 @@\n import java.util.Map.Entry;\n \n import org.apache.commons.lang.StringUtils;\n+import org.apache.flink.api.common.ExecutionConfig;\n import org.apache.flink.configuration.Configuration;\n import org.apache.flink.runtime.jobgraph.AbstractJobVertex;\n import org.apache.flink.runtime.jobgraph.DistributionPattern;\n@@ -43,6 +45,7 @@\n import org.apache.flink.streaming.runtime.partitioner.StreamPartitioner.PartitioningStrategy;\n import org.apache.flink.streaming.runtime.tasks.StreamIterationHead;\n import org.apache.flink.streaming.runtime.tasks.StreamIterationTail;\n+import org.apache.flink.util.InstantiationUtil;\n import org.slf4j.Logger;\n import org.slf4j.LoggerFactory;\n \n@@ -93,6 +96,12 @@ public JobGraph createJobGraph(String jobName) {\n \t\t\n \t\tconfigureCheckpointing();\n \n+\t\ttry {\n+\t\t\tInstantiationUtil.writeObjectToConfig(this.streamGraph.getExecutionConfig(), this.jobGraph.getJobConfiguration(), ExecutionConfig.CONFIG_KEY);\n+\t\t} catch (IOException e) {\n+\t\t\tthrow new RuntimeException(\"Config object could not be written to Job Configuration: \", e);\n+\t\t}\n+\t\t\n \t\treturn jobGraph;\n \t}\n \n", 
+  "project": "flink", 
+  "linesAdd": 9, 
+  "jira_id": "1985", 
+  "nb_skipped": 1, 
+  "commit": "495a5c3c", 
+  "nb_failure": 0, 
+  "linesRem": 0
+}

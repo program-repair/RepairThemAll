@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 173, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.maven.repository.legacy.DefaultWagonManagerTest"
+  ], 
+  "patch": "diff --git a/maven-compat/src/main/java/org/apache/maven/repository/legacy/DefaultWagonManager.java b/maven-compat/src/main/java/org/apache/maven/repository/legacy/DefaultWagonManager.java\nindex 00e7f388a..0b4f3aec7 100644\n--- a/maven-compat/src/main/java/org/apache/maven/repository/legacy/DefaultWagonManager.java\n+++ b/maven-compat/src/main/java/org/apache/maven/repository/legacy/DefaultWagonManager.java\n@@ -46,6 +46,7 @@\n import org.codehaus.plexus.component.annotations.Component;\n import org.codehaus.plexus.component.annotations.Requirement;\n import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;\n+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;\n import org.codehaus.plexus.logging.Logger;\n import org.codehaus.plexus.util.FileUtils;\n \n@@ -67,9 +68,6 @@\n     @Requirement\n     private PlexusContainer container;\n \n-    @Requirement(role = Wagon.class)\n-    private Map<String, Wagon> wagons;\n-\n     @Requirement\n     private UpdateCheckManager updateCheckManager;\n \n@@ -686,11 +684,16 @@ public Wagon getWagon( String protocol )\n         }\n \n         String hint = protocol.toLowerCase( java.util.Locale.ENGLISH );\n-        Wagon wagon = (Wagon) wagons.get( hint );\n \n-        if ( wagon == null )\n+        Wagon wagon;\n+        try\n+        {\n+            wagon = container.lookup( Wagon.class, hint );\n+        }\n+        catch ( ComponentLookupException e )\n         {\n-            throw new UnsupportedProtocolException( \"Cannot find wagon which supports the requested protocol: \" + protocol );\n+            throw new UnsupportedProtocolException( \"Cannot find wagon which supports the requested protocol: \"\n+                + protocol, e );\n         }\n \n         return wagon;\n", 
+  "project": "maven", 
+  "linesAdd": 9, 
+  "jira_id": "4474", 
+  "nb_skipped": 0, 
+  "commit": "269c956e", 
+  "nb_failure": 1, 
+  "linesRem": 6
+}

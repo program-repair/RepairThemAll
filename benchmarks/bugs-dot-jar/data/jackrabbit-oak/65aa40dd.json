@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 186, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.mongomk.MongoDocumentStoreTest"
+  ], 
+  "patch": "diff --git a/oak-mongomk/src/main/java/org/apache/jackrabbit/mongomk/MemoryDocumentStore.java b/oak-mongomk/src/main/java/org/apache/jackrabbit/mongomk/MemoryDocumentStore.java\nindex e984585eef..ad581b78a0 100644\n--- a/oak-mongomk/src/main/java/org/apache/jackrabbit/mongomk/MemoryDocumentStore.java\n+++ b/oak-mongomk/src/main/java/org/apache/jackrabbit/mongomk/MemoryDocumentStore.java\n@@ -178,14 +178,14 @@ private static boolean checkConditions(Map<String, Object> target,\n                         return false;\n                     }\n                 } else {\n-                    if (value instanceof java.util.Collection) {\n-                        java.util.Collection<?> col = (java.util.Collection<?>) value;\n+                    if (value instanceof Map) {\n+                        Map map = (Map) value;\n                         if (Boolean.TRUE.equals(op.value)) {\n-                            if (!col.contains(kv[1])) {\n+                            if (!map.containsKey(kv[1])) {\n                                 return false;\n                             }\n                         } else {\n-                            if (col.contains(kv[1])) {\n+                            if (map.containsKey(kv[1])) {\n                                 return false;\n                             }\n                         }\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 4, 
+  "jira_id": "847", 
+  "nb_skipped": 4, 
+  "commit": "65aa40dd", 
+  "nb_failure": 1, 
+  "linesRem": 4
+}

@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 5441, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.component.properties.PropertiesComponentOnExceptionDelayPatternTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/model/RedeliveryPolicyDefinition.java b/camel-core/src/main/java/org/apache/camel/model/RedeliveryPolicyDefinition.java\nindex 41e53e9c98..f695d265b0 100644\n--- a/camel-core/src/main/java/org/apache/camel/model/RedeliveryPolicyDefinition.java\n+++ b/camel-core/src/main/java/org/apache/camel/model/RedeliveryPolicyDefinition.java\n@@ -156,13 +156,13 @@ public RedeliveryPolicy createRedeliveryPolicy(CamelContext context, RedeliveryP\n                 }\n             }\n             if (delayPattern != null) {\n-                answer.setDelayPattern(delayPattern);\n+                answer.setDelayPattern(CamelContextHelper.parseText(context, delayPattern));\n             }\n             if (allowRedeliveryWhileStopping != null) {\n                 answer.setAllowRedeliveryWhileStopping(CamelContextHelper.parseBoolean(context, allowRedeliveryWhileStopping));\n             }\n             if (exchangeFormatterRef != null) {\n-                answer.setExchangeFormatterRef(exchangeFormatterRef);\n+                answer.setExchangeFormatterRef(CamelContextHelper.parseText(context, exchangeFormatterRef));\n             }\n         } catch (Exception e) {\n             throw ObjectHelper.wrapRuntimeCamelException(e);\n", 
+  "project": "camel", 
+  "linesAdd": 2, 
+  "jira_id": "9124", 
+  "nb_skipped": 4, 
+  "commit": "9da2c05a", 
+  "nb_failure": 0, 
+  "linesRem": 2
+}

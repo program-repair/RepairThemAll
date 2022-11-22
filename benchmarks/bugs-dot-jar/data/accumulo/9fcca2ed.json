@@ -1,0 +1,19 @@
+{
+  "files": 3, 
+  "nb_test": 413, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.accumulo.core.client.mock.MockTableOperationsTest"
+  ], 
+  "patch": "diff --git a/core/src/main/java/org/apache/accumulo/core/client/mock/MockAccumulo.java b/core/src/main/java/org/apache/accumulo/core/client/mock/MockAccumulo.java\nindex 5977d1da7..272d1afaa 100644\n--- a/core/src/main/java/org/apache/accumulo/core/client/mock/MockAccumulo.java\n+++ b/core/src/main/java/org/apache/accumulo/core/client/mock/MockAccumulo.java\n@@ -21,6 +21,7 @@\n import java.util.HashMap;\n import java.util.Map;\n import java.util.SortedSet;\n+import java.util.concurrent.atomic.AtomicInteger;\n \n import org.apache.accumulo.core.Constants;\n import org.apache.accumulo.core.client.BatchScanner;\n@@ -38,6 +39,7 @@\n   final Map<String,String> systemProperties = new HashMap<String,String>();\n   Map<String,MockUser> users = new HashMap<String,MockUser>();\n   final FileSystem fs;\n+  final AtomicInteger tableIdCounter = new AtomicInteger(0);\n   \n   MockAccumulo(FileSystem fs) {\n     this.fs = fs;\n@@ -76,7 +78,7 @@ public BatchScanner createBatchScanner(String tableName, Authorizations authoriz\n   }\n   \n   public void createTable(String username, String tableName, boolean useVersions, TimeType timeType) {\n-    MockTable t = new MockTable(useVersions, timeType);\n+    MockTable t = new MockTable(useVersions, timeType, Integer.toString(tableIdCounter.incrementAndGet()));\n     t.userPermissions.put(username, EnumSet.allOf(TablePermission.class));\n     tables.put(tableName, t);\n   }\ndiff --git a/core/src/main/java/org/apache/accumulo/core/client/mock/MockTable.java b/core/src/main/java/org/apache/accumulo/core/client/mock/MockTable.java\nindex 3dcab11bd..2e13d842e 100644\n--- a/core/src/main/java/org/apache/accumulo/core/client/mock/MockTable.java\n+++ b/core/src/main/java/org/apache/accumulo/core/client/mock/MockTable.java\n@@ -89,9 +89,11 @@ public int compareTo(Key o) {\n   private TimeType timeType;\n   SortedSet<Text> splits = new ConcurrentSkipListSet<Text>();\n   Map<String,Set<Text>> localityGroups = new TreeMap<String, Set<Text>>();\n+  private String tableId;\n   \n-  MockTable(boolean limitVersion, TimeType timeType) {\n+  MockTable(boolean limitVersion, TimeType timeType, String tableId) {\n     this.timeType = timeType;\n+    this.tableId = tableId;\n     settings = IteratorUtil.generateInitialTableProperties(limitVersion);\n     for (Entry<String,String> entry : AccumuloConfiguration.getDefaultConfiguration()) {\n       String key = entry.getKey();\n@@ -143,4 +145,8 @@ public void merge(Text start, Text end) {\n     if (reAdd)\n       splits.add(start);\n   }\n+\n+  public String getTableId() {\n+    return this.tableId;\n+  }\n }\ndiff --git a/core/src/main/java/org/apache/accumulo/core/client/mock/MockTableOperations.java b/core/src/main/java/org/apache/accumulo/core/client/mock/MockTableOperations.java\nindex 64f8225fc..5b1535127 100644\n--- a/core/src/main/java/org/apache/accumulo/core/client/mock/MockTableOperations.java\n+++ b/core/src/main/java/org/apache/accumulo/core/client/mock/MockTableOperations.java\n@@ -296,8 +296,8 @@ public void clearLocatorCache(String tableName) throws TableNotFoundException {\n   @Override\n   public Map<String,String> tableIdMap() {\n     Map<String,String> result = new HashMap<String,String>();\n-    for (String table : acu.tables.keySet()) {\n-      result.put(table, table);\n+    for (Entry<String,MockTable> entry : acu.tables.entrySet()) {\n+      result.put(entry.getKey(), entry.getValue().getTableId());\n     }\n     return result;\n   }\n", 
+  "project": "accumulo", 
+  "linesAdd": 12, 
+  "jira_id": "2857", 
+  "nb_skipped": 0, 
+  "commit": "9fcca2ed", 
+  "nb_failure": 1, 
+  "linesRem": 4
+}

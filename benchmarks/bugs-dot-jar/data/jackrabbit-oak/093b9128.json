@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 5, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.spi.security.authentication.external.ExternalLoginModuleTest"
+  ], 
+  "patch": "diff --git a/oak-auth-external/src/main/java/org/apache/jackrabbit/oak/spi/security/authentication/external/impl/DefaultSyncHandler.java b/oak-auth-external/src/main/java/org/apache/jackrabbit/oak/spi/security/authentication/external/impl/DefaultSyncHandler.java\nindex 43afa31067..be7be374dc 100644\n--- a/oak-auth-external/src/main/java/org/apache/jackrabbit/oak/spi/security/authentication/external/impl/DefaultSyncHandler.java\n+++ b/oak-auth-external/src/main/java/org/apache/jackrabbit/oak/spi/security/authentication/external/impl/DefaultSyncHandler.java\n@@ -644,7 +644,12 @@ private void syncProperties(ExternalIdentity ext, Authorizable auth, Map<String,\n                 String name = entry.getValue();\n                 Object obj = properties.get(name);\n                 if (obj == null) {\n+                    int nameLen = name.length();\n+                    if (nameLen > 1 && name.charAt(0) == '\"' && name.charAt(nameLen-1) == '\"') {\n+                        auth.setProperty(relPath, valueFactory.createValue(name.substring(1, nameLen - 1)));\n+                    } else {\n                         auth.removeProperty(relPath);\n+                    }\n                 } else {\n                     if (obj instanceof Collection) {\n                         auth.setProperty(relPath, createValues((Collection) obj));\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 5, 
+  "jira_id": "1848", 
+  "nb_skipped": 0, 
+  "commit": "093b9128", 
+  "nb_failure": 0, 
+  "linesRem": 0
+}

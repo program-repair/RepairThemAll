@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 3097, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.document.CommitTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Commit.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Commit.java\nindex fc7cd5adb4..d24876f52b 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Commit.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Commit.java\n@@ -523,7 +523,8 @@ private void checkConflicts(@Nonnull UpdateOp op,\n             String conflictMessage = null;\n             Revision conflictRevision = newestRev;\n             if (newestRev == null) {\n-                if ((op.isDelete() || !op.isNew()) && isConflicting(before, op)) {\n+                if ((op.isDelete() || !op.isNew())\n+                        && !allowConcurrentAddRemove(before, op)) {\n                     conflictMessage = \"The node \" +\n                             op.getId() + \" does not exist or is already deleted\";\n                     if (before != null && !before.getLocalDeleted().isEmpty()) {\n@@ -531,7 +532,7 @@ private void checkConflicts(@Nonnull UpdateOp op,\n                     }\n                 }\n             } else {\n-                if (op.isNew() && isConflicting(before, op)) {\n+                if (op.isNew() && !allowConcurrentAddRemove(before, op)) {\n                     conflictMessage = \"The node \" +\n                             op.getId() + \" was already added in revision\\n\" +\n                             formatConflictRevision(newestRev);\n@@ -615,6 +616,25 @@ private boolean isConflicting(@Nullable NodeDocument doc,\n                 nodeStore.getEnableConcurrentAddRemove());\n     }\n \n+    /**\n+     * Checks whether a concurrent add/remove operation is allowed with the\n+     * given before document and update operation. This method will first check\n+     * if the concurrent add/remove feature is enable and return {@code false}\n+     * immediately if it is disabled. Only when enabled will this method check\n+     * if there is a conflict based on the given document and update operation.\n+     * See also {@link #isConflicting(NodeDocument, UpdateOp)}.\n+     *\n+     * @param before the contents of the document before the update.\n+     * @param op the update to perform.\n+     * @return {@code true} is a concurrent add/remove update is allowed;\n+     *      {@code false} otherwise.\n+     */\n+    private boolean allowConcurrentAddRemove(@Nullable NodeDocument before,\n+                                             @Nonnull UpdateOp op) {\n+        return nodeStore.getEnableConcurrentAddRemove()\n+                && !isConflicting(before, op);\n+    }\n+\n     /**\n      * @return the branch if this is a branch commit, otherwise {@code null}.\n      */\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 22, 
+  "jira_id": "3733", 
+  "nb_skipped": 1, 
+  "commit": "a5ff019e", 
+  "nb_failure": 0, 
+  "linesRem": 2
+}

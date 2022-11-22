@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1901, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.index.IndexUpdateTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/IndexUpdate.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/IndexUpdate.java\nindex f68c213a4d..47cdfd18fc 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/IndexUpdate.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/IndexUpdate.java\n@@ -45,6 +45,7 @@\n import org.apache.jackrabbit.oak.spi.commit.Editor;\n import org.apache.jackrabbit.oak.spi.state.NodeBuilder;\n import org.apache.jackrabbit.oak.spi.state.NodeState;\n+import org.apache.jackrabbit.oak.spi.state.NodeStateUtils;\n import org.slf4j.Logger;\n import org.slf4j.LoggerFactory;\n \n@@ -170,8 +171,10 @@ private void collectIndexEditors(NodeBuilder definitions,\n                         // as we don't know the index content node name\n                         // beforehand, we'll remove all child nodes\n                         for (String rm : definition.getChildNodeNames()) {\n+                            if (NodeStateUtils.isHidden(rm)) {\n                                 definition.getChildNode(rm).remove();\n                             }\n+                        }\n                         reindex.put(concat(getPath(), INDEX_DEFINITIONS_NAME, name), editor);\n                     }\n                 } else {\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 3, 
+  "jira_id": "2117", 
+  "nb_skipped": 9, 
+  "commit": "c7669f31", 
+  "nb_failure": 1, 
+  "linesRem": 0
+}

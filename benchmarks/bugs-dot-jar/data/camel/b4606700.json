@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 3065, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.processor.SplitterStreamingErrorHandlingTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/Splitter.java b/camel-core/src/main/java/org/apache/camel/processor/Splitter.java\nindex 97e5178a49..6d585fb7fa 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/Splitter.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/Splitter.java\n@@ -109,6 +109,9 @@ public boolean process(Exchange exchange, final AsyncCallback callback) {\n     private Iterable<ProcessorExchangePair> createProcessorExchangePairsIterable(final Exchange exchange, final Object value) {\n         final Iterator iterator = ObjectHelper.createIterator(value);\n         return new Iterable() {\n+            // create a copy which we use as master to copy during splitting\n+            // this avoids any side effect reflected upon the incoming exchange\n+            private final Exchange copy = ExchangeHelper.createCopy(exchange, true);\n \n             public Iterator iterator() {\n                 return new Iterator() {\n@@ -137,7 +140,8 @@ public boolean hasNext() {\n \n                     public Object next() {\n                         Object part = iterator.next();\n-                        Exchange newExchange = ExchangeHelper.createCopy(exchange, true);\n+                        // create a copy as the new exchange to be routed in the splitter from the copy\n+                        Exchange newExchange = ExchangeHelper.createCopy(copy, true);\n                         if (part instanceof Message) {\n                             newExchange.setIn((Message)part);\n                         } else {\n", 
+  "project": "camel", 
+  "linesAdd": 5, 
+  "jira_id": "3498", 
+  "nb_skipped": 0, 
+  "commit": "b4606700", 
+  "nb_failure": 0, 
+  "linesRem": 1
+}

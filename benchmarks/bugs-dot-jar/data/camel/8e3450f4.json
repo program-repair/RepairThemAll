@@ -1,0 +1,19 @@
+{
+  "files": 2, 
+  "nb_test": 3855, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.processor.DeadLetterChannelUnmarshalSetHeaderTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/MarshalProcessor.java b/camel-core/src/main/java/org/apache/camel/processor/MarshalProcessor.java\nindex b4e328972d..9a01a552cc 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/MarshalProcessor.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/MarshalProcessor.java\n@@ -55,9 +55,15 @@ public void process(Exchange exchange) throws Exception {\n         Message out = exchange.getOut();\n         out.copyFrom(in);\n \n+        try {\n             dataFormat.marshal(exchange, body, buffer);\n             byte[] data = buffer.toByteArray();\n             out.setBody(data);\n+        } catch (Exception e) {\n+            // remove OUT message, as an exception occurred\n+            exchange.setOut(null);\n+            throw e;\n+        }\n     }\n \n     @Override\ndiff --git a/camel-core/src/main/java/org/apache/camel/processor/UnmarshalProcessor.java b/camel-core/src/main/java/org/apache/camel/processor/UnmarshalProcessor.java\nindex 414b088006..b8c5e5f6eb 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/UnmarshalProcessor.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/UnmarshalProcessor.java\n@@ -27,6 +27,7 @@\n import org.apache.camel.spi.DataFormat;\n import org.apache.camel.support.ServiceSupport;\n import org.apache.camel.util.ExchangeHelper;\n+import org.apache.camel.util.IOHelper;\n import org.apache.camel.util.ObjectHelper;\n import org.apache.camel.util.ServiceHelper;\n \n@@ -56,10 +57,12 @@ public void process(Exchange exchange) throws Exception {\n \n             Object result = dataFormat.unmarshal(exchange, stream);\n             out.setBody(result);\n+        } catch (Exception e) {\n+            // remove OUT message, as an exception occurred\n+            exchange.setOut(null);\n+            throw e;\n         } finally {\n-            if (stream != null) {\n-                stream.close();\n-            }\n+            IOHelper.close(stream, \"input stream\");\n         }\n     }\n \n", 
+  "project": "camel", 
+  "linesAdd": 12, 
+  "jira_id": "4509", 
+  "nb_skipped": 0, 
+  "commit": "8e3450f4", 
+  "nb_failure": 1, 
+  "linesRem": 3
+}

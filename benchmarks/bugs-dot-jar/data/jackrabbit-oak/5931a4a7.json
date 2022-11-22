@@ -1,0 +1,19 @@
+{
+  "files": 2, 
+  "nb_test": 1936, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.plugins.index.IndexUpdateTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/Oak.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/Oak.java\nindex 04020c1365..9399ae992e 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/Oak.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/Oak.java\n@@ -60,6 +61,7 @@\n import org.apache.jackrabbit.oak.plugins.commit.ConflictHook;\n import org.apache.jackrabbit.oak.plugins.index.AsyncIndexUpdate;\n import org.apache.jackrabbit.oak.plugins.index.CompositeIndexEditorProvider;\n+import org.apache.jackrabbit.oak.plugins.index.IndexConstants;\n import org.apache.jackrabbit.oak.plugins.index.IndexEditorProvider;\n import org.apache.jackrabbit.oak.plugins.index.IndexUpdateProvider;\n import org.apache.jackrabbit.oak.plugins.index.property.jmx.PropertyIndexAsyncReindex;\n@@ -528,11 +530,11 @@ public ContentRepository createContentRepository() {\n                     task.getIndexStats(), IndexStatsMBean.TYPE, name));\n \n             PropertyIndexAsyncReindex asyncPI = new PropertyIndexAsyncReindex(\n-                    new AsyncIndexUpdate(\"async-reindex\", store, indexEditors,\n-                            true), getExecutor()\n-            );\n-            regs.add(registerMBean(whiteboard, PropertyIndexAsyncReindexMBean.class,\n-                    asyncPI, PropertyIndexAsyncReindexMBean.TYPE, name));\n+                    new AsyncIndexUpdate(IndexConstants.ASYNC_REINDEX_VALUE,\n+                            store, indexEditors, true), getExecutor());\n+            regs.add(registerMBean(whiteboard,\n+                    PropertyIndexAsyncReindexMBean.class, asyncPI,\n+                    PropertyIndexAsyncReindexMBean.TYPE, name));\n         }\n \n         regs.add(registerMBean(whiteboard, QueryEngineSettingsMBean.class,\ndiff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/AsyncIndexUpdate.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/AsyncIndexUpdate.java\nindex c8879d08de..ea8dd803ae 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/AsyncIndexUpdate.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/AsyncIndexUpdate.java\n@@ -357,9 +357,10 @@ private void updateIndex(\n                 } else {\n                     postAsyncRunStatsStatus(indexStats);\n                 }\n-            } else if (switchOnSync) {\n-                log.debug(\"No changes detected after diff; will try to\"\n-                        + \" switch to synchronous updates on {}\",\n+            } else {\n+                if (switchOnSync) {\n+                    log.debug(\n+                            \"No changes detected after diff; will try to switch to synchronous updates on {}\",\n                             reindexedDefinitions);\n \n                     // no changes after diff, switch to sync on the async defs\n@@ -374,12 +375,12 @@ private void updateIndex(\n                     }\n                     reindexedDefinitions.clear();\n                 }\n+                postAsyncRunStatsStatus(indexStats);\n+            }\n             mergeWithConcurrencyCheck(builder, beforeCheckpoint, callback.lease);\n         } finally {\n             callback.close();\n         }\n-\n-        postAsyncRunStatsStatus(indexStats);\n     }\n \n     private void mergeWithConcurrencyCheck(\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 12, 
+  "jira_id": "2174", 
+  "nb_skipped": 9, 
+  "commit": "5931a4a7", 
+  "nb_failure": 1, 
+  "linesRem": 10
+}

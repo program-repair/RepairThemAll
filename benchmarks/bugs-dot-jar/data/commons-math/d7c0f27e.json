@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 3968, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math3.fraction.FractionTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math3/fraction/Fraction.java b/src/main/java/org/apache/commons/math3/fraction/Fraction.java\nindex f81ff0a94..08d3b9556 100644\n--- a/src/main/java/org/apache/commons/math3/fraction/Fraction.java\n+++ b/src/main/java/org/apache/commons/math3/fraction/Fraction.java\n@@ -178,7 +178,7 @@ private Fraction(double value, double epsilon, int maxDenominator, int maxIterat\n         long overflow = Integer.MAX_VALUE;\n         double r0 = value;\n         long a0 = (long)FastMath.floor(r0);\n-        if (a0 > overflow) {\n+        if (FastMath.abs(a0) > overflow) {\n             throw new FractionConversionException(value, a0, 1l);\n         }\n \n@@ -206,7 +206,7 @@ private Fraction(double value, double epsilon, int maxDenominator, int maxIterat\n             long a1 = (long)FastMath.floor(r1);\n             p2 = (a1 * p1) + p0;\n             q2 = (a1 * q1) + q0;\n-            if ((p2 > overflow) || (q2 > overflow)) {\n+            if ((FastMath.abs(p2) > overflow) || (FastMath.abs(q2) > overflow)) {\n                 throw new FractionConversionException(value, p2, q2);\n             }\n \n", 
+  "project": "commons-math", 
+  "linesAdd": 2, 
+  "jira_id": "836", 
+  "nb_skipped": 4, 
+  "commit": "d7c0f27e", 
+  "nb_failure": 1, 
+  "linesRem": 2
+}

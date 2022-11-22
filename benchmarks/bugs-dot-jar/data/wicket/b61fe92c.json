@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1498, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.markup.parser.filter.OpenCloseTagExpanderTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/parser/filter/OpenCloseTagExpander.java b/wicket-core/src/main/java/org/apache/wicket/markup/parser/filter/OpenCloseTagExpander.java\nindex f737c749e3..9e3abf8c51 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/parser/filter/OpenCloseTagExpander.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/parser/filter/OpenCloseTagExpander.java\n@@ -37,6 +37,10 @@\n  */\r\n public class OpenCloseTagExpander extends AbstractMarkupFilter\r\n {\r\n+\t// A list of elements which should not be expanded from TagType.OPEN_CLOSE to TagType.OPEN + TagType.CLOSE\r\n+\t// http://www.w3.org/TR/html-markup/syntax.html#void-element\r\n+\t// area, base, br, col, command, embed, hr, img, input, keygen, link, meta, param, source, track, wbr\r\n+\r\n \tprivate static final List<String> replaceForTags = Arrays.asList(\"a\", \"q\", \"sub\", \"sup\",\r\n \t\t\"abbr\", \"acronym\", \"cite\", \"code\", \"del\", \"dfn\", \"em\", \"ins\", \"kbd\", \"samp\", \"var\",\r\n \t\t\"label\", \"textarea\", \"tr\", \"td\", \"th\", \"caption\", \"thead\", \"tbody\", \"tfoot\", \"dl\", \"dt\",\r\n@@ -52,12 +56,9 @@\n \t\t\"b\",\r\n \t\t\"e\",\r\n \t\t\"select\",\r\n-\t\t\"col\",\r\n \r\n-\t\t// New HTML5 elements (excluding: open-close tags:\r\n-\t\t// wbr, source, time, embed, keygen\r\n \t\t// @TODO by now an exclude list is probably shorter\r\n-\t\t\"article\", \"aside\", \"command\", \"details\", \"summary\", \"figure\", \"figcaption\", \"footer\",\r\n+\t\t\"article\", \"aside\", \"details\", \"summary\", \"figure\", \"figcaption\", \"footer\",\r\n \t\t\"header\", \"hgroup\", \"mark\", \"meter\", \"nav\", \"progress\", \"ruby\", \"rt\", \"rp\", \"section\",\r\n \t\t\"audio\", \"video\", \"canvas\", \"datalist\", \"output\");\r\n \r\n", 
+  "project": "wicket", 
+  "linesAdd": 5, 
+  "jira_id": "5237", 
+  "nb_skipped": 4, 
+  "commit": "b61fe92c", 
+  "nb_failure": 1, 
+  "linesRem": 4
+}

@@ -1,0 +1,20 @@
+{
+  "files": 1, 
+  "nb_test": 894, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.flink.runtime.executiongraph.ExecutionGraphRestartTest", 
+    "org.apache.flink.runtime.leaderelection.LeaderChangeStateCleanupTest"
+  ], 
+  "patch": "diff --git a/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionGraph.java b/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionGraph.java\nindex aae0b7ce69..1e5d02cb95 100755\n--- a/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionGraph.java\n+++ b/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionGraph.java\n@@ -711,6 +711,26 @@ public void cancel() {\n \t\t\t\t\treturn;\n \t\t\t\t}\n \t\t\t}\n+\t\t\t// Executions are being canceled. Go into cancelling and wait for\n+\t\t\t// all vertices to be in their final state.\n+\t\t\telse if (current == JobStatus.FAILING) {\n+\t\t\t\tif (transitionState(current, JobStatus.CANCELLING)) {\n+\t\t\t\t\treturn;\n+\t\t\t\t}\n+\t\t\t}\n+\t\t\t// All vertices have been cancelled and it's safe to directly go\n+\t\t\t// into the canceled state.\n+\t\t\telse if (current == JobStatus.RESTARTING) {\n+\t\t\t\tsynchronized (progressLock) {\n+\t\t\t\t\tif (transitionState(current, JobStatus.CANCELED)) {\n+\t\t\t\t\t\tpostRunCleanup();\n+\t\t\t\t\t\tprogressLock.notifyAll();\n+\n+\t\t\t\t\t\tLOG.info(\"Canceled during restart.\");\n+\t\t\t\t\t\treturn;\n+\t\t\t\t\t}\n+\t\t\t\t}\n+\t\t\t}\n \t\t\telse {\n \t\t\t\t// no need to treat other states\n \t\t\t\treturn;\n@@ -747,9 +767,16 @@ else if (transitionState(current, JobStatus.FAILING, t)) {\n \tpublic void restart() {\n \t\ttry {\n \t\t\tsynchronized (progressLock) {\n-\t\t\t\tif (state != JobStatus.RESTARTING) {\n+\t\t\t\tJobStatus current = state;\n+\n+\t\t\t\tif (current == JobStatus.CANCELED) {\n+\t\t\t\t\tLOG.info(\"Canceled job during restart. Aborting restart.\");\n+\t\t\t\t\treturn;\n+\t\t\t\t}\n+\t\t\t\telse if (current != JobStatus.RESTARTING) {\n \t\t\t\t\tthrow new IllegalStateException(\"Can only restart job from state restarting.\");\n \t\t\t\t}\n+\n \t\t\t\tif (scheduler == null) {\n \t\t\t\t\tthrow new IllegalStateException(\"The execution graph has not been scheduled before - scheduler is null.\");\n \t\t\t\t}\n", 
+  "project": "flink", 
+  "linesAdd": 28, 
+  "jira_id": "3011", 
+  "nb_skipped": 1, 
+  "commit": "5a86a0a1", 
+  "nb_failure": 3, 
+  "linesRem": 1
+}

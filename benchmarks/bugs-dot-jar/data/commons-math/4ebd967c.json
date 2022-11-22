@@ -1,0 +1,21 @@
+{
+  "files": 3, 
+  "nb_test": 5428, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.commons.math3.special.BetaTest", 
+    "org.apache.commons.math3.distribution.WeibullDistributionTest", 
+    "org.apache.commons.math3.distribution.LogNormalDistributionTest"
+  ], 
+  "patch": "diff --git a/src/main/java/org/apache/commons/math3/distribution/LogNormalDistribution.java b/src/main/java/org/apache/commons/math3/distribution/LogNormalDistribution.java\nindex 810c9e407..ab7a13be4 100644\n--- a/src/main/java/org/apache/commons/math3/distribution/LogNormalDistribution.java\n+++ b/src/main/java/org/apache/commons/math3/distribution/LogNormalDistribution.java\n@@ -289,7 +289,7 @@ public double getNumericalMean() {\n     public double getNumericalVariance() {\n         final double s = shape;\n         final double ss = s * s;\n-        return (FastMath.exp(ss) - 1) * FastMath.exp(2 * scale + ss);\n+        return (FastMath.expm1(ss)) * FastMath.exp(2 * scale + ss);\n     }\n \n     /**\ndiff --git a/src/main/java/org/apache/commons/math3/distribution/WeibullDistribution.java b/src/main/java/org/apache/commons/math3/distribution/WeibullDistribution.java\nindex ec34b508c..6e69bc9be 100644\n--- a/src/main/java/org/apache/commons/math3/distribution/WeibullDistribution.java\n+++ b/src/main/java/org/apache/commons/math3/distribution/WeibullDistribution.java\n@@ -221,7 +221,7 @@ public double inverseCumulativeProbability(double p) {\n         } else  if (p == 1) {\n             ret = Double.POSITIVE_INFINITY;\n         } else {\n-            ret = scale * FastMath.pow(-FastMath.log(1.0 - p), 1.0 / shape);\n+            ret = scale * FastMath.pow(-FastMath.log1p(-p), 1.0 / shape);\n         }\n         return ret;\n     }\ndiff --git a/src/main/java/org/apache/commons/math3/special/Beta.java b/src/main/java/org/apache/commons/math3/special/Beta.java\nindex 59f696a0b..c6091b48c 100644\n--- a/src/main/java/org/apache/commons/math3/special/Beta.java\n+++ b/src/main/java/org/apache/commons/math3/special/Beta.java\n@@ -218,7 +218,7 @@ protected double getA(int n, double x) {\n                     return 1.0;\n                 }\n             };\n-            ret = FastMath.exp((a * FastMath.log(x)) + (b * FastMath.log(1.0 - x)) -\n+            ret = FastMath.exp((a * FastMath.log(x)) + (b * FastMath.log1p(-x)) -\n                 FastMath.log(a) - logBeta(a, b)) *\n                 1.0 / fraction.evaluate(x, epsilon, maxIterations);\n         }\n", 
+  "project": "commons-math", 
+  "linesAdd": 3, 
+  "jira_id": "1058", 
+  "nb_skipped": 4, 
+  "commit": "4ebd967c", 
+  "nb_failure": 3, 
+  "linesRem": 3
+}

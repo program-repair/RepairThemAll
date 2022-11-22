@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 4353, 
+  "nb_error": 0, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.camel.processor.intercept.TransactedPropertyPlaceholderIssueTest"
+  ], 
+  "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/model/ProcessorDefinition.java b/camel-core/src/main/java/org/apache/camel/model/ProcessorDefinition.java\nindex 2db4f13f28..38989d18f4 100644\n--- a/camel-core/src/main/java/org/apache/camel/model/ProcessorDefinition.java\n+++ b/camel-core/src/main/java/org/apache/camel/model/ProcessorDefinition.java\n@@ -367,9 +367,29 @@ protected Processor createOutputsProcessor(RouteContext routeContext, Collection\n         List<Processor> list = new ArrayList<Processor>();\n         for (ProcessorDefinition<?> output : outputs) {\n \n+            // allow any custom logic before we create the processor\n+            output.preCreateProcessor();\n+\n             // resolve properties before we create the processor\n             resolvePropertyPlaceholders(routeContext, output);\n \n+            // resolve constant fields (eg Exchange.FILE_NAME)\n+            resolveKnownConstantFields(output);\n+\n+            // also resolve properties and constant fields on embedded expressions\n+            ProcessorDefinition<?> me = (ProcessorDefinition<?>) output;\n+            if (me instanceof ExpressionNode) {\n+                ExpressionNode exp = (ExpressionNode) me;\n+                ExpressionDefinition expressionDefinition = exp.getExpression();\n+                if (expressionDefinition != null) {\n+                    // resolve properties before we create the processor\n+                    resolvePropertyPlaceholders(routeContext, expressionDefinition);\n+\n+                    // resolve constant fields (eg Exchange.FILE_NAME)\n+                    resolveKnownConstantFields(expressionDefinition);\n+                }\n+            }\n+\n             Processor processor = null;\n             // at first use custom factory\n             if (routeContext.getCamelContext().getProcessorFactory() != null) {\n@@ -472,10 +492,9 @@ protected void resolvePropertyPlaceholders(RouteContext routeContext, Object def\n         // include additional properties which have the Camel placeholder QName\n         // and when the definition parameter is this (otherAttributes belong to this)\n         if (processorDefinition != null && processorDefinition.getOtherAttributes() != null) {\n-            for (Object key : processorDefinition.getOtherAttributes().keySet()) {\n-                QName qname = (QName) key;\n-                if (Constants.PLACEHOLDER_QNAME.equals(qname.getNamespaceURI())) {\n-                    String local = qname.getLocalPart();\n+            for (QName key : processorDefinition.getOtherAttributes().keySet()) {\n+                if (Constants.PLACEHOLDER_QNAME.equals(key.getNamespaceURI())) {\n+                    String local = key.getLocalPart();\n                     Object value = processorDefinition.getOtherAttributes().get(key);\n                     if (value != null && value instanceof String) {\n                         // value must be enclosed with placeholder tokens\n", 
+  "project": "camel", 
+  "linesAdd": 23, 
+  "jira_id": "5796", 
+  "nb_skipped": 1, 
+  "commit": "de6dd425", 
+  "nb_failure": 1, 
+  "linesRem": 4
+}

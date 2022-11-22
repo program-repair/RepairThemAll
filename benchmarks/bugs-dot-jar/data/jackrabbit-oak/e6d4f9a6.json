@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1867, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.jackrabbit.oak.query.SQL2ParserTest"
+  ], 
+  "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/Statement.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/Statement.java\nindex 6e614b5a08..66ccb04949 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/Statement.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/Statement.java\n@@ -179,16 +179,8 @@ public String toString() {\n                 buff.append(orderList.get(i));\n             }\n         }\n-\n         // leave original xpath string as a comment\n-        if (xpathQuery != null) {\n-            buff.append(\" /* xpath: \");\n-            // the xpath query may not contain the \"end comment\" marker\n-            String xpathEscaped = xpathQuery.replaceAll(\"\\\\*\\\\/\", \"* /\");\n-            buff.append(xpathEscaped);\n-            buff.append(\" */\");\n-        }\n-        \n+        appendXPathAsComment(buff, xpathQuery);\n         return buff.toString();        \n     }\n \n@@ -251,14 +243,21 @@ public String toString() {\n                 }\n             }\n             // leave original xpath string as a comment\n-            if (xpathQuery != null) {\n-                buff.append(\" /* xpath: \");\n-                buff.append(xpathQuery);\n-                buff.append(\" */\");\n-            }\n+            appendXPathAsComment(buff, xpathQuery);\n             return buff.toString();\n         }\n         \n     }\n     \n+    private static void appendXPathAsComment(StringBuilder buff, String xpath) {\n+        if (xpath == null) {\n+            return;\n+        }\n+        buff.append(\" /* xpath: \");\n+        // the xpath query may contain the \"end comment\" marker\n+        String xpathEscaped = xpath.replaceAll(\"\\\\*\\\\/\", \"* /\");\n+        buff.append(xpathEscaped);\n+        buff.append(\" */\");        \n+    }\n+\n }\n", 
+  "project": "jackrabbit-oak", 
+  "linesAdd": 13, 
+  "jira_id": "2427", 
+  "nb_skipped": 9, 
+  "commit": "e6d4f9a6", 
+  "nb_failure": 0, 
+  "linesRem": 14
+}

@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1751, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": false
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.markup.html.TransparentWebMarkupContainerTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/html/panel/DefaultMarkupSourcingStrategy.java b/wicket-core/src/main/java/org/apache/wicket/markup/html/panel/DefaultMarkupSourcingStrategy.java\nindex 6ba5b616a7..f1749af14a 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/html/panel/DefaultMarkupSourcingStrategy.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/html/panel/DefaultMarkupSourcingStrategy.java\n@@ -21,6 +21,7 @@\n import org.apache.wicket.markup.ComponentTag;\n import org.apache.wicket.markup.IMarkupFragment;\n import org.apache.wicket.markup.MarkupStream;\n+import org.apache.wicket.markup.resolver.IComponentResolver;\n import org.slf4j.Logger;\n import org.slf4j.LoggerFactory;\n \n@@ -96,7 +97,10 @@ public IMarkupFragment getMarkup(final MarkupContainer container, final Componen\n \t\t\treturn markup;\n \t\t}\n \t\t\n+\t\tif(!(child instanceof IComponentResolver)) \n+\t\t{\n \t\t\tmarkup = searchMarkupInTransparentResolvers(container, child);\n+\t\t}\n \t\t\n \t\treturn markup;\n \t}\n", 
+  "project": "wicket", 
+  "linesAdd": 4, 
+  "jira_id": "5898", 
+  "nb_skipped": 1, 
+  "commit": "b00920f3", 
+  "nb_failure": 0, 
+  "linesRem": 0
+}

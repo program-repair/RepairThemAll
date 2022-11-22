@@ -1,0 +1,19 @@
+{
+  "files": 1, 
+  "nb_test": 1476, 
+  "nb_error": 1, 
+  "classification": {
+    "singleLine": true
+  }, 
+  "failing_tests": [
+    "org.apache.wicket.core.util.string.ComponentRendererTest"
+  ], 
+  "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/core/util/string/ComponentRenderer.java b/wicket-core/src/main/java/org/apache/wicket/core/util/string/ComponentRenderer.java\nindex 308b5487b1..41704a65c8 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/core/util/string/ComponentRenderer.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/core/util/string/ComponentRenderer.java\n@@ -100,6 +100,7 @@ public static CharSequence renderComponent(final Component component)\n \n \t\t\tRenderPage page = new RenderPage();\n \t\t\tpage.add(component);\n+\t\t\tpage.internalInitialize();\n \n \t\t\tcomponent.render();\n \t\t}\n", 
+  "project": "wicket", 
+  "linesAdd": 1, 
+  "jira_id": "5209", 
+  "nb_skipped": 4, 
+  "commit": "55eb5212", 
+  "nb_failure": 0, 
+  "linesRem": 0
+}
