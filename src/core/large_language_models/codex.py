@@ -1,11 +1,15 @@
 from dotenv import dotenv_values
 import openai
 import javalang
+import whatthepatch
+import pprint
+import re
 
 config = dotenv_values(".env")
 openai.api_key = config.get('OPENAI_API_KEY')
 
-EXAMPLE_FILE_PATH = "/Users/pengyu/src/kth/kth-plm-apr/data/example/Fibonacci.java"
+EXAMPLE_FILE_PATH = "/Users/pengyu/src/kth/plm-repair-them-all/data/example/Fibonacci.java"
+EXAMPLE_PATCH_FILE_PATH = "/Users/pengyu/src/kth/plm-repair-them-all/benchmarks/defects4j/framework/projects/Chart/patches/19.src.patch"
 MAX_TOKEN_LENGTH = 8000
 CODE_TOO_LONG = "Code is too long"
 CODEX_MODEL = "code-davinci-002"
@@ -62,9 +66,52 @@ def repair_code(file_path):
 
 
 def load_file_as_ast(file_path):
+    pp = pprint.PrettyPrinter(indent=4)
     with open(file_path, 'r') as file:
-        result = javalang.parse.parse(file.read())
-    print(result)
+        text = file.read()
+        tree = javalang.parse.parse(text)
+    nodes = filter_ast_nodes_by_types(
+        tree, ['MethodDeclaration', 'ClassDeclaration'])
+
+    for node in nodes:
+        pp.pprint(node.name)
+
+
+def filter_ast_nodes_by_types(root, node_types):
+    filtered_nodes = []
+    for node in root:
+        if isinstance(node, tuple):
+            for t in node:
+                if not isinstance(t, tuple):
+                    if t.__class__.__name__ in node_types:
+                        filtered_nodes.append(t)
+        else:
+            if node.__class__.__name__ in node_types:
+                filtered_nodes.append(node)
+
+    return filtered_nodes
+
+
+def is_line_countable(line):
+    striped_line = line.strip()
+    isComment = re.match(r'^(//|/\*|\*|\*/)', striped_line)
+    hasMultiChars = len(striped_line) > 1
+    return not isComment and hasMultiChars
+
+
+def load_patch_file(file_path):
+    with open(file_path, 'r') as file:
+        text = file.read()
+    for diff in whatthepatch.parse_patch(text):
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint('diff--------------------------------------------------------')
+        pp.pprint(diff.header)
+        pp.pprint(diff.text)
+        countable_changes = []
+        for change in diff.changes or []:
+            if change.new == None and is_line_countable(change.line):
+                countable_changes.append(change)
+        pp.pprint(countable_changes)
 
 
 def main():
@@ -74,4 +121,5 @@ def main():
 
 if __name__ == "__main__":
     # main()
-    load_file_as_ast((EXAMPLE_FILE_PATH))
+    load_file_as_ast(EXAMPLE_FILE_PATH)
+    # load_patch_file((EXAMPLE_PATCH_FILE_PATH))

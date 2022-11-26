@@ -77,5 +77,9 @@ mvn com.github.tdurieux:project-config-maven-plugin:1.0-SNAPSHOT:info -q;
     def test_folders(self, bug):
         pass
 
+    def parse_bug_snippet(self, bug):
+        # read line number from a java patch file
+        pass
+
     def __str__(self):
         return self.name
