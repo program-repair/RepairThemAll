@@ -78,8 +78,7 @@ def main():
 
 if __name__ == "__main__":
     changes = load_patch_file(EXAMPLE_PATCH_FILE_PATH)
-    methods = lang_utils.load_patch_code_snippets(
+    the_method = lang_utils.load_patch_code_snippets(
         EXAMPLE_BUGGY_FILE_PATH, changes)
-    for mn in methods:
-        print(mn)
-        print('-----------------')
+    print('-------------------')
+    print(the_method)

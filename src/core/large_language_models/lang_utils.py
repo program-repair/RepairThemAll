@@ -8,9 +8,13 @@ class MethodNode:
         self.start_pos = start_pos
         self.end_pos = end_pos
         self.code_snippet = []
+        self.highlight_line_numbers = []
 
     def __str__(self):
-        return "MethodNode(name={}, start_pos={}, end_pos={}, \ncode=\n{})".format(self.name, self.start_pos, self.end_pos, '\n'.join(self.code_snippet))
+        return "MethodNode(name={}, start_pos={}, end_pos={}, highlight=\n{})".format(self.name, self.start_pos, self.end_pos, self.highlight_line_numbers)
+
+    def add_highlight_line_number(self, line_number):
+        self.highlight_line_numbers.append(line_number)
 
 
 def clean_code(lines):
@@ -113,16 +117,19 @@ def load_patch_code_snippets(file_path, line_numbers):
 
     for m in method_nodes:
         m.code_snippet = file_lines[m.start_pos - 1:m.end_pos]
-        print(m)
-
-    result = set()
 
     for line_number in line_numbers:
-        for method_node in method_nodes:
-            if method_node.start_pos <= line_number and method_node.end_pos >= line_number:
-                result.add(method_node)
-                break
+        for m in method_nodes:
+            if m.start_pos <= line_number and m.end_pos >= line_number:
+                m.add_highlight_line_number(line_number)
 
-    for method in result:
-        method.code_snippet = file_lines[method.start_pos - 1:method.end_pos]
-    return result
+    for m in method_nodes:
+        print(m)
+
+    most_related_method = None
+    for m in method_nodes:
+        if len(m.highlight_line_numbers) > 0:
+            if most_related_method is None or len(m.highlight_line_numbers) > len(most_related_method.highlight_line_numbers):
+                most_related_method = m
+
+    return most_related_method
