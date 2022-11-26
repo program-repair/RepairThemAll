@@ -58,17 +58,17 @@ def repair_code(file_path):
 
 
 def load_patch_file(file_path):
+    countable_changes = []
     with open(file_path, 'r') as file:
         text = file.read()
     for diff in whatthepatch.parse_patch(text):
         pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(diff.header)
-        pp.pprint(diff.text)
-        countable_changes = []
         for change in diff.changes or []:
             if change.new == None and lang_utils.is_line_countable(change.line):
-                countable_changes.append(change)
+                countable_changes.append(change.old)
         pp.pprint(countable_changes)
+
+    return countable_changes
 
 
 def main():
@@ -77,9 +77,9 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
-    load_patch_file(EXAMPLE_PATCH_FILE_PATH)
-    print('--------------------------------------------------------')
-    method_nodes = lang_utils.parse_method_metainfo(EXAMPLE_BUGGY_FILE_PATH)
-    for mn in method_nodes:
+    changes = load_patch_file(EXAMPLE_PATCH_FILE_PATH)
+    methods = lang_utils.load_patch_code_snippets(
+        EXAMPLE_BUGGY_FILE_PATH, changes)
+    for mn in methods:
         print(mn)
+        print('-----------------')
