@@ -3,12 +3,15 @@ import re
 
 
 class MethodNode:
-    def __init__(self, name, start_pos, end_pos):
+    def __init__(self, name='', start_pos=0, end_pos=0):
         self.name = name
         self.start_pos = start_pos
         self.end_pos = end_pos
         self.code_snippet = []
         self.highlight_line_numbers = []
+
+    def is_empty(self):
+        return self.name == '' and self.start_pos == 0 and self.end_pos == 0
 
     def __str__(self):
         return "MethodNode(name={}, start_pos={}, end_pos={}, highlight=\n{})".format(self.name, self.start_pos, self.end_pos, self.highlight_line_numbers)
@@ -67,7 +70,7 @@ def load_file_methods(file_path):
         tree, ['MethodDeclaration', 'ConstructorDeclaration', 'ClassDeclaration', 'EnumDeclaration', 'InterfaceDeclaration'])
     for filtered_node in filtered_nodes:
         method_nodes.append(MethodNode(filtered_node.name,
-                            filtered_node.position.line, None))
+                            filtered_node.position.line))
 
     return method_nodes
 
@@ -126,10 +129,10 @@ def load_patch_code_snippets(file_path, line_numbers):
     for m in method_nodes:
         print(m)
 
-    most_related_method = None
+    most_related_method = MethodNode()
     for m in method_nodes:
         if len(m.highlight_line_numbers) > 0:
-            if most_related_method is None or len(m.highlight_line_numbers) > len(most_related_method.highlight_line_numbers):
+            if most_related_method.is_empty() or len(m.highlight_line_numbers) > len(most_related_method.highlight_line_numbers):
                 most_related_method = m
 
     return most_related_method

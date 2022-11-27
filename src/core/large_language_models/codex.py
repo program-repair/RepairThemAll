@@ -10,17 +10,9 @@ openai.api_key = config.get('OPENAI_API_KEY')
 EXAMPLE_FILE_PATH = "/Users/pengyu/src/kth/plm-repair-them-all/data/example/Fibonacci.java"
 EXAMPLE_BUGGY_FILE_PATH = "/Users/pengyu/src/kth/repair/Defects4J_Closure_3/src/com/google/javascript/jscomp/FlowSensitiveInlineVariables.java"
 EXAMPLE_PATCH_FILE_PATH = "/Users/pengyu/src/kth/plm-repair-them-all/benchmarks/defects4j/framework/projects/Closure/patches/3.src.patch"
-MAX_TOKEN_LENGTH = 8000
+MAX_TOKEN_LENGTH = 3570
 CODE_TOO_LONG = "Code is too long"
 CODEX_MODEL = "code-davinci-002"
-
-
-def prepare_buggy_code(file_path):
-    # read file
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-    # clean code
-    return lang_utils.clean_code(lines)
 
 
 def add_prompt_to_code(code):
@@ -33,7 +25,7 @@ def request_codex_code_complition(code):
         model=CODEX_MODEL,
         prompt=code,
         temperature=0,
-        max_tokens=1000,
+        max_tokens=MAX_TOKEN_LENGTH,
         top_p=1.0,
         frequency_penalty=0.0,
         presence_penalty=0.0,
@@ -42,8 +34,7 @@ def request_codex_code_complition(code):
     return response.choices[0].text  # type: ignore
 
 
-def repair_code(file_path):
-    code = prepare_buggy_code(file_path)
+def repair_code(code):
     # add prompt
     code = add_prompt_to_code(code)
     token_length = len(code.split())
@@ -72,13 +63,16 @@ def load_patch_file(file_path):
 
 
 def main():
-    code = repair_code(EXAMPLE_FILE_PATH)
-    print(code)
-
-
-if __name__ == "__main__":
     changes = load_patch_file(EXAMPLE_PATCH_FILE_PATH)
     the_method = lang_utils.load_patch_code_snippets(
         EXAMPLE_BUGGY_FILE_PATH, changes)
-    print('-------------------')
+    print('--------------------------buggy code--------------------------')
     print(the_method)
+    code = lang_utils.clean_code(the_method.code_snippet)
+    fixed_code = repair_code(code)
+    print('--------------------------fixed code--------------------------')
+    print(fixed_code)
+
+
+if __name__ == "__main__":
+    main()
