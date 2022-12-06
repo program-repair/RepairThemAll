@@ -1,6 +1,6 @@
 from dotenv import dotenv_values
 import openai
-from ..tools.lang import load_patch_code_snippets, clean_code
+from ..tools.java_lang import load_patch_code_snippets, clean_code
 from ..tools.patch import load_patch_file
 import nltk
 
@@ -47,8 +47,8 @@ def repair_code(code):
         return
     else:
         print('token length: ', token_length)
-        response = request_codex_code_complition(code)
-        return response
+        # response = request_codex_code_complition(code)
+        # return response
 
 
 def execute():
