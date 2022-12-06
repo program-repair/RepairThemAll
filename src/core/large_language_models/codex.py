@@ -1,8 +1,10 @@
 from dotenv import dotenv_values
 import openai
-import whatthepatch
-import pprint
-import lang_utils
+from ..tools.lang import load_patch_code_snippets, clean_code
+from ..tools.patch import load_patch_file
+import nltk
+
+nltk.download('punkt')
 
 config = dotenv_values(".env")
 openai.api_key = config.get('OPENAI_API_KEY')
@@ -31,13 +33,14 @@ def request_codex_code_complition(code):
         presence_penalty=0.0,
         stop=["###"]
     )
-    return response.choices[0].text  # type: ignore
+    # return response.choices[0].text  # type: ignore
+    return response
 
 
 def repair_code(code):
     # add prompt
     code = add_prompt_to_code(code)
-    token_length = len(code.split())
+    token_length = len(nltk.word_tokenize(code))
 
     if token_length > MAX_TOKEN_LENGTH:
         print(CODE_TOO_LONG)
@@ -48,31 +51,13 @@ def repair_code(code):
         return response
 
 
-def load_patch_file(file_path):
-    countable_changes = []
-    with open(file_path, 'r') as file:
-        text = file.read()
-    for diff in whatthepatch.parse_patch(text):
-        pp = pprint.PrettyPrinter(indent=4)
-        for change in diff.changes or []:
-            if change.new == None and lang_utils.is_line_countable(change.line):
-                countable_changes.append(change.old)
-        pp.pprint(countable_changes)
-
-    return countable_changes
-
-
-def main():
+def execute():
     changes = load_patch_file(EXAMPLE_PATCH_FILE_PATH)
-    the_method = lang_utils.load_patch_code_snippets(
+    the_method = load_patch_code_snippets(
         EXAMPLE_BUGGY_FILE_PATH, changes)
     print('--------------------------buggy code--------------------------')
     print(the_method)
-    code = lang_utils.clean_code(the_method.code_snippet)
+    code = clean_code(the_method.code_snippet)
     fixed_code = repair_code(code)
     print('--------------------------fixed code--------------------------')
     print(fixed_code)
-
-
-if __name__ == "__main__":
-    main()
