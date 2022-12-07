@@ -5,6 +5,18 @@ ACCEPTED_NODE_TYPES = ['MethodDeclaration', 'ConstructorDeclaration',
                        'ClassDeclaration', 'EnumDeclaration', 'InterfaceDeclaration']
 
 
+class CodeLine:
+    def __init__(self, number, content):
+        self.number = number
+        self.content = content
+
+    def is_comment_line(self):
+        return is_comment_line(self.content)
+
+    def __str__(self):
+        return f'{self.number}: {self.content}'
+
+
 class JavaAstNode:
     def __init__(self, name='', start_pos=0, end_pos=0):
         self.name = name
@@ -18,10 +30,17 @@ class JavaAstNode:
 
     def load_code_snippet(self, file_lines):
         self.end_pos = self.__cal_node_end_pos(file_lines)
-        self.code_snippet = file_lines[self.start_pos - 1:self.end_pos]
+        for num, line in enumerate(file_lines[self.start_pos - 1:self.end_pos]):
+            self.code_snippet.append(CodeLine(self.start_pos + num, line))
 
     def add_highlight_line_number(self, line_number):
         self.highlight_line_numbers.append(line_number)
+
+    def code_snippet_without_comments(self):
+        return [line.content for line in self.code_snippet if not line.is_comment_line()]
+
+    def code_snippet_with_comments(self):
+        return [line.content for line in self.code_snippet]
 
     def __cal_node_end_pos(self, file_lines):
         current_pos = self.start_pos
@@ -60,6 +79,13 @@ def clean_code(lines):
 def is_comment_line(line):
     striped_line = line.strip()
     return re.match(r'^(//|/\*|\*|\*/)', striped_line)
+
+
+def is_line_contain_statement(line):
+    striped_line = line.strip()
+    is_comment = re.match(r'^(//|/\*|\*|\*/)', striped_line)
+    has_multi_chars = len(striped_line) > 1
+    return not is_comment and has_multi_chars
 
 
 def filter_ast_nodes_by_types(root, node_types):

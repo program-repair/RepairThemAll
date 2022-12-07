@@ -1,7 +1,7 @@
 from dotenv import dotenv_values
 import openai
-from ..tools.java_lang import load_patch_code_snippets, clean_code
-from ..tools.patch import load_patch_file
+from core.tools.java_lang import load_patch_code_snippets, clean_code
+from core.tools.patch import load_patch_file
 import nltk
 
 nltk.download('punkt')
@@ -47,8 +47,8 @@ def repair_code(code):
         return
     else:
         print('token length: ', token_length)
-        # response = request_codex_code_complition(code)
-        # return response
+        response = request_codex_code_complition(code)
+        return response
 
 
 def execute():
@@ -57,7 +57,7 @@ def execute():
         EXAMPLE_BUGGY_FILE_PATH, changes)
     print('--------------------------buggy code--------------------------')
     print(the_method)
-    code = clean_code(the_method.code_snippet)
+    code = clean_code(the_method.code_snippet_without_comments())
     fixed_code = repair_code(code)
     print('--------------------------fixed code--------------------------')
     print(fixed_code)
