@@ -72,13 +72,13 @@ def clean_code(lines):
     # remove right side trailing space
     lines = [line.rstrip() for line in lines]
     # remove empty lines
-    lines = [x for x in lines if x]
+    lines = [x for x in lines if len(x) > 0]
     return '\n'.join(lines)
 
 
 def is_comment_line(line):
     striped_line = line.strip()
-    return re.match(r'^(//|/\*|\*|\*/)', striped_line)
+    return bool(re.match(r'^(//|/\*|\*|\*/)', striped_line))
 
 
 def is_line_contain_statement(line):
