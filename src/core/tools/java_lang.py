@@ -68,6 +68,11 @@ class JavaAstNode:
     def __str__(self):
         return "JavaAstNode(name={}, type={}, start_pos={}, end_pos={}, highlight=\n{})".format(self.name, self.type, self.start_pos, self.end_pos, self.highlight_line_numbers)
 
+    def __eq__(self, __o: object) -> bool:
+        if not isinstance(__o, JavaAstNode):
+            return False
+        return self.name == __o.name and self.type == __o.type and self.start_pos == __o.start_pos and self.end_pos == __o.end_pos
+
 
 def clean_code(lines):
     # remove right side trailing space

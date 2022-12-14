@@ -26,7 +26,6 @@ def test_clean_code():
     lines = ["public static void main(String[] args) {    ", "return x;    ",
              "", "}    "]
     result = clean_code(lines)
-    print(result)
     assert clean_code(
         lines) == "public static void main(String[] args) {\nreturn x;\n}"
 
