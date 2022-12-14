@@ -46,11 +46,11 @@ class JavaAstNode:
     def add_highlight_line_number(self, line_number):
         self.highlight_line_numbers.append(line_number)
 
-    def code_snippet_without_comments(self):
-        return [line.content for line in self.code_snippet if not line.is_comment_line()]
-
-    def code_snippet_with_comments(self):
-        return [line.content for line in self.code_snippet]
+    def code_lines(self, include_comment_line=True):
+        if include_comment_line:
+            return [line.content for line in self.code_snippet]
+        else:
+            return [line.content for line in self.code_snippet if not line.is_comment_line()]
 
     def code_size(self):
         return self.end_pos - self.start_pos + 1
