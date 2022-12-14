@@ -18,8 +18,9 @@ class CodeLine:
 
 
 class JavaAstNode:
-    def __init__(self, name='', start_pos=0, end_pos=0):
+    def __init__(self, name='', type='', start_pos=0, end_pos=0):
         self.name = name
+        self.type = type
         self.start_pos = start_pos
         self.end_pos = end_pos
         self.code_snippet = []
@@ -65,7 +66,7 @@ class JavaAstNode:
         return current_pos
 
     def __str__(self):
-        return "JavaAstNode(name={}, start_pos={}, end_pos={}, highlight=\n{})".format(self.name, self.start_pos, self.end_pos, self.highlight_line_numbers)
+        return "JavaAstNode(name={}, type={}, start_pos={}, end_pos={}, highlight=\n{})".format(self.name, self.type, self.start_pos, self.end_pos, self.highlight_line_numbers)
 
 
 def clean_code(lines):
@@ -113,7 +114,8 @@ def load_ast_nodes(file_path):
 
     filtered_nodes = filter_ast_nodes_by_types(tree, ACCEPTED_NODE_TYPES)
     for filtered_node in filtered_nodes:
-        ast_node = JavaAstNode(filtered_node.name, filtered_node.position.line)
+        ast_node = JavaAstNode(
+            filtered_node.name, filtered_node.__class__.__name__, filtered_node.position.line)
         ast_node.load_code_snippet(file_lines)
         ast_nodes.append(ast_node)
 
