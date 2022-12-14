@@ -43,6 +43,9 @@ class JavaAstNode:
     def code_snippet_with_comments(self):
         return [line.content for line in self.code_snippet]
 
+    def code_size(self):
+        return self.end_pos - self.start_pos + 1
+
     def __cal_node_end_pos(self, file_lines):
         current_pos = self.start_pos
         stack = []
@@ -71,7 +74,7 @@ class JavaAstNode:
     def __eq__(self, __o: object) -> bool:
         if not isinstance(__o, JavaAstNode):
             return False
-        return self.name == __o.name and self.type == __o.type and self.start_pos == __o.start_pos and self.end_pos == __o.end_pos
+        return self.name == __o.name and self.type == __o.type and self.start_pos == __o.start_pos and self.end_pos == __o.end_pos and self.highlight_line_numbers == __o.highlight_line_numbers
 
 
 def clean_code(lines):
@@ -135,8 +138,10 @@ def load_patch_code_snippets(file_path, line_numbers):
             if m.start_pos <= line_number and m.end_pos >= line_number:
                 m.add_highlight_line_number(line_number)
 
-    for m in ast_nodes:
-        print(m)
+    ast_nodes = list(filter(lambda n: len(
+        n.highlight_line_numbers) > 0, ast_nodes))
+
+    ast_nodes.sort(key=lambda n: n.code_size())
 
     most_related_method = JavaAstNode()
     for m in ast_nodes:

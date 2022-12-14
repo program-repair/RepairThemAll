@@ -26,7 +26,8 @@ def load_patch_file(file_path):
         text = file.read()
 
     for diff in whatthepatch.parse_patch(text):
-        countable_diff = CountableDiff(diff.header.new_path)
+
+        countable_diff = CountableDiff(getattr(diff.header, 'new_path'))
         for change in diff.changes or []:
             if change.new == None and is_line_contain_statement(change.line):
                 countable_diff.changes.add(change.old)

@@ -1,4 +1,5 @@
 from core.tools.java_lang import *
+from core.tools.patch import load_patch_file
 
 
 def test_is_line_contain_statement():
@@ -108,3 +109,15 @@ def test_load_ast_node():
     assert len(result_nodes) == 35
     for i in range(len(result_nodes)):
         assert result_nodes[i].__eq__(expect_nodes[i])
+
+
+def test_load_patch_code_snippets():
+    countable_diffs = load_patch_file(
+        "src/fixtures/Defects4J_Closure_01.patch")
+    file_path = "src/fixtures/Defects4J_Closure_01_fixed.source"
+    result = load_patch_code_snippets(
+        file_path, countable_diffs[0].sorted_changes())
+    expect = JavaAstNode(name='removeUnreferencedFunctionArgs',
+                         type='MethodDeclaration', start_pos=369, end_pos=409)
+    expect.highlight_line_numbers = [379, 380]
+    assert result.__eq__(expect)
