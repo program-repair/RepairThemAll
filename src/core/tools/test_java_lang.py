@@ -2,18 +2,6 @@ from core.tools.java_lang import *
 from core.tools.patch import load_patch_file
 
 
-def test_is_line_contain_statement():
-    assert is_line_contain_statement(
-        "public static void main(String[] args) {") == True
-    assert is_line_contain_statement("return x;") == True
-    assert is_line_contain_statement("/* comment") == False
-    assert is_line_contain_statement("* comment") == False
-    assert is_line_contain_statement("*/") == False
-    assert is_line_contain_statement("// comment") == False
-    assert is_line_contain_statement("    {") == False
-    assert is_line_contain_statement("    }") == False
-
-
 def test_is_comment_line():
     assert is_comment_line("public static void main(String[] args) {") == False
     assert is_comment_line("return x;") == False
@@ -111,11 +99,11 @@ def test_load_ast_node():
         assert result_nodes[i].__eq__(expect_nodes[i])
 
 
-def test_load_patch_code_snippets():
+def test_load_fixed_code_node():
     countable_diffs = load_patch_file(
         "src/fixtures/Defects4J_Closure_01.patch")
     file_path = "src/fixtures/Defects4J_Closure_01_fixed.source"
-    result = load_patch_code_snippets(
+    result = load_fixed_code_node(
         file_path, countable_diffs[0].sorted_changes())
     expect = JavaAstNode(name='removeUnreferencedFunctionArgs',
                          type='MethodDeclaration', start_pos=369, end_pos=409)
@@ -126,9 +114,9 @@ def test_load_patch_code_snippets():
 def test_get_node_by_hash():
     fixed_file_path = "src/fixtures/Defects4J_Closure_01_fixed.source"
     buggy_file_path = "src/fixtures/Defects4J_Closure_01_buggy.source"
-    patch_file = 'src/fixtures/Defects4J_Closure_01.patch'
-    countable_diffs = load_patch_file(patch_file)
-    fixed_node = load_patch_code_snippets(
+    patch_file_path = 'src/fixtures/Defects4J_Closure_01.patch'
+    countable_diffs = load_patch_file(patch_file_path)
+    fixed_node = load_fixed_code_node(
         fixed_file_path, countable_diffs[0].sorted_changes())
     buggy_nodes = load_ast_nodes(buggy_file_path)
     buggy_node = get_node_by_hash(buggy_nodes, fixed_node.hash)

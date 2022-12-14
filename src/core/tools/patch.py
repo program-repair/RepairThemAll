@@ -1,6 +1,6 @@
 
 import whatthepatch
-from core.tools.java_lang import is_line_contain_statement
+import re
 
 
 class CountableDiff:
@@ -18,6 +18,13 @@ class CountableDiff:
         if not isinstance(__o, CountableDiff):
             return False
         return self.file_path == __o.file_path and self.changes == __o.changes
+
+
+def is_line_contain_statement(line):
+    striped_line = line.strip()
+    is_comment = re.match(r'^(//|/\*|\*|\*/)', striped_line)
+    has_multi_chars = len(striped_line) > 1
+    return not is_comment and has_multi_chars
 
 
 def load_patch_file(file_path):

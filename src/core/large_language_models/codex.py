@@ -1,6 +1,6 @@
 from dotenv import dotenv_values
 import openai
-from core.tools.java_lang import load_patch_code_snippets, clean_code
+from core.tools.java_lang import get_node_by_hash, load_ast_nodes, load_fixed_code_node, clean_code
 from core.tools.patch import load_patch_file
 import nltk
 
@@ -51,13 +51,22 @@ def repair_code(code):
         return response
 
 
-def execute():
-    changes = load_patch_file(EXAMPLE_PATCH_FILE_PATH)
-    the_method = load_patch_code_snippets(
-        EXAMPLE_BUGGY_FILE_PATH, changes)
-    print('--------------------------buggy code--------------------------')
-    print(the_method)
-    code = clean_code(the_method.code_snippet_without_comments())
-    fixed_code = repair_code(code)
-    print('--------------------------fixed code--------------------------')
-    print(fixed_code)
+# def execute():
+#     changes = load_patch_file(EXAMPLE_PATCH_FILE_PATH)
+#     the_method = load_patch_code_snippets(
+#         EXAMPLE_BUGGY_FILE_PATH, changes)
+#     print('--------------------------buggy code--------------------------')
+#     print(the_method)
+#     code = clean_code(the_method.code_snippet_without_comments())
+#     fixed_code = repair_code(code)
+#     print('--------------------------fixed code--------------------------')
+#     print(fixed_code)
+
+
+def load_buggy_code_node(fixed_file_path, buggy_file_path, patch_file_path):
+    countable_diffs = load_patch_file(patch_file_path)
+    fixed_node = load_fixed_code_node(
+        fixed_file_path, countable_diffs[0].sorted_changes())
+    buggy_nodes = load_ast_nodes(buggy_file_path)
+    buggy_node = get_node_by_hash(buggy_nodes, fixed_node.hash)
+    return buggy_node

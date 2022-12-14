@@ -1,5 +1,17 @@
 
-from core.tools.patch import load_patch_file
+from core.tools.patch import is_line_contain_statement, load_patch_file
+
+
+def test_is_line_contain_statement():
+    assert is_line_contain_statement(
+        "public static void main(String[] args) {") == True
+    assert is_line_contain_statement("return x;") == True
+    assert is_line_contain_statement("/* comment") == False
+    assert is_line_contain_statement("* comment") == False
+    assert is_line_contain_statement("*/") == False
+    assert is_line_contain_statement("// comment") == False
+    assert is_line_contain_statement("    {") == False
+    assert is_line_contain_statement("    }") == False
 
 
 def test_load_patch_file():

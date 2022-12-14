@@ -99,13 +99,6 @@ def is_comment_line(line):
     return bool(re.match(r'^(//|/\*|\*|\*/)', striped_line))
 
 
-def is_line_contain_statement(line):
-    striped_line = line.strip()
-    is_comment = re.match(r'^(//|/\*|\*|\*/)', striped_line)
-    has_multi_chars = len(striped_line) > 1
-    return not is_comment and has_multi_chars
-
-
 def filter_ast_nodes_by_types(root, node_types):
     filtered_nodes = []
     for node in root:
@@ -140,7 +133,7 @@ def load_ast_nodes(file_path):
     return ast_nodes
 
 
-def load_patch_code_snippets(file_path, line_numbers):
+def load_fixed_code_node(file_path, line_numbers):
     ast_nodes = load_ast_nodes(file_path)
 
     for line_number in line_numbers:
