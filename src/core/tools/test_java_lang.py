@@ -121,3 +121,17 @@ def test_load_patch_code_snippets():
                          type='MethodDeclaration', start_pos=369, end_pos=409)
     expect.highlight_line_numbers = [379, 380]
     assert result.__eq__(expect)
+
+
+def test_get_node_by_hash():
+    fixed_file_path = "src/fixtures/Defects4J_Closure_01_fixed.source"
+    buggy_file_path = "src/fixtures/Defects4J_Closure_01_buggy.source"
+    patch_file = 'src/fixtures/Defects4J_Closure_01.patch'
+    countable_diffs = load_patch_file(patch_file)
+    fixed_node = load_patch_code_snippets(
+        fixed_file_path, countable_diffs[0].sorted_changes())
+    buggy_nodes = load_ast_nodes(buggy_file_path)
+    buggy_node = get_node_by_hash(buggy_nodes, fixed_node.hash)
+    print('fixed_node: ', fixed_node)
+    print('buggy_node: ', buggy_node)
+    assert buggy_node.hash == fixed_node.hash

@@ -25,6 +25,15 @@ class JavaAstNode:
         self.end_pos = end_pos
         self.code_snippet = []
         self.highlight_line_numbers = []
+        self.hash = ''
+
+    def generate_hash(self, ast_node):
+        if type in ['MethodDeclaration', 'ConstructorDeclaration', 'ClassDeclaration', 'InterfaceDeclaration']:
+            self.hash = hash((ast_node.name, ast_node.__class__.__name__,
+                             str(ast_node.modifiers), str(ast_node.annotations), str(ast_node.type_parameters)))
+        else:
+            self.hash = hash((ast_node.name, ast_node.__class__.__name__,
+                              str(ast_node.modifiers), str(ast_node.annotations)))
 
     def is_empty(self):
         return self.name == '' and self.start_pos == 0 and self.end_pos == 0
@@ -69,7 +78,7 @@ class JavaAstNode:
         return current_pos
 
     def __str__(self):
-        return "JavaAstNode(name={}, type={}, start_pos={}, end_pos={}, highlight=\n{})".format(self.name, self.type, self.start_pos, self.end_pos, self.highlight_line_numbers)
+        return "JavaAstNode(name={}, type={}, start_pos={}, end_pos={}, hash={}, highlight=\n{})".format(self.name, self.type, self.start_pos, self.end_pos, self.hash, self.highlight_line_numbers)
 
     def __eq__(self, __o: object) -> bool:
         if not isinstance(__o, JavaAstNode):
@@ -125,6 +134,7 @@ def load_ast_nodes(file_path):
         ast_node = JavaAstNode(
             filtered_node.name, filtered_node.__class__.__name__, filtered_node.position.line)
         ast_node.load_code_snippet(file_lines)
+        ast_node.generate_hash(filtered_node)
         ast_nodes.append(ast_node)
 
     return ast_nodes
@@ -149,4 +159,12 @@ def load_patch_code_snippets(file_path, line_numbers):
             if most_related_method.is_empty() or len(m.highlight_line_numbers) > len(most_related_method.highlight_line_numbers):
                 most_related_method = m
 
+    print('most_related_method: {}'.format(most_related_method))
     return most_related_method
+
+
+def get_node_by_hash(ast_nodes, hash):
+    for node in ast_nodes:
+        if node.hash == hash:
+            return node
+    return JavaAstNode()
