@@ -177,3 +177,42 @@ def test_get_node_by_hash():
     print('fixed_node: ', fixed_node)
     print('buggy_node: ', buggy_node)
     assert buggy_node.hash == fixed_node.hash
+
+
+def test_get_node_by_hash_all_fixtures():
+    print('test_get_node_by_hash_all_fixtures:')
+    fixture_path = "src/fixtures/"
+    projects = ["Closure", "Mockito"]
+    examples = ["01", "05", "10", "15", "20", "25", "30"]
+    for project in projects:
+        for example in examples:
+            # read patch diffs
+            patch_file_path = os.path.join(
+                fixture_path, "Defects4J_{}_{}.patch".format(project, example))
+            countable_diffs = load_patch_file(patch_file_path)
+            # fixed ast node
+            if len(countable_diffs) == 1:
+                fixed_file_path = os.path.join(
+                    fixture_path, "Defects4J_{}_{}_fixed.source".format(project, example))
+                buggy_file_path = os.path.join(
+                    fixture_path, "Defects4J_{}_{}_buggy.source".format(project, example))
+                fixed_node = load_fixed_code_node(
+                    fixed_file_path, countable_diffs[0].sorted_changes())
+                buggy_nodes = load_ast_nodes(buggy_file_path)
+                buggy_node = get_node_by_hash(buggy_nodes, fixed_node.hash)
+                print('fixed_node: ', fixed_node)
+                print('buggy_node: ', buggy_node)
+                assert buggy_node.hash == fixed_node.hash
+            elif len(countable_diffs) > 1:
+                for i in range(len(countable_diffs)):
+                    fixed_file_path = os.path.join(
+                        fixture_path, "Defects4J_{}_{}_{}_fixed.source".format(project, example, i + 1))
+                    buggy_file_path = os.path.join(
+                        fixture_path, "Defects4J_{}_{}_{}_buggy.source".format(project, example, i + 1))
+                    fixed_node = load_fixed_code_node(
+                        fixed_file_path, countable_diffs[i].sorted_changes())
+                    buggy_nodes = load_ast_nodes(buggy_file_path)
+                    buggy_node = get_node_by_hash(buggy_nodes, fixed_node.hash)
+                    print('fixed_node: ', fixed_node)
+                    print('buggy_node: ', buggy_node)
+                    assert buggy_node.hash == fixed_node.hash
