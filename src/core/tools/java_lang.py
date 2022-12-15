@@ -18,13 +18,16 @@ class CodeLine:
 
 
 class JavaAstNode:
-    def __init__(self, name='', type='', start_pos=0, end_pos=0):
+    def __init__(self, name='', type='', start_pos=0, end_pos=0, highlight_line_numbers=[]):
         self.name = name
         self.type = type
         self.start_pos = start_pos
         self.end_pos = end_pos
         self.code_snippet = []
-        self.highlight_line_numbers = []
+        if highlight_line_numbers:
+            self.highlight_line_numbers = highlight_line_numbers
+        else:
+            self.highlight_line_numbers = []
         self.hash = ''
 
     def generate_hash(self, ast_node):
@@ -59,26 +62,34 @@ class JavaAstNode:
         return self.end_pos - self.start_pos + 1
 
     def __cal_node_end_pos(self, file_lines):
-        current_pos = self.start_pos
-        stack = []
+        try:
+            current_pos = self.start_pos
+            stack = []
 
-        while current_pos < len(file_lines):
-            line = file_lines[current_pos - 1]
-            line = re.sub(r'".*"', '', line)
-            line = re.sub(r"'.*'", '', line)
-            if is_comment_line(line):
+            while current_pos < len(file_lines):
+                line = file_lines[current_pos - 1]
+                line = re.sub(r'".*"', '', line)
+                line = re.sub(r"'.*'", '', line)
+                if is_comment_line(line):
+                    current_pos += 1
+                    continue
+                for c in line:
+                    if c == '{':
+                        stack.append(c)
+                    elif c == '}':
+                        stack.pop()
+                        if len(stack) == 0:
+                            return current_pos
+                    elif c == ';':
+                        if len(stack) == 0:
+                            return current_pos
                 current_pos += 1
-                continue
-            for c in line:
-                if c == '{':
-                    stack.append(c)
-                elif c == '}':
-                    stack.pop()
-                    if len(stack) == 0:
-                        return current_pos
-            current_pos += 1
 
-        return current_pos
+            return current_pos
+        except Exception as e:
+            print('Error in __cal_node_end_pos: {} {} {}\n{}'.format(
+                self.name, self.type, self.start_pos, e))
+            raise e
 
     def __str__(self):
         return "JavaAstNode(name={}, type={}, start_pos={}, end_pos={}, hash={}, highlight=\n{})".format(self.name, self.type, self.start_pos, self.end_pos, self.hash, self.highlight_line_numbers)
