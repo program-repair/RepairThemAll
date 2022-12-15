@@ -52,6 +52,9 @@ class JavaAstNode:
         else:
             return [line.content for line in self.code_snippet if not line.is_comment_line()]
 
+    def code_lines_str(self, include_comment_line=True):
+        return "".join(self.code_lines(include_comment_line))
+
     def code_size(self):
         return self.end_pos - self.start_pos + 1
 

@@ -12,4 +12,4 @@ def test_load_buggy_code_node():
     assert buggy_node.type == 'MethodDeclaration'
     assert buggy_node.start_pos == 369
     assert buggy_node.end_pos == 406
-    print('buggy code body:\n', "".join(buggy_node.code_lines()))
+    print('buggy code body:\n', buggy_node.code_lines_str())
