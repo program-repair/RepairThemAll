@@ -11,7 +11,7 @@ def test_generate_prompt():
     target_prompt_filepath = 'src/fixtures/Defects4J_Closure_01.prompt'
     buggy_node = load_buggy_code_node(
         target_fixed_filepath, target_buggy_filepath, target_patch_filepath)
-    prompt = generate_prompt(example_buggy_filepath,
+    prompt = generate_prompt('###', example_buggy_filepath,
                              example_fixed_filepath, buggy_node)
 
     with open(target_prompt_filepath, 'r') as file:

@@ -1,5 +1,5 @@
-#Provide a fix for the buggy function
-#Buggy Function
+###Provide a fix for the buggy function
+###Buggy Function
 class FibonacciExample {
     public static void main(String args[]) {
         int n1 = 0, n2 = 1, n3, i, count = 10;
@@ -14,7 +14,7 @@ class FibonacciExample {
         }
     }
 }
-#Fixed Function
+###Fixed Function
 class FibonacciExample {
     public static void main(String args[]) {
         int n1 = 0, n2 = 1, n3, i, count = 10;
@@ -29,8 +29,8 @@ class FibonacciExample {
         }
     }
 }
-#Provide a fix for the buggy function
-#Buggy Function
+###Provide a fix for the buggy function
+###Buggy Function
   private void removeUnreferencedFunctionArgs(Scope fnScope) {
     // Notice that removing unreferenced function args breaks
     // Function.prototype.length. In advanced mode, we don't really care
@@ -69,4 +69,4 @@ class FibonacciExample {
       callSiteOptimizer.optimize(fnScope, referenced);
     }
   }
-#Fixed Function
+###Fixed Function

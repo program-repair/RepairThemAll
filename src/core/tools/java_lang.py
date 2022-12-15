@@ -155,7 +155,6 @@ def load_fixed_code_node(file_path, line_numbers):
             if most_related_method.is_empty() or len(m.highlight_line_numbers) > len(most_related_method.highlight_line_numbers):
                 most_related_method = m
 
-    print('most_related_method: {}'.format(most_related_method))
     return most_related_method
 
 
