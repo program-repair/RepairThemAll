@@ -3,6 +3,7 @@ import openai
 import nltk
 from core.tools.java_lang import get_node_by_hash, load_ast_nodes, load_fixed_code_node
 from core.tools.patch import load_patch_file
+from core.tools.persist import log4output
 from core.tools.prompt import generate_prompt
 
 
@@ -45,24 +46,40 @@ def request_codex_code_complition(code):
     return response
 
 
-def repair_code(buggy_node):
-    prompt = generate_prompt(
-        STOP_SIGN, EXAMPLE_BUGGY_FILEPATH, EXAMPLE_FIXED_FILEPATH, buggy_node)
+def repair_code(prompt, dry_run=False):
     token_length = len(nltk.word_tokenize(prompt))
 
     if token_length > MAX_TOKEN_LENGTH:
         print(CODE_TOO_LONG)
+        return
+    elif dry_run:
+        print('Dry run, prompt:', prompt)
         return
     else:
         response = request_codex_code_complition(prompt)
         return response
 
 
-def execute():
-    fixed_file_path = "src/fixtures/Defects4J_Closure_01_fixed.source"
-    buggy_file_path = "src/fixtures/Defects4J_Closure_01_buggy.source"
-    patch_file_path = 'src/fixtures/Defects4J_Closure_01.patch'
-    buggy_node = load_buggy_code_node(
-        fixed_file_path, buggy_file_path, patch_file_path)
-    response = repair_code(buggy_node)
-    print(response.choices[0].text)  # type: ignore
+def fix_bug_by_openai_codex(bug_dir, patch_file_path, dry_run=False):
+    countable_diffs = load_patch_file(patch_file_path)
+    if len(countable_diffs) == 1:
+        fixed_bug_path = bug_dir + "_fixed/" + countable_diffs[0].file_path
+        buggy_bug_path = bug_dir + "_buggy/" + countable_diffs[0].file_path
+        output_file_path = 'output/{}'.format(bug_dir.split('/')[-1])
+        print('Fixed bug path: ', fixed_bug_path)
+        print('Buggy bug path: ', buggy_bug_path)
+        print('output_file_path: ', output_file_path)
+        buggy_node = load_buggy_code_node(
+            fixed_bug_path, buggy_bug_path, patch_file_path)
+        prompt = generate_prompt(
+            STOP_SIGN, EXAMPLE_BUGGY_FILEPATH, EXAMPLE_FIXED_FILEPATH, buggy_node)
+        log4output(output_file_path + '.prompt', prompt)
+        response = repair_code(prompt, dry_run)
+        if response:
+            log4output(output_file_path + '.response',
+                       response.choices[0].text)
+            print(response.choices[0].text)  # type: ignore
+        return response
+    else:
+        print("Skip, more than one file changed")
+        return
