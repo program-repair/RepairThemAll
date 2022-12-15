@@ -2,6 +2,8 @@
 
 ## Environment
 TODO
+pipenv install
+pipenv shell
 
 ## Test Codex
 `python src/runner.py`

@@ -11,6 +11,9 @@ __pycache__/
 # C extensions
 *.so
 
+# Log or temporary files
+output/
+
 # Distribution / packaging
 .Python
 build/
