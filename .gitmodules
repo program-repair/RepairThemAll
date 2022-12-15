@@ -1,6 +1,7 @@
 [submodule "benchmarks/defects4j"]
 	path = benchmarks/defects4j
-	url = https://github.com/rjust/defects4j.git
+	url = https://github.com/zpengyu/defects4j.git
+	branch = v1.5
 [submodule "benchmarks/bears"]
 	path = benchmarks/bears
 	url = https://github.com/bears-bugs/bears-benchmark.git

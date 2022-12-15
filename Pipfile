@@ -4,10 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-openai = "1.1.0"
-sets = "0.3.2"
-python-dotenv = "0.21.0"
 javalang="0.13.0"
+openai = "1.1.0"
+pytest='7.2.0'
+python-dotenv = "0.21.0"
+sets = "0.3.2"
 whatthepatch='1.0.3'
 
 [dev-packages]

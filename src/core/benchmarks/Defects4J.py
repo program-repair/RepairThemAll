@@ -62,13 +62,21 @@ class Defects4J(Benchmark):
     def checkout(self, bug, working_directory, buggy_version=True):
         print('Defects4J checkout...')
         print('bug:', bug)
+        if buggy_version:
+            version = 'b'
+            print('checking out buggy version')
+        else:
+            version = 'f'
+            print('checking out fixed version')
+
         cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";
-defects4j checkout -p %s -v %sb -w %s;
+defects4j checkout -p %s -v %s%s -w %s;
 """ % (JAVA7_HOME,
             self._get_benchmark_path(),
             os.path.join(JAVA7_HOME, '..'),
             bug.project,
             bug.bug_id,
+            version,
             working_directory)
         print('Defects4J checkout cmd: ', cmd)
         subprocess.call(cmd, shell=True, stdout=FNULL,
