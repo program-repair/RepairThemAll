@@ -77,7 +77,7 @@ def fix_bug_by_openai_codex(bug_dir, patch_file_path, dry_run=False):
         response = repair_code(prompt, dry_run)
         if response:
             log4output(output_file_path + '.response',
-                       response.choices[0].text)
+                       response.choices[0].text)  # type: ignore
             print(response.choices[0].text)  # type: ignore
         return response
     else:
