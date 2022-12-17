@@ -1,7 +1,0 @@
-{
-	"name": "Nopol",
-	"version": "0.0.3",
-	"solver": "z3",
-	"jar": "nopol.jar",
-	"main": "fr.inria.lille.repair.Main"
-}
