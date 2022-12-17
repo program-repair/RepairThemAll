@@ -562,7 +562,7 @@
         "google_compiled_protos_deploy.jar"
     ], 
     "project": "Closure",
-    "nbBugs": 133, 
+    "nbBugs": 176, 
     "package": "com.google", 
     "src": {
         "133": {
