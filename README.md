@@ -1,5 +1,5 @@
 # RepairThemAll for Large Language Models
-
+install svn!!! (for Defects4J, otherwise Jfreechart can't be checkout)
 ## Environment
 TODO
 pipenv install
@@ -11,3 +11,7 @@ Example 1: `python src/fixa.py -t dryrun -m Codex -b Defects4J -p Lang -i 6  -w 
 
 ## Run unit test
 `pytest -vv`
+
+## Notes
+* project Collections can be ignored
+* Chart uses SVN

@@ -3,121 +3,12 @@
         "11": "target/classes/:target/test-classes/", 
         "27": "build/classes/:build/tests/"
     }, 
-    "complianceLevel": {
-        "1": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "10": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "11": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "12": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "13": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "14": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "15": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "16": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "17": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "18": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "19": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "2": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "20": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "21": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "22": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "23": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "24": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "25": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "26": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "27": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "3": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "4": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "5": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "6": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "7": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "8": {
-            "source": 5, 
-            "target": 5
-        }, 
-        "9": {
-            "source": 5, 
-            "target": 5
-        }
-    }, 
     "libs": [
         "joda-convert-1.2.jar"
     ], 
     "project": "Time",
     "nbBugs": 27, 
+    "deprecatedBugs":  [21],
     "package": "org.joda", 
     "src": {
         "11": {

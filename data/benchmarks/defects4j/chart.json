@@ -2,118 +2,13 @@
     "classpath": {
         "26": "build/:build-tests/"
     }, 
-    "complianceLevel": {
-        "1": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "10": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "11": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "12": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "13": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "14": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "15": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "16": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "17": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "18": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "19": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "2": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "20": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "21": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "22": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "23": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "24": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "25": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "26": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "3": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "4": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "5": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "6": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "7": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "8": {
-            "source": 4, 
-            "target": 4
-        }, 
-        "9": {
-            "source": 4, 
-            "target": 4
-        }
-    }, 
     "libs": [
         "cobertura-lib/servlet-api-2.5-6.1.14.jar", 
         "servlet.jar"
     ], 
     "project": "Chart",
     "nbBugs": 26, 
+    "deprecatedBugs":  [],
     "package": "org.jfree", 
     "src": {
         "26": {

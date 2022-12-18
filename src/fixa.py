@@ -34,7 +34,9 @@ def checkout_bug(benchmark, project, bug_id, version):
     bug_path = os.path.join(args.working_directory,
                             "%s_%s_%s_%s" % (benchmark.name, project, bug_id, version))
 
+    print('bug_identifier: ', bug_identifier)
     bug = benchmark.get_bug(bug_identifier)
+    print('bug: ', bug)
     is_buggy_version = version == 'buggy'
     bug.checkout(bug_path, is_buggy_version)
 
@@ -59,7 +61,12 @@ def fix_single_bug(args, bug_id, compile=True, dry_run=False):
     if args.model == 'Codex' and args.benchmark == 'Defects4J':
         patch_file_path = 'benchmarks/defects4j/framework/projects/{}/patches/{}.src.patch'.format(
             args.project, bug_id)
-        response = fix_bug_by_openai_codex(bug_dir, patch_file_path, dry_run)
+        try:
+            response = fix_bug_by_openai_codex(
+                bug_dir, patch_file_path, dry_run)
+        except Exception as e:
+            print(
+                '-------something wrong with bug {} {}-------'.format(args.project, bug_id), e)
     else:
         print('Only support Codex with Defects4J for now')
         exit(1)
@@ -72,6 +79,6 @@ if __name__ == "__main__":
     if args.id == None:
         bug_size = DEFECTS4J_BUG_SIZE[args.project]
         for bug_id in range(1, bug_size + 1):
-            fix_single_bug(args, str(bug_id), False, dry_run)
+            fix_single_bug(args, str(bug_id), True, dry_run)
     else:
-        fix_single_bug(args, args.id, False, dry_run)
+        fix_single_bug(args, args.id, True, dry_run)
