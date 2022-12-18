@@ -41,7 +41,7 @@ def load_ast_nodes(file_path):
         ast_node = JavaAstNode(
             filtered_node.name, filtered_node.__class__.__name__, filtered_node.position.line)
         ast_node.load_code_snippet(file_lines)
-        ast_node.generate_hash(filtered_node)
+        ast_node.load_node_data(filtered_node)
         ast_nodes.append(ast_node)
 
     return ast_nodes

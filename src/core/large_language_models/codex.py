@@ -60,7 +60,7 @@ def repair_code(prompt, dry_run=False):
         return response
 
 
-def fix_bug_by_openai_codex(bug_dir, patch_file_path, dry_run=False):
+def fix_bug_by_openai_codex(bug_dir, patch_file_path, include_document, include_comments, dry_run=False):
     countable_diffs = load_patch_file(patch_file_path)
     if len(countable_diffs) == 1:
         fixed_bug_path = bug_dir + "_fixed/" + countable_diffs[0].file_path
@@ -71,8 +71,8 @@ def fix_bug_by_openai_codex(bug_dir, patch_file_path, dry_run=False):
         print('output_file_path: ', output_file_path)
         buggy_node = load_buggy_code_node(
             fixed_bug_path, buggy_bug_path, patch_file_path)
-        prompt = generate_prompt(
-            STOP_SIGN, EXAMPLE_BUGGY_FILEPATH, EXAMPLE_FIXED_FILEPATH, buggy_node)
+        prompt = generate_prompt(STOP_SIGN, EXAMPLE_BUGGY_FILEPATH,
+                                 EXAMPLE_FIXED_FILEPATH, buggy_node, include_document, include_comments)
         log4output(output_file_path + '.prompt', prompt)
         response = repair_code(prompt, dry_run)
         if response:

@@ -31,8 +31,11 @@ class JavaAstNode:
         else:
             self.highlight_line_numbers = []
         self.hash = ''
+        self.documentation = ''
 
-    def generate_hash(self, ast_node):
+    def load_node_data(self, ast_node):
+        self.documentation = ast_node.documentation
+
         hash_str = ''
         hash_str += ast_node.name
         hash_str += ast_node.__class__.__name__

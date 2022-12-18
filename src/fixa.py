@@ -43,7 +43,7 @@ def checkout_bug(benchmark, project, bug_id, version):
     return bug
 
 
-def fix_single_bug(args, bug_id, compile=True, test=True, dry_run=False):
+def fix_single_bug(args, bug_id, include_document, include_comments, compile, test, dry_run):
     benchmark = get_benchmark(args.benchmark)
 
     bug_dir = os.path.join(args.working_directory,
@@ -67,7 +67,7 @@ def fix_single_bug(args, bug_id, compile=True, test=True, dry_run=False):
             args.project, bug_id)
         try:
             response = fix_bug_by_openai_codex(
-                bug_dir, patch_file_path, dry_run)
+                bug_dir, patch_file_path, include_document, include_comments, dry_run)
         except Exception as e:
             print(
                 '-------something wrong with bug {} {}-------'.format(args.project, bug_id), e)
@@ -83,6 +83,7 @@ if __name__ == "__main__":
     if args.id == None:
         bug_size = DEFECTS4J_BUG_SIZE[args.project]
         for bug_id in range(1, bug_size + 1):
-            fix_single_bug(args, str(bug_id), True, True, dry_run)
+            fix_single_bug(args, str(bug_id), False,
+                           False, True, True, dry_run)
     else:
-        fix_single_bug(args, args.id, True, True, dry_run)
+        fix_single_bug(args, args.id, False, False, True, True, dry_run)
