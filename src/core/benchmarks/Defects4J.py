@@ -51,6 +51,8 @@ class Defects4J(Benchmark):
                 data = json.load(fd)
                 self.project_data[data['project']] = data
                 for i in range(1, data['nbBugs'] + 1):
+                    if i in data['deprecatedBugs']:
+                        continue
                     bug = Bug(self, data['project'], i)
                     bug.project_data = data
                     self.bugs += [bug]

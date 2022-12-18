@@ -47,12 +47,13 @@ def request_codex_code_complition(code):
 
 
 def repair_code(prompt, dry_run=False):
-    token_length = len(nltk.word_tokenize(prompt))
+    # TODO: comment out for now, need to move to the place after generating prompt
+    # token_length = len(nltk.word_tokenize(prompt))
+    # if token_length > MAX_TOKEN_LENGTH:
+    #    print(CODE_TOO_LONG)
+    #    return
 
-    if token_length > MAX_TOKEN_LENGTH:
-        print(CODE_TOO_LONG)
-        return
-    elif dry_run:
+    if dry_run:
         print('Dry run, prompt:', prompt)
         return
     else:
@@ -73,10 +74,10 @@ def fix_bug_by_openai_codex(bug_dir, patch_file_path, include_document, include_
             fixed_bug_path, buggy_bug_path, patch_file_path)
         prompt = generate_prompt(STOP_SIGN, EXAMPLE_BUGGY_FILEPATH,
                                  EXAMPLE_FIXED_FILEPATH, buggy_node, include_document, include_comments)
-        log4output(output_file_path + '.prompt', prompt)
+        log4output(output_file_path + '.codex_prompt', prompt)
         response = repair_code(prompt, dry_run)
         if response:
-            log4output(output_file_path + '.response',
+            log4output(output_file_path + '.codex_response',
                        response.choices[0].text)  # type: ignore
             print(response.choices[0].text)  # type: ignore
         return response

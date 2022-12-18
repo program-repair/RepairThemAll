@@ -1,5 +1,6 @@
 import os
 import argparse
+import time
 from core.large_language_models.codex import fix_bug_by_openai_codex
 
 from core.utils import get_benchmark
@@ -43,22 +44,27 @@ def checkout_bug(benchmark, project, bug_id, version):
     return bug
 
 
-def fix_single_bug(args, bug_id, include_document, include_comments, compile, test, dry_run):
+def fix_single_bug(args, bug_id, fixa_config):
     benchmark = get_benchmark(args.benchmark)
 
     bug_dir = os.path.join(args.working_directory,
                            "%s_%s_%s" % (args.benchmark, args.project, bug_id))
 
-    fixed_bug = checkout_bug(benchmark, args.project, bug_id, 'fixed')
-    if compile:
+    try:
+        fixed_bug = checkout_bug(benchmark, args.project, bug_id, 'fixed')
+    except Exception as e:
+        print('-------bug {} {} does not exist or deprecated-------\n'.format(args.project, bug_id), e)
+        return
+
+    if fixa_config.compile:
         fixed_bug.compile()
-    if test:
+    if fixa_config.test:
         fixed_bug.run_test()
 
     buggy_bug = checkout_bug(benchmark, args.project, bug_id, 'buggy')
-    if compile:
+    if fixa_config.compile:
         buggy_bug.compile()
-    if test:
+    if fixa_config.test:
         buggy_bug.run_test()
 
     # Only support Codex with Defects4J for now
@@ -67,13 +73,22 @@ def fix_single_bug(args, bug_id, include_document, include_comments, compile, te
             args.project, bug_id)
         try:
             response = fix_bug_by_openai_codex(
-                bug_dir, patch_file_path, include_document, include_comments, dry_run)
+                bug_dir, patch_file_path, fixa_config.include_document, fixa_config.include_comments, dry_run)
         except Exception as e:
             print(
                 '-------something wrong with bug {} {}-------'.format(args.project, bug_id), e)
     else:
         print('Only support Codex with Defects4J for now')
         exit(1)
+
+
+fixa_config = {
+    'include_document': False,
+    'include_comments': False,
+    'compile': False,
+    'test': False,
+    'dry_run': False,
+}
 
 
 if __name__ == "__main__":
@@ -83,7 +98,7 @@ if __name__ == "__main__":
     if args.id == None:
         bug_size = DEFECTS4J_BUG_SIZE[args.project]
         for bug_id in range(1, bug_size + 1):
-            fix_single_bug(args, str(bug_id), False,
-                           False, True, True, dry_run)
+            fix_single_bug(args, str(bug_id), fixa_config)
+            time.sleep(5)
     else:
-        fix_single_bug(args, args.id, False, False, True, True, dry_run)
+        fix_single_bug(args, args.id, fixa_config)
