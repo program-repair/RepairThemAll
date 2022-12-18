@@ -79,8 +79,7 @@ defects4j checkout -p %s -v %s%s -w %s;
             version,
             working_directory)
         print('Defects4J checkout cmd: ', cmd)
-        subprocess.call(cmd, shell=True, stdout=FNULL,
-                        stderr=subprocess.STDOUT)
+        subprocess.call(cmd, shell=True)
         pass
 
     def compile(self, bug, working_directory):
@@ -93,11 +92,11 @@ defects4j compile;
             self._get_benchmark_path(),
             os.path.join(JAVA8_HOME, '..'),
             working_directory)
-        subprocess.call(cmd, shell=True, stdout=FNULL,
-                        stderr=subprocess.STDOUT)
+        subprocess.call(cmd, shell=True)
         pass
 
     def run_test(self, bug, working_directory, test=None):
+        print('Defects4J running test...')
         test_arg = ""
         if test is not None:
             test_arg = "-t %s" % (test)
@@ -110,8 +109,7 @@ defects4j test %s;
             os.path.join(JAVA8_HOME, '..'),
             working_directory,
             test_arg)
-        subprocess.check_call(cmd, shell=True, stdout=FNULL,
-                              stderr=subprocess.STDOUT)
+        subprocess.check_call(cmd, shell=True)
         if os.path.exists(os.path.join(working_directory, "failing_tests")):
             with open(os.path.join(working_directory, "failing_tests")) as fd:
                 return fd.read()

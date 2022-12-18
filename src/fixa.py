@@ -43,7 +43,7 @@ def checkout_bug(benchmark, project, bug_id, version):
     return bug
 
 
-def fix_single_bug(args, bug_id, compile=True, dry_run=False):
+def fix_single_bug(args, bug_id, compile=True, test=True, dry_run=False):
     benchmark = get_benchmark(args.benchmark)
 
     bug_dir = os.path.join(args.working_directory,
@@ -52,10 +52,14 @@ def fix_single_bug(args, bug_id, compile=True, dry_run=False):
     fixed_bug = checkout_bug(benchmark, args.project, bug_id, 'fixed')
     if compile:
         fixed_bug.compile()
+    if test:
+        fixed_bug.run_test()
 
     buggy_bug = checkout_bug(benchmark, args.project, bug_id, 'buggy')
     if compile:
         buggy_bug.compile()
+    if test:
+        buggy_bug.run_test()
 
     # Only support Codex with Defects4J for now
     if args.model == 'Codex' and args.benchmark == 'Defects4J':
@@ -79,6 +83,6 @@ if __name__ == "__main__":
     if args.id == None:
         bug_size = DEFECTS4J_BUG_SIZE[args.project]
         for bug_id in range(1, bug_size + 1):
-            fix_single_bug(args, str(bug_id), True, dry_run)
+            fix_single_bug(args, str(bug_id), True, True, dry_run)
     else:
-        fix_single_bug(args, args.id, True, dry_run)
+        fix_single_bug(args, args.id, True, True, dry_run)
