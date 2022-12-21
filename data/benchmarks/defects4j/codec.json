@@ -1,5 +1,6 @@
 {
     "project": "Codec",
     "nbBugs":  18,
+    "smallBugs": [4, 7, 17],
     "deprecatedBugs":  []
 }

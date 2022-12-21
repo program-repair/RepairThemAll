@@ -19,7 +19,8 @@
         "objenesis-2.2.jar"
     ], 
     "project": "Mockito",
-    "nbBugs": 38, 
+    "nbBugs": 38,
+    "smallBugs": [7,9,31,36,38],
     "deprecatedBugs":  [],
     "package": "org.mockito", 
     "src": {

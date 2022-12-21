@@ -11,7 +11,7 @@ parser.add_argument("--model", "-m", required=True,
                     help="The pre-trained large language model (for example, codex)")
 parser.add_argument("--benchmark", "-b", required=True, default="Defects4J",
                     help="The benchmark to repair")
-parser.add_argument("--project", "-p", required=True,
+parser.add_argument("--project", "-p", required=False,
                     help="The project name (case sensitive)")
 parser.add_argument("--id", "-i", required=False, help="The bug id")
 parser.add_argument("--working_directory", "-w",
@@ -21,11 +21,22 @@ parser.add_argument("--type", "-t",
 
 DEFECTS4J_BUG_SIZE = {
     'Chart': 26,
+    'Cli': 40,
     'Closure': 176,
+    'Codec': 18,
+    'Collections': 28,
+    'Compress': 47,
+    'Csv': 16,
+    'Gson': 18,
+    'JacksonCore': 26,
+    'JacksonDatabind': 112,
+    'JacksonXml': 6,
+    'Jsoup': 93,
+    'JxPath': 22,
     'Lang': 65,
     'Math': 106,
     'Mockito': 38,
-    'Time': 27
+    'Time': 27,
 }
 
 
@@ -56,15 +67,15 @@ def fix_single_bug(args, bug_id, fixa_config):
         print('-------bug {} {} does not exist or deprecated-------\n'.format(args.project, bug_id), e)
         return
 
-    if fixa_config.compile:
+    if fixa_config['compile']:
         fixed_bug.compile()
-    if fixa_config.test:
+    if fixa_config['test']:
         fixed_bug.run_test()
 
     buggy_bug = checkout_bug(benchmark, args.project, bug_id, 'buggy')
-    if fixa_config.compile:
+    if fixa_config['compile']:
         buggy_bug.compile()
-    if fixa_config.test:
+    if fixa_config['test']:
         buggy_bug.run_test()
 
     # Only support Codex with Defects4J for now
@@ -73,7 +84,7 @@ def fix_single_bug(args, bug_id, fixa_config):
             args.project, bug_id)
         try:
             response = fix_bug_by_openai_codex(
-                bug_dir, patch_file_path, fixa_config.include_document, fixa_config.include_comments, dry_run)
+                bug_dir, patch_file_path, fixa_config['include_document'], fixa_config['include_comments'], fixa_config['dry_run'])
         except Exception as e:
             print(
                 '-------something wrong with bug {} {}-------'.format(args.project, bug_id), e)
@@ -87,18 +98,29 @@ fixa_config = {
     'include_comments': False,
     'compile': False,
     'test': False,
-    'dry_run': False,
+    'dry_run': True,
 }
+
+DEFECTS4J_PROJECTS = ['Chart', 'Cli', 'Closure', 'Codec', 'Collections', 'Compress', 'Csv', 'Gson',
+                      'JacksonCore', 'JacksonDatabind', 'JacksonXml', 'Jsoup', 'JxPath', 'Lang', 'Math', 'Mockito', 'Time']
 
 
 if __name__ == "__main__":
     args = parser.parse_args()
     dry_run = args.type == 'dryrun'
 
-    if args.id == None:
+    if args.project != None and args.id == None:
+        # fix all bugs from a project
         bug_size = DEFECTS4J_BUG_SIZE[args.project]
         for bug_id in range(1, bug_size + 1):
             fix_single_bug(args, str(bug_id), fixa_config)
             time.sleep(5)
+    elif args.project == None and args.id == None:
+        # fix all bugs from all projects
+        for project, bug_size in DEFECTS4J_BUG_SIZE.items():
+            args.project = project
+            for bug_id in range(1, bug_size + 1):
+                fix_single_bug(args, str(bug_id), fixa_config)
+                # time.sleep(5)
     else:
         fix_single_bug(args, args.id, fixa_config)

@@ -1,5 +1,6 @@
 {
     "project": "Gson",
     "nbBugs":  18,
+    "smallBugs": [18], 
     "deprecatedBugs":  []
 }

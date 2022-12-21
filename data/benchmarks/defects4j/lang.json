@@ -12,6 +12,7 @@
     ], 
     "project": "Lang",
     "nbBugs": 65,
+    "smallBugs": [8,29,57],
     "deprecatedBugs":  [2],
     "package": "org.apache.commons", 
     "src": {

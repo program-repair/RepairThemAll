@@ -1,5 +1,6 @@
 {
     "project": "JxPath",
     "nbBugs":  22,
+    "smallBugs": [21],
     "deprecatedBugs":  []
 }

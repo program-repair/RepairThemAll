@@ -1,5 +1,6 @@
 {
     "project": "JacksonCore",
     "nbBugs":  26,
+    "smallBugs": [20,23], 
     "deprecatedBugs":  []
 }

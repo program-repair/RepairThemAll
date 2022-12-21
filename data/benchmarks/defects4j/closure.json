@@ -29,6 +29,7 @@
     ], 
     "project": "Closure",
     "nbBugs": 176, 
+    "smallBugs": [7, 12, 55, 82, 109, 111, 145],
     "deprecatedBugs":  [63, 93],
     "package": "com.google", 
     "src": {

@@ -1,5 +1,6 @@
 {
     "project": "JacksonXml",
     "nbBugs":  6,
+    "smallBugs": [5],
     "deprecatedBugs":  []
 }

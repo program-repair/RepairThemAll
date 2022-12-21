@@ -6,7 +6,8 @@
         "commons-discovery-0.5.jar"
     ], 
     "project": "Math",
-    "nbBugs": 106, 
+    "nbBugs": 106,
+    "smallBugs": [2,17,27,34,59,63,75,89,105],
     "deprecatedBugs":  [],
     "package": "org.apache.commons", 
     "src": {
