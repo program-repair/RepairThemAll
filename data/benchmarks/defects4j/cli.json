@@ -1,6 +1,6 @@
 {
     "project": "Cli",
     "nbBugs":  40,
-    "smallBugs": [10, 37],
+    "smallestBug": 10,
     "deprecatedBugs":  [6]
 }

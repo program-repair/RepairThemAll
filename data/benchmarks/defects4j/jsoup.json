@@ -1,6 +1,6 @@
 {
     "project": "Jsoup",
     "nbBugs":  93,
-    "smallBugs": [29,88],
+    "smallestBug": 29,
     "deprecatedBugs":  []
 }

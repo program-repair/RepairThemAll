@@ -1,6 +1,6 @@
 {
     "project": "Csv",
     "nbBugs":  16,
-    "smallBugs": [4], 
+    "smallestBug": 4, 
     "deprecatedBugs":  []
 }

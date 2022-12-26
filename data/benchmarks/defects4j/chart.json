@@ -8,7 +8,7 @@
     ], 
     "project": "Chart",
     "nbBugs": 26, 
-    "smallBugs": [8, 17],
+    "smallestBug": 8,
     "deprecatedBugs":  [],
     "package": "org.jfree", 
     "src": {

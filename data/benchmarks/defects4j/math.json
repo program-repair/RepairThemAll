@@ -7,7 +7,7 @@
     ], 
     "project": "Math",
     "nbBugs": 106,
-    "smallBugs": [2,17,27,34,59,63,75,89,105],
+    "smallestBug": 2,
     "deprecatedBugs":  [],
     "package": "org.apache.commons", 
     "src": {

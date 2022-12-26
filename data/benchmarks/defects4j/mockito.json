@@ -20,7 +20,7 @@
     ], 
     "project": "Mockito",
     "nbBugs": 38,
-    "smallBugs": [7,9,31,36,38],
+    "smallestBug": 9,
     "deprecatedBugs":  [],
     "package": "org.mockito", 
     "src": {
