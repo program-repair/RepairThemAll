@@ -1,19 +1,16 @@
 import os
 from dotenv import dotenv_values
 import openai
-import nltk
 from core.tools.java_lang import get_node_by_hash, load_ast_nodes, load_fixed_code_node
 from core.tools.patch import load_patch_file
 from core.tools.persist import write_to_file
 from core.tools.prompt import generate_prompt
 
 
-nltk.download('punkt')
-
 config = dotenv_values(".env")
 openai.api_key = config.get('OPENAI_API_KEY')
 
-MAX_TOKEN_LENGTH = 3570
+MAX_TOKEN_LENGTH = 4000
 CODE_TOO_LONG = "Code is too long"
 CODEX_MODEL = "code-davinci-002"
 EXAMPLE_BUGGY_FILEPATH = 'data/example/codex_prompt_example_buggy.source'
@@ -51,12 +48,6 @@ def request_codex_code_complition(code):
 
 
 def repair_code(prompt, dry_run=False):
-    # TODO: comment out for now, need to move to the place after generating prompt
-    # token_length = len(nltk.word_tokenize(prompt))
-    # if token_length > MAX_TOKEN_LENGTH:
-    #    print(CODE_TOO_LONG)
-    #    return
-
     if dry_run:
         print('Dry run, prompt:', prompt)
         return
