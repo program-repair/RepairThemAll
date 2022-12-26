@@ -1,7 +1,7 @@
 import os
 import argparse
 import time
-from core.large_language_models.codex import fix_bug_by_openai_codex
+from core.large_language_models.codex import apply_response_to_fixed_version, fix_bug_by_openai_codex
 
 from core.utils import get_benchmark
 
@@ -83,8 +83,10 @@ def fix_single_bug(args, bug_id, fixa_config):
         patch_file_path = 'benchmarks/defects4j/framework/projects/{}/patches/{}.src.patch'.format(
             args.project, bug_id)
         try:
-            response = fix_bug_by_openai_codex(
-                bug_dir, patch_file_path, fixa_config['include_document'], fixa_config['include_comments'], fixa_config['dry_run'])
+            applied = fix_bug_by_openai_codex(args.working_directory, fixed_bug, patch_file_path,
+                                              fixa_config['include_document'], fixa_config['include_comments'], fixa_config['dry_run'])
+            if applied:
+                fixed_bug.compile()  # compile the fixed version with the response from Codex
         except Exception as e:
             print(
                 '-------something wrong with bug {} {}-------'.format(args.project, bug_id), e)
@@ -121,6 +123,6 @@ if __name__ == "__main__":
             args.project = project
             for bug_id in range(1, bug_size + 1):
                 fix_single_bug(args, str(bug_id), fixa_config)
-                # time.sleep(5)
+                time.sleep(5)
     else:
         fix_single_bug(args, args.id, fixa_config)

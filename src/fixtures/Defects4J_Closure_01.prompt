@@ -14,6 +14,7 @@ class FibonacciExample {
         }
     }
 }
+
 ###Fixed Function
 class FibonacciExample {
     public static void main(String args[]) {
@@ -28,6 +29,17 @@ class FibonacciExample {
             n2 = n3;
         }
     }
+}
+
+###Provide a fix for the buggy function
+###Buggy Function
+private static boolean isReduceableFunctionExpression(Node n) {
+  return NodeUtil.isFunctionExpression(n);
+}
+###Fixed Function
+private static boolean isReduceableFunctionExpression(Node n) {
+  return NodeUtil.isFunctionExpression(n)
+      && !NodeUtil.isGetOrSetKey(n.getParent());
 }
 ###Provide a fix for the buggy function
 ###Buggy Function
@@ -58,4 +70,5 @@ class FibonacciExample {
       callSiteOptimizer.optimize(fnScope, referenced);
     }
   }
+
 ###Fixed Function
