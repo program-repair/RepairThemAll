@@ -5,7 +5,7 @@ import re
 import subprocess
 # from sets import Set
 
-from config import DATA_PATH, JAVA7_HOME, JAVA8_HOME
+from config import DATA_PATH, JAVA8_HOME, JAVA8_HOME
 from config import REPAIR_ROOT
 from core.Benchmark import Benchmark
 from core.Bug import Bug
@@ -51,6 +51,8 @@ class Defects4J(Benchmark):
                 data = json.load(fd)
                 self.project_data[data['project']] = data
                 for i in range(1, data['nbBugs'] + 1):
+                    if i in data['deprecatedBugs']:
+                        continue
                     bug = Bug(self, data['project'], i)
                     bug.project_data = data
                     self.bugs += [bug]
@@ -71,16 +73,15 @@ class Defects4J(Benchmark):
 
         cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";
 defects4j checkout -p %s -v %s%s -w %s;
-""" % (JAVA7_HOME,
+""" % (JAVA8_HOME,
             self._get_benchmark_path(),
-            os.path.join(JAVA7_HOME, '..'),
+            os.path.join(JAVA8_HOME, '..'),
             bug.project,
             bug.bug_id,
             version,
             working_directory)
         print('Defects4J checkout cmd: ', cmd)
-        subprocess.call(cmd, shell=True, stdout=FNULL,
-                        stderr=subprocess.STDOUT)
+        subprocess.call(cmd, shell=True)
         pass
 
     def compile(self, bug, working_directory):
@@ -89,15 +90,15 @@ defects4j checkout -p %s -v %s%s -w %s;
 export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true;
 cd %s;
 defects4j compile;
-""" % (JAVA7_HOME,
+""" % (JAVA8_HOME,
             self._get_benchmark_path(),
-            os.path.join(JAVA7_HOME, '..'),
+            os.path.join(JAVA8_HOME, '..'),
             working_directory)
-        subprocess.call(cmd, shell=True, stdout=FNULL,
-                        stderr=subprocess.STDOUT)
+        subprocess.call(cmd, shell=True)
         pass
 
     def run_test(self, bug, working_directory, test=None):
+        print('Defects4J running test...')
         test_arg = ""
         if test is not None:
             test_arg = "-t %s" % (test)
@@ -105,13 +106,12 @@ defects4j compile;
 export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true; 
 cd %s;
 defects4j test %s;
-""" % (JAVA7_HOME,
+""" % (JAVA8_HOME,
             self._get_benchmark_path(),
-            os.path.join(JAVA7_HOME, '..'),
+            os.path.join(JAVA8_HOME, '..'),
             working_directory,
             test_arg)
-        subprocess.check_call(cmd, shell=True, stdout=FNULL,
-                              stderr=subprocess.STDOUT)
+        subprocess.check_call(cmd, shell=True)
         if os.path.exists(os.path.join(working_directory, "failing_tests")):
             with open(os.path.join(working_directory, "failing_tests")) as fd:
                 return fd.read()
@@ -121,9 +121,9 @@ defects4j test %s;
         cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";
 export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true;
 defects4j info -p %s -b %s;
-""" % (JAVA7_HOME,
+""" % (JAVA8_HOME,
             self._get_benchmark_path(),
-            os.path.join(JAVA7_HOME, '..'),
+            os.path.join(JAVA8_HOME, '..'),
             bug.project,
             bug.bug_id)
         try:
@@ -212,9 +212,9 @@ defects4j info -p %s -b %s;
         cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";
         cd %s;
         defects4j export -p cp.test 2> /dev/null;
-        """ % (JAVA7_HOME,
+        """ % (JAVA8_HOME,
                self._get_benchmark_path(),
-               os.path.join(JAVA7_HOME, '..'),
+               os.path.join(JAVA8_HOME, '..'),
                bug.working_directory)
         try:
             lib_output = subprocess.check_output(cmd, shell=True, stderr=FNULL)

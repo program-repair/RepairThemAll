@@ -1,0 +1,6 @@
+{
+    "project": "Compress",
+    "nbBugs":  47,
+    "smallestBug": 13, 
+    "deprecatedBugs":  []
+}

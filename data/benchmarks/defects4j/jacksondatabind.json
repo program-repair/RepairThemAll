@@ -1,0 +1,6 @@
+{
+    "project": "JacksonDatabind",
+    "nbBugs":  112,
+    "smallestBug": 7, 
+    "deprecatedBugs":  []
+}

@@ -6,7 +6,7 @@ def test_load_buggy_code_node():
     fixed_file_path = "src/fixtures/Defects4J_Closure_01_fixed.source"
     buggy_file_path = "src/fixtures/Defects4J_Closure_01_buggy.source"
     patch_file_path = 'src/fixtures/Defects4J_Closure_01.patch'
-    buggy_node = load_buggy_code_node(
+    fixed_node, buggy_node = load_buggy_code_node(
         fixed_file_path, buggy_file_path, patch_file_path)
     assert buggy_node.name == 'removeUnreferencedFunctionArgs'
     assert buggy_node.type == 'MethodDeclaration'

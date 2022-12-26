@@ -1,0 +1,6 @@
+{
+    "project": "JacksonCore",
+    "nbBugs":  26,
+    "smallestBug": 20, 
+    "deprecatedBugs":  []
+}
