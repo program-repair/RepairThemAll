@@ -39,7 +39,7 @@ def request_codex_code_complition(code):
     response = openai.Completion.create(
         model=CODEX_MODEL,
         prompt=code,
-        temperature=0.2,
+        temperature=0.8,
         max_tokens=MAX_TOKEN_LENGTH,
         top_p=0.95,
         frequency_penalty=0.0,
@@ -47,7 +47,6 @@ def request_codex_code_complition(code):
         stop=[STOP_SIGN],
     )
     print('--->', response)
-    # return response.choices[0].text  # type: ignore
     return response
 
 
@@ -67,12 +66,21 @@ def repair_code(prompt, dry_run=False):
 
 
 def apply_response_to_fixed_version(fixed_bug_path, response_text, fixed_node):
-    response_text_lines = response_text.split("\n")
-    with open(fixed_bug_path, 'r') as file:
-        fixed_bug_lines = file.readlines()
-    fixed_bug_lines[fixed_node.start_line -
-                    1:fixed_node.end_line] = response_text_lines
-    write_to_file(fixed_bug_path, "\n".join(fixed_bug_lines))
+    print('fixed_bug_path: ', fixed_bug_path)
+    print('fixed_node: ', fixed_node)
+    print('response_text: ', response_text)
+    try:
+        response_text_lines = response_text.split("\n")
+        with open(fixed_bug_path, 'r') as file:
+            fixed_bug_lines = file.readlines()
+        fixed_bug_lines[fixed_node.start_pos -
+                        1:fixed_node.end_pos] = response_text_lines
+        write_to_file(fixed_bug_path, "\n".join(fixed_bug_lines))
+        return True
+    except Exception as e:
+        print('Error: ', e)
+        print('fixed_bug_path: ', fixed_bug_path)
+        return False
 
 
 def fix_bug_by_openai_codex(working_directory, bug, patch_file_path, include_document, include_comments, dry_run=False):
@@ -109,11 +117,10 @@ def fix_bug_by_openai_codex(working_directory, bug, patch_file_path, include_doc
     # request codex code completion
     # "finish_reason: stop" means the code is fixed
     # "finish_reason: length" means the code is too long
-    if response and response.choices[0].finish_reason == 'stop':
+    if response and response.choices[0].finish_reason == 'stop':  # type: ignore
         write_to_file(output_file_path + '.codex_response',
                       response.choices[0].text)  # type: ignore
         print(response.choices[0].text)  # type: ignore
-        apply_response_to_fixed_version(
+        return apply_response_to_fixed_version(
             fixed_bug_path, response.choices[0].text, fixed_node)  # type: ignore
-        return True
     return False

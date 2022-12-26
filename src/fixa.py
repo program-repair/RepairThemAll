@@ -86,6 +86,7 @@ def fix_single_bug(args, bug_id, fixa_config):
             applied = fix_bug_by_openai_codex(args.working_directory, fixed_bug, patch_file_path,
                                               fixa_config['include_document'], fixa_config['include_comments'], fixa_config['dry_run'])
             if applied:
+                print('bug from codex response has been applied')
                 fixed_bug.compile()  # compile the fixed version with the response from Codex
         except Exception as e:
             print(
@@ -100,7 +101,7 @@ fixa_config = {
     'include_comments': False,
     'compile': False,
     'test': False,
-    'dry_run': True,
+    'dry_run': False,
 }
 
 DEFECTS4J_PROJECTS = ['Chart', 'Cli', 'Closure', 'Codec', 'Collections', 'Compress', 'Csv', 'Gson',
@@ -116,13 +117,13 @@ if __name__ == "__main__":
         bug_size = DEFECTS4J_BUG_SIZE[args.project]
         for bug_id in range(1, bug_size + 1):
             fix_single_bug(args, str(bug_id), fixa_config)
-            time.sleep(5)
+            time.sleep(30)
     elif args.project == None and args.id == None:
         # fix all bugs from all projects
         for project, bug_size in DEFECTS4J_BUG_SIZE.items():
             args.project = project
             for bug_id in range(1, bug_size + 1):
                 fix_single_bug(args, str(bug_id), fixa_config)
-                time.sleep(5)
+                time.sleep(30)
     else:
         fix_single_bug(args, args.id, fixa_config)
