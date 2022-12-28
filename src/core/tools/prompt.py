@@ -1,3 +1,6 @@
+from core.tools.tokenizer import number_of_tokens
+
+
 def generate_prompt(stop_sign, first_buggy_example_path, first_fixed_example_path, project_buggy_path, project_fixed_path, target_buggy_node, include_document, include_comments, include_project_specific_example):
     # load general example
     with open(first_buggy_example_path, 'r') as file:
@@ -32,4 +35,9 @@ def generate_prompt(stop_sign, first_buggy_example_path, first_fixed_example_pat
     target_prompt = '{}Provide a fix for the buggy function\n{}Buggy Function\n{}\n{}Fixed Function\n'.format(
         stop_sign, stop_sign, buggy_code, stop_sign)
 
-    return general_example_prompt + project_example_prompt + target_prompt
+    # size
+    prompt_size = number_of_tokens(
+        general_example_prompt + project_example_prompt)
+    bug_size = number_of_tokens(target_prompt)
+
+    return (general_example_prompt + project_example_prompt + target_prompt), prompt_size, bug_size
