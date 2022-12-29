@@ -94,8 +94,9 @@ defects4j compile;
             self._get_benchmark_path(),
             os.path.join(JAVA8_HOME, '..'),
             working_directory)
-        subprocess.call(cmd, shell=True)
-        pass
+        out = subprocess.check_output(
+            cmd, shell=True, stderr=subprocess.STDOUT)
+        return out.decode("utf-8")
 
     def run_test(self, bug, working_directory, test=None):
         print('Defects4J running test...')

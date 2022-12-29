@@ -1,6 +1,8 @@
 import os
 import argparse
 import time
+from core.database.engine import save
+from core.database.schema import Result
 from core.large_language_models.codex import apply_response_to_fixed_version, fix_bug_by_openai_codex
 
 from core.utils import get_benchmark
@@ -56,6 +58,14 @@ def checkout_bug(benchmark, project, bug_id, version):
 
 
 def fix_single_bug(args, bug_id, fixa_config):
+    result = Result()
+    result.buggy_code_chunk = ''
+    result.model = args.model
+    result.benchmark = args.benchmark
+    result.project = args.project
+    result.bug_id = bug_id
+    result.request_type = 'SINGLE_FUNCTION'
+
     benchmark = get_benchmark(args.benchmark)
 
     bug_dir = os.path.join(args.working_directory,
@@ -83,11 +93,14 @@ def fix_single_bug(args, bug_id, fixa_config):
         patch_file_path = 'benchmarks/defects4j/framework/projects/{}/patches/{}.src.patch'.format(
             args.project, bug_id)
         try:
-            applied = fix_bug_by_openai_codex(args.working_directory, fixed_bug, patch_file_path,
-                                              fixa_config['include_document'], fixa_config['include_comments'], fixa_config['dry_run'])
+            applied, result = fix_bug_by_openai_codex(result, args.working_directory, fixed_bug, patch_file_path,
+                                                      fixa_config['include_document'], fixa_config['include_comments'], fixa_config['dry_run'])
             if applied:
                 print('bug from codex response has been applied')
-                fixed_bug.compile()  # compile the fixed version with the response from Codex
+                # compile the fixed version with the response from Codex
+                compiled_output = fixed_bug.compile()
+                result.respond_compiled_output = compiled_output
+            save(result)
         except Exception as e:
             print(
                 '-------something wrong with bug {} {}-------'.format(args.project, bug_id), e)
@@ -99,7 +112,7 @@ def fix_single_bug(args, bug_id, fixa_config):
 fixa_config = {
     'include_document': False,
     'include_comments': False,
-    'compile': False,
+    'compile': True,
     'test': False,
     'dry_run': False,
 }
