@@ -100,8 +100,13 @@ def fix_single_bug(args, bug_id, fixa_config):
                 # compile the fixed version with the response from Codex
                 compiled_output = fixed_bug.compile()
                 result.respond_compiled_output = compiled_output
+                if compiled_output.count('OK') == 2:
+                    result.result_type = 'COMPILED_SUCCESS'
             save(result)
         except Exception as e:
+            result.result_type = 'ERROR'
+            result.error_message = str(e)
+            save(result)
             print(
                 '-------something wrong with bug {} {}-------'.format(args.project, bug_id), e)
     else:
