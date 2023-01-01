@@ -78,11 +78,14 @@ def apply_response_to_fixed_version(fixed_bug_path, response_text, fixed_node):
     print('response_text: ', response_text)
     try:
         response_text_lines = response_text.split("\n")
+        print('response_text_lines: ', response_text_lines)
         with open(fixed_bug_path, 'r') as file:
             fixed_bug_lines = file.readlines()
-        fixed_bug_lines[fixed_node.start_pos -
-                        1:fixed_node.end_pos] = response_text_lines
-        write_to_file(fixed_bug_path, "\n".join(fixed_bug_lines))
+        new_fixed_bug_file = "".join(fixed_bug_lines[0:fixed_node.start_pos - 1]) + \
+            "\n".join(response_text_lines) + \
+            "".join(fixed_bug_lines[fixed_node.end_pos:])
+        write_to_file(fixed_bug_path, new_fixed_bug_file)
+        print('new_fixed_bug_lines: ', new_fixed_bug_file)
         return True, None
     except Exception as e:
         print('Error: ', e)
