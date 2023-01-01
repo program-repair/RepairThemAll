@@ -40,9 +40,9 @@ def request_codex_code_complition(result, code, prompt_size, bug_size):
     print('prompt: ', code)
     request_params = {
         'model': CODEX_MODEL,
-        'temperature': 0.8,
+        'temperature': 0,
         'max_tokens': max_completion_size,
-        'top_p': 0.95,
+        'top_p': 1,
         'frequency_penalty': 0.0,
         'presence_penalty': 0.0,
         'stop': [STOP_SIGN],

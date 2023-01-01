@@ -1,4 +1,5 @@
 import os
+from core.database.schema import Result
 from core.tools.java_lang import *
 from core.tools.patch import load_patch_file
 
@@ -111,8 +112,9 @@ def test_load_ast_node():
 
 
 def test_load_fixed_code_node():
-    countable_diffs = load_patch_file(
-        "src/fixtures/Defects4J_Closure_01.patch")
+    mock_result = Result()
+    countable_diffs, mock_result = load_patch_file(
+        mock_result, "src/fixtures/Defects4J_Closure_01.patch")
     file_path = "src/fixtures/Defects4J_Closure_01_fixed.source"
     result = load_fixed_code_node(
         file_path, countable_diffs[0].sorted_changes())
@@ -123,6 +125,7 @@ def test_load_fixed_code_node():
 
 
 def test_load_fixed_code_node_all_fixtures():
+    mock_result = Result()
     print('test_load_fixed_code_node_all_fixtures:')
     fixture_path = "src/fixtures/"
     projects = ["Closure", "Mockito"]
@@ -132,7 +135,8 @@ def test_load_fixed_code_node_all_fixtures():
             # read patch diffs
             patch_file_path = os.path.join(
                 fixture_path, "Defects4J_{}_{}.patch".format(project, example))
-            countable_diffs = load_patch_file(patch_file_path)
+            countable_diffs, mock_result = load_patch_file(
+                mock_result, patch_file_path)
             # fixed ast node
             if len(countable_diffs) == 1:
                 fixed_file_path = os.path.join(
@@ -157,7 +161,9 @@ def test_load_fixed_code_node_all_fixtures():
 
 
 def assert_get_single_node_by_hash(fixed_file_path, buggy_file_path, patch_file_path):
-    countable_diffs = load_patch_file(patch_file_path)
+    mock_result = Result()
+    countable_diffs, mock_result = load_patch_file(
+        mock_result, patch_file_path)
     fixed_node = load_fixed_code_node(
         fixed_file_path, countable_diffs[0].sorted_changes())
     buggy_nodes = load_ast_nodes(buggy_file_path)
@@ -184,6 +190,7 @@ def test_get_node_by_hash_Lang_06():
 
 
 def test_get_node_by_hash_all_fixtures():
+    mock_result = Result()
     print('test_get_node_by_hash_all_fixtures:')
     fixture_path = "src/fixtures/"
     projects = ["Closure", "Mockito"]
@@ -193,7 +200,8 @@ def test_get_node_by_hash_all_fixtures():
             # read patch diffs
             patch_file_path = os.path.join(
                 fixture_path, "Defects4J_{}_{}.patch".format(project, example))
-            countable_diffs = load_patch_file(patch_file_path)
+            countable_diffs, mock_result = load_patch_file(
+                mock_result, patch_file_path)
             # fixed ast node
             if len(countable_diffs) == 1:
                 fixed_file_path = os.path.join(

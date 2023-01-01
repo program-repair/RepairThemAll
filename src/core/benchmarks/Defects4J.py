@@ -116,7 +116,7 @@ defects4j test %s;
         if os.path.exists(os.path.join(working_directory, "failing_tests")):
             with open(os.path.join(working_directory, "failing_tests")) as fd:
                 return fd.read()
-        pass
+        return True
 
     def failing_tests(self, bug):
         cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";

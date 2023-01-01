@@ -102,6 +102,11 @@ def fix_single_bug(args, bug_id, fixa_config):
                 result.respond_compiled_output = compiled_output
                 if compiled_output.count('OK') == 2:
                     result.result_type = 'COMPILED_SUCCESS'
+                test_output = fixed_bug.run_test()
+                if test_output == True:
+                    result.request_type = 'TEST_SUCCESS'
+                else:
+                    result.result_type = 'TEST_FAILED'
             save(result)
         except Exception as e:
             result.result_type = 'ERROR'
@@ -118,8 +123,9 @@ fixa_config = {
     'include_document': False,
     'include_comments': False,
     'compile': True,
-    'test': False,
+    'test': True,
     'dry_run': False,
+    'sample': 200,
 }
 
 DEFECTS4J_PROJECTS = ['Chart', 'Cli', 'Closure', 'Codec', 'Collections', 'Compress', 'Csv', 'Gson',
