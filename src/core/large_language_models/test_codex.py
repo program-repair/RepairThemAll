@@ -1,4 +1,5 @@
 
+from core.database.schema import Result
 from core.large_language_models.codex import load_buggy_code_node
 
 
@@ -6,8 +7,9 @@ def test_load_buggy_code_node():
     fixed_file_path = "src/fixtures/Defects4J_Closure_01_fixed.source"
     buggy_file_path = "src/fixtures/Defects4J_Closure_01_buggy.source"
     patch_file_path = 'src/fixtures/Defects4J_Closure_01.patch'
-    fixed_node, buggy_node = load_buggy_code_node(
-        fixed_file_path, buggy_file_path, patch_file_path)
+    mockResult = Result()
+    fixed_node, buggy_node, mockResult = load_buggy_code_node(
+        mockResult, fixed_file_path, buggy_file_path, patch_file_path)
     assert buggy_node.name == 'removeUnreferencedFunctionArgs'
     assert buggy_node.type == 'MethodDeclaration'
     assert buggy_node.start_pos == 369

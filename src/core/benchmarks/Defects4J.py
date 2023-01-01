@@ -94,8 +94,9 @@ defects4j compile;
             self._get_benchmark_path(),
             os.path.join(JAVA8_HOME, '..'),
             working_directory)
-        subprocess.call(cmd, shell=True)
-        pass
+        out = subprocess.check_output(
+            cmd, shell=True, stderr=subprocess.STDOUT)
+        return out.decode("utf-8")
 
     def run_test(self, bug, working_directory, test=None):
         print('Defects4J running test...')
@@ -115,7 +116,7 @@ defects4j test %s;
         if os.path.exists(os.path.join(working_directory, "failing_tests")):
             with open(os.path.join(working_directory, "failing_tests")) as fd:
                 return fd.read()
-        pass
+        return True
 
     def failing_tests(self, bug):
         cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";
