@@ -32,7 +32,8 @@ def load_patch_file(result, file_path):
     with open(file_path, 'r') as file:
         text = file.read()
 
-    result.patch = text
+    if result:
+        result.patch = text
 
     for diff in whatthepatch.parse_patch(text):
 

@@ -3,7 +3,7 @@ import argparse
 import time
 from core.database.engine import save
 from core.database.schema import Result
-from core.large_language_models.codex import apply_response_to_fixed_version, fix_bug_by_openai_codex
+from core.large_language_models.codex import apply_response_to_fixed_version, fix_bug_by_openai_codex, revert_response_to_fixed_version
 
 from core.utils import get_benchmark
 
@@ -93,8 +93,8 @@ def fix_single_bug(args, bug_id, fixa_config):
         patch_file_path = 'benchmarks/defects4j/framework/projects/{}/patches/{}.src.patch'.format(
             args.project, bug_id)
         try:
-            applied, result = fix_bug_by_openai_codex(result, args.working_directory, fixed_bug, patch_file_path,
-                                                      fixa_config['include_document'], fixa_config['include_comments'], fixa_config['dry_run'])
+            applied, result, original_buy_lines = fix_bug_by_openai_codex(result, args.working_directory, fixed_bug, patch_file_path,
+                                                                          fixa_config['include_document'], fixa_config['include_comments'], fixa_config['dry_run'])
             if applied:
                 print('bug from codex response has been applied')
                 # compile the fixed version with the response from Codex
@@ -104,9 +104,12 @@ def fix_single_bug(args, bug_id, fixa_config):
                     result.result_type = 'COMPILED_SUCCESS'
                 test_output = fixed_bug.run_test()
                 if test_output == True:
-                    result.request_type = 'TEST_SUCCESS'
+                    result.result_type = 'TEST_SUCCESS'
                 else:
                     result.result_type = 'TEST_FAILED'
+                # revert the codex response version to the original fixed version
+                revert_response_to_fixed_version(
+                    original_buy_lines, args.working_directory, fixed_bug, patch_file_path)
             save(result)
         except Exception as e:
             result.result_type = 'ERROR'
@@ -121,11 +124,11 @@ def fix_single_bug(args, bug_id, fixa_config):
 
 fixa_config = {
     'include_document': False,
-    'include_comments': False,
-    'compile': True,
-    'test': True,
+    'include_comments': True,
+    'compile': False,
+    'test': False,
     'dry_run': False,
-    'sample': 200,
+    'sample': 10,
 }
 
 DEFECTS4J_PROJECTS = ['Chart', 'Cli', 'Closure', 'Codec', 'Collections', 'Compress', 'Csv', 'Gson',
@@ -136,18 +139,20 @@ if __name__ == "__main__":
     args = parser.parse_args()
     dry_run = args.type == 'dryrun'
 
-    if args.project != None and args.id == None:
-        # fix all bugs from a project
-        bug_size = DEFECTS4J_BUG_SIZE[args.project]
-        for bug_id in range(1, bug_size + 1):
-            fix_single_bug(args, str(bug_id), fixa_config)
-            time.sleep(30)
-    elif args.project == None and args.id == None:
-        # fix all bugs from all projects
-        for project, bug_size in DEFECTS4J_BUG_SIZE.items():
-            args.project = project
+    for round in range(fixa_config['sample']):
+        print('round: ', round + 1)
+        if args.project != None and args.id == None:
+            # fix all bugs from a project
+            bug_size = DEFECTS4J_BUG_SIZE[args.project]
             for bug_id in range(1, bug_size + 1):
                 fix_single_bug(args, str(bug_id), fixa_config)
                 time.sleep(30)
-    else:
-        fix_single_bug(args, args.id, fixa_config)
+        elif args.project == None and args.id == None:
+            # fix all bugs from all projects
+            for project, bug_size in DEFECTS4J_BUG_SIZE.items():
+                args.project = project
+                for bug_id in range(1, bug_size + 1):
+                    fix_single_bug(args, str(bug_id), fixa_config)
+                    time.sleep(30)
+        else:
+            fix_single_bug(args, args.id, fixa_config)

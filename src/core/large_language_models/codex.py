@@ -1,3 +1,4 @@
+import copy
 import os
 from dotenv import dotenv_values
 import openai
@@ -40,9 +41,9 @@ def request_codex_code_complition(result, code, prompt_size, bug_size):
     print('prompt: ', code)
     request_params = {
         'model': CODEX_MODEL,
-        'temperature': 0,
+        'temperature': 0.8,
         'max_tokens': max_completion_size,
-        'top_p': 1,
+        'top_p': 0.95,
         'frequency_penalty': 0.0,
         'presence_penalty': 0.0,
         'stop': [STOP_SIGN],
@@ -76,18 +77,35 @@ def apply_response_to_fixed_version(fixed_bug_path, response_text, fixed_node):
     print('fixed_bug_path: ', fixed_bug_path)
     print('fixed_node: ', fixed_node)
     print('response_text: ', response_text)
+    original_fixed_bug_lines = []
     try:
         response_text_lines = response_text.split("\n")
         with open(fixed_bug_path, 'r') as file:
             fixed_bug_lines = file.readlines()
-        fixed_bug_lines[fixed_node.start_pos -
-                        1:fixed_node.end_pos] = response_text_lines
-        write_to_file(fixed_bug_path, "\n".join(fixed_bug_lines))
-        return True, None
+        original_fixed_bug_lines = copy.deepcopy(fixed_bug_lines)
+        new_fixed_bug_file = "".join(fixed_bug_lines[0:fixed_node.start_pos - 1]) + \
+            "\n".join(response_text_lines) + \
+            "".join(fixed_bug_lines[fixed_node.end_pos:])
+        write_to_file(fixed_bug_path, new_fixed_bug_file)
+        return True, None, original_fixed_bug_lines
     except Exception as e:
         print('Error: ', e)
         print('fixed_bug_path: ', fixed_bug_path)
-        return False, e
+        return False, e, original_fixed_bug_lines
+
+
+def get_fixed_bug_path(bug_dir, patch_file_path):
+    countable_diffs, _ = load_patch_file(None, patch_file_path)
+    return bug_dir + "_fixed/" + countable_diffs[0].file_path
+
+
+# revert fixed bug file after testing codex response
+def revert_response_to_fixed_version(original_buy_lines, working_directory, bug, patch_file_path):
+    print('revert fixed bug file after testing codex response')
+    bug_dir = os.path.join(working_directory, "%s_%s_%s" %
+                           (bug.benchmark, bug.project, bug.bug_id))
+    fixed_bug_path = get_fixed_bug_path(bug_dir, patch_file_path)
+    write_to_file(fixed_bug_path, ''.join(original_buy_lines))
 
 
 def fix_bug_by_openai_codex(result: Result, working_directory, bug, patch_file_path, include_document, include_comments, dry_run=False):
@@ -96,7 +114,7 @@ def fix_bug_by_openai_codex(result: Result, working_directory, bug, patch_file_p
     countable_diffs, result = load_patch_file(result, patch_file_path)
     if len(countable_diffs) > 1:
         print("Skip, more than one file changed")
-        return False, result
+        return False, result, []
 
     # load buggy code
     fixed_bug_path = bug_dir + "_fixed/" + countable_diffs[0].file_path
@@ -136,7 +154,7 @@ def fix_bug_by_openai_codex(result: Result, working_directory, bug, patch_file_p
     # "finish_reason: length" means the code is too long
     if response and response.choices[0].finish_reason == 'length':  # type: ignore
         result.result_type = 'LENGTH'
-        return False, result
+        return False, result, []
     elif response and response.choices[0].finish_reason == 'stop':
         result.result_type = 'STOP'
         result.respond_code_chunk = response.choices[0].text  # type: ignore
@@ -145,11 +163,11 @@ def fix_bug_by_openai_codex(result: Result, working_directory, bug, patch_file_p
         write_to_file(output_file_path + '.codex_response',
                       response.choices[0].text)  # type: ignore
         print(response.choices[0].text)  # type: ignore
-        applied, error = apply_response_to_fixed_version(
+        applied, error, original_buy_lines = apply_response_to_fixed_version(
             fixed_bug_path, response.choices[0].text, fixed_node)  # type: ignore
         if applied == False and error:
             raise error
         result.result_type = 'APPLIED'
-        return applied, result
+        return applied, result, original_buy_lines
 
-    return False, result
+    return False, result, []
