@@ -115,7 +115,9 @@ defects4j test %s;
         subprocess.check_call(cmd, shell=True)
         if os.path.exists(os.path.join(working_directory, "failing_tests")):
             with open(os.path.join(working_directory, "failing_tests")) as fd:
-                return fd.read()
+                file_lines = fd.readlines()
+            print('failing_tests: ', file_lines)
+            return False
         return True
 
     def failing_tests(self, bug):

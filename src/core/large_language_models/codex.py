@@ -41,9 +41,9 @@ def request_codex_code_complition(result, code, prompt_size, bug_size):
     print('prompt: ', code)
     request_params = {
         'model': CODEX_MODEL,
-        'temperature': 0,
+        'temperature': 0.8,
         'max_tokens': max_completion_size,
-        'top_p': 1,
+        'top_p': 0.95,
         'frequency_penalty': 0.0,
         'presence_penalty': 0.0,
         'stop': [STOP_SIGN],
@@ -80,7 +80,6 @@ def apply_response_to_fixed_version(fixed_bug_path, response_text, fixed_node):
     original_fixed_bug_lines = []
     try:
         response_text_lines = response_text.split("\n")
-        print('response_text_lines: ', response_text_lines)
         with open(fixed_bug_path, 'r') as file:
             fixed_bug_lines = file.readlines()
         original_fixed_bug_lines = copy.deepcopy(fixed_bug_lines)
@@ -88,7 +87,6 @@ def apply_response_to_fixed_version(fixed_bug_path, response_text, fixed_node):
             "\n".join(response_text_lines) + \
             "".join(fixed_bug_lines[fixed_node.end_pos:])
         write_to_file(fixed_bug_path, new_fixed_bug_file)
-        print('new_fixed_bug_lines: ', new_fixed_bug_file)
         return True, None, original_fixed_bug_lines
     except Exception as e:
         print('Error: ', e)

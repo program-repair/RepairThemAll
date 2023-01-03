@@ -104,7 +104,7 @@ def fix_single_bug(args, bug_id, fixa_config):
                     result.result_type = 'COMPILED_SUCCESS'
                 test_output = fixed_bug.run_test()
                 if test_output == True:
-                    result.request_type = 'TEST_SUCCESS'
+                    result.result_type = 'TEST_SUCCESS'
                 else:
                     result.result_type = 'TEST_FAILED'
                 # revert the codex response version to the original fixed version
@@ -125,10 +125,10 @@ def fix_single_bug(args, bug_id, fixa_config):
 fixa_config = {
     'include_document': False,
     'include_comments': True,
-    'compile': True,
-    'test': True,
+    'compile': False,
+    'test': False,
     'dry_run': False,
-    'sample': 200,
+    'sample': 10,
 }
 
 DEFECTS4J_PROJECTS = ['Chart', 'Cli', 'Closure', 'Codec', 'Collections', 'Compress', 'Csv', 'Gson',
@@ -139,18 +139,20 @@ if __name__ == "__main__":
     args = parser.parse_args()
     dry_run = args.type == 'dryrun'
 
-    if args.project != None and args.id == None:
-        # fix all bugs from a project
-        bug_size = DEFECTS4J_BUG_SIZE[args.project]
-        for bug_id in range(1, bug_size + 1):
-            fix_single_bug(args, str(bug_id), fixa_config)
-            time.sleep(30)
-    elif args.project == None and args.id == None:
-        # fix all bugs from all projects
-        for project, bug_size in DEFECTS4J_BUG_SIZE.items():
-            args.project = project
+    for round in range(fixa_config['sample']):
+        print('round: ', round + 1)
+        if args.project != None and args.id == None:
+            # fix all bugs from a project
+            bug_size = DEFECTS4J_BUG_SIZE[args.project]
             for bug_id in range(1, bug_size + 1):
                 fix_single_bug(args, str(bug_id), fixa_config)
                 time.sleep(30)
-    else:
-        fix_single_bug(args, args.id, fixa_config)
+        elif args.project == None and args.id == None:
+            # fix all bugs from all projects
+            for project, bug_size in DEFECTS4J_BUG_SIZE.items():
+                args.project = project
+                for bug_id in range(1, bug_size + 1):
+                    fix_single_bug(args, str(bug_id), fixa_config)
+                    time.sleep(30)
+        else:
+            fix_single_bug(args, args.id, fixa_config)
