@@ -43,7 +43,8 @@ FIXA_CONFIG = {
     'compile': False,
     'test': False,
     'dry_run': False,
-    'sample': 10,
+    'sample': 200,
+    'completion_ratio': 1.2,
 }
 
 DEFECTS4J_PROJECTS = ['Chart', 'Cli', 'Closure', 'Codec', 'Collections', 'Compress', 'Csv', 'Gson',

@@ -131,7 +131,6 @@ def fix_single_bug(args, bug_id, fixa_config):
 
     # save 'result' to database
     result_template = Result()
-    result_template.buggy_code_chunk = ''
     result_template.model = args.model
     result_template.benchmark = args.benchmark
     result_template.project = args.project
@@ -158,6 +157,13 @@ def fix_single_bug(args, bug_id, fixa_config):
     fixed_node, buggy_node = load_code_node(
         fixed_bug_path, buggy_bug_path, countable_diffs)
 
+    result_template.buggy_code_chunk = buggy_node.code_lines_str()
+    result_template.buggy_code_token = number_of_tokens(
+        result_template.buggy_code_chunk)
+    result_template.fixed_code_chunk = fixed_node.code_lines_str()
+    result_template.fixed_code_token = number_of_tokens(
+        result_template.fixed_code_chunk)
+
     # build prompt
     project_buggy_path = PROJECT_EXAMPLE_BUGGY_PATH_FORMAT.format(
         fixed_bug.project)
@@ -175,7 +181,10 @@ def fix_single_bug(args, bug_id, fixa_config):
 
     # calculate number of requests
     request_counter, n_value, max_completion_size = calculate_request_counter(
-        prompt_size, bug_size)
+        fixa_config['sample'], fixa_config['completion_ratio'], prompt_size, bug_size)
+    print('request_counter: ', request_counter)
+    print('n_value: ', n_value)
+    print('max_completion_size: ', max_completion_size)
     request_params = {
         'model': CODEX_MODEL,
         'temperature': 0.8,
@@ -187,6 +196,7 @@ def fix_single_bug(args, bug_id, fixa_config):
         'n': n_value,
     }
     result_template.request_params = request_params
+    result_template.prompt_params = fixa_config
 
     # send requests to Codex
     sample_number = 0
@@ -214,8 +224,9 @@ def fix_single_bug(args, bug_id, fixa_config):
                     sample_result.respond_compiled_output = compiled_output
                     if compiled_output.count('OK') == 2:
                         sample_result.result_type = 'COMPILED_SUCCESS'
-                    test_output = fixed_bug.run_test()
-                    if test_output == True:
+                    success, test_output = fixed_bug.run_test()
+                    sample_result.respond_test_output = test_output
+                    if success == True:
                         sample_result.result_type = 'TEST_SUCCESS'
                     else:
                         sample_result.result_type = 'TEST_FAILED'

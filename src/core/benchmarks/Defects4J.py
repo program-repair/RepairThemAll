@@ -112,13 +112,14 @@ defects4j test %s;
             os.path.join(JAVA8_HOME, '..'),
             working_directory,
             test_arg)
-        subprocess.check_call(cmd, shell=True)
+        out = subprocess.check_output(
+            cmd, shell=True, stderr=subprocess.STDOUT)
         if os.path.exists(os.path.join(working_directory, "failing_tests")):
             with open(os.path.join(working_directory, "failing_tests")) as fd:
                 file_lines = fd.readlines()
             print('failing_tests: ', file_lines)
-            return False
-        return True
+            return False, out.decode("utf-8")
+        return True, out.decode("utf-8")
 
     def failing_tests(self, bug):
         cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";
