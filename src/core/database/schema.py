@@ -17,6 +17,7 @@ class Result(Base):
     bug_id: int = Column(Integer(), nullable=False)  # type: ignore
     # single line, function, single hunk
     request_type: str = Column(String(100))  # type: ignore
+    sample_number: int = Column(Integer())  # type: ignore
     prompt_text: str = Column(Text)  # type: ignore
     prompt_size: int = Column(Integer())  # type: ignore
     patch: str = Column(Text)  # type: ignore
@@ -27,6 +28,7 @@ class Result(Base):
     respond_code_chunk: str = Column(Text)  # type: ignore
     respond_code_token: int = Column(Integer())  # type: ignore
     respond_compiled_output: str = Column(Text)  # type: ignore
+    respond_test_output: str = Column(Text)  # type: ignore
     created_on: datetime = Column(
         DateTime(), default=datetime.now)  # type: ignore
     # for example, turn on/off comments or document

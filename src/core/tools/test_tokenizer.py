@@ -16,6 +16,6 @@ def test_number_of_tokens_example():
 
 
 def test_get_max_completion_size():
-    assert 120 == get_max_completion_size(500, 100)
-    assert 1200 == get_max_completion_size(500, 1000)
-    assert 2500 == get_max_completion_size(500, 5000)
+    assert 120 == get_max_completion_size(1.2, 500, 100)
+    assert 1200 == get_max_completion_size(1.2, 500, 1000)
+    assert 2500 == get_max_completion_size(1.2, 500, 5000)

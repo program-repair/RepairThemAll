@@ -27,6 +27,22 @@ def is_line_contain_statement(line):
     return not is_comment and has_multi_chars
 
 
+def read_patch_file(file_path):
+    countable_diffs = []
+    with open(file_path, 'r') as file:
+        text = file.read()
+
+    for diff in whatthepatch.parse_patch(text):
+
+        countable_diff = CountableDiff(getattr(diff.header, 'new_path'))
+        for change in diff.changes or []:
+            if change.new == None and is_line_contain_statement(change.line):
+                countable_diff.changes.add(change.old)
+        countable_diffs.append(countable_diff)
+
+    return countable_diffs, text
+
+
 def load_patch_file(result, file_path):
     countable_diffs = []
     with open(file_path, 'r') as file:

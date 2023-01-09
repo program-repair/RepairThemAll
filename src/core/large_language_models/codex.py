@@ -1,13 +1,16 @@
 import copy
 import os
+import time
 from dotenv import dotenv_values
 import openai
+from core.database.engine import save
 from core.database.schema import Result
 from core.tools.java_lang import get_node_by_hash, load_ast_nodes, load_fixed_code_node
-from core.tools.patch import load_patch_file
+from core.tools.patch import load_patch_file, read_patch_file
 from core.tools.persist import write_to_file
 from core.tools.prompt import generate_prompt
-from core.tools.tokenizer import get_max_completion_size, number_of_tokens
+from core.tools.tokenizer import calculate_request_counter, number_of_tokens
+from core.utils import get_benchmark
 
 
 config = dotenv_values(".env")
@@ -23,34 +26,18 @@ PROJECT_EXAMPLE_FIXED_PATH_FORMAT = 'data/example/codex_project_example_{}_fixed
 STOP_SIGN = "###"
 
 
-def load_buggy_code_node(result, fixed_file_path, buggy_file_path, patch_file_path):
-    countable_diffs, result = load_patch_file(result, patch_file_path)
+def load_code_node(fixed_file_path, buggy_file_path, countable_diffs):
     fixed_node = load_fixed_code_node(
         fixed_file_path, countable_diffs[0].sorted_changes())
     buggy_nodes = load_ast_nodes(buggy_file_path)
     buggy_node = get_node_by_hash(buggy_nodes, fixed_node.hash)
-    return fixed_node, buggy_node, result
+    return fixed_node, buggy_node
 
 
-def request_codex_code_complition(result, code, prompt_size, bug_size):
-    max_completion_size = get_max_completion_size(prompt_size, bug_size)
-    print('prompt_size: ', prompt_size)
-    print('bug_size: ', bug_size)
-    print('max_completion_size: ', max_completion_size)
+def request_codex_code_complition(prompt, request_params):
     # https://beta.openai.com/docs/api-reference/completions/create
-    print('prompt: ', code)
-    request_params = {
-        'model': CODEX_MODEL,
-        'temperature': 0.8,
-        'max_tokens': max_completion_size,
-        'top_p': 0.95,
-        'frequency_penalty': 0.0,
-        'presence_penalty': 0.0,
-        'stop': [STOP_SIGN],
-    }
-    result.request_params = request_params
     response = openai.Completion.create(
-        prompt=code,
+        prompt=prompt,
         model=request_params['model'],
         temperature=request_params['temperature'],
         max_tokens=request_params['max_tokens'],
@@ -58,19 +45,10 @@ def request_codex_code_complition(result, code, prompt_size, bug_size):
         frequency_penalty=request_params['frequency_penalty'],
         presence_penalty=request_params['presence_penalty'],
         stop=request_params['stop'],
+        n=request_params['n'],
     )
     print('--->', response)
-    return response, result
-
-
-def repair_code(result, prompt, prompt_size, bug_size, dry_run=False):
-    if dry_run:
-        print('Dry run, prompt:', prompt)
-        return None, result
-    else:
-        response, result = request_codex_code_complition(
-            result, prompt, prompt_size, bug_size)
-        return response, result
+    return response
 
 
 def apply_response_to_fixed_version(fixed_bug_path, response_text, fixed_node):
@@ -108,66 +86,156 @@ def revert_response_to_fixed_version(original_buy_lines, working_directory, bug,
     write_to_file(fixed_bug_path, ''.join(original_buy_lines))
 
 
-def fix_bug_by_openai_codex(result: Result, working_directory, bug, patch_file_path, include_document, include_comments, dry_run=False):
-    bug_dir = os.path.join(working_directory, "%s_%s_%s" %
-                           (bug.benchmark, bug.project, bug.bug_id))
-    countable_diffs, result = load_patch_file(result, patch_file_path)
-    if len(countable_diffs) > 1:
-        print("Skip, more than one file changed")
-        return False, result, []
+def checkout_bug(benchmark, working_directory, project, bug_id, version):
+    bug_identifier = project + '_' + bug_id
 
-    # load buggy code
+    bug_path = os.path.join(working_directory,
+                            "%s_%s_%s_%s" % (benchmark.name, project, bug_id, version))
+
+    print('bug_identifier: ', bug_identifier)
+    bug = benchmark.get_bug(bug_identifier)
+    print('bug: ', bug)
+    is_buggy_version = version == 'buggy'
+    bug.checkout(bug_path, is_buggy_version)
+
+    return bug
+
+
+def fix_single_bug(args, bug_id, fixa_config):
+    # Only support Codex with Defects4J for now
+    if args.model != 'Codex' or args.benchmark != 'Defects4J':
+        print('Only support Codex with Defects4J for now')
+        exit(1)
+
+    benchmark = get_benchmark(args.benchmark)
+
+    # checkout fixed bug
+    try:
+        fixed_bug = checkout_bug(
+            benchmark, args.working_directory, args.project, bug_id, 'fixed')
+        if fixa_config['compile']:
+            fixed_bug.compile()
+        if fixa_config['test']:
+            fixed_bug.run_test()
+    except Exception as e:
+        print('-------bug {} {} does not exist or deprecated-------\n'.format(args.project, bug_id), e)
+        return
+
+    # checkout buggy bug
+    buggy_bug = checkout_bug(
+        benchmark, args.working_directory, args.project, bug_id, 'buggy')
+    if fixa_config['compile']:
+        buggy_bug.compile()
+    if fixa_config['test']:
+        buggy_bug.run_test()
+
+    # save 'result' to database
+    result_template = Result()
+    result_template.model = args.model
+    result_template.benchmark = args.benchmark
+    result_template.project = args.project
+    result_template.bug_id = bug_id
+    result_template.request_type = 'SINGLE_FUNCTION'
+    result_template.sample_number = 0
+
+    # read patch file
+    patch_file_path = 'benchmarks/defects4j/framework/projects/{}/patches/{}.src.patch'.format(
+        args.project, bug_id)
+    countable_diffs, patch_text = read_patch_file(patch_file_path)
+    result_template.patch = patch_text
+    if len(countable_diffs) > 1:
+        result_template.result_type = 'ERROR'
+        result_template.error_message = str("Skip, more than one file changed")
+        save(result_template)
+        return
+
+    # prepare fixed and buggy code ast node
+    bug_dir = os.path.join(args.working_directory, "%s_%s_%s" %
+                           (fixed_bug.benchmark, fixed_bug.project, bug_id))
     fixed_bug_path = bug_dir + "_fixed/" + countable_diffs[0].file_path
     buggy_bug_path = bug_dir + "_buggy/" + countable_diffs[0].file_path
-    output_file_path = 'output/{}'.format(bug_dir.split('/')[-1])
-    project_buggy_path = PROJECT_EXAMPLE_BUGGY_PATH_FORMAT.format(bug.project)
-    project_fixed_path = PROJECT_EXAMPLE_FIXED_PATH_FORMAT.format(bug.project)
-    print('Fixed bug path: ', fixed_bug_path)
-    print('Buggy bug path: ', buggy_bug_path)
-    print('output_file_path: ', output_file_path)
-    fixed_node, buggy_node, result = load_buggy_code_node(
-        result, fixed_bug_path, buggy_bug_path, patch_file_path)
+    fixed_node, buggy_node = load_code_node(
+        fixed_bug_path, buggy_bug_path, countable_diffs)
 
-    result.fixed_code_chunk = fixed_node.code_lines_str()
-    result.fixed_code_token = number_of_tokens(fixed_node.code_lines_str())
+    result_template.buggy_code_chunk = buggy_node.code_lines_str()
+    result_template.buggy_code_token = number_of_tokens(
+        result_template.buggy_code_chunk)
+    result_template.fixed_code_chunk = fixed_node.code_lines_str()
+    result_template.fixed_code_token = number_of_tokens(
+        result_template.fixed_code_chunk)
 
-    result.buggy_code_chunk = buggy_node.code_lines_str()
-    result.buggy_code_token = number_of_tokens(buggy_node.code_lines_str())
-
-    # should include project specific example
-    smallest_bug_example_id = int(bug._get_project_data()['smallestBug'])
+    # build prompt
+    project_buggy_path = PROJECT_EXAMPLE_BUGGY_PATH_FORMAT.format(
+        fixed_bug.project)
+    project_fixed_path = PROJECT_EXAMPLE_FIXED_PATH_FORMAT.format(
+        fixed_bug.project)
+    smallest_bug_example_id = int(fixed_bug._get_project_data()['smallestBug'])
     include_project_specific_example = smallest_bug_example_id != 0 and smallest_bug_example_id != int(
-        bug.bug_id)
-
-    # generate prompt
+        fixed_bug.bug_id)
+    output_file_path = 'output/{}'.format(bug_dir.split('/')[-1])
     prompt, prompt_size, bug_size = generate_prompt(STOP_SIGN, EXAMPLE_BUGGY_FILEPATH, EXAMPLE_FIXED_FILEPATH,
-                                                    project_buggy_path, project_fixed_path, buggy_node, include_document, include_comments, include_project_specific_example)
+                                                    project_buggy_path, project_fixed_path, buggy_node, fixa_config['include_document'], fixa_config['include_comments'], include_project_specific_example)
     write_to_file(output_file_path + '.codex_prompt', prompt)
-    response, result = repair_code(
-        result, prompt, prompt_size, bug_size, dry_run)
+    result_template.prompt_text = prompt
+    result_template.prompt_size = prompt_size
 
-    result.prompt_text = prompt
-    result.prompt_size = prompt_size
+    # calculate number of requests
+    request_counter, n_value, max_completion_size = calculate_request_counter(
+        fixa_config['sample'], fixa_config['completion_ratio'], prompt_size, bug_size)
+    print('request_counter: ', request_counter)
+    print('n_value: ', n_value)
+    print('max_completion_size: ', max_completion_size)
+    request_params = {
+        'model': CODEX_MODEL,
+        'temperature': 0.8,
+        'max_tokens': max_completion_size,
+        'top_p': 0.95,
+        'frequency_penalty': 0.0,
+        'presence_penalty': 0.0,
+        'stop': [STOP_SIGN],
+        'n': n_value,
+    }
+    result_template.request_params = request_params
+    result_template.prompt_params = fixa_config
 
-    # request codex code completion
-    # "finish_reason: stop" means the code is fixed
-    # "finish_reason: length" means the code is too long
-    if response and response.choices[0].finish_reason == 'length':  # type: ignore
-        result.result_type = 'LENGTH'
-        return False, result, []
-    elif response and response.choices[0].finish_reason == 'stop':
-        result.result_type = 'STOP'
-        result.respond_code_chunk = response.choices[0].text  # type: ignore
-        result.respond_code_token = number_of_tokens(
-            response.choices[0].text)  # type: ignore
-        write_to_file(output_file_path + '.codex_response',
-                      response.choices[0].text)  # type: ignore
-        print(response.choices[0].text)  # type: ignore
-        applied, error, original_buy_lines = apply_response_to_fixed_version(
-            fixed_bug_path, response.choices[0].text, fixed_node)  # type: ignore
-        if applied == False and error:
-            raise error
-        result.result_type = 'APPLIED'
-        return applied, result, original_buy_lines
-
-    return False, result, []
+    # send requests to Codex
+    sample_number = 0
+    for i in range(request_counter):
+        response = request_codex_code_complition(prompt, request_params)
+        for choice in response.choices:  # type: ignore
+            sample_result = copy.deepcopy(result_template)
+            sample_number += 1
+            sample_result.sample_number = sample_number
+            print('choice: ', choice.text)
+            if choice.finish_reason == 'length':
+                sample_result.result_type = 'LENGTH'
+                save(sample_result)
+            elif choice.finish_reason == 'stop':
+                sample_result.result_type = 'STOP'
+                sample_result.respond_code_chunk = choice.text
+                sample_result.respond_code_token = number_of_tokens(
+                    choice.text)
+                # apply the choice to the code
+                applied, error, original_func_lines = apply_response_to_fixed_version(
+                    fixed_bug_path, choice.text, fixed_node)
+                if applied:
+                    sample_result.result_type = 'APPLIED'
+                    compiled_output = fixed_bug.compile()
+                    sample_result.respond_compiled_output = compiled_output
+                    if compiled_output.count('OK') == 2:
+                        sample_result.result_type = 'COMPILED_SUCCESS'
+                    success, test_output = fixed_bug.run_test()
+                    sample_result.respond_test_output = test_output
+                    if success == True:
+                        sample_result.result_type = 'TEST_SUCCESS'
+                    else:
+                        sample_result.result_type = 'TEST_FAILED'
+                    # revert the codex response version to the original fixed version
+                    revert_response_to_fixed_version(
+                        original_func_lines, args.working_directory, fixed_bug, patch_file_path)
+                    save(sample_result)
+                else:
+                    sample_result.result_type = 'ERROR'
+                    sample_result.error_message = str(error)
+                    save(sample_result)
+        time.sleep(10)
