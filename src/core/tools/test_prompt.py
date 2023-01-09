@@ -1,5 +1,5 @@
-from core.database.schema import Result
-from core.large_language_models.codex import load_buggy_code_node
+from core.large_language_models.codex import load_code_node
+from core.tools.patch import read_patch_file
 from core.tools.prompt import generate_prompt
 
 
@@ -13,9 +13,9 @@ def test_generate_prompt():
     target_patch_filepath = 'src/fixtures/Defects4J_Closure_01.patch'
     target_prompt_filepath = 'src/fixtures/Defects4J_Closure_01.prompt'
 
-    mock_result = Result()
-    fixed_node, buggy_node, mock_result = load_buggy_code_node(
-        mock_result, target_fixed_filepath, target_buggy_filepath, target_patch_filepath)
+    countable_diffs, patch_text = read_patch_file(target_patch_filepath)
+    fixed_node, buggy_node = load_code_node(
+        target_fixed_filepath, target_buggy_filepath, countable_diffs)
 
     prompt, prompt_size, bug_size = generate_prompt('###', example_buggy_filepath, example_fixed_filepath,
                                                     project_buggy_filepath, project_fixed_filepath, buggy_node, False, False, True)

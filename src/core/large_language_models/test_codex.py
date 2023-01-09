@@ -1,15 +1,15 @@
 
-from core.database.schema import Result
-from core.large_language_models.codex import load_buggy_code_node
+from core.large_language_models.codex import load_code_node
+from core.tools.patch import read_patch_file
 
 
 def test_load_buggy_code_node():
     fixed_file_path = "src/fixtures/Defects4J_Closure_01_fixed.source"
     buggy_file_path = "src/fixtures/Defects4J_Closure_01_buggy.source"
     patch_file_path = 'src/fixtures/Defects4J_Closure_01.patch'
-    mockResult = Result()
-    fixed_node, buggy_node, mockResult = load_buggy_code_node(
-        mockResult, fixed_file_path, buggy_file_path, patch_file_path)
+    countable_diffs, patch_text = read_patch_file(patch_file_path)
+    fixed_node, buggy_node = load_code_node(
+        fixed_file_path, buggy_file_path, countable_diffs)
     assert buggy_node.name == 'removeUnreferencedFunctionArgs'
     assert buggy_node.type == 'MethodDeclaration'
     assert buggy_node.start_pos == 369
