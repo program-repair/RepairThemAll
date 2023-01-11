@@ -116,7 +116,7 @@ def test_load_fixed_code_node():
     countable_diffs, mock_result = load_patch_file(
         mock_result, "src/fixtures/Defects4J_Closure_01.patch")
     file_path = "src/fixtures/Defects4J_Closure_01_fixed.source"
-    result = load_fixed_code_node(
+    result, i = load_fixed_code_node(
         file_path, countable_diffs[0].sorted_changes())
     expect = JavaAstNode(name='removeUnreferencedFunctionArgs',
                          type='MethodDeclaration', start_pos=369, end_pos=409)
@@ -141,7 +141,7 @@ def test_load_fixed_code_node_all_fixtures():
             if len(countable_diffs) == 1:
                 fixed_file_path = os.path.join(
                     fixture_path, "Defects4J_{}_{}_fixed.source".format(project, example))
-                result = load_fixed_code_node(
+                result, _ = load_fixed_code_node(
                     fixed_file_path, countable_diffs[0].sorted_changes())
                 print('fixed node for {}_{}: {}'.format(
                     project, example, result))
@@ -151,7 +151,7 @@ def test_load_fixed_code_node_all_fixtures():
                 for i in range(len(countable_diffs)):
                     fixed_file_path = os.path.join(
                         fixture_path, "Defects4J_{}_{}_{}_fixed.source".format(project, example, i + 1))
-                    result = load_fixed_code_node(
+                    result, _ = load_fixed_code_node(
                         fixed_file_path, countable_diffs[i].sorted_changes())
                     print('fixed node for {}_{}_{}: {}'.format(
                         project, example, i + 1, result))
@@ -164,7 +164,7 @@ def assert_get_single_node_by_hash(fixed_file_path, buggy_file_path, patch_file_
     mock_result = Result()
     countable_diffs, mock_result = load_patch_file(
         mock_result, patch_file_path)
-    fixed_node = load_fixed_code_node(
+    fixed_node, _ = load_fixed_code_node(
         fixed_file_path, countable_diffs[0].sorted_changes())
     buggy_nodes = load_ast_nodes(buggy_file_path)
     buggy_node = get_node_by_hash(buggy_nodes, fixed_node.hash)
@@ -208,7 +208,7 @@ def test_get_node_by_hash_all_fixtures():
                     fixture_path, "Defects4J_{}_{}_fixed.source".format(project, example))
                 buggy_file_path = os.path.join(
                     fixture_path, "Defects4J_{}_{}_buggy.source".format(project, example))
-                fixed_node = load_fixed_code_node(
+                fixed_node, _ = load_fixed_code_node(
                     fixed_file_path, countable_diffs[0].sorted_changes())
                 buggy_nodes = load_ast_nodes(buggy_file_path)
                 buggy_node = get_node_by_hash(buggy_nodes, fixed_node.hash)
@@ -222,7 +222,7 @@ def test_get_node_by_hash_all_fixtures():
                     buggy_file_path = os.path.join(
                         fixture_path, "Defects4J_{}_{}_{}_buggy.source".format(project, example, i + 1))
                     try:
-                        fixed_node = load_fixed_code_node(
+                        fixed_node, _ = load_fixed_code_node(
                             fixed_file_path, countable_diffs[i].sorted_changes())
                         buggy_nodes = load_ast_nodes(buggy_file_path)
                         buggy_node = get_node_by_hash(

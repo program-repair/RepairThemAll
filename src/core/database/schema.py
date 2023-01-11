@@ -29,6 +29,8 @@ class Result(Base):
     respond_code_token: int = Column(Integer())  # type: ignore
     respond_compiled_output: str = Column(Text)  # type: ignore
     respond_test_output: str = Column(Text)  # type: ignore
+    buggy_test_output: str = Column(Text)  # type: ignore
+    fixed_test_output: str = Column(Text)  # type: ignore
     created_on: datetime = Column(
         DateTime(), default=datetime.now)  # type: ignore
     # for example, turn on/off comments or document

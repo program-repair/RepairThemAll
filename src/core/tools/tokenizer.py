@@ -16,7 +16,7 @@ def number_of_tokens(text):
 
 
 def get_max_completion_size(completion_ratio, prompt_size, bug_size):
-    rest = max(int(MAX_TOKEN_LENGTH - prompt_size - bug_size), 0)
+    rest = max(int(MAX_TOKEN_LENGTH - prompt_size), 1)
     completion_budget = bug_size * completion_ratio
     return int(min(rest, completion_budget))
 
@@ -25,5 +25,7 @@ def calculate_request_counter(total_samples, completion_ratio, prompt_size, bug_
     completion_size = get_max_completion_size(
         completion_ratio, prompt_size, bug_size)
     n_value = max(floor(MAX_COMPLETION_TOKEN_LENGTH / completion_size), 1)
+    if n_value > total_samples:
+        n_value = total_samples
     total_request = ceil(total_samples / n_value)
     return total_request, n_value, completion_size

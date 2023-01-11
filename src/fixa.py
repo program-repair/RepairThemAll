@@ -43,7 +43,7 @@ FIXA_CONFIG = {
     'compile': False,
     'test': False,
     'dry_run': False,
-    'sample': 200,
+    'sample': 10,
     'completion_ratio': 1.2,
 }
 

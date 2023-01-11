@@ -5,7 +5,7 @@ from dotenv import dotenv_values
 import openai
 from core.database.engine import save
 from core.database.schema import Result
-from core.tools.java_lang import get_node_by_hash, load_ast_nodes, load_fixed_code_node
+from core.tools.java_lang import get_node_by_position, load_ast_nodes, load_fixed_code_node
 from core.tools.patch import load_patch_file, read_patch_file
 from core.tools.persist import write_to_file
 from core.tools.prompt import generate_prompt
@@ -27,10 +27,10 @@ STOP_SIGN = "###"
 
 
 def load_code_node(fixed_file_path, buggy_file_path, countable_diffs):
-    fixed_node = load_fixed_code_node(
+    fixed_node, i = load_fixed_code_node(
         fixed_file_path, countable_diffs[0].sorted_changes())
     buggy_nodes = load_ast_nodes(buggy_file_path)
-    buggy_node = get_node_by_hash(buggy_nodes, fixed_node.hash)
+    buggy_node = get_node_by_position(buggy_nodes, fixed_node, i)
     return fixed_node, buggy_node
 
 
@@ -51,7 +51,7 @@ def request_codex_code_complition(prompt, request_params):
     return response
 
 
-def apply_response_to_fixed_version(fixed_bug_path, response_text, fixed_node):
+def apply_text_to_fixed_version(fixed_bug_path, response_text, fixed_node):
     print('fixed_bug_path: ', fixed_bug_path)
     print('fixed_node: ', fixed_node)
     print('response_text: ', response_text)
@@ -164,6 +164,27 @@ def fix_single_bug(args, bug_id, fixa_config):
     result_template.fixed_code_token = number_of_tokens(
         result_template.fixed_code_chunk)
 
+    # run original fixed version unit tests
+    template_fixed_complied_output = fixed_bug.compile()
+    if template_fixed_complied_output.count('OK') == 2:
+        _, fixed_test_output = fixed_bug.run_test()
+        result_template.fixed_test_output = fixed_test_output
+    else:
+        result_template.fixed_test_output = 'Compile error'
+
+    # run buggy code against fixed unit tests, then revert the source to the fixed code
+    applied, error, original_func_lines = apply_text_to_fixed_version(
+        fixed_bug_path, buggy_node.code_lines_str(), fixed_node)
+    if applied:
+        template_buggy_complied_output = fixed_bug.compile()
+        if template_buggy_complied_output.count('OK') == 2:
+            _, buggy_test_output = fixed_bug.run_test()
+            result_template.buggy_test_output = buggy_test_output
+        else:
+            result_template.buggy_test_output = 'Compile error'
+        revert_response_to_fixed_version(
+            original_func_lines, args.working_directory, fixed_bug, patch_file_path)
+
     # build prompt
     project_buggy_path = PROJECT_EXAMPLE_BUGGY_PATH_FORMAT.format(
         fixed_bug.project)
@@ -216,7 +237,7 @@ def fix_single_bug(args, bug_id, fixa_config):
                 sample_result.respond_code_token = number_of_tokens(
                     choice.text)
                 # apply the choice to the code
-                applied, error, original_func_lines = apply_response_to_fixed_version(
+                applied, error, original_func_lines = apply_text_to_fixed_version(
                     fixed_bug_path, choice.text, fixed_node)
                 if applied:
                     sample_result.result_type = 'APPLIED'

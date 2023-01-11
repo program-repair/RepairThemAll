@@ -1,3 +1,4 @@
+import copy
 import javalang
 from core.tools.java_ast_node import JavaAstNode
 
@@ -48,7 +49,8 @@ def load_ast_nodes(file_path):
 
 
 def load_fixed_code_node(file_path, line_numbers):
-    ast_nodes = load_ast_nodes(file_path)
+    origin_ast_nodes = load_ast_nodes(file_path)
+    ast_nodes = copy.deepcopy(origin_ast_nodes)
 
     for line_number in line_numbers:
         for m in ast_nodes:
@@ -66,7 +68,12 @@ def load_fixed_code_node(file_path, line_numbers):
             if most_related_method.is_empty() or len(m.highlight_line_numbers) > len(most_related_method.highlight_line_numbers):
                 most_related_method = m
 
-    return most_related_method
+    position = 0
+    for i in range(len(origin_ast_nodes)):
+        if origin_ast_nodes[i].hash == most_related_method.hash:
+            position = i
+
+    return most_related_method, position
 
 
 class NodeNotFoundException(Exception):
@@ -78,3 +85,15 @@ def get_node_by_hash(ast_nodes, hash):
         if node.hash == hash:
             return node
     raise NodeNotFoundException('Node with hash {} not found'.format(hash))
+
+
+def get_node_by_position(ast_nodes, fixed_node, position):
+    print('position', position)
+    for n in ast_nodes:
+        print(n.name, n.hash)
+    if position < len(ast_nodes):
+        node = ast_nodes[position]
+        if node.hash == fixed_node.hash or node.name == fixed_node.name:
+            return node
+    raise NodeNotFoundException(
+        'Node with name {} not found'.format(fixed_node.name))
