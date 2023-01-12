@@ -114,12 +114,10 @@ defects4j test %s;
             test_arg)
         out = subprocess.check_output(
             cmd, shell=True, stderr=subprocess.STDOUT)
-        if os.path.exists(os.path.join(working_directory, "failing_tests")):
-            with open(os.path.join(working_directory, "failing_tests")) as fd:
-                file_lines = fd.readlines()
-            print('failing_tests: ', file_lines)
-            return False, out.decode("utf-8")
-        return True, out.decode("utf-8")
+        print('running on working_directory: ', working_directory)
+        testing_output = out.decode("utf-8")
+        success = "Failing tests: 0" in testing_output
+        return success, testing_output
 
     def failing_tests(self, bug):
         cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";

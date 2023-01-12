@@ -54,7 +54,7 @@ def request_codex_code_complition(prompt, request_params):
 def apply_text_to_fixed_version(fixed_bug_path, response_text, fixed_node):
     print('fixed_bug_path: ', fixed_bug_path)
     print('fixed_node: ', fixed_node)
-    print('response_text: ', response_text)
+    print('response_text:\n ', response_text)
     original_fixed_bug_lines = []
     try:
         response_text_lines = response_text.split("\n")
@@ -101,35 +101,27 @@ def checkout_bug(benchmark, working_directory, project, bug_id, version):
     return bug
 
 
-def fix_single_bug(args, bug_id, fixa_config):
-    # Only support Codex with Defects4J for now
-    if args.model != 'Codex' or args.benchmark != 'Defects4J':
-        print('Only support Codex with Defects4J for now')
-        exit(1)
-
-    benchmark = get_benchmark(args.benchmark)
-
+def checkout_fixed_version(benchmark, working_directory, project, bug_id, fixa_config):
     # checkout fixed bug
     try:
         fixed_bug = checkout_bug(
-            benchmark, args.working_directory, args.project, bug_id, 'fixed')
+            benchmark, working_directory, project, bug_id, 'fixed')
         if fixa_config['compile']:
             fixed_bug.compile()
-        if fixa_config['test']:
-            fixed_bug.run_test()
     except Exception as e:
-        print('-------bug {} {} does not exist or deprecated-------\n'.format(args.project, bug_id), e)
-        return
+        print('-------bug {} {} does not exist or deprecated-------\n'.format(project, bug_id), e)
+        return None
 
     # checkout buggy bug
     buggy_bug = checkout_bug(
-        benchmark, args.working_directory, args.project, bug_id, 'buggy')
+        benchmark, working_directory, project, bug_id, 'buggy')
     if fixa_config['compile']:
         buggy_bug.compile()
-    if fixa_config['test']:
-        buggy_bug.run_test()
 
-    # save 'result' to database
+    return fixed_bug
+
+
+def build_result_template(args, bug_id):
     result_template = Result()
     result_template.model = args.model
     result_template.benchmark = args.benchmark
@@ -137,20 +129,12 @@ def fix_single_bug(args, bug_id, fixa_config):
     result_template.bug_id = bug_id
     result_template.request_type = 'SINGLE_FUNCTION'
     result_template.sample_number = 0
+    return result_template
 
-    # read patch file
-    patch_file_path = 'benchmarks/defects4j/framework/projects/{}/patches/{}.src.patch'.format(
-        args.project, bug_id)
-    countable_diffs, patch_text = read_patch_file(patch_file_path)
-    result_template.patch = patch_text
-    if len(countable_diffs) > 1:
-        result_template.result_type = 'ERROR'
-        result_template.error_message = str("Skip, more than one file changed")
-        save(result_template)
-        return
 
+def run_fixed_unit_tests(result_template, working_directory, patch_file_path, countable_diffs, fixed_bug, bug_id):
     # prepare fixed and buggy code ast node
-    bug_dir = os.path.join(args.working_directory, "%s_%s_%s" %
+    bug_dir = os.path.join(working_directory, "%s_%s_%s" %
                            (fixed_bug.benchmark, fixed_bug.project, bug_id))
     fixed_bug_path = bug_dir + "_fixed/" + countable_diffs[0].file_path
     buggy_bug_path = bug_dir + "_buggy/" + countable_diffs[0].file_path
@@ -165,10 +149,14 @@ def fix_single_bug(args, bug_id, fixa_config):
         result_template.fixed_code_chunk)
 
     # run original fixed version unit tests
+    # must checkout the fixed bug again
+    fixed_bug = checkout_bug(
+        fixed_bug.benchmark, working_directory, fixed_bug.project, bug_id, 'fixed')
     template_fixed_complied_output = fixed_bug.compile()
     if template_fixed_complied_output.count('OK') == 2:
         _, fixed_test_output = fixed_bug.run_test()
         result_template.fixed_test_output = fixed_test_output
+        print('fixed_test_output: \n', fixed_test_output)
     else:
         result_template.fixed_test_output = 'Compile error'
 
@@ -180,11 +168,16 @@ def fix_single_bug(args, bug_id, fixa_config):
         if template_buggy_complied_output.count('OK') == 2:
             _, buggy_test_output = fixed_bug.run_test()
             result_template.buggy_test_output = buggy_test_output
+            print('buggy_test_output: \n', buggy_test_output)
         else:
             result_template.buggy_test_output = 'Compile error'
         revert_response_to_fixed_version(
-            original_func_lines, args.working_directory, fixed_bug, patch_file_path)
+            original_func_lines, working_directory, fixed_bug, patch_file_path)
 
+    return result_template, fixed_node, buggy_node
+
+
+def build_prompt(result_template, fixed_bug, buggy_node, fixa_config, bug_dir):
     # build prompt
     project_buggy_path = PROJECT_EXAMPLE_BUGGY_PATH_FORMAT.format(
         fixed_bug.project)
@@ -199,10 +192,14 @@ def fix_single_bug(args, bug_id, fixa_config):
     write_to_file(output_file_path + '.codex_prompt', prompt)
     result_template.prompt_text = prompt
     result_template.prompt_size = prompt_size
+    result_template.buggy_code_token = bug_size
 
-    # calculate number of requests
+    return result_template
+
+
+def build_request_params(result_template, fixa_config):
     request_counter, n_value, max_completion_size = calculate_request_counter(
-        fixa_config['sample'], fixa_config['completion_ratio'], prompt_size, bug_size)
+        fixa_config['sample'], fixa_config['completion_ratio'], result_template.prompt_size, result_template.buggy_code_token)
     print('request_counter: ', request_counter)
     print('n_value: ', n_value)
     print('max_completion_size: ', max_completion_size)
@@ -219,44 +216,122 @@ def fix_single_bug(args, bug_id, fixa_config):
     result_template.request_params = request_params
     result_template.prompt_params = fixa_config
 
-    # send requests to Codex
-    sample_number = 0
-    for i in range(request_counter):
-        response = request_codex_code_complition(prompt, request_params)
-        for choice in response.choices:  # type: ignore
-            sample_result = copy.deepcopy(result_template)
-            sample_number += 1
-            sample_result.sample_number = sample_number
-            print('choice: ', choice.text)
-            if choice.finish_reason == 'length':
-                sample_result.result_type = 'LENGTH'
-                save(sample_result)
-            elif choice.finish_reason == 'stop':
-                sample_result.result_type = 'STOP'
-                sample_result.respond_code_chunk = choice.text
-                sample_result.respond_code_token = number_of_tokens(
-                    choice.text)
-                # apply the choice to the code
-                applied, error, original_func_lines = apply_text_to_fixed_version(
-                    fixed_bug_path, choice.text, fixed_node)
-                if applied:
-                    sample_result.result_type = 'APPLIED'
-                    compiled_output = fixed_bug.compile()
-                    sample_result.respond_compiled_output = compiled_output
-                    if compiled_output.count('OK') == 2:
-                        sample_result.result_type = 'COMPILED_SUCCESS'
-                    success, test_output = fixed_bug.run_test()
-                    sample_result.respond_test_output = test_output
-                    if success == True:
-                        sample_result.result_type = 'TEST_SUCCESS'
-                    else:
-                        sample_result.result_type = 'TEST_FAILED'
-                    # revert the codex response version to the original fixed version
-                    revert_response_to_fixed_version(
-                        original_func_lines, args.working_directory, fixed_bug, patch_file_path)
-                    save(sample_result)
+    return result_template, request_counter
+
+
+def process_response(sample_result, choice, fixed_bug_path, fixed_node, fixed_bug, patch_file_path, working_directory):
+    if choice.finish_reason == 'length':
+        sample_result.result_type = 'EXCEED_MAX_LENGTH'
+    elif choice.finish_reason == 'stop':
+        sample_result.result_type = 'RESPONDED'
+        sample_result.respond_code_chunk = choice.text
+        sample_result.respond_code_token = number_of_tokens(
+            choice.text)
+        # apply the choice to the code
+        applied, error, original_func_lines = apply_text_to_fixed_version(
+            fixed_bug_path, choice.text, fixed_node)
+        if applied:
+            sample_result.result_type = 'APPLIED'
+            compiled_output = fixed_bug.compile()
+            sample_result.respond_compiled_output = compiled_output
+            if compiled_output.count('OK') == 2:
+                sample_result.result_type = 'COMPILED_SUCCESS'
+                # only run test if the code is compiled successfully
+                success, test_output = fixed_bug.run_test()
+                print('test_output: \n', test_output)
+                sample_result.respond_test_output = test_output
+                if success == True:
+                    sample_result.result_type = 'TEST_SUCCESS'
+                elif len(sample_result.respond_test_output) < len(sample_result.buggy_test_output) and sample_result.respond_test_output == sample_result.fixed_test_output:
+                    sample_result.result_type = 'TEST_FAILED_BUT_MATCHED_REDUCED'
+                elif len(sample_result.respond_test_output) < len(sample_result.buggy_test_output):
+                    sample_result.result_type = 'TEST_FAILED_BUT_REDUCED'
+                elif sample_result.respond_test_output == sample_result.fixed_test_output:
+                    sample_result.result_type = 'TEST_FAILED_BUT_MATCHED'
                 else:
-                    sample_result.result_type = 'ERROR'
-                    sample_result.error_message = str(error)
+                    sample_result.result_type = 'TEST_FAILED'
+            else:
+                sample_result.result_type = 'APPLIED_BUT_COMPILED_FAILED'
+
+            # revert the codex response version to the original fixed version
+            revert_response_to_fixed_version(
+                original_func_lines, working_directory, fixed_bug, patch_file_path)
+        else:
+            sample_result.result_type = 'ERROR'
+            sample_result.error_message = str(error)
+    return sample_result
+
+
+def fix_single_bug(args, bug_id, fixa_config):
+    # Only support Codex with Defects4J for now
+    if args.model != 'Codex' or args.benchmark != 'Defects4J':
+        print('Only support Codex with Defects4J for now')
+        exit(1)
+
+    benchmark = get_benchmark(args.benchmark)
+
+    # checkout buggy and fixed version
+    fixed_bug = checkout_fixed_version(
+        benchmark, args.working_directory, args.project, bug_id, fixa_config)
+
+    if fixed_bug is None:
+        return
+
+    # build a result template that will be used to save the result
+    result_template = build_result_template(args, bug_id)
+
+    try:
+        # read patch file
+        patch_file_path = 'benchmarks/defects4j/framework/projects/{}/patches/{}.src.patch'.format(
+            args.project, bug_id)
+        countable_diffs, patch_text = read_patch_file(patch_file_path)
+        result_template.patch = patch_text
+        if len(countable_diffs) > 1:
+            result_template.result_type = 'ERROR'
+            result_template.error_message = str(
+                "Skip, more than one file changed")
+            save(result_template)
+            return
+
+        # location of checkout bug dir
+        bug_dir = os.path.join(args.working_directory, "%s_%s_%s" %
+                               (fixed_bug.benchmark, fixed_bug.project, bug_id))
+        fixed_bug_path = bug_dir + "_fixed/" + countable_diffs[0].file_path
+
+        # prepare fixed and buggy code ast node
+        # run original fixed version unit tests
+        # run buggy code against fixed unit tests, then revert the source to the fixed code
+        result_template, fixed_node, buggy_node = run_fixed_unit_tests(
+            result_template, args.working_directory, patch_file_path, countable_diffs, fixed_bug, bug_id)
+
+        # build prompt
+        result_template = build_prompt(
+            result_template, fixed_bug, buggy_node, fixa_config, bug_dir)
+
+        # calculate number of requests
+        result_template, request_counter = build_request_params(
+            result_template, fixa_config)
+
+        # send requests to Codex
+        sample_number = 0
+        for i in range(request_counter):
+            response = request_codex_code_complition(
+                result_template.prompt_text, result_template.request_params)
+            for choice in response.choices:  # type: ignore
+                sample_result = copy.deepcopy(result_template)
+                sample_number += 1
+                sample_result.sample_number = sample_number
+                try:
+                    sample_result = process_response(
+                        sample_result, choice, fixed_bug_path, fixed_node, fixed_bug, patch_file_path, args.working_directory)
+                except Exception as e:
+                    sample_result.result_type = 'SAMPLE_ERROR'
+                    sample_result.error_message = str(
+                        'Error in processing response, in the sample: ' + str(sample_number))
+                finally:
                     save(sample_result)
-        time.sleep(10)
+            time.sleep(10)
+    except Exception as e:
+        result_template.result_type = 'TEMPLATE_ERROR'
+        result_template.error_message = str(e)
+        save(result_template)

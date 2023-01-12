@@ -88,9 +88,6 @@ def get_node_by_hash(ast_nodes, hash):
 
 
 def get_node_by_position(ast_nodes, fixed_node, position):
-    print('position', position)
-    for n in ast_nodes:
-        print(n.name, n.hash)
     if position < len(ast_nodes):
         node = ast_nodes[position]
         if node.hash == fixed_node.hash or node.name == fixed_node.name:
