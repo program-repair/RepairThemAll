@@ -40,10 +40,8 @@ DEFECTS4J_BUG_SIZE = {
 FIXA_CONFIG = {
     'include_document': False,
     'include_comments': True,
-    'compile': False,
-    'test': False,
-    'dry_run': False,
-    'sample': 200,
+    'compile': True,
+    'sample': 100,
     'completion_ratio': 1.2,
 }
 
