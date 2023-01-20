@@ -41,7 +41,7 @@ FIXA_CONFIG = {
     'include_document': False,
     'include_comments': True,
     'compile': True,
-    'sample': 100,
+    'sample': 1,
     'completion_ratio': 1.2,
 }
 
@@ -53,20 +53,18 @@ if __name__ == "__main__":
     args = parser.parse_args()
     dry_run = args.type == 'dryrun'
 
-    for round in range(FIXA_CONFIG['sample']):
-        print('round: ', round + 1)
-        if args.project != None and args.id == None:
-            # fix all bugs from a project
-            bug_size = DEFECTS4J_BUG_SIZE[args.project]
+    if args.project != None and args.id == None:
+        # fix all bugs from a project
+        bug_size = DEFECTS4J_BUG_SIZE[args.project]
+        for bug_id in range(1, bug_size + 1):
+            fix_single_bug(args, str(bug_id), FIXA_CONFIG)
+            time.sleep(12)
+    elif args.project == None and args.id == None:
+        # fix all bugs from all projects
+        for project, bug_size in DEFECTS4J_BUG_SIZE.items():
+            args.project = project
             for bug_id in range(1, bug_size + 1):
                 fix_single_bug(args, str(bug_id), FIXA_CONFIG)
                 time.sleep(12)
-        elif args.project == None and args.id == None:
-            # fix all bugs from all projects
-            for project, bug_size in DEFECTS4J_BUG_SIZE.items():
-                args.project = project
-                for bug_id in range(1, bug_size + 1):
-                    fix_single_bug(args, str(bug_id), FIXA_CONFIG)
-                    time.sleep(12)
-        else:
-            fix_single_bug(args, args.id, FIXA_CONFIG)
+    else:
+        fix_single_bug(args, args.id, FIXA_CONFIG)
