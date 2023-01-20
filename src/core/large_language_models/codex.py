@@ -1,5 +1,6 @@
 import copy
 import os
+import shutil
 import time
 from dotenv import dotenv_values
 import openai
@@ -51,25 +52,23 @@ def request_codex_code_complition(prompt, request_params):
     return response
 
 
-def apply_text_to_fixed_version(fixed_bug_path, response_text, fixed_node):
-    print('fixed_bug_path: ', fixed_bug_path)
-    print('fixed_node: ', fixed_node)
+def apply_text_to_buggy_version(buggy_bug_path, response_text, buggy_node):
+    print('fixed_bug_path: ', buggy_bug_path)
+    print('fixed_node: ', buggy_node)
     print('response_text:\n ', response_text)
-    original_fixed_bug_lines = []
     try:
         response_text_lines = response_text.split("\n")
-        with open(fixed_bug_path, 'r') as file:
-            fixed_bug_lines = file.readlines()
-        original_fixed_bug_lines = copy.deepcopy(fixed_bug_lines)
-        new_fixed_bug_file = "".join(fixed_bug_lines[0:fixed_node.start_pos - 1]) + \
+        with open(buggy_bug_path, 'r') as file:
+            buggy_bug_lines = file.readlines()
+        new_buggy_bug_file = "".join(buggy_bug_lines[0:buggy_node.start_pos - 1]) + \
             "\n".join(response_text_lines) + \
-            "".join(fixed_bug_lines[fixed_node.end_pos:])
-        write_to_file(fixed_bug_path, new_fixed_bug_file)
-        return True, None, original_fixed_bug_lines
+            "".join(buggy_bug_lines[buggy_node.end_pos:])
+        write_to_file(buggy_bug_path, new_buggy_bug_file)
+        return True, None
     except Exception as e:
         print('Error: ', e)
-        print('fixed_bug_path: ', fixed_bug_path)
-        return False, e, original_fixed_bug_lines
+        print('buggy_bug_path: ', buggy_bug_path)
+        return False, e
 
 
 def get_fixed_bug_path(bug_dir, patch_file_path):
@@ -78,12 +77,14 @@ def get_fixed_bug_path(bug_dir, patch_file_path):
 
 
 # revert fixed bug file after testing codex response
-def revert_response_to_fixed_version(original_buy_lines, working_directory, bug, patch_file_path):
-    print('revert fixed bug file after testing codex response')
-    bug_dir = os.path.join(working_directory, "%s_%s_%s" %
-                           (bug.benchmark, bug.project, bug.bug_id))
-    fixed_bug_path = get_fixed_bug_path(bug_dir, patch_file_path)
-    write_to_file(fixed_bug_path, ''.join(original_buy_lines))
+def revert_response_to_buggy_version(bug_dir, benchmark, working_directory, project, bug_id):
+    print('revert buggy bug file after testing codex response')
+    buggy_path = bug_dir + "_buggy/"
+    print('clean buggy_bug_path: ', buggy_path)
+    shutil.rmtree(buggy_path)
+    buggy_bug = checkout_bug(
+        benchmark, working_directory, project, bug_id, 'buggy')
+    buggy_bug.compile()
 
 
 def checkout_bug(benchmark, working_directory, project, bug_id, version):
@@ -101,24 +102,42 @@ def checkout_bug(benchmark, working_directory, project, bug_id, version):
     return bug
 
 
-def checkout_fixed_version(benchmark, working_directory, project, bug_id, fixa_config):
-    # checkout fixed bug
+def checkout_buggy_version(result_template, benchmark, working_directory, project, bug_id):
     try:
+        # checkout buggy bug
+        buggy_bug = checkout_bug(
+            benchmark, working_directory, project, bug_id, 'buggy')
+
+        complied_output = buggy_bug.compile()
+        if complied_output.count('OK') == 2:
+            _, buggy_test_output = buggy_bug.run_test()
+            result_template.buggy_test_output = buggy_test_output
+            return result_template, buggy_bug
+        else:
+            result_template.buggy_test_output = 'Compile error'
+            return result_template, None
+    except Exception as e:
+        print('Something went wrong when checkout buggy version of bug {} {}-------\n'.format(project, bug_id), e)
+        return result_template, None
+
+
+def checkout_fixed_version(result_template, benchmark, working_directory, project, bug_id):
+    try:
+        # checkout fixed bug
         fixed_bug = checkout_bug(
             benchmark, working_directory, project, bug_id, 'fixed')
-        if fixa_config['compile']:
-            fixed_bug.compile()
+
+        complied_output = fixed_bug.compile()
+        if complied_output.count('OK') == 2:
+            _, fixed_test_output = fixed_bug.run_test()
+            result_template.fixed_test_output = fixed_test_output
+            return result_template, fixed_bug
+        else:
+            result_template.fixed_test_output = 'Compile error'
+            return result_template, None
     except Exception as e:
-        print('-------bug {} {} does not exist or deprecated-------\n'.format(project, bug_id), e)
-        return None
-
-    # checkout buggy bug
-    buggy_bug = checkout_bug(
-        benchmark, working_directory, project, bug_id, 'buggy')
-    if fixa_config['compile']:
-        buggy_bug.compile()
-
-    return fixed_bug
+        print('Something went wrong when checkout fixed version of bug {} {}-------\n'.format(project, bug_id), e)
+        return result_template, None
 
 
 def build_result_template(args, bug_id):
@@ -132,7 +151,7 @@ def build_result_template(args, bug_id):
     return result_template
 
 
-def run_fixed_unit_tests(result_template, working_directory, patch_file_path, countable_diffs, fixed_bug, bug_id):
+def load_buggy_fixed_code_nodes(result_template, working_directory, countable_diffs, fixed_bug, bug_id):
     # prepare fixed and buggy code ast node
     bug_dir = os.path.join(working_directory, "%s_%s_%s" %
                            (fixed_bug.benchmark, fixed_bug.project, bug_id))
@@ -150,29 +169,29 @@ def run_fixed_unit_tests(result_template, working_directory, patch_file_path, co
 
     # run original fixed version unit tests
     # must checkout the fixed bug again
-    fixed_bug = checkout_bug(
-        fixed_bug.benchmark, working_directory, fixed_bug.project, bug_id, 'fixed')
-    template_fixed_complied_output = fixed_bug.compile()
-    if template_fixed_complied_output.count('OK') == 2:
-        _, fixed_test_output = fixed_bug.run_test()
-        result_template.fixed_test_output = fixed_test_output
-        print('fixed_test_output: \n', fixed_test_output)
-    else:
-        result_template.fixed_test_output = 'Compile error'
+    # fixed_bug = checkout_bug(
+    #     fixed_bug.benchmark, working_directory, fixed_bug.project, bug_id, 'fixed')
+    # template_fixed_complied_output = fixed_bug.compile()
+    # if template_fixed_complied_output.count('OK') == 2:
+    #     _, fixed_test_output = fixed_bug.run_test()
+    #     result_template.fixed_test_output = fixed_test_output
+    #     print('fixed_test_output: \n', fixed_test_output)
+    # else:
+    #     result_template.fixed_test_output = 'Compile error'
 
     # run buggy code against fixed unit tests, then revert the source to the fixed code
-    applied, error, original_func_lines = apply_text_to_fixed_version(
-        fixed_bug_path, buggy_node.code_lines_str(), fixed_node)
-    if applied:
-        template_buggy_complied_output = fixed_bug.compile()
-        if template_buggy_complied_output.count('OK') == 2:
-            _, buggy_test_output = fixed_bug.run_test()
-            result_template.buggy_test_output = buggy_test_output
-            print('buggy_test_output: \n', buggy_test_output)
-        else:
-            result_template.buggy_test_output = 'Compile error'
-        revert_response_to_fixed_version(
-            original_func_lines, working_directory, fixed_bug, patch_file_path)
+    # applied, error, original_func_lines = apply_text_to_fixed_version(
+    #     fixed_bug_path, buggy_node.code_lines_str(), fixed_node)
+    # if applied:
+    #     template_buggy_complied_output = fixed_bug.compile()
+    #     if template_buggy_complied_output.count('OK') == 2:
+    #         _, buggy_test_output = fixed_bug.run_test()
+    #         result_template.buggy_test_output = buggy_test_output
+    #         print('buggy_test_output: \n', buggy_test_output)
+    #     else:
+    #         result_template.buggy_test_output = 'Compile error'
+    #     revert_response_to_fixed_version(
+    #         original_func_lines, working_directory, fixed_bug, patch_file_path)
 
     return result_template, fixed_node, buggy_node
 
@@ -205,7 +224,7 @@ def build_request_params(result_template, fixa_config):
     print('max_completion_size: ', max_completion_size)
     request_params = {
         'model': CODEX_MODEL,
-        'temperature': 0.8,
+        'temperature': 0.2,
         'max_tokens': max_completion_size,
         'top_p': 0.95,
         'frequency_penalty': 0.0,
@@ -219,7 +238,7 @@ def build_request_params(result_template, fixa_config):
     return result_template, request_counter
 
 
-def process_response(sample_result, choice, fixed_bug_path, fixed_node, fixed_bug, patch_file_path, working_directory):
+def process_response(sample_result, choice, buggy_bug_path, buggy_node, buggy_bug, patch_file_path, working_directory):
     if choice.finish_reason == 'length':
         sample_result.result_type = 'EXCEED_MAX_LENGTH'
     elif choice.finish_reason == 'stop':
@@ -228,16 +247,16 @@ def process_response(sample_result, choice, fixed_bug_path, fixed_node, fixed_bu
         sample_result.respond_code_token = number_of_tokens(
             choice.text)
         # apply the choice to the code
-        applied, error, original_func_lines = apply_text_to_fixed_version(
-            fixed_bug_path, choice.text, fixed_node)
+        applied, error = apply_text_to_buggy_version(
+            buggy_bug_path, choice.text, buggy_node)
         if applied:
             sample_result.result_type = 'APPLIED'
-            compiled_output = fixed_bug.compile()
+            compiled_output = buggy_bug.compile()
             sample_result.respond_compiled_output = compiled_output
             if compiled_output.count('OK') == 2:
                 sample_result.result_type = 'COMPILED_SUCCESS'
                 # only run test if the code is compiled successfully
-                success, test_output = fixed_bug.run_test()
+                success, test_output = buggy_bug.run_test()
                 print('test_output: \n', test_output)
                 sample_result.respond_test_output = test_output
                 if success == True:
@@ -252,10 +271,6 @@ def process_response(sample_result, choice, fixed_bug_path, fixed_node, fixed_bu
                     sample_result.result_type = 'TEST_FAILED'
             else:
                 sample_result.result_type = 'APPLIED_BUT_COMPILED_FAILED'
-
-            # revert the codex response version to the original fixed version
-            revert_response_to_fixed_version(
-                original_func_lines, working_directory, fixed_bug, patch_file_path)
         else:
             sample_result.result_type = 'ERROR'
             sample_result.error_message = str(error)
@@ -270,15 +285,20 @@ def fix_single_bug(args, bug_id, fixa_config):
 
     benchmark = get_benchmark(args.benchmark)
 
-    # checkout buggy and fixed version
-    fixed_bug = checkout_fixed_version(
-        benchmark, args.working_directory, args.project, bug_id, fixa_config)
+    # build a result template that will be used to save the result
+    result_template = build_result_template(args, bug_id)
 
+    # Run fixed version to get the test output
+    result_template, fixed_bug = checkout_fixed_version(
+        result_template, benchmark, args.working_directory, args.project, bug_id)
     if fixed_bug is None:
         return
 
-    # build a result template that will be used to save the result
-    result_template = build_result_template(args, bug_id)
+    # Run buggy version to get the test output
+    result_template, buggy_bug = checkout_buggy_version(
+        result_template, benchmark, args.working_directory, args.project, bug_id)
+    if buggy_bug is None:
+        return
 
     try:
         # read patch file
@@ -296,13 +316,13 @@ def fix_single_bug(args, bug_id, fixa_config):
         # location of checkout bug dir
         bug_dir = os.path.join(args.working_directory, "%s_%s_%s" %
                                (fixed_bug.benchmark, fixed_bug.project, bug_id))
-        fixed_bug_path = bug_dir + "_fixed/" + countable_diffs[0].file_path
+        buggy_bug_path = bug_dir + "_buggy/" + countable_diffs[0].file_path
 
         # prepare fixed and buggy code ast node
         # run original fixed version unit tests
         # run buggy code against fixed unit tests, then revert the source to the fixed code
-        result_template, fixed_node, buggy_node = run_fixed_unit_tests(
-            result_template, args.working_directory, patch_file_path, countable_diffs, fixed_bug, bug_id)
+        result_template, fixed_node, buggy_node = load_buggy_fixed_code_nodes(
+            result_template, args.working_directory, countable_diffs, fixed_bug, bug_id)
 
         # build prompt
         result_template = build_prompt(
@@ -323,11 +343,14 @@ def fix_single_bug(args, bug_id, fixa_config):
                 sample_result.sample_number = sample_number
                 try:
                     sample_result = process_response(
-                        sample_result, choice, fixed_bug_path, fixed_node, fixed_bug, patch_file_path, args.working_directory)
+                        sample_result, choice, buggy_bug_path, buggy_node, buggy_bug, patch_file_path, args.working_directory)
+                    # revert the codex response version to the original fixed version
+                    revert_response_to_buggy_version(
+                        bug_dir, benchmark, args.working_directory, args.project, bug_id)
                 except Exception as e:
                     sample_result.result_type = 'SAMPLE_ERROR'
                     sample_result.error_message = str(
-                        'Error in processing response, in the sample: ' + str(sample_number))
+                        'Error in processing response, in the sample: ' + str(sample_number) + ', ' + str(e))
                 finally:
                     save(sample_result)
             time.sleep(10)
