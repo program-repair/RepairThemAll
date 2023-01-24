@@ -1,16 +1,19 @@
+from dotenv import dotenv_values
 from sqlalchemy import create_engine
 from sqlalchemy.engine import URL
 from sqlalchemy.orm import sessionmaker
 
+config = dotenv_values(".env")
+RDS_USERNAME = config.get('RDS_USERNAME')
+RDS_PASSWORD = config.get('RDS_PASSWORD')
+RDS_HOSTNAME = config.get('RDS_HOSTNAME')
+RDS_DATABASE = config.get('RDS_DATABASE')
+RDS_URL = 'postgresql://{}:{}@{}/{}'.format(
+    RDS_USERNAME, RDS_PASSWORD, RDS_HOSTNAME, RDS_DATABASE)
+
 
 def get_engine():
-    url = URL.create(
-        drivername="postgresql",
-        username="postgres",
-        password="root",
-        database="plm"
-    )
-    return create_engine(url)
+    return create_engine(RDS_URL)
 
 
 def connect():

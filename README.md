@@ -25,7 +25,9 @@ Mockito: 9
 Time: 22
 ## Test Codex
 `python src/runner.py`
-Example 1: `python src/fixa.py -t dryrun -m Codex -b Defects4J -p Lang -i 6  -w /Users/pengyu/src/kth/repair`
+Example "Run bug 6 in project Lang": `python src/fixa.py -m Codex -b Defects4J -p Lang -i 6  -w /Users/pengyu/src/kth/repair`
+Example "Run all bugs in project Lang": `python src/fixa.py -m Codex -b Defects4J -p Lang  -w /Users/pengyu/src/kth/repair`
+Example "Run all bugs from all projects": `python src/fixa.py -m Codex -b Defects4J -w /Users/pengyu/src/kth/repair`
 
 ## Run unit test
 `pytest -vv`
