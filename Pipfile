@@ -18,4 +18,4 @@ psycopg2 = "2.9.5"
 autopep8 = "2.0.1"
 
 [requires]
-python_version = "3.10"
+python_version = "3.9"
