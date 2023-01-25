@@ -35,3 +35,8 @@ Example "Run all bugs from all projects": `python src/fixa.py -m Codex -b Defect
 ## Notes
 * project Collections can be ignored
 * Chart uses SVN
+
+## Docker
+Build docker locally: `docker build -t zpengyu/plm-repair-them-all -f Dockerfile .`
+`pipenv shell`
+`python3 src/fixa.py -m Codex -b Defects4J -p Lang -i 6  -w /repair`

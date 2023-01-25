@@ -6,19 +6,19 @@ REPAIR_ROOT = os.path.join(os.path.dirname(__file__), '..')
 DATA_PATH = os.path.join(REPAIR_ROOT, "data")
 REPAIR_TOOL_FOLDER = os.path.join(REPAIR_ROOT, "repair_tools")
 WORKING_DIRECTORY = os.environ.get(
-    "WORKING_DIRECTORY", expanduser("~/src/kth/repair/"))
+    "WORKING_DIRECTORY", expanduser("/repair/"))
 OUTPUT_PATH = os.environ.get(
-    "OUTPUT_PATH", expanduser("~/src/kth/repair/results"))
+    "OUTPUT_PATH", expanduser("/repair/results"))
 
 Z3_PATH = os.path.join(REPAIR_ROOT, "libs", "z3", "build")
 
 MAVEN_BIN = os.environ.get("MAVEN_BIN", expanduser(
-    "~/repair/deps/Maven/apache-maven/bin/"))
+    "/repair/deps/Maven/apache-maven/bin/"))
 
 JAVA7_HOME = os.environ.get(
     "JAVA7_HOME", expanduser("/Library/Java/JavaVirtualMachines/zulu-7.jdk/Contents/Home/bin"))
 JAVA8_HOME = os.environ.get(
-    "JAVA8_HOME", expanduser("/Library/Java/JavaVirtualMachines/jdk1.8.0_231.jdk/Contents/Home/bin"))
+    "JAVA8_HOME", expanduser("/usr/lib/jvm/java-8-openjdk-amd64/"))
 JAVA_ARGS = os.environ.get("JAVA_ARGS", "-Xmx4g -Xms1g")
 
 LOCAL_THREAD = int(os.environ.get("THREADS", "1"))

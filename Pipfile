@@ -6,13 +6,14 @@ name = "pypi"
 [packages]
 javalang="0.13.0"
 openai = "1.1.0"
+psycopg2 = "2.9.5"
 pytest='7.2.0'
 python-dotenv = "0.21.0"
 sets = "0.3.2"
-whatthepatch='1.0.3'
-transformers = "4.25.1"
 sqlalchemy = "1.4.45"
-psycopg2 = "2.9.5"
+tensorflow = "2.11.0"
+transformers = "4.25.1"
+whatthepatch='1.0.3'
 
 [dev-packages]
 autopep8 = "2.0.1"
