@@ -238,17 +238,29 @@ def build_request_params(result_template, fixa_config):
     return result_template, request_counter
 
 
+def sanitize_choice_text(choice_text):
+    cleaned_text = []
+    for l in choice_text.split('\n'):
+        if l.startswith('#'):
+            continue
+        if len(l.strip()) == 0:
+            continue
+        cleaned_text.append(l)
+    return '\n'.join(cleaned_text)
+
+
 def process_response(sample_result, choice, buggy_bug_path, buggy_node, buggy_bug, patch_file_path, working_directory):
     if choice.finish_reason == 'length':
         sample_result.result_type = 'EXCEED_MAX_LENGTH'
     elif choice.finish_reason == 'stop':
         sample_result.result_type = 'RESPONDED'
-        sample_result.respond_code_chunk = choice.text
+        response_text = sanitize_choice_text(choice.text)
+        sample_result.respond_code_chunk = response_text
         sample_result.respond_code_token = number_of_tokens(
-            choice.text)
+            response_text)
         # apply the choice to the code
         applied, error = apply_text_to_buggy_version(
-            buggy_bug_path, choice.text, buggy_node)
+            buggy_bug_path, response_text, buggy_node)
         if applied:
             sample_result.result_type = 'APPLIED'
             compiled_output = buggy_bug.compile()
