@@ -1,5 +1,5 @@
 
-from core.large_language_models.codex import load_code_node
+from core.large_language_models.codex import load_code_node, sanitize_choice_text
 from core.tools.patch import read_patch_file
 
 
@@ -15,3 +15,13 @@ def test_load_buggy_code_node():
     assert buggy_node.start_pos == 369
     assert buggy_node.end_pos == 406
     print('buggy code body:\n', buggy_node.code_lines_str())
+
+
+def test_sanitize_choice_text():
+    dirty_file_path = "src/fixtures/Defects4J_Chart_01_codex_response_dirty.txt"
+    with open(dirty_file_path, 'r') as file:
+        dirty_text = file.read()
+    clean_file_path = "src/fixtures/Defects4J_Chart_01_codex_response_clean.txt"
+    with open(clean_file_path, 'r') as file:
+        clean_text = file.read()
+    assert clean_text == sanitize_choice_text(dirty_text)
