@@ -12,6 +12,7 @@ RUN add-apt-repository -y \
 # Install OpenJDK-8
 RUN apt-get update && \
     apt-get install -y openjdk-8-jdk && \
+    apt-get install -y vim && \
     apt-get install -y ant && \
     apt-get install -y git && \
     apt-get install -y subversion && \
@@ -50,6 +51,7 @@ RUN export LANG
 # Setup plm-repair-them-all
 RUN mkdir /repair
 RUN mkdir /plm-repair-them-all
+RUN mkdir /plm-repair-them-all/output
 COPY benchmarks /plm-repair-them-all/benchmarks
 COPY data /plm-repair-them-all/data
 COPY src /plm-repair-them-all/src
@@ -62,7 +64,8 @@ COPY setup.sh /plm-repair-them-all/setup.sh
 
 # defect4j
 RUN cd /plm-repair-them-all/benchmarks/defects4j && cpanm --installdeps . && ./init.sh
-RUN export PATH=$PATH:/plm-repair-them-all/benchmarks/defects4j/framework/bin
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/plm-repair-them-all/benchmarks/defects4j/framework/bin
+RUN export PATH
 
 # Install pipenv
 RUN cd /plm-repair-them-all && python3.9 -m pip install pipenv

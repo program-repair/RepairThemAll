@@ -38,5 +38,6 @@ Example "Run all bugs from all projects": `python src/fixa.py -m Codex -b Defect
 
 ## Docker
 Build docker locally: `docker build -t zpengyu/plm-repair-them-all -f Dockerfile .`
+`/bin/bash`
 `pipenv shell`
 `python3 src/fixa.py -m Codex -b Defects4J -p Lang -i 6  -w /repair`

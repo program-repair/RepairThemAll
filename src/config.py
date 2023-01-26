@@ -1,6 +1,8 @@
 import os
+from dotenv import dotenv_values
 from os.path import expanduser
-# from core.utils import getGridTime
+
+env_config = dotenv_values(".env")
 
 REPAIR_ROOT = os.path.join(os.path.dirname(__file__), '..')
 DATA_PATH = os.path.join(REPAIR_ROOT, "data")
@@ -17,8 +19,7 @@ MAVEN_BIN = os.environ.get("MAVEN_BIN", expanduser(
 
 JAVA7_HOME = os.environ.get(
     "JAVA7_HOME", expanduser("/Library/Java/JavaVirtualMachines/zulu-7.jdk/Contents/Home/bin"))
-JAVA8_HOME = os.environ.get(
-    "JAVA8_HOME", expanduser("/usr/lib/jvm/java-8-openjdk-amd64/"))
+JAVA8_HOME = env_config.get('JAVA8_HOME')
 JAVA_ARGS = os.environ.get("JAVA_ARGS", "-Xmx4g -Xms1g")
 
 LOCAL_THREAD = int(os.environ.get("THREADS", "1"))
