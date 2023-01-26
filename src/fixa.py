@@ -1,7 +1,9 @@
 import argparse
 import time
 from core.large_language_models.codex import fix_single_bug
+from dotenv import dotenv_values
 
+config = dotenv_values(".env")
 
 parser = argparse.ArgumentParser(
     prog="fixa", description='Checkout and fix the bug by pre-trained large language model')
@@ -41,7 +43,7 @@ FIXA_CONFIG = {
     'include_document': False,
     'include_comments': True,
     'compile': True,
-    'sample': 1,
+    'sample': int(config.get('CODEX_SAMPLE_SIZE') or 1),
     'completion_ratio': 1.2,
 }
 

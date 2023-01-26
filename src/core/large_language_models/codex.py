@@ -224,7 +224,7 @@ def build_request_params(result_template, fixa_config):
     print('max_completion_size: ', max_completion_size)
     request_params = {
         'model': CODEX_MODEL,
-        'temperature': 0.2,
+        'temperature': float(config.get('CODEX_TEMPERATURE') or 0.8),
         'max_tokens': max_completion_size,
         'top_p': 0.95,
         'frequency_penalty': 0.0,
