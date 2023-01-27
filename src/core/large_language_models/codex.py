@@ -255,7 +255,8 @@ def process_response(sample_result, choice, buggy_bug_path, buggy_node, buggy_bu
     elif choice.finish_reason == 'stop':
         sample_result.result_type = 'RESPONDED'
         response_text = sanitize_choice_text(choice.text)
-        sample_result.respond_code_chunk = response_text
+        sample_result.respond_origin_code_chunk = choice.text
+        sample_result.respond_clean_code_chunk = response_text
         sample_result.respond_code_token = number_of_tokens(
             response_text)
         # apply the choice to the code

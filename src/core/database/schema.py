@@ -25,7 +25,8 @@ class Result(Base):
     buggy_code_token: int = Column(Integer())  # type: ignore
     fixed_code_chunk: str = Column(Text)  # type: ignore
     fixed_code_token: int = Column(Integer())  # type: ignore
-    respond_code_chunk: str = Column(Text)  # type: ignore
+    respond_origin_code_chunk: str = Column(Text)  # type: ignore
+    respond_clean_code_chunk: str = Column(Text)  # type: ignore
     respond_code_token: int = Column(Integer())  # type: ignore
     respond_compiled_output: str = Column(Text)  # type: ignore
     respond_test_output: str = Column(Text)  # type: ignore
