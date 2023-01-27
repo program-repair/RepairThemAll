@@ -346,9 +346,18 @@ def fix_single_bug(args, bug_id, fixa_config):
 
         # send requests to Codex
         sample_number = 0
-        for i in range(request_counter):
-            response = request_codex_code_complition(
-                result_template.prompt_text, result_template.request_params)
+        curr_request_counter = 0
+        while curr_request_counter < request_counter:
+            try:
+                response = request_codex_code_complition(
+                    result_template.prompt_text, result_template.request_params)
+                curr_request_counter += 1
+            except Exception as e:
+                print('Something went wrong when requesting codex, will sleep 60s')
+                print('Exception: ', e)
+                time.sleep(60)
+                continue
+
             for choice in response.choices:  # type: ignore
                 sample_result = copy.deepcopy(result_template)
                 sample_number += 1
@@ -356,17 +365,23 @@ def fix_single_bug(args, bug_id, fixa_config):
                 try:
                     sample_result = process_response(
                         sample_result, choice, buggy_bug_path, buggy_node, buggy_bug, patch_file_path, args.working_directory)
+                except Exception as e:
+                    sample_result.result_type = 'SAMPLE_ERROR'
+                    sample_result.error_message = str(
+                        'Error in processing response, in the sample: ' + str(sample_number) + ', ' + str(e))
+                try:
                     # revert the codex response version to the original fixed version
                     revert_response_to_buggy_version(
                         bug_dir, benchmark, args.working_directory, args.project, bug_id)
                 except Exception as e:
                     sample_result.result_type = 'SAMPLE_ERROR'
                     sample_result.error_message = str(
-                        'Error in processing response, in the sample: ' + str(sample_number) + ', ' + str(e))
-                finally:
-                    save(sample_result)
-            time.sleep(10)
+                        'Error when reverting buggy code, in the sample: ' + str(sample_number) + ', ' + str(e))
+                save(sample_result)
+
+            time.sleep(12)
     except Exception as e:
         result_template.result_type = 'TEMPLATE_ERROR'
         result_template.error_message = str(e)
         save(result_template)
+        time.sleep(12)
