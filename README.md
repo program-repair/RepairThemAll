@@ -37,7 +37,13 @@ Example "Run all bugs from all projects": `python src/fixa.py -m Codex -b Defect
 * Chart uses SVN
 
 ## Docker
-Build docker locally: `docker build -t zpengyu/plm-repair-them-all -f Dockerfile .`
-`/bin/bash`
+### Build docker locally:
+`docker build -t zpengyu/plm-repair-them-all -f Dockerfile .`
+### Build docker image by docker-compose
+`docker-compose build`
+### Run docker by docker-compose
+`docker-compose run repair`
+
+### Execute defects4j in docker cli
 `pipenv shell`
 `python3 src/fixa.py -m Codex -b Defects4J -p Lang -i 6  -w /repair`
