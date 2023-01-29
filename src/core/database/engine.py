@@ -28,7 +28,15 @@ def get_session():
 
 
 def save(obj):
-    session = get_session()
-    session.add(obj)
-    session.commit()
-    session.close()
+    try:
+        session = get_session()
+        session.add(obj)
+        session.commit()
+        session.close()
+    except Exception as e:
+        # try again!
+        print('Error: {}'.format(e))
+        session = get_session()
+        session.add(obj)
+        session.commit()
+        session.close()
