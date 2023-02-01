@@ -6,7 +6,7 @@ from dotenv import dotenv_values
 config = dotenv_values(".env")
 
 parser = argparse.ArgumentParser(
-    prog="fixa", description='Checkout and fix the bug by pre-trained large language model')
+    prog="ask", description='Checkout and fix the bug by pre-trained large language model')
 parser.add_argument("--model", "-m", required=True,
                     help="The pre-trained large language model (for example, codex)")
 parser.add_argument("--benchmark", "-b", required=True, default="Defects4J",

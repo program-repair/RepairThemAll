@@ -1,8 +1,6 @@
-from sqlalchemy import JSON, Column, Integer, String, DateTime, Text
+from sqlalchemy import JSON, Column, Integer, String, DateTime, Text, Numeric
 from sqlalchemy.orm import declarative_base
 from datetime import datetime
-
-from core.database.engine import get_engine
 
 Base = declarative_base()
 
@@ -20,6 +18,10 @@ class Result(Base):
     sample_number: int = Column(Integer())  # type: ignore
     prompt_text: str = Column(Text)  # type: ignore
     prompt_size: int = Column(Integer())  # type: ignore
+    bug_start_pos: int = Column(Integer())  # type: ignore
+    bug_end_pos: int = Column(Integer())  # type: ignore
+    temperature: float = Column(Numeric())  # type: ignore
+    buggy_file_path: str = Column(String(200))  # type: ignore
     patch: str = Column(Text)  # type: ignore
     buggy_code_chunk: str = Column(Text)  # type: ignore
     buggy_code_token: int = Column(Integer())  # type: ignore
@@ -47,5 +49,5 @@ class Result(Base):
         pass
 
 
-def run():
-    Base.metadata.create_all(get_engine())
+# def run():
+#     Base.metadata.create_all(get_engine())

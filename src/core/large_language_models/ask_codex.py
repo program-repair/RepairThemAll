@@ -160,6 +160,9 @@ def load_buggy_fixed_code_nodes(result_template, working_directory, countable_di
     fixed_node, buggy_node = load_code_node(
         fixed_bug_path, buggy_bug_path, countable_diffs)
 
+    result_template.bug_start_pos = buggy_node.start_pos
+    result_template.bug_end_pos = buggy_node.end_pos
+
     result_template.buggy_code_chunk = buggy_node.code_lines_str()
     result_template.buggy_code_token = number_of_tokens(
         result_template.buggy_code_chunk)
@@ -234,6 +237,7 @@ def build_request_params(result_template, fixa_config):
     }
     result_template.request_params = request_params
     result_template.prompt_params = fixa_config
+    result_template.temperature = request_params['temperature']
 
     return result_template, request_counter
 
@@ -285,10 +289,11 @@ def ask_codex_for_single_bug(args, bug_id, fixa_config):
             save(result_template)
             return
 
+        result_template.buggy_file_path = countable_diffs[0].file_path
+
         # location of checkout bug dir
         bug_dir = os.path.join(args.working_directory, "%s_%s_%s" %
                                (fixed_bug.benchmark, fixed_bug.project, bug_id))
-        buggy_bug_path = bug_dir + "_buggy/" + countable_diffs[0].file_path
 
         # prepare fixed and buggy code ast node
         # run original fixed version unit tests
