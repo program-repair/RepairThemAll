@@ -100,9 +100,9 @@ defects4j compile;
 
     def run_test(self, bug, working_directory, test=None):
         print('Defects4J running test...')
-        test_arg = ""
+        test_arg = "-r"  # NOTE: !!!! only run relevant tests
         if test is not None:
-            test_arg = "-t %s" % (test)
+            test_arg = "-r -t %s" % (test)
         cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";
 export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true; 
 cd %s;
@@ -112,6 +112,7 @@ defects4j test %s;
             os.path.join(JAVA8_HOME, '..'),
             working_directory,
             test_arg)
+        print('Defects4J run_test cmd: ', cmd)
         out = subprocess.check_output(
             cmd, shell=True, stderr=subprocess.STDOUT)
         print('running on working_directory: ', working_directory)

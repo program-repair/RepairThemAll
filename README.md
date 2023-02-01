@@ -46,4 +46,9 @@ Example "Run all bugs from all projects": `python src/fixa.py -m Codex -b Defect
 
 ### Execute defects4j in docker cli
 `pipenv shell`
-`python3 src/fixa.py -m Codex -b Defects4J -p Lang -i 6  -w /repair`
+
+### ask codex for choices
+`python3 src/ask.py -m Codex -b Defects4J -p Chart -i 6  -w /repair`
+
+### verify codex response by given postres id range, for example id range [123, 456]
+`python3 src/verify.py -i 123-456  -w /repair`

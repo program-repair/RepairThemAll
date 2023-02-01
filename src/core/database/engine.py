@@ -1,7 +1,9 @@
+import copy
 from dotenv import dotenv_values
 from sqlalchemy import create_engine
 from sqlalchemy.engine import URL
 from sqlalchemy.orm import sessionmaker
+from core.database.schema import Result
 
 config = dotenv_values(".env")
 RDS_USERNAME = config.get('RDS_USERNAME')
@@ -32,11 +34,27 @@ def save(obj):
         session = get_session()
         session.add(obj)
         session.commit()
-        session.close()
     except Exception as e:
         # try again!
         print('Error: {}'.format(e))
         session = get_session()
         session.add(obj)
         session.commit()
-        session.close()
+
+
+def get_result_by_id(id):
+    session = get_session()
+    result = session.query(Result).get(id)
+    return result
+
+
+def update_result_by_id(id, obj):
+    session = get_session()
+    result = session.query(Result).get(id)
+    result.respond_code_token = obj.respond_code_token
+    result.respond_compiled_output = obj.respond_compiled_output
+    result.respond_test_output = obj.respond_test_output
+    result.result_type = obj.result_type
+    result.error_message = obj.error_message
+    print('Update result: {}'.format(result.result_type))
+    session.commit()
