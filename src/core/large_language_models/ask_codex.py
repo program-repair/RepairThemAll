@@ -313,7 +313,8 @@ def ask_codex_for_single_bug(args, bug_id, fixa_config):
         sample_number = 0
         curr_request_counter = 0
         openai_error_counter = 0
-        max_openai_error_counter = 5
+        max_openai_error_counter = int(
+            config.get('MAX_OPENAI_ERROR_COUNTER') or 2)
         while curr_request_counter < request_counter and openai_error_counter < max_openai_error_counter:
             try:
                 response = request_codex_code_complition(
@@ -324,19 +325,17 @@ def ask_codex_for_single_bug(args, bug_id, fixa_config):
                     # this bug can not be solved by Codex due to rate limit
                     print('Rate limit reached for this bug, will skip', str(e))
                     time.sleep(60)
-                    continue
                 elif 'Error communicating with OpenAI' in str(e):
                     # sometimes OpenAI will return error, we will retry
                     print('OpenAI server error, will retry', str(e))
                     time.sleep(60)
-                    openai_error_counter += 1
-                    if openai_error_counter == max_openai_error_counter:
-                        raise e
-                    continue
                 else:
                     print('Something went wrong when requesting codex', str(e))
                     time.sleep(60)
-                    continue
+                openai_error_counter += 1
+                if openai_error_counter >= max_openai_error_counter:
+                    raise e
+                continue
 
             for choice in response.choices:  # type: ignore
                 sample_result = copy.deepcopy(result_template)
