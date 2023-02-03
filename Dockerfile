@@ -62,6 +62,9 @@ COPY Pipfile /plm-repair-them-all/Pipfile
 COPY Pipfile.lock /plm-repair-them-all/Pipfile.lock
 COPY setup.sh /plm-repair-them-all/setup.sh
 
+# setup
+RUN cd /plm-repair-them-all && ./setup.sh
+
 # defect4j
 RUN cd /plm-repair-them-all/benchmarks/defects4j && cpanm --installdeps . && ./init.sh
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/plm-repair-them-all/benchmarks/defects4j/framework/bin
@@ -70,6 +73,5 @@ RUN export PATH
 # Install pipenv
 RUN cd /plm-repair-them-all && python3.9 -m pip install pipenv
 RUN cd /plm-repair-them-all && pipenv install
-RUN cd /plm-repair-them-all && ./setup.sh
 
 ENTRYPOINT ["/bin/bash"]
