@@ -23,5 +23,8 @@ if __name__ == "__main__":
 
     if id_start <= id_end:
         for i in range(id_start, id_end + 1):
-            print(f"Verify codex reponse with id: {i}...")
-            verify_single_sample(i, args.working_directory)
+            try:
+                print(f"Verify codex reponse with id: {i}...")
+                verify_single_sample(i, args.working_directory)
+            except Exception as e:
+                print("Error when verifying codex response with id: ", i, e)
