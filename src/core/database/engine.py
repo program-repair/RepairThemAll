@@ -45,12 +45,14 @@ def save(obj):
 def get_result_by_id(id):
     session = get_session()
     result = session.query(Result).get(id)
+    if result == None:
+        raise Exception('Cannot find result by id: ', id)
     return result
 
 
 def update_result_by_id(id, obj):
     session = get_session()
-    result = session.query(Result).get(id)
+    result = get_result_by_id(id)
     result.respond_code_token = obj.respond_code_token
     result.respond_compiled_output = obj.respond_compiled_output
     result.respond_test_output = obj.respond_test_output
