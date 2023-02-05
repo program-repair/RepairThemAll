@@ -52,11 +52,7 @@ def get_result_by_id(id):
 
 def update_result_by_id(id, obj):
     session = get_session()
-    result = get_result_by_id(id)
-    result.respond_code_token = obj.respond_code_token
-    result.respond_compiled_output = obj.respond_compiled_output
-    result.respond_test_output = obj.respond_test_output
-    result.result_type = obj.result_type
-    result.error_message = obj.error_message
-    print('Update result: {}'.format(result.result_type))
+    session.query(Result).filter(Result.id == id).update({'respond_code_token': obj.respond_code_token, 'respond_compiled_output': obj.respond_compiled_output,
+                                                          'respond_test_output': obj.respond_test_output, 'result_type': obj.result_type, 'error_message': obj.error_message})
+    print('Update result: {}'.format(obj.result_type))
     session.commit()
