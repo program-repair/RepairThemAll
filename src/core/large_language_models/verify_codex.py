@@ -77,7 +77,7 @@ def checkout_buggy_version(benchmark, working_directory, project, bug_id):
 
 
 def verify_response(record, buggy_bug_path, buggy_bug):
-    if record.result_type == 'RESPONDED':
+    if record.result_type == 'RESPONDED' or record.result_type == 'SAMPLE_ERROR':
         # apply the choice to the code
         applied, error = apply_text_to_buggy_version(buggy_bug_path, record)
         if applied:
