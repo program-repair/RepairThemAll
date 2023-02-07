@@ -2,6 +2,6 @@ version: '3.8'
 
 services:
   repair:
-    image: 732347485653.dkr.ecr.us-east-1.amazonaws.com/plm-repair:latest
+    build: .
     volumes:
         - /Users/pengyu/src/kth/repair:/repair

@@ -14,6 +14,7 @@ parser.add_argument("--benchmark", "-b", required=True, default="Defects4J",
 parser.add_argument("--project", "-p", required=False,
                     help="The project name (case sensitive)")
 parser.add_argument("--id", "-i", required=False, help="The bug id")
+parser.add_argument("--start", "-s", required=False, help="The bug id starts from")
 parser.add_argument("--working_directory", "-w",
                     required=True, help="The working directory")
 parser.add_argument("--type", "-t",
@@ -58,7 +59,8 @@ if __name__ == "__main__":
     if args.project != None and args.id == None:
         # fix all bugs from a project
         bug_size = DEFECTS4J_BUG_SIZE[args.project]
-        for bug_id in range(1, bug_size + 1):
+        starts_from = int(args.start) if args.start != None else 1
+        for bug_id in range(starts_from, bug_size + 1):
             ask_codex_for_single_bug(args, str(bug_id), FIXA_CONFIG)
             time.sleep(12)
     elif args.project == None and args.id == None:
