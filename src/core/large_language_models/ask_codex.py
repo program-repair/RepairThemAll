@@ -316,22 +316,24 @@ def ask_codex_for_single_bug(args, bug_id, fixa_config):
         max_openai_error_counter = int(
             config.get('MAX_OPENAI_ERROR_COUNTER') or 2)
         while curr_request_counter < request_counter and openai_error_counter < max_openai_error_counter:
+            current_time = int(time.time())
             try:
                 response = request_codex_code_complition(
                     result_template.prompt_text, result_template.request_params)
                 curr_request_counter += 1
+                current_time = int(time.time())
             except Exception as e:
                 if 'Rate limit reached for' in str(e):
                     # this bug can not be solved by Codex due to rate limit
                     print('Rate limit reached for this bug, will skip', str(e))
-                    time.sleep(60)
+                    time.sleep(30)
                 elif 'Error communicating with OpenAI' in str(e):
                     # sometimes OpenAI will return error, we will retry
                     print('OpenAI server error, will retry', str(e))
-                    time.sleep(60)
+                    time.sleep(30)
                 else:
                     print('Something went wrong when requesting codex', str(e))
-                    time.sleep(60)
+                    time.sleep(30)
                 openai_error_counter += 1
                 if openai_error_counter >= max_openai_error_counter:
                     raise e
@@ -350,10 +352,11 @@ def ask_codex_for_single_bug(args, bug_id, fixa_config):
                     response_text = sanitize_choice_text(choice.text)
                     sample_result.respond_origin_code_chunk = choice.text
                     sample_result.respond_clean_code_chunk = response_text
-                    sample_result.respond_code_token = number_of_tokens(
-                        response_text)
+                    # No need this line, this line pops up token error : sample_result.respond_code_token = number_of_tokens(response_text)
                 save(sample_result)
-            time.sleep(12)
+            time_gap = int(time.time()) - current_time
+            if time_gap < 12:
+                time.sleep(12-time_gap)
     except Exception as e:
         result_template.result_type = 'TEMPLATE_ERROR'
         result_template.error_message = str(e)
