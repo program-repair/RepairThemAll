@@ -73,6 +73,6 @@ RUN export PATH
 
 # Install pipenv
 RUN cd /plm-repair-them-all && python3.9 -m pip install pipenv
-RUN cd /plm-repair-them-all && pipenv install
+# RUN cd /plm-repair-them-all && pipenv install
 
 ENTRYPOINT ["/bin/bash"]
