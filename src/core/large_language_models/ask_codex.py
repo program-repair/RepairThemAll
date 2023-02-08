@@ -318,6 +318,10 @@ def ask_codex_for_single_bug(args, bug_id, fixa_config):
         openai_error_counter = 0
         max_openai_error_counter = int(
             config.get('MAX_OPENAI_ERROR_COUNTER') or 2)
+        if request_counter >= 200:
+            printlog('request_counter is too large, will reset to 1')
+            request_counter = 1
+
         while curr_request_counter < request_counter and openai_error_counter < max_openai_error_counter:
             current_time = int(time.time())
             try:
