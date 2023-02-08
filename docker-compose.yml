@@ -1,7 +1,0 @@
-version: '3.8'
-
-services:
-  repair:
-    build: .
-    volumes:
-        - /Users/pengyu/src/kth/repair:/repair
