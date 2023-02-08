@@ -7,6 +7,7 @@ import openai
 from core.database.engine import save
 from core.database.schema import Result
 from core.tools.java_lang import get_node_by_position, load_ast_nodes, load_fixed_code_node
+from core.tools.log import printlog
 from core.tools.patch import load_patch_file, read_patch_file
 from core.tools.persist import write_to_file
 from core.tools.prompt import generate_prompt
@@ -48,14 +49,14 @@ def request_codex_code_complition(prompt, request_params):
         stop=request_params['stop'],
         n=request_params['n'],
     )
-    print('--->', response)
+    printlog('--->', response)
     return response
 
 
 def apply_text_to_buggy_version(buggy_bug_path, response_text, buggy_node):
-    print('fixed_bug_path: ', buggy_bug_path)
-    print('fixed_node: ', buggy_node)
-    print('response_text:\n ', response_text)
+    printlog('fixed_bug_path: ', buggy_bug_path)
+    printlog('fixed_node: ', buggy_node)
+    printlog('response_text:\n ', response_text)
     try:
         response_text_lines = response_text.split("\n")
         with open(buggy_bug_path, 'r') as file:
@@ -66,8 +67,8 @@ def apply_text_to_buggy_version(buggy_bug_path, response_text, buggy_node):
         write_to_file(buggy_bug_path, new_buggy_bug_file)
         return True, None
     except Exception as e:
-        print('Error: ', e)
-        print('buggy_bug_path: ', buggy_bug_path)
+        printlog('Error: ', e)
+        printlog('buggy_bug_path: ', buggy_bug_path)
         return False, e
 
 
@@ -78,9 +79,9 @@ def get_fixed_bug_path(bug_dir, patch_file_path):
 
 # revert fixed bug file after testing codex response
 def revert_response_to_buggy_version(bug_dir, benchmark, working_directory, project, bug_id):
-    print('revert buggy bug file after testing codex response')
+    printlog('revert buggy bug file after testing codex response')
     buggy_path = bug_dir + "_buggy/"
-    print('clean buggy_bug_path: ', buggy_path)
+    printlog('clean buggy_bug_path: ', buggy_path)
     shutil.rmtree(buggy_path)
     buggy_bug = checkout_bug(
         benchmark, working_directory, project, bug_id, 'buggy')
@@ -93,9 +94,9 @@ def checkout_bug(benchmark, working_directory, project, bug_id, version):
     bug_path = os.path.join(working_directory,
                             "%s_%s_%s_%s" % (benchmark.name, project, bug_id, version))
 
-    print('bug_identifier: ', bug_identifier)
+    printlog('bug_identifier: ', bug_identifier)
     bug = benchmark.get_bug(bug_identifier)
-    print('bug: ', bug)
+    printlog('bug: ', bug)
     is_buggy_version = version == 'buggy'
     bug.checkout(bug_path, is_buggy_version)
 
@@ -117,7 +118,8 @@ def checkout_buggy_version(result_template, benchmark, working_directory, projec
             result_template.buggy_test_output = 'Compile error'
             return result_template, None
     except Exception as e:
-        print('Something went wrong when checkout buggy version of bug {} {}-------\n'.format(project, bug_id), e)
+        printlog(
+            'Something went wrong when checkout buggy version of bug {} {}-------\n'.format(project, bug_id), e)
         return result_template, None
 
 
@@ -136,7 +138,8 @@ def checkout_fixed_version(result_template, benchmark, working_directory, projec
             result_template.fixed_test_output = 'Compile error'
             return result_template, None
     except Exception as e:
-        print('Something went wrong when checkout fixed version of bug {} {}-------\n'.format(project, bug_id), e)
+        printlog(
+            'Something went wrong when checkout fixed version of bug {} {}-------\n'.format(project, bug_id), e)
         return result_template, None
 
 
@@ -178,7 +181,7 @@ def load_buggy_fixed_code_nodes(result_template, working_directory, countable_di
     # if template_fixed_complied_output.count('OK') == 2:
     #     _, fixed_test_output = fixed_bug.run_test()
     #     result_template.fixed_test_output = fixed_test_output
-    #     print('fixed_test_output: \n', fixed_test_output)
+    #     printlog('fixed_test_output: \n', fixed_test_output)
     # else:
     #     result_template.fixed_test_output = 'Compile error'
 
@@ -190,7 +193,7 @@ def load_buggy_fixed_code_nodes(result_template, working_directory, countable_di
     #     if template_buggy_complied_output.count('OK') == 2:
     #         _, buggy_test_output = fixed_bug.run_test()
     #         result_template.buggy_test_output = buggy_test_output
-    #         print('buggy_test_output: \n', buggy_test_output)
+    #         printlog('buggy_test_output: \n', buggy_test_output)
     #     else:
     #         result_template.buggy_test_output = 'Compile error'
     #     revert_response_to_fixed_version(
@@ -222,9 +225,9 @@ def build_prompt(result_template, fixed_bug, buggy_node, fixa_config, bug_dir):
 def build_request_params(result_template, fixa_config):
     request_counter, n_value, max_completion_size = calculate_request_counter(
         fixa_config['sample'], fixa_config['completion_ratio'], result_template.prompt_size, result_template.buggy_code_token)
-    print('request_counter: ', request_counter)
-    print('n_value: ', n_value)
-    print('max_completion_size: ', max_completion_size)
+    printlog('request_counter: ', request_counter)
+    printlog('n_value: ', n_value)
+    printlog('max_completion_size: ', max_completion_size)
     request_params = {
         'model': CODEX_MODEL,
         'temperature': float(config.get('CODEX_TEMPERATURE') or 0.8),
@@ -256,7 +259,7 @@ def sanitize_choice_text(choice_text):
 def ask_codex_for_single_bug(args, bug_id, fixa_config):
     # Only support Codex with Defects4J for now
     if args.model != 'Codex' or args.benchmark != 'Defects4J':
-        print('Only support Codex with Defects4J for now')
+        printlog('Only support Codex with Defects4J for now')
         exit(1)
 
     benchmark = get_benchmark(args.benchmark)
@@ -325,14 +328,14 @@ def ask_codex_for_single_bug(args, bug_id, fixa_config):
             except Exception as e:
                 if 'Rate limit reached for' in str(e):
                     # this bug can not be solved by Codex due to rate limit
-                    print('Rate limit reached for this bug, will skip', str(e))
+                    printlog('Rate limit reached for this bug, will skip', str(e))
                     time.sleep(30)
                 elif 'Error communicating with OpenAI' in str(e):
                     # sometimes OpenAI will return error, we will retry
-                    print('OpenAI server error, will retry', str(e))
+                    printlog('OpenAI server error, will retry', str(e))
                     time.sleep(30)
                 else:
-                    print('Something went wrong when requesting codex', str(e))
+                    printlog('Something went wrong when requesting codex', str(e))
                     time.sleep(30)
                 openai_error_counter += 1
                 if openai_error_counter >= max_openai_error_counter:
@@ -343,7 +346,7 @@ def ask_codex_for_single_bug(args, bug_id, fixa_config):
                 sample_result = copy.deepcopy(result_template)
                 sample_number += 1
                 sample_result.sample_number = sample_number
-                print('processing sample_number: ', sample_number)
+                printlog('processing sample_number: ', sample_number)
 
                 if choice.finish_reason == 'length':
                     sample_result.result_type = 'EXCEED_MAX_LENGTH'
@@ -354,9 +357,10 @@ def ask_codex_for_single_bug(args, bug_id, fixa_config):
                     sample_result.respond_clean_code_chunk = response_text
                     # No need this line, this line pops up token error : sample_result.respond_code_token = number_of_tokens(response_text)
                 save(sample_result)
+                time.sleep(1)  # prevent postgres error
             time_gap = int(time.time()) - current_time
             if time_gap < 12:
-                time.sleep(12-time_gap)
+                time.sleep(12 - time_gap)
     except Exception as e:
         result_template.result_type = 'TEMPLATE_ERROR'
         result_template.error_message = str(e)

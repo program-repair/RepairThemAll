@@ -4,6 +4,7 @@ import time
 from dotenv import dotenv_values
 import openai
 from core.database.engine import get_result_by_id, update_result_by_id
+from core.tools.log import printlog
 from core.tools.persist import write_to_file
 from core.utils import get_benchmark
 
@@ -22,8 +23,8 @@ STOP_SIGN = "###"
 
 
 def apply_text_to_buggy_version(buggy_bug_path, record):
-    print('fixed_bug_path: ', buggy_bug_path)
-    print('response_text:\n ', record.respond_clean_code_chunk)
+    printlog('fixed_bug_path: ', buggy_bug_path)
+    printlog('response_text:\n ', record.respond_clean_code_chunk)
     try:
         response_text_lines = record.respond_clean_code_chunk.split("\n")
         with open(buggy_bug_path, 'r') as file:
@@ -34,16 +35,16 @@ def apply_text_to_buggy_version(buggy_bug_path, record):
         write_to_file(buggy_bug_path, new_buggy_bug_file)
         return True, None
     except Exception as e:
-        print('Error: ', e)
-        print('buggy_bug_path: ', buggy_bug_path)
+        printlog('Error: ', e)
+        printlog('buggy_bug_path: ', buggy_bug_path)
         return False, e
 
 
 # revert fixed bug file after testing codex response
 def revert_response_to_buggy_version(bug_dir, benchmark, working_directory, project, bug_id):
-    print('revert buggy bug file after testing codex response')
+    printlog('revert buggy bug file after testing codex response')
     buggy_path = bug_dir + "_buggy/"
-    print('clean buggy_bug_path: ', buggy_path)
+    printlog('clean buggy_bug_path: ', buggy_path)
     shutil.rmtree(buggy_path)
     buggy_bug = checkout_bug(
         benchmark, working_directory, project, bug_id, 'buggy')
@@ -56,9 +57,9 @@ def checkout_bug(benchmark, working_directory, project, bug_id, version):
     bug_path = os.path.join(working_directory,
                             "%s_%s_%s_%s" % (benchmark.name, project, str(bug_id), version))
 
-    print('bug_identifier: ', bug_identifier)
+    printlog('bug_identifier: ', bug_identifier)
     bug = benchmark.get_bug(bug_identifier)
-    print('bug: ', bug)
+    printlog('bug: ', bug)
     is_buggy_version = version == 'buggy'
     bug.checkout(bug_path, is_buggy_version)
 
@@ -72,7 +73,7 @@ def checkout_buggy_version(benchmark, working_directory, project, bug_id):
             benchmark, working_directory, project, bug_id, 'buggy')
         return buggy_bug
     except Exception as e:
-        print('Something went wrong when checkout buggy version of bug {} {}-------\n'.format(project, bug_id), e)
+        printlog('Something went wrong when checkout buggy version of bug {} {}-------\n'.format(project, bug_id), e)
         return None
 
 
@@ -88,7 +89,7 @@ def verify_response(record, buggy_bug_path, buggy_bug):
                 record.result_type = 'COMPILED_SUCCESS'
                 # only run test if the code is compiled successfully
                 success, test_output = buggy_bug.run_test()
-                print('test_output: \n', test_output)
+                printlog('test_output: \n', test_output)
                 record.respond_test_output = test_output
                 if success == True:
                     record.result_type = 'TEST_SUCCESS'
@@ -113,12 +114,12 @@ def verify_single_sample(id, working_directory):
 
     # Only support Codex with Defects4J for now
     if record.model != 'Codex' or record.benchmark != 'Defects4J':
-        print('Only support Codex with Defects4J for now')
+        printlog('Only support Codex with Defects4J for now')
         exit(1)
 
     benchmark = get_benchmark(record.benchmark)
 
-    print('Verifying bug {} {}: sample {}-------\n'.format(record.project,
+    printlog('Verifying bug {} {}: sample {}-------\n'.format(record.project,
           record.bug_id, record.sample_number))
 
     # Run buggy version to get the test output
