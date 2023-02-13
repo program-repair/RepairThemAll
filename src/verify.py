@@ -1,4 +1,5 @@
 import argparse
+import time
 from core.large_language_models.verify_codex import verify_single_sample
 from dotenv import dotenv_values
 
@@ -28,3 +29,4 @@ if __name__ == "__main__":
                 verify_single_sample(i, args.working_directory)
             except Exception as e:
                 print("Error when verifying codex response with id: ", i, e)
+                time.sleep(3)
