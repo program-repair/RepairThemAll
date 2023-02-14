@@ -5,7 +5,7 @@ import re
 import subprocess
 # from sets import Set
 
-from config import DATA_PATH, JAVA8_HOME, JAVA8_HOME
+from config import DATA_PATH, JAVA8_HOME, JAVA8_HOME, TEST_TIMEOUT
 from config import REPAIR_ROOT
 from core.Benchmark import Benchmark
 from core.Bug import Bug
@@ -106,11 +106,12 @@ defects4j compile;
         cmd = """export PATH="%s:%s:$PATH";export JAVA_HOME="%s";
 export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true; 
 cd %s;
-defects4j test %s;
+timeout %s defects4j test %s;
 """ % (JAVA8_HOME,
             self._get_benchmark_path(),
             os.path.join(JAVA8_HOME, '..'),
             working_directory,
+            TEST_TIMEOUT,
             test_arg)
         print('Defects4J run_test cmd: ', cmd)
         out = subprocess.check_output(
