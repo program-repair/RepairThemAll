@@ -73,7 +73,8 @@ def checkout_buggy_version(benchmark, working_directory, project, bug_id):
             benchmark, working_directory, project, bug_id, 'buggy')
         return buggy_bug
     except Exception as e:
-        printlog('Something went wrong when checkout buggy version of bug {} {}-------\n'.format(project, bug_id), e)
+        printlog(
+            'Something went wrong when checkout buggy version of bug {} {}-------\n'.format(project, bug_id), e)
         return None
 
 
@@ -93,6 +94,8 @@ def verify_response(record, buggy_bug_path, buggy_bug):
                 record.respond_test_output = test_output
                 if success == True:
                     record.result_type = 'TEST_SUCCESS'
+                elif record.respond_test_output.count('OK') < 2 and record.respond_test_output.count('Failing tests:') == 0:
+                    record.result_type = 'TEST_TIMEOUT'
                 elif len(record.respond_test_output) < len(record.buggy_test_output) and record.respond_test_output == record.fixed_test_output:
                     record.result_type = 'TEST_FAILED_BUT_MATCHED_REDUCED'
                 elif len(record.respond_test_output) < len(record.buggy_test_output):
@@ -120,7 +123,7 @@ def verify_single_sample(id, working_directory):
     benchmark = get_benchmark(record.benchmark)
 
     printlog('Verifying bug {} {}: sample {}-------\n'.format(record.project,
-          record.bug_id, record.sample_number))
+                                                              record.bug_id, record.sample_number))
 
     # Run buggy version to get the test output
     buggy_bug = checkout_buggy_version(

@@ -28,3 +28,5 @@ GRID5K_MAX_NODE = 50
 TOOL_TIMEOUT = os.environ.get("TOOL_TIMEOUT", "120")
 # Format: HH:MM ## the fuction getGridTime calculates the timeout of the grid taking into account an overhead (expressed as percentage)
 # GRID5K_TIME_OUT = getGridTime(TOOL_TIMEOUT, overhead=0.33)
+
+TEST_TIMEOUT = env_config.get('TEST_TIMEOUT')
