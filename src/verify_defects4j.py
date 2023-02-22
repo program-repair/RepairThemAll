@@ -1,6 +1,6 @@
 import argparse
 import time
-from core.large_language_models.verify_codex import verify_single_sample
+from core.large_language_models.verify_codex_defects4j import verify_single_sample
 from dotenv import dotenv_values
 
 config = dotenv_values(".env")
