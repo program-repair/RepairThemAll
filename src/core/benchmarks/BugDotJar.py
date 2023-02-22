@@ -73,6 +73,7 @@ class BugDotJar(Benchmark):
                 project, data['jira_id'], commit)
             cmd = "cd " + os.path.join(self.path, "repositories",
                                        bug.project.lower()) + "; git reset .; git checkout -- .; git clean -x -d --force; git checkout master; git checkout " + branch_id
+            print('BugDotJar checkout cmd: ', cmd)
             subprocess.call(cmd, shell=True, stdout=FNULL,
                             stderr=subprocess.STDOUT)
             shutil.copytree(os.path.join(self.path, "repositories",
@@ -91,9 +92,9 @@ class BugDotJar(Benchmark):
         mvn -Dhttps.protocols=TLSv1.2 test -DskipTests -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true -Dhttps.protocols=TLSv1.2;
         mvn dependency:build-classpath -Dmdep.outputFile="classpath.info";
         """ % (working_directory, java_version, MAVEN_BIN)
-        subprocess.call(cmd, shell=True, stdout=FNULL,
-                        stderr=subprocess.STDOUT)
-        pass
+        out = subprocess.check_output(
+            cmd, shell=True, stderr=subprocess.STDOUT)
+        return out.decode("utf-8")
 
     def run_test(self, bug, working_directory, test=None):
         java_version = os.path.join(JAVA8_HOME, '..')
@@ -105,8 +106,13 @@ class BugDotJar(Benchmark):
         export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true;
         rm -rf .git; git init; git commit -m 'init' --allow-empty;
         mvn -Dhttps.protocols=TLSv1.2 test -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true -Djacoco.skip=true -Dhttps.protocols=TLSv1.2;""" % (working_directory, java_version, MAVEN_BIN)
-        subprocess.call(cmd, shell=True, stdout=FNULL,
-                        stderr=subprocess.STDOUT)
+
+        print('BugDotJar run_test cmd: ', cmd)
+        out = subprocess.check_output(
+            cmd, shell=True, stderr=subprocess.STDOUT)
+        print('running on working_directory: ', working_directory)
+        testing_output = out.decode("utf-8")
+        print('testing_output: ', testing_output)
         return self.get_maven_test_results(bug, working_directory)
 
     def failing_module(self, bug):

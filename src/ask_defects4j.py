@@ -1,6 +1,6 @@
 import argparse
 import time
-from core.large_language_models.ask_codex import ask_codex_for_single_bug
+from core.large_language_models.ask_codex_defects4j import ask_codex_for_single_bug
 from dotenv import dotenv_values
 
 config = dotenv_values(".env")
@@ -14,7 +14,8 @@ parser.add_argument("--benchmark", "-b", required=True, default="Defects4J",
 parser.add_argument("--project", "-p", required=False,
                     help="The project name (case sensitive)")
 parser.add_argument("--id", "-i", required=False, help="The bug id")
-parser.add_argument("--start", "-s", required=False, help="The bug id starts from")
+parser.add_argument("--start", "-s", required=False,
+                    help="The bug id starts from")
 parser.add_argument("--working_directory", "-w",
                     required=True, help="The working directory")
 parser.add_argument("--type", "-t",
