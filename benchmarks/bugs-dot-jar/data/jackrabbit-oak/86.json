@@ -1,0 +1,20 @@
+{
+    "bug_id": 86,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "84fb6b29",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.kernel.KernelNodeBuilderTest"
+    ],
+    "files": 1,
+    "jira_id": "1178",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 6,
+    "nb_test": 1423,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\nindex c3b3885428..00136aa516 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\n@@ -260,7 +260,7 @@ public boolean exists() {\n \n     @Override\n     public boolean isNew() {\n-        return !isRoot() && !parent.base().hasChildNode(name) && parent.hasChildNode(name);\n+        return exists() && !base.exists();\n     }\n \n     @Override\n",
+    "project": "jackrabbit-oak"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 53,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "9e05f77f",
+    "failing_tests": [
+        "org.apache.camel.processor.onexception.OnExceptionWhenSimpleOgnlTest"
+    ],
+    "files": 1,
+    "jira_id": "4513",
+    "linesAdd": 5,
+    "linesRem": 0,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 3842,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/language/bean/BeanExpression.java b/camel-core/src/main/java/org/apache/camel/language/bean/BeanExpression.java\nindex 98ac1c5539..f79e041ba3 100644\n--- a/camel-core/src/main/java/org/apache/camel/language/bean/BeanExpression.java\n+++ b/camel-core/src/main/java/org/apache/camel/language/bean/BeanExpression.java\n@@ -154,6 +154,9 @@ public void process(Exchange exchange) throws Exception {\n             try {\n                 // copy the original exchange to avoid side effects on it\n                 Exchange resultExchange = exchange.copy();\n+                // remove any existing exception in case we do OGNL on the exception\n+                resultExchange.setException(null);\n+\n                 // force to use InOut to retrieve the result on the OUT message\n                 resultExchange.setPattern(ExchangePattern.InOut);\n                 processor.process(resultExchange);\n@@ -195,6 +198,8 @@ public OgnlInvokeProcessor(BeanHolder beanHolder, String ognl) {\n         public void process(Exchange exchange) throws Exception {\n             // copy the original exchange to avoid side effects on it\n             Exchange resultExchange = exchange.copy();\n+            // remove any existing exception in case we do OGNL on the exception\n+            resultExchange.setException(null);\n             // force to use InOut to retrieve the result on the OUT message\n             resultExchange.setPattern(ExchangePattern.InOut);\n             // do not propagate any method name when using OGNL, as with OGNL we\n",
+    "project": "camel"
+}

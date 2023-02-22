@@ -1,0 +1,20 @@
+{
+    "bug_id": 52,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "f656676e",
+    "failing_tests": [
+        "org.apache.commons.math.optimization.linear.SimplexSolverTest"
+    ],
+    "files": 1,
+    "jira_id": "713",
+    "linesAdd": 6,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 3124,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math/optimization/linear/SimplexTableau.java b/src/main/java/org/apache/commons/math/optimization/linear/SimplexTableau.java\nindex fd8943203..d96c9167b 100644\n--- a/src/main/java/org/apache/commons/math/optimization/linear/SimplexTableau.java\n+++ b/src/main/java/org/apache/commons/math/optimization/linear/SimplexTableau.java\n@@ -407,7 +407,12 @@ protected RealPointValuePair getSolution() {\n             continue;\n           }\n           Integer basicRow = getBasicRow(colIndex);\n-          if (basicRows.contains(basicRow)) {\n+          if (basicRow != null && basicRow == 0) {\n+              // if the basic row is found to be the objective function row\n+              // set the coefficient to 0 -> this case handles unconstrained \n+              // variables that are still part of the objective function\n+              coefficients[i] = 0;\n+          } else if (basicRows.contains(basicRow)) {\n               // if multiple variables can take a given value\n               // then we choose the first and set the rest equal to 0\n               coefficients[i] = 0 - (restrictToNonNegative ? 0 : mostNegative);\n",
+    "project": "commons-math"
+}

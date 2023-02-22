@@ -1,0 +1,20 @@
+{
+    "bug_id": 279,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "fd910746",
+    "failing_tests": [
+        "org.apache.wicket.markup.html.form.FormValidationTest"
+    ],
+    "files": 1,
+    "jira_id": "4757",
+    "linesAdd": 1,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 5,
+    "nb_test": 1408,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java\nindex 9d46baf7cc..d3c9b8bacc 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java\n@@ -170,8 +170,7 @@ public void component(final FormComponent<?> formComponent, final IVisit<Void> v\n \t\t\t\treturn;\n \t\t\t}\n \n-\t\t\tif (formComponent.isVisibleInHierarchy() && formComponent.isValid() &&\n-\t\t\t\tformComponent.isEnabledInHierarchy())\n+\t\t\tif (formComponent.isVisibleInHierarchy() && formComponent.isEnabledInHierarchy())\n \t\t\t{\n \t\t\t\tvalidate(formComponent);\n \t\t\t}\n",
+    "project": "wicket"
+}

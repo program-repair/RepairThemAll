@@ -1,0 +1,20 @@
+{
+    "bug_id": 240,
+    "classification": {
+        "singleLine": true
+    },
+    "commit": "06812d25",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.index.lucene.IndexDefinitionTest"
+    ],
+    "files": 1,
+    "jira_id": "3367",
+    "linesAdd": 0,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 4,
+    "nb_test": 257,
+    "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexDefinition.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexDefinition.java\nindex cd4a119290..843fc82b40 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexDefinition.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexDefinition.java\n@@ -865,7 +865,6 @@ public boolean isBasedOnNtBase(){\n \n                     //Include props with name, boosted and nodeScopeIndex\n                     if (pd.nodeScopeIndex\n-                            && pd.boost != PropertyDefinition.DEFAULT_BOOST\n                             && pd.analyzed\n                             && !pd.isRegexp){\n                         boostedProps.add(pd);\n",
+    "project": "jackrabbit-oak"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 38,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "11763dee",
+    "failing_tests": [
+        "org.apache.logging.log4j.core.layout.JSONLayoutTest"
+    ],
+    "files": 2,
+    "jira_id": "478",
+    "linesAdd": 3,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 8,
+    "nb_test": 476,
+    "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/helpers/Transform.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/helpers/Transform.java\nindex 6c68e4dd3..a50224569 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/helpers/Transform.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/helpers/Transform.java\n@@ -139,7 +139,7 @@ public static String escapeJsonControlCharacters(final String input) {\n         final int len = input.length();\n         for (int i = 0; i < len; i++) {\n             final char ch = input.charAt(i);\n-            final String escBs = \"\\\\\\\\\";\n+            final String escBs = \"\\\\\";\n             switch (ch) {\n             case '\"':\n                 buf.append(escBs);\ndiff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/layout/JSONLayout.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/layout/JSONLayout.java\nindex a6a8af089..a9005d1cb 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/layout/JSONLayout.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/layout/JSONLayout.java\n@@ -189,7 +189,7 @@ public String toSerializable(final LogEvent event) {\n             if (jsonSupported) {\n                 buf.append(((MultiformatMessage) msg).getFormattedMessage(FORMATS));\n             } else {\n-                Transform.appendEscapingCDATA(buf, event.getMessage().getFormattedMessage());\n+                buf.append(Transform.escapeJsonControlCharacters(event.getMessage().getFormattedMessage()));\n             }\n             buf.append('\\\"');\n         }\n@@ -198,7 +198,7 @@ public String toSerializable(final LogEvent event) {\n             buf.append(\",\");\n             buf.append(this.eol);\n             buf.append(\"\\\"ndc\\\":\");\n-            Transform.appendEscapingCDATA(buf, event.getContextStack().toString());\n+            buf.append(Transform.escapeJsonControlCharacters(event.getContextStack().toString()));\n             buf.append(\"\\\"\");\n         }\n \n",
+    "project": "logging-log4j2"
+}

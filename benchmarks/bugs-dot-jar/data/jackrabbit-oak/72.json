@@ -1,0 +1,20 @@
+{
+    "bug_id": 72,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "3bf07779",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexQueryTest"
+    ],
+    "files": 1,
+    "jira_id": "2999",
+    "linesAdd": 24,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 3,
+    "nb_test": 463,
+    "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditor.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditor.java\nindex 2023f2dfc6..0f96b8a6e0 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditor.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditor.java\n@@ -100,6 +100,8 @@\n \n     private boolean propertiesChanged = false;\n \n+    private List<PropertyState> propertiesModified = Lists.newArrayList();\n+\n     private final NodeState root;\n \n     /**\n@@ -222,12 +224,14 @@ public void propertyAdded(PropertyState after) {\n     @Override\n     public void propertyChanged(PropertyState before, PropertyState after) {\n         markPropertyChanged(before.getName());\n+        propertiesModified.add(before);\n         checkAggregates(before.getName());\n     }\n \n     @Override\n     public void propertyDeleted(PropertyState before) {\n         markPropertyChanged(before.getName());\n+        propertiesModified.add(before);\n         checkAggregates(before.getName());\n     }\n \n@@ -333,6 +337,11 @@ private Document makeDocument(String path, NodeState state, boolean isUpdate) {\n         dirty |= indexNullCheckEnabledProps(path, fields, state);\n         dirty |= indexNotNullCheckEnabledProps(path, fields, state);\n         \n+        // Check if a node having a single property was modified/deleted\n+        if (!dirty) {\n+            dirty = indexIfSinglePropertyRemoved();\n+        }\n+\n         if (isUpdate && !dirty) {\n             // updated the state but had no relevant changes\n             return null;\n@@ -579,6 +588,21 @@ private boolean indexNullCheckEnabledProps(String path, List<Field> fields, Node\n         return fieldAdded;\n     }\n     \n+    private boolean indexIfSinglePropertyRemoved() {\n+        boolean dirty = false;\n+        for (PropertyState ps : propertiesModified) {\n+            PropertyDefinition pd = indexingRule.getConfig(ps.getName());\n+            if (pd != null \n+                    && pd.index \n+                    && (pd.includePropertyType(ps.getType().tag()) \n+                            || indexingRule.includePropertyType(ps.getType().tag()))) {\n+                dirty = true;\n+                break;\n+            }\n+        }\n+        return dirty;\n+    }\n+    \n     /**\n      * Determine if the property as defined by PropertyDefinition exists or not.\n      *\n",
+    "project": "jackrabbit-oak"
+}

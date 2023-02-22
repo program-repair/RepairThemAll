@@ -1,0 +1,20 @@
+{
+    "bug_id": 258,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "c250db9c",
+    "failing_tests": [
+        "org.apache.wicket.validation.validator.UrlValidatorTest"
+    ],
+    "files": 1,
+    "jira_id": "4255",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 3,
+    "nb_test": 1251,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/validation/validator/UrlValidator.java b/wicket-core/src/main/java/org/apache/wicket/validation/validator/UrlValidator.java\nindex 9cc917c9de..a259c51175 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/validation/validator/UrlValidator.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/validation/validator/UrlValidator.java\n@@ -427,7 +427,7 @@ protected boolean isValidAuthority(String authority)\n \t\t\tif (segmentCount > 1)\n \t\t\t{\n \t\t\t\tString topLevel = domainSegment[segmentCount - 1];\n-\t\t\t\tif (topLevel.length() < 2 || topLevel.length() > 4)\n+\t\t\t\tif (topLevel.length() < 2)\n \t\t\t\t{\n \t\t\t\t\treturn false;\n \t\t\t\t}\n",
+    "project": "wicket"
+}

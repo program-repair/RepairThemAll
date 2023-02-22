@@ -1,0 +1,20 @@
+{
+    "bug_id": 147,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "8f35fcb8",
+    "failing_tests": [
+        "org.apache.commons.math4.ode.JacobianMatricesTest"
+    ],
+    "files": 1,
+    "jira_id": "1232",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 3,
+    "nb_test": 5809,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math4/ode/UnknownParameterException.java b/src/main/java/org/apache/commons/math4/ode/UnknownParameterException.java\nindex 75c621056..bbbaa4a16 100644\n--- a/src/main/java/org/apache/commons/math4/ode/UnknownParameterException.java\n+++ b/src/main/java/org/apache/commons/math4/ode/UnknownParameterException.java\n@@ -38,7 +38,7 @@\n      * @param name parameter name.\n      */\n     public UnknownParameterException(final String name) {\n-        super(LocalizedFormats.UNKNOWN_PARAMETER);\n+        super(LocalizedFormats.UNKNOWN_PARAMETER, name);\n         this.name = name;\n     }\n \n",
+    "project": "commons-math"
+}

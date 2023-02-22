@@ -1,0 +1,20 @@
+{
+    "bug_id": 43,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "c408c3ed",
+    "failing_tests": [
+        "org.apache.camel.component.vm.VMSplitterTest"
+    ],
+    "files": 1,
+    "jira_id": "4542",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 3872,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/model/language/MethodCallExpression.java b/camel-core/src/main/java/org/apache/camel/model/language/MethodCallExpression.java\nindex 796cbdd73f..2ac12c322c 100644\n--- a/camel-core/src/main/java/org/apache/camel/model/language/MethodCallExpression.java\n+++ b/camel-core/src/main/java/org/apache/camel/model/language/MethodCallExpression.java\n@@ -170,7 +170,7 @@ public Expression createExpression(CamelContext camelContext) {\n             BeanHolder holder = new RegistryBean(camelContext, ref);\n             // get the bean which will check that it exists\n             instance = holder.getBean();\n-            answer = new BeanExpression(ref, getMethod());\n+            answer = new BeanExpression(instance, getMethod());\n         }\n \n         validateHasMethod(camelContext, instance, beanType, getMethod());\n",
+    "project": "camel"
+}

@@ -1,0 +1,21 @@
+{
+    "bug_id": 114,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "708e756d",
+    "failing_tests": [
+        "org.apache.camel.component.file.FileSplitInSplitTest",
+        "org.apache.camel.processor.aggregator.AggregateTimeoutWithExecutorServiceTest"
+    ],
+    "files": 1,
+    "jira_id": "5704",
+    "linesAdd": 4,
+    "linesRem": 0,
+    "nb_error": 1,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 4322,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/MulticastProcessor.java b/camel-core/src/main/java/org/apache/camel/processor/MulticastProcessor.java\nindex b2930f68c6..399308605f 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/MulticastProcessor.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/MulticastProcessor.java\n@@ -1002,6 +1002,10 @@ protected void setAggregationStrategyOnExchange(Exchange exchange, AggregationSt\n         Map<Object, AggregationStrategy> map = CastUtils.cast(property);\n         if (map == null) {\n             map = new HashMap<Object, AggregationStrategy>();\n+        } else {\n+            // it is not safe to use the map directly as the exchange doesn't have the deep copy of it's properties\n+            // we just create a new copy if we need to change the map\n+            map = new HashMap<Object, AggregationStrategy>(map);\n         }\n         // store the strategy using this processor as the key\n         // (so we can store multiple strategies on the same exchange)\n",
+    "project": "camel"
+}

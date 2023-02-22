@@ -1,0 +1,20 @@
+{
+    "bug_id": 8,
+    "classification": {
+        "singleLine": true
+    },
+    "commit": "b293b75c",
+    "failing_tests": [
+        "org.apache.wicket.request.mapper.HomePageMapperTest"
+    ],
+    "files": 1,
+    "jira_id": "3065",
+    "linesAdd": 1,
+    "linesRem": 0,
+    "nb_error": 2,
+    "nb_failure": 0,
+    "nb_skipped": 1,
+    "nb_test": 963,
+    "patch": "diff --git a/wicket/src/main/java/org/apache/wicket/request/mapper/HomePageMapper.java b/wicket/src/main/java/org/apache/wicket/request/mapper/HomePageMapper.java\nindex e4f6c8b300..b44207d1cb 100644\n--- a/wicket/src/main/java/org/apache/wicket/request/mapper/HomePageMapper.java\n+++ b/wicket/src/main/java/org/apache/wicket/request/mapper/HomePageMapper.java\n@@ -87,6 +87,7 @@ public IRequestHandler mapRequest(Request request)\n \t\t\t{\n \t\t\t\tpageProvider = new PageProvider(homePageClass);\n \t\t\t}\n+\t\t\tpageProvider.setPageSource(getContext());\n \n \t\t\treturn new RenderPageRequestHandler(pageProvider);\n \t\t}\n",
+    "project": "wicket"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 12,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "499a9c6b",
+    "failing_tests": [
+        "org.apache.wicket.model.InheritedModelTest"
+    ],
+    "files": 1,
+    "jira_id": "3413",
+    "linesAdd": 6,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 1064,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/Component.java b/wicket-core/src/main/java/org/apache/wicket/Component.java\nindex f94cf41533..7a3df6abe9 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/Component.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/Component.java\n@@ -2956,6 +2956,12 @@ void setModelImpl(IModel<?> model)\n \t\t\tif (model != null)\n \t\t\t{\n \t\t\t\tdata_set(0, model);\n+\t\t\t\t// WICKET-3413 reset 'inherited model' flag if model changed\n+\t\t\t\t// and a new one is not IComponentInheritedModel\n+\t\t\t\tif (getFlag(FLAG_INHERITABLE_MODEL) && !(model instanceof IComponentInheritedModel))\n+\t\t\t\t{\n+\t\t\t\t\tsetFlag(FLAG_INHERITABLE_MODEL, false);\n+\t\t\t\t}\n \t\t\t}\n \t\t\telse\n \t\t\t{\n",
+    "project": "wicket"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 235,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "71499e17",
+    "failing_tests": [
+        "org.apache.wicket.request.mapper.BasicResourceReferenceMapperTest"
+    ],
+    "files": 1,
+    "jira_id": "3297",
+    "linesAdd": 11,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 1038,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/request/mapper/AbstractResourceReferenceMapper.java b/wicket-core/src/main/java/org/apache/wicket/request/mapper/AbstractResourceReferenceMapper.java\nindex b0b40ecbac..ce4896c5d6 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/mapper/AbstractResourceReferenceMapper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/mapper/AbstractResourceReferenceMapper.java\n@@ -47,14 +47,22 @@ protected static String encodeResourceReferenceAttributes(\n \t\t\t{\n \t\t\t\tres.append(attributes.getLocale().toString());\n \t\t\t}\n-\t\t\tif (!Strings.isEmpty(attributes.getStyle()))\n+\t\t\tboolean styleEmpty = Strings.isEmpty(attributes.getStyle());\n+\t\t\tif (!styleEmpty)\n \t\t\t{\n-\t\t\t\tres.append(\"-\");\n+\t\t\t\tres.append('-');\n \t\t\t\tres.append(attributes.getStyle());\n \t\t\t}\n \t\t\tif (!Strings.isEmpty(attributes.getVariation()))\n \t\t\t{\n-\t\t\t\tres.append(\"-\");\n+\t\t\t\tif (styleEmpty)\n+\t\t\t\t{\n+\t\t\t\t\tres.append(\"--\");\n+\t\t\t\t}\n+\t\t\t\telse\n+\t\t\t\t{\n+\t\t\t\t\tres.append('-');\n+\t\t\t\t}\n \t\t\t\tres.append(attributes.getVariation());\n \t\t\t}\n \t\t\treturn res.toString();\n",
+    "project": "wicket"
+}

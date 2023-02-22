@@ -1,0 +1,20 @@
+{
+    "bug_id": 7,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "06e2da35",
+    "failing_tests": [
+        "org.apache.flink.runtime.checkpoint.CheckpointCoordinatorTest"
+    ],
+    "files": 1,
+    "jira_id": "2515",
+    "linesAdd": 2,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 716,
+    "patch": "diff --git a/flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint/CheckpointCoordinator.java b/flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint/CheckpointCoordinator.java\nindex 96941321b9..de83ad9f15 100644\n--- a/flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint/CheckpointCoordinator.java\n+++ b/flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint/CheckpointCoordinator.java\n@@ -23,6 +23,7 @@\n import akka.actor.Props;\n \n import org.apache.flink.api.common.JobID;\n+import org.apache.flink.runtime.execution.ExecutionState;\n import org.apache.flink.runtime.executiongraph.Execution;\n import org.apache.flink.runtime.executiongraph.ExecutionAttemptID;\n import org.apache.flink.runtime.executiongraph.ExecutionJobVertex;\n@@ -224,7 +225,7 @@ public boolean triggerCheckpoint(final long timestamp) {\n \t\t\tExecutionAttemptID[] triggerIDs = new ExecutionAttemptID[tasksToTrigger.length];\n \t\t\tfor (int i = 0; i < tasksToTrigger.length; i++) {\n \t\t\t\tExecution ee = tasksToTrigger[i].getCurrentExecutionAttempt();\n-\t\t\t\tif (ee != null) {\n+\t\t\t\tif (ee != null && ee.getState() == ExecutionState.RUNNING) {\n \t\t\t\t\ttriggerIDs[i] = ee.getAttemptId();\n \t\t\t\t} else {\n \t\t\t\t\tLOG.info(\"Checkpoint triggering task {} is not being executed at the moment. Aborting checkpoint.\",\n",
+    "project": "flink"
+}

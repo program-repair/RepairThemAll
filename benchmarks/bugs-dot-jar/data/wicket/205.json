@@ -1,0 +1,20 @@
+{
+    "bug_id": 205,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "5f69685d",
+    "failing_tests": [
+        "org.apache.wicket.markup.html.internal.HeaderResponseTest"
+    ],
+    "files": 2,
+    "jira_id": "4030",
+    "linesAdd": 8,
+    "linesRem": 9,
+    "nb_error": 5,
+    "nb_failure": 0,
+    "nb_skipped": 2,
+    "nb_test": 1187,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/html/internal/HeaderResponse.java b/wicket-core/src/main/java/org/apache/wicket/markup/html/internal/HeaderResponse.java\nindex dbde5620e6..25e908aeae 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/html/internal/HeaderResponse.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/html/internal/HeaderResponse.java\n@@ -25,7 +25,6 @@\n import org.apache.wicket.markup.html.WicketEventReference;\n import org.apache.wicket.request.IRequestHandler;\n import org.apache.wicket.request.Response;\n-import org.apache.wicket.request.Url;\n import org.apache.wicket.request.cycle.RequestCycle;\n import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;\n import org.apache.wicket.request.mapper.parameter.PageParameters;\n@@ -378,22 +377,22 @@ public boolean isClosed()\n \t}\n \n \t/**\n+\t * Rewrites a relative url into a context-relative one, leaves absolute urls alone\n \t * \n-\t * @param location\n+\t * @param url\n \t * @return relative path\n \t */\n-\tprivate String relative(final String location)\n+\tprivate String relative(final String url)\n \t{\n-\t\tArgs.notEmpty(location, \"location\");\n+\t\tArgs.notEmpty(url, \"location\");\n \n-\t\tif (location.startsWith(\"http://\") || location.startsWith(\"https://\") ||\n-\t\t\tlocation.startsWith(\"/\"))\n+\t\tif (url.startsWith(\"http://\") || url.startsWith(\"https://\") || url.startsWith(\"/\"))\n \t\t{\n-\t\t\treturn location;\n+\t\t\treturn url;\n \t\t}\n \n \t\tRequestCycle rc = RequestCycle.get();\n-\t\treturn rc.getUrlRenderer().renderUrl(Url.parse(location, rc.getRequest().getCharset()));\n+\t\treturn rc.getUrlRenderer().renderContextRelativeUrl(url);\n \t}\n \n \t/**\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/mock/MockWebRequest.java b/wicket-core/src/main/java/org/apache/wicket/mock/MockWebRequest.java\nindex 3b266214f5..c79b71616d 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/mock/MockWebRequest.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/mock/MockWebRequest.java\n@@ -47,7 +47,7 @@\n \tprivate Locale locale = Locale.getDefault();\n \tprivate String contextPath;\n \tprivate String filterPath;\n-\tprivate String prefixToContextPath;\n+\tprivate String prefixToContextPath = \"\";\n \n \t/**\n \t * Construct.\n",
+    "project": "wicket"
+}

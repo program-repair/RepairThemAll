@@ -1,0 +1,20 @@
+{
+    "bug_id": 271,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "be97d017",
+    "failing_tests": [
+        "org.apache.wicket.page.PersistentPageManagerTest"
+    ],
+    "files": 1,
+    "jira_id": "3420",
+    "linesAdd": 1,
+    "linesRem": 2,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 1084,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/pageStore/DefaultPageStore.java b/wicket-core/src/main/java/org/apache/wicket/pageStore/DefaultPageStore.java\nindex 17a812b8a3..675f320520 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/pageStore/DefaultPageStore.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/pageStore/DefaultPageStore.java\n@@ -22,7 +22,6 @@\n import java.util.Iterator;\n import java.util.List;\n \n-import org.apache.wicket.Page;\n import org.apache.wicket.page.IManageablePage;\n import org.apache.wicket.util.lang.Args;\n import org.apache.wicket.util.lang.Objects;\n@@ -275,7 +274,7 @@ public Object restoreAfterSerialization(final Serializable serializable)\n \t\t{\n \t\t\treturn null;\n \t\t}\n-\t\telse if (!storeAfterSessionReplication() || serializable instanceof Page)\n+\t\telse if (!storeAfterSessionReplication() || serializable instanceof IManageablePage)\n \t\t{\n \t\t\treturn serializable;\n \t\t}\n",
+    "project": "wicket"
+}

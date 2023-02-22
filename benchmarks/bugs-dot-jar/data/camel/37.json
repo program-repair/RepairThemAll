@@ -1,0 +1,20 @@
+{
+    "bug_id": 37,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "2c5a42db",
+    "failing_tests": [
+        "org.apache.camel.processor.aggregator.CustomListAggregationStrategyCompletionFromBatchConsumerTest"
+    ],
+    "files": 1,
+    "jira_id": "6557",
+    "linesAdd": 2,
+    "linesRem": 4,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 4668,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/aggregate/AbstractListAggregationStrategy.java b/camel-core/src/main/java/org/apache/camel/processor/aggregate/AbstractListAggregationStrategy.java\nindex d37bba343d..a19bdbcd5e 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/aggregate/AbstractListAggregationStrategy.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/aggregate/AbstractListAggregationStrategy.java\n@@ -80,11 +80,9 @@ public void onCompletion(Exchange exchange) {\n      */\n     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {\n         List<V> list;\n-        Exchange answer = oldExchange;\n \n         if (oldExchange == null) {\n-            answer = new DefaultExchange(newExchange);\n-            list = getList(answer);\n+            list = getList(newExchange);\n         } else {\n             list = getList(oldExchange);\n         }\n@@ -96,7 +94,7 @@ public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {\n             }\n         }\n \n-        return answer;\n+        return oldExchange != null ? oldExchange : newExchange;\n     }\n \n     @SuppressWarnings(\"unchecked\")\n",
+    "project": "camel"
+}

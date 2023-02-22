@@ -1,0 +1,20 @@
+{
+    "bug_id": 71,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "df9f4a6a",
+    "failing_tests": [
+        "org.apache.camel.management.ManagedCustomPolicyTest"
+    ],
+    "files": 2,
+    "jira_id": "4536",
+    "linesAdd": 12,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 3841,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/WrapProcessor.java b/camel-core/src/main/java/org/apache/camel/processor/WrapProcessor.java\nindex 4b3b7c882e..adb508ab65 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/WrapProcessor.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/WrapProcessor.java\n@@ -16,6 +16,8 @@\n  */\n package org.apache.camel.processor;\n \n+import java.util.List;\n+\n import org.apache.camel.Processor;\n import org.apache.camel.util.ServiceHelper;\n \n@@ -37,6 +39,14 @@ public String toString() {\n         return \"Wrap[\" + wrapped + \"] -> \" + processor;\n     }\n \n+    @Override\n+    public List<Processor> next() {\n+        // must include wrapped in navigate\n+        List<Processor> list = super.next();\n+        list.add(wrapped);\n+        return list;\n+    }\n+\n     @Override\n     protected void doStart() throws Exception {\n         ServiceHelper.startService(wrapped);\ndiff --git a/camel-core/src/main/java/org/apache/camel/util/AsyncProcessorConverterHelper.java b/camel-core/src/main/java/org/apache/camel/util/AsyncProcessorConverterHelper.java\nindex 7a5a6f2444..656136c157 100644\n--- a/camel-core/src/main/java/org/apache/camel/util/AsyncProcessorConverterHelper.java\n+++ b/camel-core/src/main/java/org/apache/camel/util/AsyncProcessorConverterHelper.java\n@@ -41,9 +41,8 @@ private AsyncProcessorConverterHelper() {\n     }\r\n \r\n     /**\r\n-     * Creates a AsnycProcossor that delegates to the given processor.\r\n-     * It is important that this implements DelegateProcessor\r\n-     *\r\n+     * Creates a {@link AsyncProcessor} that delegates to the given processor.\r\n+     * It is important that this implements {@link DelegateProcessor}\r\n      */\r\n     private static final class ProcessorToAsyncProcessorBridge implements DelegateProcessor, AsyncProcessor, Navigate<Processor>, Service {\r\n         protected Processor processor;\r\n",
+    "project": "camel"
+}

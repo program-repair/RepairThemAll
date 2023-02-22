@@ -1,0 +1,20 @@
+{
+    "bug_id": 12,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "494212b3",
+    "failing_tests": [
+        "org.apache.flink.api.common.state.ValueStateDescriptorTest"
+    ],
+    "files": 1,
+    "jira_id": "3760",
+    "linesAdd": 2,
+    "linesRem": 4,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 1802,
+    "patch": "diff --git a/flink-core/src/main/java/org/apache/flink/api/common/state/StateDescriptor.java b/flink-core/src/main/java/org/apache/flink/api/common/state/StateDescriptor.java\nindex 10ac5bae09..243ebcd20b 100644\n--- a/flink-core/src/main/java/org/apache/flink/api/common/state/StateDescriptor.java\n+++ b/flink-core/src/main/java/org/apache/flink/api/common/state/StateDescriptor.java\n@@ -284,12 +284,10 @@ private void readObject(final ObjectInputStream in) throws IOException, ClassNot\n \t\tboolean hasDefaultValue = in.readBoolean();\n \t\tif (hasDefaultValue) {\n \t\t\tint size = in.readInt();\n+\n \t\t\tbyte[] buffer = new byte[size];\n-\t\t\tint bytesRead = in.read(buffer);\n \n-\t\t\tif (bytesRead != size) {\n-\t\t\t\tthrow new RuntimeException(\"Read size does not match expected size.\");\n-\t\t\t}\n+\t\t\tin.readFully(buffer);\n \n \t\t\ttry (ByteArrayInputStream bais = new ByteArrayInputStream(buffer);\n \t\t\t\t\tDataInputViewStreamWrapper inView = new DataInputViewStreamWrapper(bais))\n",
+    "project": "flink"
+}

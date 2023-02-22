@@ -1,0 +1,20 @@
+{
+    "bug_id": 9,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "c831e44d",
+    "failing_tests": [
+        "org.apache.accumulo.core.data.KeyTest"
+    ],
+    "files": 1,
+    "jira_id": "193",
+    "linesAdd": 26,
+    "linesRem": 17,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 265,
+    "patch": "diff --git a/src/core/src/main/java/org/apache/accumulo/core/data/Key.java b/src/core/src/main/java/org/apache/accumulo/core/data/Key.java\nindex 3d1f92db7..afab88733 100644\n--- a/src/core/src/main/java/org/apache/accumulo/core/data/Key.java\n+++ b/src/core/src/main/java/org/apache/accumulo/core/data/Key.java\n@@ -22,6 +22,8 @@\n  * \n  */\n \n+import static org.apache.accumulo.core.util.ByteBufferUtil.toBytes;\n+\n import java.io.DataInput;\n import java.io.DataOutput;\n import java.io.IOException;\n@@ -38,8 +40,6 @@\n import org.apache.hadoop.io.WritableComparator;\n import org.apache.hadoop.io.WritableUtils;\n \n-import static org.apache.accumulo.core.util.ByteBufferUtil.toBytes;\n-\n public class Key implements WritableComparable<Key>, Cloneable {\n   \n   protected byte[] row;\n@@ -444,8 +444,10 @@ public int hashCode() {\n   }\n   \n   public static String toPrintableString(byte ba[], int offset, int len, int maxLen) {\n-    StringBuilder sb = new StringBuilder();\n+    return appendPrintableString(ba, offset, len, maxLen, new StringBuilder()).toString();\n+  }\n   \n+  public static StringBuilder appendPrintableString(byte ba[], int offset, int len, int maxLen, StringBuilder sb) {\n     int plen = Math.min(len, maxLen);\n     \n     for (int i = 0; i < plen; i++) {\n@@ -460,26 +462,33 @@ public static String toPrintableString(byte ba[], int offset, int len, int maxLe\n       sb.append(\"... TRUNCATED\");\n     }\n     \n-    return sb.toString();\n+    return sb;\n   }\n   \n-  public String toString() {\n-    String labelString = new ColumnVisibility(colVisibility).toString();\n+  private StringBuilder rowColumnStringBuilder() {\n+    StringBuilder sb = new StringBuilder();\n+    appendPrintableString(row, 0, row.length, Constants.MAX_DATA_TO_PRINT, sb);\n+    sb.append(\" \");\n+    appendPrintableString(colFamily, 0, colFamily.length, Constants.MAX_DATA_TO_PRINT, sb);\n+    sb.append(\":\");\n+    appendPrintableString(colQualifier, 0, colQualifier.length, Constants.MAX_DATA_TO_PRINT, sb);\n+    sb.append(\" [\");\n+    appendPrintableString(colVisibility, 0, colVisibility.length, Constants.MAX_DATA_TO_PRINT, sb);\n+    sb.append(\"]\");\n+    return sb;\n+  }\n   \n-    String s = toPrintableString(row, 0, row.length, Constants.MAX_DATA_TO_PRINT) + \" \"\n-        + toPrintableString(colFamily, 0, colFamily.length, Constants.MAX_DATA_TO_PRINT) + \":\"\n-        + toPrintableString(colQualifier, 0, colQualifier.length, Constants.MAX_DATA_TO_PRINT) + \" \" + labelString + \" \" + Long.toString(timestamp) + \" \"\n-        + deleted;\n-    return s;\n+  public String toString() {\n+    StringBuilder sb = rowColumnStringBuilder();\n+    sb.append(\" \");\n+    sb.append(Long.toString(timestamp));\n+    sb.append(\" \");\n+    sb.append(deleted);\n+    return sb.toString();\n   }\n   \n   public String toStringNoTime() {\n-    \n-    String labelString = new ColumnVisibility(colVisibility).toString();\n-    \n-    String s = new String(row, 0, row.length) + \" \" + new String(colFamily, 0, colFamily.length) + \":\" + new String(colQualifier, 0, colQualifier.length) + \" \"\n-        + labelString;\n-    return s;\n+    return rowColumnStringBuilder().toString();\n   }\n   \n   public int getLength() {\n",
+    "project": "accumulo"
+}

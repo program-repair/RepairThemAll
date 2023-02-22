@@ -1,0 +1,20 @@
+{
+    "bug_id": 62,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "60f64cc1",
+    "failing_tests": [
+        "org.apache.logging.log4j.core.async.AsyncLoggersWithAsyncAppenderTest"
+    ],
+    "files": 1,
+    "jira_id": "668",
+    "linesAdd": 6,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 2,
+    "nb_test": 658,
+    "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/appender/AsyncAppender.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/appender/AsyncAppender.java\nindex 8178fe26f..e47075780 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/appender/AsyncAppender.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/appender/AsyncAppender.java\n@@ -27,6 +27,7 @@\n import org.apache.logging.log4j.core.Appender;\n import org.apache.logging.log4j.core.Filter;\n import org.apache.logging.log4j.core.LogEvent;\n+import org.apache.logging.log4j.core.async.RingBufferLogEvent;\n import org.apache.logging.log4j.core.config.AppenderControl;\n import org.apache.logging.log4j.core.config.AppenderRef;\n import org.apache.logging.log4j.core.config.Configuration;\n@@ -127,12 +128,15 @@ public void stop() {\n      * @param logEvent The LogEvent.\n      */\n     @Override\n-    public void append(final LogEvent logEvent) {\n+    public void append(LogEvent logEvent) {\n         if (!isStarted()) {\n             throw new IllegalStateException(\"AsyncAppender \" + getName() + \" is not active\");\n         }\n         if (!(logEvent instanceof Log4jLogEvent)) {\n-            return; // only know how to Serialize Log4jLogEvents\n+            if (!(logEvent instanceof RingBufferLogEvent)) {\n+                return; // only know how to Serialize Log4jLogEvents and RingBufferLogEvents\n+            }\n+            logEvent = ((RingBufferLogEvent) logEvent).createMemento();\n         }\n         Log4jLogEvent coreEvent = (Log4jLogEvent) logEvent;\n         boolean appendSuccessful = false;\n",
+    "project": "logging-log4j2"
+}

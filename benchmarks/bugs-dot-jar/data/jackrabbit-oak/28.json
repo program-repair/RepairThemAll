@@ -1,0 +1,20 @@
+{
+    "bug_id": 28,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "2565d74a",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.document.DocumentNodeStoreTest"
+    ],
+    "files": 1,
+    "jira_id": "3579",
+    "linesAdd": 25,
+    "linesRem": 6,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 3025,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java\nindex ada87d0363..8511e3713b 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java\n@@ -68,6 +68,8 @@\n \n import com.google.common.base.Function;\n import com.google.common.base.Predicates;\n+import com.google.common.base.Supplier;\n+import com.google.common.base.Suppliers;\n import com.google.common.cache.Cache;\n import com.google.common.collect.Iterables;\n import com.google.common.collect.Lists;\n@@ -2561,18 +2563,35 @@ public long determineServerTimeDifferenceMillis() {\n     static abstract class NodeStoreTask implements Runnable {\n         final WeakReference<DocumentNodeStore> ref;\n         private final AtomicBoolean isDisposed;\n-        private int delay;\n+        private final Supplier<Integer> delaySupplier;\n \n-        NodeStoreTask(DocumentNodeStore nodeStore, AtomicBoolean isDisposed) {\n-            ref = new WeakReference<DocumentNodeStore>(nodeStore);\n-            delay = nodeStore.getAsyncDelay();\n+        NodeStoreTask(final DocumentNodeStore nodeStore,\n+                      final AtomicBoolean isDisposed,\n+                      Supplier<Integer> delay) {\n+            this.ref = new WeakReference<DocumentNodeStore>(nodeStore);\n             this.isDisposed = isDisposed;\n+            if (delay == null) {\n+                delay = new Supplier<Integer>() {\n+                    @Override\n+                    public Integer get() {\n+                        DocumentNodeStore ns = ref.get();\n+                        return ns != null ? ns.getAsyncDelay() : 0;\n+                    }\n+                };\n+            }\n+            this.delaySupplier = delay;\n+        }\n+\n+        NodeStoreTask(final DocumentNodeStore nodeStore,\n+                      final AtomicBoolean isDisposed) {\n+            this(nodeStore, isDisposed, null);\n         }\n \n         protected abstract void execute(@Nonnull DocumentNodeStore nodeStore);\n \n         @Override\n         public void run() {\n+            int delay = delaySupplier.get();\n             while (delay != 0 && !isDisposed.get()) {\n                 synchronized (isDisposed) {\n                     try {\n@@ -2588,7 +2607,7 @@ public void run() {\n                     } catch (Throwable t) {\n                         LOG.warn(\"Background operation failed: \" + t.toString(), t);\n                     }\n-                    delay = nodeStore.getAsyncDelay();\n+                    delay = delaySupplier.get();\n                 } else {\n                     // node store not in use anymore\n                     break;\n@@ -2633,7 +2652,7 @@ protected void execute(@Nonnull DocumentNodeStore nodeStore) {\n \n         BackgroundLeaseUpdate(DocumentNodeStore nodeStore,\n                               AtomicBoolean isDisposed) {\n-            super(nodeStore, isDisposed);\n+            super(nodeStore, isDisposed, Suppliers.ofInstance(1000));\n         }\n \n         @Override\n",
+    "project": "jackrabbit-oak"
+}

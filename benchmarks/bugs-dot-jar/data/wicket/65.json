@@ -1,0 +1,20 @@
+{
+    "bug_id": 65,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "d79d0192",
+    "failing_tests": [
+        "org.apache.wicket.markup.html.list.TableTest"
+    ],
+    "files": 1,
+    "jira_id": "2181",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 782,
+    "patch": "diff --git a/wicket/src/main/java/org/apache/wicket/markup/html/list/PageableListView.java b/wicket/src/main/java/org/apache/wicket/markup/html/list/PageableListView.java\nindex 707cef46ba..e1b2e77cc6 100644\n--- a/wicket/src/main/java/org/apache/wicket/markup/html/list/PageableListView.java\n+++ b/wicket/src/main/java/org/apache/wicket/markup/html/list/PageableListView.java\n@@ -84,7 +84,7 @@ public PageableListView(final String id, final List<T> list, final int rowsPerPa\n \tpublic final int getCurrentPage()\n \t{\n \t\t// If first cell is out of range, bring page back into range\n-\t\twhile ((currentPage * rowsPerPage) >= getList().size())\n+\t\twhile ((currentPage > 0) && ((currentPage * rowsPerPage) >= getList().size()))\n \t\t{\n \t\t\tcurrentPage--;\n \t\t}\n",
+    "project": "wicket"
+}

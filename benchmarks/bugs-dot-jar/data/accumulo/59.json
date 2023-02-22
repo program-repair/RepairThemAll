@@ -1,0 +1,25 @@
+{
+    "bug_id": 59,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "019edb16",
+    "failing_tests": [
+        "org.apache.accumulo.core.client.mapreduce.AccumuloOutputFormatTest",
+        "org.apache.accumulo.core.client.mapreduce.AccumuloMultiTableInputFormatTest",
+        "org.apache.accumulo.core.client.mapreduce.TokenFileTest",
+        "org.apache.accumulo.core.client.mapreduce.AccumuloFileOutputFormatTest",
+        "org.apache.accumulo.core.client.mapreduce.AccumuloInputFormatTest",
+        "org.apache.accumulo.core.client.mapreduce.AccumuloRowInputFormatTest"
+    ],
+    "files": 1,
+    "jira_id": "2659",
+    "linesAdd": 3,
+    "linesRem": 0,
+    "nb_error": 8,
+    "nb_failure": 0,
+    "nb_skipped": 1,
+    "nb_test": 629,
+    "patch": "diff --git a/core/src/main/java/org/apache/accumulo/core/client/mapred/InputFormatBase.java b/core/src/main/java/org/apache/accumulo/core/client/mapred/InputFormatBase.java\nindex 54b983f6b..0cee355db 100644\n--- a/core/src/main/java/org/apache/accumulo/core/client/mapred/InputFormatBase.java\n+++ b/core/src/main/java/org/apache/accumulo/core/client/mapred/InputFormatBase.java\n@@ -322,6 +322,9 @@ protected void setupIterators(JobConf job, Scanner scanner, String tableName, or\n         iterators = getIterators(job);\n       } else {\n         iterators = split.getIterators();\n+        if (null == iterators) {\n+          iterators = getIterators(job);\n+        }\n       }\n \n       setupIterators(iterators, scanner);\n",
+    "project": "accumulo"
+}

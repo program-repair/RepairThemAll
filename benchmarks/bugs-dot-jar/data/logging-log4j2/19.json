@@ -1,0 +1,20 @@
+{
+    "bug_id": 19,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "afcf92eb",
+    "failing_tests": [
+        "org.apache.logging.log4j.message.StructuredDataMessageTest"
+    ],
+    "files": 1,
+    "jira_id": "114",
+    "linesAdd": 2,
+    "linesRem": 2,
+    "nb_error": 1,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 47,
+    "patch": "diff --git a/api/src/main/java/org/apache/logging/log4j/message/StructuredDataMessage.java b/api/src/main/java/org/apache/logging/log4j/message/StructuredDataMessage.java\nindex d3dee6de7..b4e640172 100644\n--- a/api/src/main/java/org/apache/logging/log4j/message/StructuredDataMessage.java\n+++ b/api/src/main/java/org/apache/logging/log4j/message/StructuredDataMessage.java\n@@ -188,8 +188,8 @@ protected void setMessageFormat(String msg) {\n \n     @Override\n     protected void validate(String key, String value) {\n-        if (value.length() > MAX_LENGTH) {\n-            throw new IllegalArgumentException(\"Structured data values are limited to 32 characters. key: \" + key +\n+        if (key.length() > MAX_LENGTH) {\n+            throw new IllegalArgumentException(\"Structured data keys are limited to 32 characters. key: \" + key +\n                 \" value: \" + value);\n         }\n     }\n",
+    "project": "logging-log4j2"
+}

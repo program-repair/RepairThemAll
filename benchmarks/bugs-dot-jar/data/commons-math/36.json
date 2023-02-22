@@ -1,0 +1,20 @@
+{
+    "bug_id": 36,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "fb007815",
+    "failing_tests": [
+        "org.apache.commons.math4.stat.correlation.KendallsCorrelationTest"
+    ],
+    "files": 1,
+    "jira_id": "1277",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 3,
+    "nb_test": 5859,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math4/stat/correlation/KendallsCorrelation.java b/src/main/java/org/apache/commons/math4/stat/correlation/KendallsCorrelation.java\nindex 77b7d2297..125083e91 100644\n--- a/src/main/java/org/apache/commons/math4/stat/correlation/KendallsCorrelation.java\n+++ b/src/main/java/org/apache/commons/math4/stat/correlation/KendallsCorrelation.java\n@@ -201,7 +201,7 @@ public int compare(Pair<Double, Double> pair1, Pair<Double, Double> pair2) {\n         tiedXPairs += sum(consecutiveXTies - 1);\n         tiedXYPairs += sum(consecutiveXYTies - 1);\n \n-        int swaps = 0;\n+        long swaps = 0;\n         @SuppressWarnings(\"unchecked\")\n         Pair<Double, Double>[] pairsDestination = new Pair[n];\n         for (int segmentSize = 1; segmentSize < n; segmentSize <<= 1) {\n",
+    "project": "commons-math"
+}

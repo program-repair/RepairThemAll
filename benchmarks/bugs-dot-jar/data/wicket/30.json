@@ -1,0 +1,20 @@
+{
+    "bug_id": 30,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "518c933b",
+    "failing_tests": [
+        "org.apache.wicket.request.UrlTest"
+    ],
+    "files": 1,
+    "jira_id": "5114",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 92,
+    "patch": "diff --git a/wicket-request/src/main/java/org/apache/wicket/request/Url.java b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\nindex 12ca5f0b4d..9ca2c0d8b4 100755\n--- a/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n+++ b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n@@ -674,7 +674,7 @@ else if (Strings.isEmpty(protocol) && Strings.isEmpty(host) == false)\n \t\t\t\tresult.append(port);\n \t\t\t}\n \n-\t\t\tif (path.contains(\"..\"))\n+\t\t\tif (segments.contains(\"..\"))\n \t\t\t{\n \t\t\t\tthrow new IllegalStateException(\"Cannot render this url in \" +\n \t\t\t\t\tStringMode.FULL.name() + \" mode because it has a `..` segment: \" + toString());\n",
+    "project": "wicket"
+}

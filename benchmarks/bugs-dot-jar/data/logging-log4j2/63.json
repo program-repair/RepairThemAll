@@ -1,0 +1,20 @@
+{
+    "bug_id": 63,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "25cb587a",
+    "failing_tests": [
+        "org.apache.logging.log4j.core.config.TestConfigurator"
+    ],
+    "files": 1,
+    "jira_id": "293",
+    "linesAdd": 25,
+    "linesRem": 3,
+    "nb_error": 2,
+    "nb_failure": 0,
+    "nb_skipped": 5,
+    "nb_test": 417,
+    "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/config/ConfigurationFactory.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/config/ConfigurationFactory.java\nindex 7873c79ee..849019675 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/config/ConfigurationFactory.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/config/ConfigurationFactory.java\n@@ -88,6 +88,18 @@\n      */\n     protected static final String DEFAULT_PREFIX = \"log4j2\";\n \n+    /**\n+     * The name of the classloader URI scheme.\n+     */\n+    private static final String CLASS_LOADER_SCHEME = \"classloader\";\n+    private static final int CLASS_LOADER_SCHEME_LENGTH = CLASS_LOADER_SCHEME.length() + 1;\n+\n+    /**\n+     * The name of the classpath URI scheme, synonymous with the classloader URI scheme.\n+     */\n+    private static final String CLASS_PATH_SCHEME = \"classpath\";\n+    private static final int CLASS_PATH_SCHEME_LENGTH = CLASS_PATH_SCHEME.length() + 1;\n+\n     private static volatile List<ConfigurationFactory> factories = null;\n \n     private static ConfigurationFactory configFactory = new Factory();\n@@ -221,9 +233,19 @@ protected ConfigurationSource getInputFromURI(final URI configLocation) {\n             }\n         }\n         final String scheme = configLocation.getScheme();\n-        if (scheme == null || scheme.equals(\"classloader\")) {\n+        final boolean isClassLoaderScheme = scheme != null && scheme.equals(CLASS_LOADER_SCHEME);\n+        final boolean isClassPathScheme = scheme != null && !isClassLoaderScheme && scheme.equals(CLASS_PATH_SCHEME);\n+        if (scheme == null || isClassLoaderScheme || isClassPathScheme) {\n             final ClassLoader loader = this.getClass().getClassLoader();\n-            final ConfigurationSource source = getInputFromResource(configLocation.getPath(), loader);\n+            String path;\n+            if (isClassLoaderScheme) {\n+                path = configLocation.toString().substring(CLASS_LOADER_SCHEME_LENGTH);\n+            } else if (isClassPathScheme) {\n+                path = configLocation.toString().substring(CLASS_PATH_SCHEME_LENGTH);\n+            } else {\n+                path = configLocation.getPath();\n+            }\n+            final ConfigurationSource source = getInputFromResource(path, loader);\n             if (source != null) {\n                 return source;\n             }\n@@ -365,7 +387,7 @@ public Configuration getConfiguration(final String name, final URI configLocatio\n                     final String[] types = factory.getSupportedTypes();\n                     if (types != null) {\n                         for (final String type : types) {\n-                            if (type.equals(\"*\") || configLocation.getPath().endsWith(type)) {\n+                            if (type.equals(\"*\") || configLocation.toString().endsWith(type)) {\n                                 final Configuration config = factory.getConfiguration(name, configLocation);\n                                 if (config != null) {\n                                     return config;\n",
+    "project": "logging-log4j2"
+}

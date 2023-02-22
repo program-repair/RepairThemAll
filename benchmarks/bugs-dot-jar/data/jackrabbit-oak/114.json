@@ -1,0 +1,20 @@
+{
+    "bug_id": 114,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "117b0a3d",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.jcr.RepositoryTest"
+    ],
+    "files": 1,
+    "jira_id": "1227",
+    "linesAdd": 8,
+    "linesRem": 0,
+    "nb_error": 4,
+    "nb_failure": 0,
+    "nb_skipped": 5,
+    "nb_test": 1963,
+    "patch": "diff --git a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/session/NodeImpl.java b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/session/NodeImpl.java\nindex 2dbd284919..21a32d0671 100644\n--- a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/session/NodeImpl.java\n+++ b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/session/NodeImpl.java\n@@ -797,6 +797,7 @@ public PropertyIterator getWeakReferences(String name) throws RepositoryExceptio\n \n     @Override\n     public boolean hasNode(String relPath) throws RepositoryException {\n+        try {\n             final String oakPath = getOakPathOrThrow(relPath);\n             return perform(new NodeOperation<Boolean>(dlg) {\n                 @Override\n@@ -804,10 +805,14 @@ public Boolean perform() throws RepositoryException {\n                     return node.getChild(oakPath) != null;\n                 }\n             });\n+        } catch (PathNotFoundException e) {\n+            return false;\n+        }\n     }\n \n     @Override\n     public boolean hasProperty(String relPath) throws RepositoryException {\n+        try {\n             final String oakPath = getOakPathOrThrow(relPath);\n             return perform(new NodeOperation<Boolean>(dlg) {\n                 @Override\n@@ -815,6 +820,9 @@ public Boolean perform() throws RepositoryException {\n                     return node.getPropertyOrNull(oakPath) != null;\n                 }\n             });\n+        } catch (PathNotFoundException e) {\n+            return false;\n+        }\n     }\n \n     @Override\n",
+    "project": "jackrabbit-oak"
+}

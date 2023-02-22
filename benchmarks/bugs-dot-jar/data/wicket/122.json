@@ -1,0 +1,20 @@
+{
+    "bug_id": 122,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "36a41358",
+    "failing_tests": [
+        "org.apache.wicket.util.lang.PropertyResolverTest"
+    ],
+    "files": 1,
+    "jira_id": "2337",
+    "linesAdd": 12,
+    "linesRem": 0,
+    "nb_error": 3,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 798,
+    "patch": "diff --git a/wicket/src/main/java/org/apache/wicket/util/lang/PropertyResolver.java b/wicket/src/main/java/org/apache/wicket/util/lang/PropertyResolver.java\nindex ae38446b57..d83ba146a3 100644\n--- a/wicket/src/main/java/org/apache/wicket/util/lang/PropertyResolver.java\n+++ b/wicket/src/main/java/org/apache/wicket/util/lang/PropertyResolver.java\n@@ -217,6 +217,12 @@ private static ObjectAndGetSetter getObjectAndGetSetter(final String expression,\n \t\twhile (index != -1)\n \t\t{\n \t\t\texp = expressionBracketsSeperated.substring(lastIndex, index);\n+\t\t\tif (exp.length() == 0)\n+\t\t\t{\n+\t\t\t\texp = expressionBracketsSeperated.substring(index + 1);\n+\t\t\t\tbreak;\n+\t\t\t}\n+\n \t\t\tIGetAndSet getAndSetter = null;\n \t\t\ttry\n \t\t\t{\n@@ -762,6 +768,8 @@ public Object newValue(Object object)\n \t\t */\n \t\tpublic Object getValue(Object object)\n \t\t{\n+\t\t\tif (((List<?>)object).size() <= index)\n+\t\t\t\treturn null;\n \t\t\treturn ((List<?>)object).get(index);\n \t\t}\n \n@@ -818,9 +826,13 @@ public Object newValue(Object object)\n \t\t * @see org.apache.wicket.util.lang.PropertyResolver.IGetAndSet#getValue(java.lang.Object)\n \t\t */\n \t\tpublic Object getValue(Object object)\n+\t\t{\n+\t\t\tif (Array.getLength(object) > index)\n \t\t\t{\n \t\t\t\treturn Array.get(object, index);\n \t\t\t}\n+\t\t\treturn null;\n+\t\t}\n \n \t\t/**\n \t\t * @see org.apache.wicket.util.lang.PropertyResolver.IGetAndSet#setValue(Object, Object,\n",
+    "project": "wicket"
+}

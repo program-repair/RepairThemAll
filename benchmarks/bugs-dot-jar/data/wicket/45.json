@@ -1,0 +1,20 @@
+{
+    "bug_id": 45,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "eccb3b11",
+    "failing_tests": [
+        "org.apache.wicket.core.util.string.JavaScriptUtilsTest"
+    ],
+    "files": 1,
+    "jira_id": "4777",
+    "linesAdd": 2,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 5,
+    "nb_test": 1410,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/core/util/string/JavaScriptUtils.java b/wicket-core/src/main/java/org/apache/wicket/core/util/string/JavaScriptUtils.java\nindex f07d5151f1..42d9274b8b 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/core/util/string/JavaScriptUtils.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/core/util/string/JavaScriptUtils.java\n@@ -143,7 +143,7 @@ public static void writeJavaScriptUrl(final Response response, final CharSequenc\n \t\t\tresponse.write(\"charset=\\\"\" + Strings.escapeMarkup(charset) + \"\\\" \");\n \t\t}\n \t\tresponse.write(\"src=\\\"\");\n-\t\tresponse.write(Strings.escapeMarkup(url));\n+\t\tresponse.write(url);\n \t\tresponse.write(\"\\\"></script>\");\n \t\tresponse.write(\"\\n\");\n \t}\n@@ -201,7 +201,7 @@ public static void writeOpenTag(final Response response, String id)\n \t\tresponse.write(\"<script type=\\\"text/javascript\\\" \");\n \t\tif (id != null)\n \t\t{\n-\t\t\tresponse.write(\"id=\\\"\" + id + \"\\\"\");\n+\t\t\tresponse.write(\"id=\\\"\" + Strings.escapeMarkup(id) + \"\\\"\");\n \t\t}\n \t\tresponse.write(\">\");\n \t\tresponse.write(SCRIPT_CONTENT_PREFIX);\n",
+    "project": "wicket"
+}

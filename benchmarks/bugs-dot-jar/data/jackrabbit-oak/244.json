@@ -1,0 +1,20 @@
+{
+    "bug_id": 244,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "0c3e3d70",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.mongomk.RangeTest"
+    ],
+    "files": 1,
+    "jira_id": "1289",
+    "linesAdd": 3,
+    "linesRem": 2,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 6,
+    "nb_test": 1497,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/mongomk/Range.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/mongomk/Range.java\nindex 19ed201916..52045fc9e9 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/mongomk/Range.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/mongomk/Range.java\n@@ -51,8 +51,9 @@\n      * @return <code>true</code> if within this range; <code>false</code>\n      * otherwise.\n      */\n-    boolean includes(Revision r) {\n-        return high.compareRevisionTime(r) >= 0\n+    boolean includes(@Nonnull Revision r) {\n+        return high.getClusterId() == r.getClusterId()\n+                && high.compareRevisionTime(r) >= 0\n                 && low.compareRevisionTime(r) <= 0;\n     }\n \n",
+    "project": "jackrabbit-oak"
+}

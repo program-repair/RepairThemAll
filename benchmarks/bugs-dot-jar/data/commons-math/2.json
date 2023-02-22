@@ -1,0 +1,20 @@
+{
+    "bug_id": 2,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "6844aba9",
+    "failing_tests": [
+        "org.apache.commons.math3.util.FastMathTest"
+    ],
+    "files": 1,
+    "jira_id": "904",
+    "linesAdd": 3,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 4,
+    "nb_test": 4252,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math3/util/FastMath.java b/src/main/java/org/apache/commons/math3/util/FastMath.java\nindex fd1ce2d85..9dc84c631 100644\n--- a/src/main/java/org/apache/commons/math3/util/FastMath.java\n+++ b/src/main/java/org/apache/commons/math3/util/FastMath.java\n@@ -309,6 +309,8 @@\n \n     /** 2^52 - double numbers this large must be integral (no fraction) or NaN or Infinite */\n     private static final double TWO_POWER_52 = 4503599627370496.0;\n+    /** 2^53 - double numbers this large must be even. */\n+    private static final double TWO_POWER_53 = 2 * TWO_POWER_52;\n \n     /** Constant: {@value}. */\n     private static final double F_1_3 = 1d / 3d;\n@@ -1537,7 +1539,7 @@ public static double pow(double x, double y) {\n         /* Handle special case x<0 */\n         if (x < 0) {\n             // y is an even integer in this case\n-            if (y >= TWO_POWER_52 || y <= -TWO_POWER_52) {\n+            if (y >= TWO_POWER_53 || y <= -TWO_POWER_53) {\n                 return pow(-x, y);\n             }\n \n",
+    "project": "commons-math"
+}

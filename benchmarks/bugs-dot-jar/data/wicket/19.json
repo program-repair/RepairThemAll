@@ -1,0 +1,20 @@
+{
+    "bug_id": 19,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ce172da8",
+    "failing_tests": [
+        "org.apache.wicket.protocol.http.servlet.ServletWebRequestTest"
+    ],
+    "files": 1,
+    "jira_id": "4841",
+    "linesAdd": 7,
+    "linesRem": 2,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 5,
+    "nb_test": 1426,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/protocol/http/servlet/ServletWebRequest.java b/wicket-core/src/main/java/org/apache/wicket/protocol/http/servlet/ServletWebRequest.java\nindex 02ffe67337..8e41aef4a8 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/protocol/http/servlet/ServletWebRequest.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/protocol/http/servlet/ServletWebRequest.java\n@@ -30,6 +30,7 @@\n import javax.servlet.ServletRequest;\n import javax.servlet.http.Cookie;\n import javax.servlet.http.HttpServletRequest;\n+import javax.servlet.http.HttpServletResponse;\n \n import org.apache.wicket.protocol.http.RequestUtils;\n import org.apache.wicket.request.IRequestParameters;\n@@ -37,9 +38,9 @@\n import org.apache.wicket.request.Url;\n import org.apache.wicket.request.UrlUtils;\n import org.apache.wicket.request.http.WebRequest;\n+import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;\n import org.apache.wicket.util.lang.Args;\n import org.apache.wicket.util.lang.Bytes;\n-import org.apache.wicket.util.lang.Checks;\n import org.apache.wicket.util.string.PrependingStringBuffer;\n import org.apache.wicket.util.string.StringValue;\n import org.apache.wicket.util.string.Strings;\n@@ -168,7 +169,11 @@ else if (!isAjax())\n \t\t\t\tbase = getRequestParameters().getParameterValue(PARAM_AJAX_BASE_URL).toString(null);\n \t\t\t}\n \n-\t\t\tChecks.notNull(base, \"Current ajax request is missing the base url header or parameter\");\n+\t\t\tif (base == null)\n+\t\t\t{\n+\t\t\t\tthrow new AbortWithHttpErrorCodeException(HttpServletResponse.SC_BAD_REQUEST,\n+\t\t\t\t\t\"Current ajax request is missing the base url header or parameter\");\n+\t\t\t}\n \n \t\t\treturn setParameters(Url.parse(base, getCharset()));\n \t\t}\n",
+    "project": "wicket"
+}

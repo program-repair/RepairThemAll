@@ -1,0 +1,22 @@
+{
+    "bug_id": 141,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ddf7e8a2",
+    "failing_tests": [
+        "org.apache.wicket.markup.html.link.AutolinkTest",
+        "org.apache.wicket.markup.html.link.BookmarkableHomePageLinksTest",
+        "org.apache.wicket.stateless.StatelessComponentTest"
+    ],
+    "files": 1,
+    "jira_id": "3333",
+    "linesAdd": 4,
+    "linesRem": 4,
+    "nb_error": 0,
+    "nb_failure": 5,
+    "nb_skipped": 0,
+    "nb_test": 1050,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/html/link/Link.java b/wicket-core/src/main/java/org/apache/wicket/markup/html/link/Link.java\nindex f674c75646..bc4b4f1cfc 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/html/link/Link.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/html/link/Link.java\n@@ -21,7 +21,6 @@\n import org.apache.wicket.WicketRuntimeException;\n import org.apache.wicket.markup.ComponentTag;\n import org.apache.wicket.model.IModel;\n-import org.apache.wicket.util.string.Strings;\n \n /**\n  * Implementation of a hyperlink component. A link can be used with an anchor (&lt;a href...)\n@@ -368,7 +367,7 @@ protected void onComponentTag(final ComponentTag tag)\n \t\t\t\ttag.getName().equalsIgnoreCase(\"area\"))\n \t\t\t{\n \t\t\t\t// generate the href attribute\n-\t\t\t\ttag.put(\"href\", Strings.replaceAll(url, \"&\", \"&amp;\"));\n+\t\t\t\ttag.put(\"href\", url);\n \n \t\t\t\t// Add any popup script\n \t\t\t\tif (popupSettings != null)\n@@ -381,7 +380,7 @@ protected void onComponentTag(final ComponentTag tag)\n \t\t\telse if (tag.getName().equalsIgnoreCase(\"script\") ||\n \t\t\t\ttag.getName().equalsIgnoreCase(\"style\"))\n \t\t\t{\n-\t\t\t\ttag.put(\"src\", Strings.replaceAll(url, \"&\", \"&amp;\"));\n+\t\t\t\ttag.put(\"src\", url);\n \t\t\t}\n \t\t\telse\n \t\t\t{\n@@ -401,7 +400,8 @@ else if (tag.getName().equalsIgnoreCase(\"script\") ||\n \t\t\t\t\t\t\"onclick\",\n \t\t\t\t\t\t\"var win = this.ownerDocument.defaultView || this.ownerDocument.parentWindow; \" +\n \t\t\t\t\t\t\t\"if (win == window) { window.location.href='\" +\n-\t\t\t\t\t\t\tStrings.replaceAll(url, \"&\", \"&amp;\") + \"'; } ;return false\");\n+\t\t\t\t\t\t\turl +\n+\t\t\t\t\t\t\t\"'; } ;return false\");\n \t\t\t\t}\n \t\t\t}\n \n",
+    "project": "wicket"
+}

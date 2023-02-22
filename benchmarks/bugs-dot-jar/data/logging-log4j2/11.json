@@ -1,0 +1,20 @@
+{
+    "bug_id": 11,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "3eb44094",
+    "failing_tests": [
+        "org.apache.logging.log4j.LevelTest"
+    ],
+    "files": 1,
+    "jira_id": "56",
+    "linesAdd": 6,
+    "linesRem": 3,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 18,
+    "patch": "diff --git a/log4j2-api/src/main/java/org/apache/logging/log4j/Level.java b/log4j2-api/src/main/java/org/apache/logging/log4j/Level.java\nindex 5d5641710..4fd311528 100644\n--- a/log4j2-api/src/main/java/org/apache/logging/log4j/Level.java\n+++ b/log4j2-api/src/main/java/org/apache/logging/log4j/Level.java\n@@ -96,9 +96,12 @@ public static Level toLevel(String sArg, Level defaultLevel) {\n         if (sArg == null) {\n             return defaultLevel;\n         }\n-\n-        Level level = valueOf(sArg);\n-        return (level == null) ? defaultLevel : level;\n+        for (Level level : values()) {\n+            if (level.name().equals(sArg)) {\n+                return level;\n+            }\n+        }\n+        return defaultLevel;\n     }\n \n     /**\n",
+    "project": "logging-log4j2"
+}

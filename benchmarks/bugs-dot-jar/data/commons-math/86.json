@@ -1,0 +1,20 @@
+{
+    "bug_id": 86,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "c44bfe00",
+    "failing_tests": [
+        "org.apache.commons.math4.ode.events.EventStateTest"
+    ],
+    "files": 1,
+    "jira_id": "1226",
+    "linesAdd": 11,
+    "linesRem": 0,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 3,
+    "nb_test": 5808,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math4/ode/events/EventState.java b/src/main/java/org/apache/commons/math4/ode/events/EventState.java\nindex fe3039a4c..1908440ce 100644\n--- a/src/main/java/org/apache/commons/math4/ode/events/EventState.java\n+++ b/src/main/java/org/apache/commons/math4/ode/events/EventState.java\n@@ -296,7 +296,18 @@ public double value(final double t) throws LocalMaxCountExceededException {\n                             ta = forward ? ta + convergence : ta - convergence;\n                             ga = f.value(ta);\n                         } while ((g0Positive ^ (ga >= 0)) && (forward ^ (ta >= tb)));\n+\n+                        if (forward ^ (ta >= tb)) {\n+                            // we were able to skip this spurious root\n                             --i;\n+                        } else {\n+                            // we can't avoid this root before the end of the step,\n+                            // we have to handle it despite it is close to the former one\n+                            // maybe we have two very close roots\n+                            pendingEventTime = root;\n+                            pendingEvent = true;\n+                            return true;\n+                        }\n                     } else if (Double.isNaN(previousEventTime) ||\n                                (FastMath.abs(previousEventTime - root) > convergence)) {\n                         pendingEventTime = root;\n",
+    "project": "commons-math"
+}

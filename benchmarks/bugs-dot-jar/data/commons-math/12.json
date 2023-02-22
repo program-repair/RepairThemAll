@@ -1,0 +1,20 @@
+{
+    "bug_id": 12,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "7994d3ee",
+    "failing_tests": [
+        "org.apache.commons.math3.optimization.fitting.HarmonicFitterTest"
+    ],
+    "files": 2,
+    "jira_id": "844",
+    "linesAdd": 10,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 4,
+    "nb_test": 4049,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math3/exception/util/LocalizedFormats.java b/src/main/java/org/apache/commons/math3/exception/util/LocalizedFormats.java\nindex 1ca563575..04edd0b46 100644\n--- a/src/main/java/org/apache/commons/math3/exception/util/LocalizedFormats.java\n+++ b/src/main/java/org/apache/commons/math3/exception/util/LocalizedFormats.java\n@@ -344,7 +344,7 @@\n     WRONG_BLOCK_LENGTH(\"wrong array shape (block length = {0}, expected {1})\"),\n     WRONG_NUMBER_OF_POINTS(\"{0} points are required, got only {1}\"),\n     NUMBER_OF_POINTS(\"number of points ({0})\"), /* keep */\n-    ZERO_DENOMINATOR(\"denominator must be different from 0\"),\n+    ZERO_DENOMINATOR(\"denominator must be different from 0\"), /* keep */\n     ZERO_DENOMINATOR_IN_FRACTION(\"zero denominator in fraction {0}/{1}\"),\n     ZERO_FRACTION_TO_DIVIDE_BY(\"the fraction to divide by must not be zero: {0}/{1}\"),\n     ZERO_NORM(\"zero norm\"),\ndiff --git a/src/main/java/org/apache/commons/math3/optimization/fitting/HarmonicFitter.java b/src/main/java/org/apache/commons/math3/optimization/fitting/HarmonicFitter.java\nindex ebb36d310..c7af9ae56 100644\n--- a/src/main/java/org/apache/commons/math3/optimization/fitting/HarmonicFitter.java\n+++ b/src/main/java/org/apache/commons/math3/optimization/fitting/HarmonicFitter.java\n@@ -21,6 +21,7 @@\n import org.apache.commons.math3.analysis.function.HarmonicOscillator;\n import org.apache.commons.math3.exception.ZeroException;\n import org.apache.commons.math3.exception.NumberIsTooSmallException;\n+import org.apache.commons.math3.exception.MathIllegalStateException;\n import org.apache.commons.math3.exception.util.LocalizedFormats;\n import org.apache.commons.math3.util.FastMath;\n \n@@ -250,6 +251,8 @@ private void sortObservations() {\n          * has been called previously.\n          *\n          * @throws ZeroException if the abscissa range is zero.\n+         * @throws MathIllegalStateException when the guessing procedure cannot\n+         * produce sensible results.\n          */\n         private void guessAOmega() {\n             // initialize the sums for the linear model between the two integrals\n@@ -317,6 +320,12 @@ private void guessAOmega() {\n                 }\n                 a = 0.5 * (yMax - yMin);\n             } else {\n+                if (c2 == 0) {\n+                    // In some ill-conditioned cases (cf. MATH-844), the guesser\n+                    // procedure cannot produce sensible results.\n+                    throw new MathIllegalStateException(LocalizedFormats.ZERO_DENOMINATOR);\n+                }\n+\n                 a = FastMath.sqrt(c1 / c2);\n                 omega = FastMath.sqrt(c2 / c3);\n             }\n",
+    "project": "commons-math"
+}

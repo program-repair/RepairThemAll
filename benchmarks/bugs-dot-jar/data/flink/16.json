@@ -1,0 +1,20 @@
+{
+    "bug_id": 16,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "dc78a747",
+    "failing_tests": [
+        "typeutils.runtime.kryo.KryoGenericTypeSerializerTest"
+    ],
+    "files": 1,
+    "jira_id": "3762",
+    "linesAdd": 2,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 1807,
+    "patch": "diff --git a/flink-core/src/main/java/org/apache/flink/api/java/typeutils/runtime/kryo/KryoSerializer.java b/flink-core/src/main/java/org/apache/flink/api/java/typeutils/runtime/kryo/KryoSerializer.java\nindex d5c2f676ce..e74e2519fc 100644\n--- a/flink-core/src/main/java/org/apache/flink/api/java/typeutils/runtime/kryo/KryoSerializer.java\n+++ b/flink-core/src/main/java/org/apache/flink/api/java/typeutils/runtime/kryo/KryoSerializer.java\n@@ -327,9 +327,8 @@ private void checkKryoInitialized() {\n \t\tif (this.kryo == null) {\n \t\t\tthis.kryo = getKryoInstance();\n \n-\t\t\t// disable reference tracking. reference tracking is costly, usually unnecessary, and\n-\t\t\t// inconsistent with Flink's own serialization (which does not do reference tracking)\n-\t\t\tkryo.setReferences(false);\n+\t\t\t// Enable reference tracking. \n+\t\t\tkryo.setReferences(true);\n \t\t\t\n \t\t\t// Throwable and all subclasses should be serialized via java serialization\n \t\t\tkryo.addDefaultSerializer(Throwable.class, new JavaSerializer());\n",
+    "project": "flink"
+}

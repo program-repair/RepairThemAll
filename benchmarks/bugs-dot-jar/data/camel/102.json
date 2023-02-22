@@ -1,0 +1,20 @@
+{
+    "bug_id": 102,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "8433e6db",
+    "failing_tests": [
+        "org.apache.camel.issues.SplitterCorrelationIdIssueTest"
+    ],
+    "files": 2,
+    "jira_id": "3395",
+    "linesAdd": 20,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 3000,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/Splitter.java b/camel-core/src/main/java/org/apache/camel/processor/Splitter.java\nindex 1f5113477f..97e5178a49 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/Splitter.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/Splitter.java\n@@ -137,7 +137,7 @@ public boolean hasNext() {\n \n                     public Object next() {\n                         Object part = iterator.next();\n-                        Exchange newExchange = exchange.copy();\n+                        Exchange newExchange = ExchangeHelper.createCopy(exchange, true);\n                         if (part instanceof Message) {\n                             newExchange.setIn((Message)part);\n                         } else {\ndiff --git a/camel-core/src/main/java/org/apache/camel/util/ExchangeHelper.java b/camel-core/src/main/java/org/apache/camel/util/ExchangeHelper.java\nindex 03ce98e0c8..606a69ad3c 100644\n--- a/camel-core/src/main/java/org/apache/camel/util/ExchangeHelper.java\n+++ b/camel-core/src/main/java/org/apache/camel/util/ExchangeHelper.java\n@@ -168,6 +168,8 @@ public static Object getMandatoryOutBody(Exchange exchange) throws InvalidPayloa\n      * @param handover whether the on completion callbacks should be handed over to the new copy.\n      */\n     public static Exchange createCorrelatedCopy(Exchange exchange, boolean handover) {\n+        String id = exchange.getExchangeId();\n+\n         Exchange copy = exchange.copy();\n         // do not share the unit of work\n         copy.setUnitOfWork(null);\n@@ -177,7 +179,23 @@ public static Exchange createCorrelatedCopy(Exchange exchange, boolean handover)\n             uow.handoverSynchronization(copy);\n         }\n         // set a correlation id so we can track back the original exchange\n-        copy.setProperty(Exchange.CORRELATION_ID, exchange.getExchangeId());\n+        copy.setProperty(Exchange.CORRELATION_ID, id);\n+        return copy;\n+    }\n+\n+    /**\n+     * Creates a new instance and copies from the current message exchange so that it can be\n+     * forwarded to another destination as a new instance.\n+     *\n+     * @param exchange original copy of the exchange\n+     * @param preserveExchangeId whether or not the exchange id should be preserved\n+     * @return the copy\n+     */\n+    public static Exchange createCopy(Exchange exchange, boolean preserveExchangeId) {\n+        Exchange copy = exchange.copy();\n+        if (preserveExchangeId) {\n+            copy.setExchangeId(exchange.getExchangeId());\n+        }\n         return copy;\n     }\n \n",
+    "project": "camel"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 188,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "eabb4066",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.query.UnionQueryTest"
+    ],
+    "files": 1,
+    "jira_id": "3013",
+    "linesAdd": 8,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 9,
+    "nb_test": 2184,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/UnionQueryImpl.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/UnionQueryImpl.java\nindex 90cb3ff8a0..2f9bf8d4e7 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/UnionQueryImpl.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/UnionQueryImpl.java\n@@ -91,13 +91,19 @@ public void setOrderings(OrderingImpl[] orderings) {\n     @Override\n     public void setLimit(long limit) {\n         this.limit = limit;\n-        left.setLimit(limit);\n-        right.setLimit(limit);\n+        applyLimitOffset();\n     }\n \n     @Override\n     public void setOffset(long offset) {\n         this.offset = offset;\n+        applyLimitOffset();\n+    }\n+\n+    private void applyLimitOffset() {\n+        long subqueryLimit = QueryImpl.saturatedAdd(limit, offset);\n+        left.setLimit(subqueryLimit);\n+        right.setLimit(subqueryLimit);\n     }\n \n     @Override\n",
+    "project": "jackrabbit-oak"
+}

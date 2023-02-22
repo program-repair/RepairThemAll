@@ -1,0 +1,31 @@
+{
+    "bug_id": 86,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "941e3cb1",
+    "failing_tests": [
+        "org.apache.accumulo.core.client.mapred.AccumuloFileOutputFormatTest",
+        "org.apache.accumulo.core.client.mapreduce.AccumuloOutputFormatTest",
+        "org.apache.accumulo.core.client.mapred.AccumuloRowInputFormatTest",
+        "org.apache.accumulo.core.client.mapreduce.AccumuloMultiTableInputFormatTest",
+        "org.apache.accumulo.core.client.mapred.AccumuloInputFormatTest",
+        "org.apache.accumulo.core.client.mapred.TokenFileTest",
+        "org.apache.accumulo.core.client.mapred.AccumuloOutputFormatTest",
+        "org.apache.accumulo.core.client.mapreduce.TokenFileTest",
+        "org.apache.accumulo.core.client.mapreduce.AccumuloFileOutputFormatTest",
+        "org.apache.accumulo.core.client.mapreduce.AccumuloInputFormatTest",
+        "org.apache.accumulo.core.client.mapreduce.AccumuloRowInputFormatTest",
+        "org.apache.accumulo.core.client.mapred.AccumuloMultiTableInputFormatTest"
+    ],
+    "files": 2,
+    "jira_id": "1732",
+    "linesAdd": 16,
+    "linesRem": 6,
+    "nb_error": 16,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 510,
+    "patch": "diff --git a/core/src/main/java/org/apache/accumulo/core/client/mapred/AbstractInputFormat.java b/core/src/main/java/org/apache/accumulo/core/client/mapred/AbstractInputFormat.java\nindex c89c5d735..eaf99cbea 100644\n--- a/core/src/main/java/org/apache/accumulo/core/client/mapred/AbstractInputFormat.java\n+++ b/core/src/main/java/org/apache/accumulo/core/client/mapred/AbstractInputFormat.java\n@@ -371,6 +371,8 @@ public void initialize(InputSplit inSplit, JobConf job) throws IOException {\n         log.debug(\"Authorizations are: \" + authorizations);\n         if (tableConfig.isOfflineScan()) {\n           scanner = new OfflineScanner(instance, new Credentials(principal, token), split.getTableId(), authorizations);\n+        } else if (instance instanceof MockInstance) {\n+          scanner = instance.getConnector(principal, token).createScanner(split.getTableName(), authorizations);\n         } else {\n           scanner = new ScannerImpl(instance, new Credentials(principal, token), split.getTableId(), authorizations);\n         }\n@@ -382,7 +384,7 @@ public void initialize(InputSplit inSplit, JobConf job) throws IOException {\n           log.info(\"Using local iterators\");\n           scanner = new ClientSideIteratorScanner(scanner);\n         }\n-        setupIterators(job, scanner, split.getTableId());\n+        setupIterators(job, scanner, split.getTableName());\n       } catch (Exception e) {\n         throw new IOException(e);\n       }\n@@ -460,7 +462,11 @@ public float getProgress() throws IOException {\n       TabletLocator tl;\n       try {\n         // resolve table name to id once, and use id from this point forward\n-        tableId = Tables.getTableId(getInstance(job), tableName);\n+        Instance instance = getInstance(job);\n+        if (instance instanceof MockInstance)\n+          tableId = \"\";\n+        else\n+          tableId = Tables.getTableId(instance, tableName);\n         if (tableConfig.isOfflineScan()) {\n           binnedRanges = binOfflineTable(job, tableId, ranges);\n           while (binnedRanges == null) {\n@@ -469,7 +475,6 @@ public float getProgress() throws IOException {\n             binnedRanges = binOfflineTable(job, tableId, ranges);\n           }\n         } else {\n-          Instance instance = getInstance(job);\n           tl = getTabletLocator(job, tableId);\n           // its possible that the cache could contain complete, but old information about a tables tablets... so clear it\n           tl.invalidateCache();\ndiff --git a/core/src/main/java/org/apache/accumulo/core/client/mapreduce/AbstractInputFormat.java b/core/src/main/java/org/apache/accumulo/core/client/mapreduce/AbstractInputFormat.java\nindex 74f8f8b7a..d426caf34 100644\n--- a/core/src/main/java/org/apache/accumulo/core/client/mapreduce/AbstractInputFormat.java\n+++ b/core/src/main/java/org/apache/accumulo/core/client/mapreduce/AbstractInputFormat.java\n@@ -386,6 +386,8 @@ public void initialize(InputSplit inSplit, TaskAttemptContext attempt) throws IO\n         log.debug(\"Authorizations are: \" + authorizations);\n         if (tableConfig.isOfflineScan()) {\n           scanner = new OfflineScanner(instance, new Credentials(principal, token), split.getTableId(), authorizations);\n+        } else if (instance instanceof MockInstance) {\n+          scanner = instance.getConnector(principal, token).createScanner(split.getTableName(), authorizations);\n         } else {\n           scanner = new ScannerImpl(instance, new Credentials(principal, token), split.getTableId(), authorizations);\n         }\n@@ -397,7 +399,7 @@ public void initialize(InputSplit inSplit, TaskAttemptContext attempt) throws IO\n           log.info(\"Using local iterators\");\n           scanner = new ClientSideIteratorScanner(scanner);\n         }\n-        setupIterators(attempt, scanner, split.getTableId());\n+        setupIterators(attempt, scanner, split.getTableName());\n       } catch (Exception e) {\n         throw new IOException(e);\n       }\n@@ -488,7 +490,11 @@ public V getCurrentValue() throws IOException, InterruptedException {\n       TabletLocator tl;\n       try {\n         // resolve table name to id once, and use id from this point forward\n-        tableId = Tables.getTableId(getInstance(context), tableName);\n+        Instance instance = getInstance(context);\n+        if (instance instanceof MockInstance)\n+          tableId = \"\";\n+        else\n+          tableId = Tables.getTableId(instance, tableName);\n         if (tableConfig.isOfflineScan()) {\n           binnedRanges = binOfflineTable(context, tableId, ranges);\n           while (binnedRanges == null) {\n@@ -498,7 +504,6 @@ public V getCurrentValue() throws IOException, InterruptedException {\n \n           }\n         } else {\n-          Instance instance = getInstance(context);\n           tl = getTabletLocator(context, tableId);\n           // its possible that the cache could contain complete, but old information about a tables tablets... so clear it\n           tl.invalidateCache();\n",
+    "project": "accumulo"
+}

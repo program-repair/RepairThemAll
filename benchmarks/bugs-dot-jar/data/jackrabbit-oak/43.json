@@ -1,0 +1,20 @@
+{
+    "bug_id": 43,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "a8c925e0",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.query.FilterTest"
+    ],
+    "files": 1,
+    "jira_id": "1108",
+    "linesAdd": 7,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 6,
+    "nb_test": 1445,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/index/FilterImpl.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/index/FilterImpl.java\nindex 14d8639a81..6eb282ee9b 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/index/FilterImpl.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/index/FilterImpl.java\n@@ -251,6 +251,13 @@ public void restrictProperty(String propertyName, Operator op, PropertyValue v)\n         PropertyValue oldLast = x.last;\n         switch (op) {\n         case EQUAL:\n+            if (x.first != null && x.last == x.first && x.firstIncluding && x.lastIncluding) {\n+                // there is already an equality condition on this property\n+                // we will keep this, as it could be a multi-valued property\n+                // (unlike in databases, \"x = 1 and x = 2\" can match a node\n+                // if x is a multi-valued property with value \"{1, 2}\")\n+                return;\n+            }\n             x.first = maxValue(oldFirst, v);\n             x.firstIncluding = x.first == oldFirst ? x.firstIncluding : true;\n             x.last = minValue(oldLast, v);\n",
+    "project": "jackrabbit-oak"
+}

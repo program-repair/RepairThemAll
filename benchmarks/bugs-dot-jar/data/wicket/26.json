@@ -1,0 +1,20 @@
+{
+    "bug_id": 26,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "e8dab4a0",
+    "failing_tests": [
+        "org.apache.wicket.protocol.http.WicketFilterTest"
+    ],
+    "files": 1,
+    "jira_id": "5138",
+    "linesAdd": 12,
+    "linesRem": 8,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 3,
+    "nb_test": 1469,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/protocol/http/WicketFilter.java b/wicket-core/src/main/java/org/apache/wicket/protocol/http/WicketFilter.java\nindex eb73ee7986..be577f3338 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/protocol/http/WicketFilter.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/protocol/http/WicketFilter.java\n@@ -96,8 +96,8 @@\n \tprivate boolean isServlet = false;\n \n \t/**\n-\t * default constructor, usually invoked through the servlet \n-\t * container by the web.xml configuration\n+\t * default constructor, usually invoked through the servlet container by the web.xml\n+\t * configuration\n \t */\n \tpublic WicketFilter()\n \t{\n@@ -106,8 +106,8 @@ public WicketFilter()\n \t/**\n \t * constructor supporting programmatic setup of the filter\n \t * <p/>\n-\t *  this can be useful for programmatically creating and appending the \n-\t *  wicket filter to the servlet context using servlet 3 features.\n+\t * this can be useful for programmatically creating and appending the wicket filter to the\n+\t * servlet context using servlet 3 features.\n \t * \n \t * @param application\n \t *            web application\n@@ -174,7 +174,7 @@ boolean processRequest(ServletRequest request, final ServletResponse response,\n \t\t\t\treturn false;\n \t\t\t}\n \n-\t\t\tif (\"OPTIONS\".equals(httpServletRequest.getMethod()))\n+\t\t\tif (\"OPTIONS\".equalsIgnoreCase(httpServletRequest.getMethod()))\n \t\t\t{\n \t\t\t\t// handle the OPTIONS request outside of normal request processing.\n \t\t\t\t// wicket pages normally only support GET and POST methods, but resources and\n@@ -198,7 +198,8 @@ boolean processRequest(ServletRequest request, final ServletResponse response,\n \t\t\t\t\thttpServletResponse);\n \n \t\t\t\tRequestCycle requestCycle = application.createRequestCycle(webRequest, webResponse);\n-\t\t\t\tres = processRequestCycle(requestCycle, webResponse, httpServletRequest, httpServletResponse, chain);\n+\t\t\t\tres = processRequestCycle(requestCycle, webResponse, httpServletRequest,\n+\t\t\t\t\thttpServletResponse, chain);\n \t\t\t}\n \t\t\telse\n \t\t\t{\n@@ -250,7 +251,8 @@ boolean processRequest(ServletRequest request, final ServletResponse response,\n \t */\n \tprotected boolean processRequestCycle(RequestCycle requestCycle, WebResponse webResponse,\n \t\tHttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,\n-\t\tfinal FilterChain chain) throws IOException, ServletException {\n+\t\tfinal FilterChain chain) throws IOException, ServletException\n+\t{\n \t\t// Assume we are able to handle the request\n \t\tboolean res = true;\n \n@@ -518,6 +520,7 @@ protected String getFilterPath(final HttpServletRequest request)\n \n \t/**\n \t * Provide a standard getter for filterPath.\n+\t * \n \t * @return The configured filterPath.\n \t */\n \tprotected String getFilterPath()\n@@ -651,7 +654,8 @@ public final void setFilterPath(String filterPath)\n \t\tif (this.filterPath != null)\n \t\t{\n \t\t\tthrow new IllegalStateException(\n-\t\t\t\t\"Filter path is write-once. You can not change it. Current value='\" + filterPath + '\\'');\n+\t\t\t\t\"Filter path is write-once. You can not change it. Current value='\" + filterPath +\n+\t\t\t\t\t'\\'');\n \t\t}\n \t\tif (filterPath != null)\n \t\t{\n",
+    "project": "wicket"
+}

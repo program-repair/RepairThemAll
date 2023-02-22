@@ -1,0 +1,20 @@
+{
+    "bug_id": 232,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "bb7f9cf5",
+    "failing_tests": [
+        "org.apache.wicket.RestartResponseAtInterceptPageExceptionTest"
+    ],
+    "files": 1,
+    "jira_id": "1718",
+    "linesAdd": 3,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 1791,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/html/WebPage.java b/wicket-core/src/main/java/org/apache/wicket/markup/html/WebPage.java\nindex 903d7c414e..5c7d6bb8d8 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/html/WebPage.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/html/WebPage.java\n@@ -26,11 +26,9 @@\n import org.apache.wicket.markup.renderStrategy.AbstractHeaderRenderStrategy;\n import org.apache.wicket.model.IModel;\n import org.apache.wicket.protocol.http.WebApplication;\n-import org.apache.wicket.request.IRequestHandler;\n import org.apache.wicket.request.Request;\n import org.apache.wicket.request.Response;\n import org.apache.wicket.request.cycle.RequestCycle;\n-import org.apache.wicket.core.request.handler.IPageRequestHandler;\n import org.apache.wicket.request.http.WebRequest;\n import org.apache.wicket.request.http.WebResponse;\n import org.apache.wicket.request.mapper.parameter.PageParameters;\n@@ -216,8 +214,11 @@ protected void onAfterRender()\n \t\t// only in development mode validate the headers\n \t\tif (getApplication().usesDevelopmentConfig())\n \t\t{\n+\t\t\t// check headers only when page was completely rendered\n+\t\t\tif (wasRendered(this)) {\n \t\t\t\tvalidateHeaders();\n \t\t\t}\n+\t\t}\n \n \t\tsuper.onAfterRender();\n \t}\n",
+    "project": "wicket"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 72,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ed780cc7",
+    "failing_tests": [
+        "org.apache.wicket.validation.validator.UrlValidatorTest"
+    ],
+    "files": 1,
+    "jira_id": "5112",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 3,
+    "nb_test": 1466,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/validation/validator/UrlValidator.java b/wicket-core/src/main/java/org/apache/wicket/validation/validator/UrlValidator.java\nindex a259c51175..b7eee1510a 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/validation/validator/UrlValidator.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/validation/validator/UrlValidator.java\n@@ -115,7 +115,7 @@\n \tprivate static final int PARSE_AUTHORITY_PORT = 4;\n \tprivate static final int PARSE_AUTHORITY_EXTRA = 5; // Should always be empty.\n \n-\tprivate static final String PATH_PATTERN = \"^(/[-\\\\w:@&?=+,.!/~*'%$_;]*)?$\";\n+\tprivate static final String PATH_PATTERN = \"^(/[-\\\\w:@&?=+,.!/~*'%$_;\\\\(\\\\)]*)?$\";\n \n \tprivate static final String QUERY_PATTERN = \"^(.*)$\";\n \n",
+    "project": "wicket"
+}

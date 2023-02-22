@@ -1,0 +1,20 @@
+{
+    "bug_id": 53,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "c8fd3c53",
+    "failing_tests": [
+        "org.apache.logging.log4j.MarkerTest"
+    ],
+    "files": 1,
+    "jira_id": "1058",
+    "linesAdd": 3,
+    "linesRem": 0,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 18,
+    "patch": "diff --git a/log4j-slf4j-impl/src/main/java/org/apache/logging/slf4j/Log4jMarker.java b/log4j-slf4j-impl/src/main/java/org/apache/logging/slf4j/Log4jMarker.java\nindex 50d126c59..c2273f5c9 100644\n--- a/log4j-slf4j-impl/src/main/java/org/apache/logging/slf4j/Log4jMarker.java\n+++ b/log4j-slf4j-impl/src/main/java/org/apache/logging/slf4j/Log4jMarker.java\n@@ -85,6 +85,9 @@ public boolean hasChildren() {\n \r\n     @Override\r\n \tpublic boolean contains(final org.slf4j.Marker marker) {\r\n+\t\tif (marker == null) {\r\n+\t\t\tthrow new IllegalArgumentException();\r\n+\t\t}\r\n \t\treturn this.marker.isInstanceOf(marker.getName());\r\n \t}\r\n \r\n",
+    "project": "logging-log4j2"
+}

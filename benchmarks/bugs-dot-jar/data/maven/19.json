@@ -1,0 +1,20 @@
+{
+    "bug_id": 19,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "c225847e",
+    "failing_tests": [
+        "org.apache.maven.repository.internal.DefaultArtifactDescriptorReaderTest"
+    ],
+    "files": 1,
+    "jira_id": "5459",
+    "linesAdd": 8,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 16,
+    "patch": "diff --git a/maven-aether-provider/src/main/java/org/apache/maven/repository/internal/DefaultArtifactDescriptorReader.java b/maven-aether-provider/src/main/java/org/apache/maven/repository/internal/DefaultArtifactDescriptorReader.java\nindex 380a6078c..59a955d9c 100644\n--- a/maven-aether-provider/src/main/java/org/apache/maven/repository/internal/DefaultArtifactDescriptorReader.java\n+++ b/maven-aether-provider/src/main/java/org/apache/maven/repository/internal/DefaultArtifactDescriptorReader.java\n@@ -275,6 +275,7 @@ private Model loadPom( RepositorySystemSession session, ArtifactDescriptorReques\n         Set<String> visited = new LinkedHashSet<String>();\n         for ( Artifact artifact = request.getArtifact();; )\n         {\n+            Artifact pomArtifact = ArtifactDescriptorUtils.toPomArtifact( artifact );\n             try\n             {\n                 VersionRequest versionRequest =\n@@ -283,6 +284,13 @@ private Model loadPom( RepositorySystemSession session, ArtifactDescriptorReques\n                 VersionResult versionResult = versionResolver.resolveVersion( session, versionRequest );\n \n                 artifact = artifact.setVersion( versionResult.getVersion() );\n+\n+                versionRequest =\n+                    new VersionRequest( pomArtifact, request.getRepositories(), request.getRequestContext() );\n+                versionRequest.setTrace( trace );\n+                versionResult = versionResolver.resolveVersion( session, versionRequest );\n+\n+                pomArtifact = pomArtifact.setVersion( versionResult.getVersion() );\n             }\n             catch ( VersionResolutionException e )\n             {\n@@ -303,8 +311,6 @@ private Model loadPom( RepositorySystemSession session, ArtifactDescriptorReques\n                 throw new ArtifactDescriptorException( result );\n             }\n \n-            Artifact pomArtifact = ArtifactDescriptorUtils.toPomArtifact( artifact );\n-\n             ArtifactResult resolveResult;\n             try\n             {\n",
+    "project": "maven"
+}

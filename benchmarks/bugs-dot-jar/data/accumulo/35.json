@@ -1,0 +1,20 @@
+{
+    "bug_id": 35,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "3143b9c5",
+    "failing_tests": [
+        "org.apache.accumulo.proxy.SimpleTest"
+    ],
+    "files": 1,
+    "jira_id": "1800",
+    "linesAdd": 5,
+    "linesRem": 5,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 33,
+    "patch": "diff --git a/proxy/src/main/java/org/apache/accumulo/proxy/ProxyServer.java b/proxy/src/main/java/org/apache/accumulo/proxy/ProxyServer.java\nindex 3c5c88a43..c6e74f15c 100644\n--- a/proxy/src/main/java/org/apache/accumulo/proxy/ProxyServer.java\n+++ b/proxy/src/main/java/org/apache/accumulo/proxy/ProxyServer.java\n@@ -1125,16 +1125,16 @@ private void addCellsToWriter(Map<ByteBuffer,List<ColumnUpdate>> cells, BatchWri\n         if (update.isSetTimestamp()) {\n           if (update.isSetDeleteCell()) {\n             m.putDelete(update.getColFamily(), update.getColQualifier(), viz, update.getTimestamp());\n+          } else {\n+            m.put(new Text(update.getColFamily()), new Text(update.getColQualifier()), viz, update.getTimestamp(), new Value(value));\n+            }\n         } else {\n           if (update.isSetDeleteCell()) {\n-              m.putDelete(update.getColFamily(), update.getColQualifier(), viz, update.getTimestamp());\n+            m.putDelete(new Text(update.getColFamily()), new Text(update.getColQualifier()), viz);\n           } else {\n-              m.put(update.getColFamily(), update.getColQualifier(), viz, update.getTimestamp(), value);\n+            m.put(new Text(update.getColFamily()), new Text(update.getColQualifier()), viz, new Value(value));\n           }\n         }\n-        } else {\n-          m.put(update.getColFamily(), update.getColQualifier(), viz, value);\n-        }\n       }\n       try {\n         bwpe.writer.addMutation(m);\n",
+    "project": "accumulo"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 28,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "e7ac45b6",
+    "failing_tests": [
+        "org.apache.camel.component.file.FileConsumerPathWithAmpersandTest"
+    ],
+    "files": 1,
+    "jira_id": "9217",
+    "linesAdd": 0,
+    "linesRem": 6,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 4,
+    "nb_test": 5437,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/impl/DefaultComponent.java b/camel-core/src/main/java/org/apache/camel/impl/DefaultComponent.java\nindex c7ab7ff8a7..c6492ea2a6 100644\n--- a/camel-core/src/main/java/org/apache/camel/impl/DefaultComponent.java\n+++ b/camel-core/src/main/java/org/apache/camel/impl/DefaultComponent.java\n@@ -196,12 +196,6 @@ protected void validateParameters(String uri, Map<String, Object> parameters, St\n      * @throws ResolveEndpointFailedException should be thrown if the URI validation failed\n      */\n     protected void validateURI(String uri, String path, Map<String, Object> parameters) {\n-        // check for uri containing & but no ? marker\n-        if (uri.contains(\"&\") && !uri.contains(\"?\")) {\n-            throw new ResolveEndpointFailedException(uri, \"Invalid uri syntax: no ? marker however the uri \"\n-                + \"has & parameter separators. Check the uri if its missing a ? marker.\");\n-        }\n-\n         // check for uri containing double && markers without include by RAW\n         if (uri.contains(\"&&\")) {\n             Pattern pattern = Pattern.compile(\"RAW(.*&&.*)\");\n",
+    "project": "camel"
+}

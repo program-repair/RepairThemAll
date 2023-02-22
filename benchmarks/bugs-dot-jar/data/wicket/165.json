@@ -1,0 +1,20 @@
+{
+    "bug_id": 165,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "1dcaec98",
+    "failing_tests": [
+        "org.apache.wicket.extensions.markup.html.basic.DefaultLinkParserTest"
+    ],
+    "files": 1,
+    "jira_id": "4099",
+    "linesAdd": 5,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 16,
+    "patch": "diff --git a/wicket-extensions/src/main/java/org/apache/wicket/extensions/markup/html/basic/LinkParser.java b/wicket-extensions/src/main/java/org/apache/wicket/extensions/markup/html/basic/LinkParser.java\nindex ff1aa1bb17..8cf4356592 100644\n--- a/wicket-extensions/src/main/java/org/apache/wicket/extensions/markup/html/basic/LinkParser.java\n+++ b/wicket-extensions/src/main/java/org/apache/wicket/extensions/markup/html/basic/LinkParser.java\n@@ -62,6 +62,10 @@ public String parse(final String text)\n \t\t}\n \n \t\tString work = text;\n+\n+\t\t// don't try to parse markup. just plain text. WICKET-4099\n+\t\tif (work.indexOf('<') == -1)\n+\t\t{\n \t\t\tfor (String pattern : renderStrategies.keySet())\n \t\t\t{\n \t\t\t\tILinkRenderStrategy strategy = renderStrategies.get(pattern);\n@@ -76,6 +80,7 @@ public String parse(final String text)\n \t\t\t\tmatcher.appendTail(buffer);\n \t\t\t\twork = buffer.toString();\n \t\t\t}\n+\t\t}\n \t\treturn work;\n \t}\n }\n",
+    "project": "wicket"
+}

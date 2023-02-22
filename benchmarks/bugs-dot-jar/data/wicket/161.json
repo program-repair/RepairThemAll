@@ -1,0 +1,20 @@
+{
+    "bug_id": 161,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "9e6efa61",
+    "failing_tests": [
+        "org.apache.wicket.extensions.yui.calendar.DatePickerTest"
+    ],
+    "files": 1,
+    "jira_id": "5204",
+    "linesAdd": 3,
+    "linesRem": 7,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 17,
+    "patch": "diff --git a/wicket-datetime/src/main/java/org/apache/wicket/extensions/yui/calendar/DateTimeField.java b/wicket-datetime/src/main/java/org/apache/wicket/extensions/yui/calendar/DateTimeField.java\nindex 2534f48afa..13b9cb867b 100644\n--- a/wicket-datetime/src/main/java/org/apache/wicket/extensions/yui/calendar/DateTimeField.java\n+++ b/wicket-datetime/src/main/java/org/apache/wicket/extensions/yui/calendar/DateTimeField.java\n@@ -435,19 +435,15 @@ protected void onBeforeRender()\n \t\t}\n \t\telse\n \t\t{\n-\t\t\tMutableDateTime mDate;\n+\t\t\tMutableDateTime mDate = new MutableDateTime(modelObject);\n \t\t\t// convert date to the client's time zone if we have that info\n \t\t\tTimeZone zone = getClientTimeZone();\n \t\t\tif (zone != null)\n \t\t\t{\n-\t\t\t\tmDate = new MutableDateTime(modelObject, DateTimeZone.forTimeZone(zone));\n-\t\t\t}\n-\t\t\telse\n-\t\t\t{\n-\t\t\t\tmDate = new MutableDateTime(modelObject);\n+\t\t\t\tmDate.setZone(DateTimeZone.forTimeZone(zone));\n \t\t\t}\n \n-\t\t\tdate = mDate.toDate();\n+\t\t\tdate = mDate.toDateTime().toLocalDate().toDate();\n \n \t\t\tif (use12HourFormat)\n \t\t\t{\n",
+    "project": "wicket"
+}

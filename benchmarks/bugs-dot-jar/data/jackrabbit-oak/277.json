@@ -1,0 +1,20 @@
+{
+    "bug_id": 277,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "94110f21",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.security.user.PasswordExpiryHistoryTest"
+    ],
+    "files": 1,
+    "jira_id": "3792",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 1,
+    "nb_test": 3065,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/security/user/UserAuthentication.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/security/user/UserAuthentication.java\nindex f7b3b693a9..95fd76ae33 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/security/user/UserAuthentication.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/security/user/UserAuthentication.java\n@@ -169,7 +169,7 @@ private boolean changePassword(User user, SimpleCredentials credentials) {\n                 }\n             }\n         } catch (PasswordHistoryException e) {\n-            credentials.setAttribute(e.getClass().getName(), e.getMessage());\n+            credentials.setAttribute(e.getClass().getSimpleName(), e.getMessage());\n             log.error(\"Failed to change password for user \" + userId, e.getMessage());\n         } catch (RepositoryException e) {\n             log.error(\"Failed to change password for user \" + userId, e.getMessage());\n",
+    "project": "jackrabbit-oak"
+}

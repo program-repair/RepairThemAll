@@ -1,0 +1,20 @@
+{
+    "bug_id": 11,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "b68c84b8",
+    "failing_tests": [
+        "org.apache.maven.project.ModelUtilsTest"
+    ],
+    "files": 1,
+    "jira_id": "1703",
+    "linesAdd": 29,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 80,
+    "patch": "diff --git a/maven-project/src/main/java/org/apache/maven/project/ModelUtils.java b/maven-project/src/main/java/org/apache/maven/project/ModelUtils.java\nindex ec56f1b7d..b0c6c758b 100644\n--- a/maven-project/src/main/java/org/apache/maven/project/ModelUtils.java\n+++ b/maven-project/src/main/java/org/apache/maven/project/ModelUtils.java\n@@ -53,6 +53,7 @@\n import java.util.Map;\n import java.util.Properties;\n import java.util.TreeMap;\n+import java.util.HashMap;\n \n public final class ModelUtils\n {\n@@ -208,6 +209,8 @@ public static void mergePluginDefinitions( Plugin child, Plugin parent, boolean\n \n         child.setConfiguration( childConfiguration );\n \n+        child.setDependencies( mergeDependencyList( child.getDependencies(), parent.getDependencies() ) );\n+\n         // from here to the end of the method is dealing with merging of the <executions/> section.\n         String parentInherited = parent.getInherited();\n \n@@ -1000,4 +1003,30 @@ public static void mergeFilterLists( List childFilters, List parentFilters )\n             }\n         }\n     }\n+\n+    public static List mergeDependencyList( List child, List parent )\n+    {\n+        Map depsMap = new HashMap();\n+\n+        if ( parent != null )\n+        {\n+            for ( Iterator it = parent.iterator(); it.hasNext(); )\n+            {\n+                Dependency dependency = (Dependency) it.next();\n+                depsMap.put( dependency.getManagementKey(), dependency );\n+            }\n+        }\n+\n+        if ( child != null )\n+        {\n+            for ( Iterator it = child.iterator(); it.hasNext(); )\n+            {\n+                Dependency dependency = (Dependency) it.next();\n+                depsMap.put( dependency.getManagementKey(), dependency );\n+            }\n+        }\n+\n+        return new ArrayList( depsMap.values() );\n+    }\n+\n }\n",
+    "project": "maven"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 170,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "2f95b81f",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.mongomk.MongoMKRebaseTest"
+    ],
+    "files": 1,
+    "jira_id": "1129",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 6,
+    "nb_test": 1312,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/mongomk/MongoNodeStore.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/mongomk/MongoNodeStore.java\nindex c92d4f5a44..4047727145 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/mongomk/MongoNodeStore.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/mongomk/MongoNodeStore.java\n@@ -747,7 +747,7 @@ Revision rebase(@Nonnull Revision branchHead, @Nonnull Revision base) {\n             // empty branch\n             return base.asBranchRevision();\n         }\n-        if (b.getBase().equals(base)) {\n+        if (b.getBase(branchHead).equals(base)) {\n             return branchHead;\n         }\n         // add a pseudo commit to make sure current head of branch\n",
+    "project": "jackrabbit-oak"
+}

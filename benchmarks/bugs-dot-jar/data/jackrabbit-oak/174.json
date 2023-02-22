@@ -1,0 +1,20 @@
+{
+    "bug_id": 174,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "64712735",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.upgrade.CopyVersionHistoryTest"
+    ],
+    "files": 1,
+    "jira_id": "3249",
+    "linesAdd": 19,
+    "linesRem": 1,
+    "nb_error": 4,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 99,
+    "patch": "diff --git a/oak-upgrade/src/main/java/org/apache/jackrabbit/oak/upgrade/RepositoryUpgrade.java b/oak-upgrade/src/main/java/org/apache/jackrabbit/oak/upgrade/RepositoryUpgrade.java\nindex f4684cc4a3..93b5133a54 100644\n--- a/oak-upgrade/src/main/java/org/apache/jackrabbit/oak/upgrade/RepositoryUpgrade.java\n+++ b/oak-upgrade/src/main/java/org/apache/jackrabbit/oak/upgrade/RepositoryUpgrade.java\n@@ -462,7 +462,7 @@ protected Root getWriteRoot() {\n                 createIndexEditorProvider()\n             )));\n \n-            target.merge(builder, new LoggingCompositeHook(hooks, source, earlyShutdown), CommitInfo.EMPTY);\n+            target.merge(builder, new LoggingCompositeHook(hooks, source, overrideEarlyShutdown()), CommitInfo.EMPTY);\n             logger.info(\"Processing commit hooks completed in {}s ({})\", watch.elapsed(TimeUnit.SECONDS), watch);\n             logger.debug(\"Repository upgrade completed.\");\n         } catch (Exception e) {\n@@ -470,6 +470,24 @@ protected Root getWriteRoot() {\n         }\n     }\n \n+    private boolean overrideEarlyShutdown() {\n+        if (earlyShutdown == false) {\n+            return false;\n+        }\n+\n+        final VersionCopyConfiguration c = this.versionCopyConfiguration;\n+        if (c.isCopyVersions() && c.skipOrphanedVersionsCopy()) {\n+            logger.info(\"Overriding early shutdown to false because of the copy versions settings\");\n+            return false;\n+        }\n+        if (c.isCopyVersions() && !c.skipOrphanedVersionsCopy()\n+                && c.getOrphanedMinDate().after(c.getVersionsMinDate())) {\n+            logger.info(\"Overriding early shutdown to false because of the copy versions settings\");\n+            return false;\n+        }\n+        return true;\n+    }\n+\n     private static EditorProvider createTypeEditorProvider() {\n         return new EditorProvider() {\n             @Override\n",
+    "project": "jackrabbit-oak"
+}

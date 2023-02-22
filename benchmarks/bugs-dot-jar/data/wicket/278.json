@@ -1,0 +1,20 @@
+{
+    "bug_id": 278,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "f20b2d70",
+    "failing_tests": [
+        "org.apache.wicket.core.request.mapper.AbstractBookmarkableMapperTest"
+    ],
+    "files": 1,
+    "jira_id": "4932",
+    "linesAdd": 11,
+    "linesRem": 0,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 5,
+    "nb_test": 1449,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/AbstractBookmarkableMapper.java b/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/AbstractBookmarkableMapper.java\nindex 86c64a6d46..56e27d4994 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/AbstractBookmarkableMapper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/AbstractBookmarkableMapper.java\n@@ -24,6 +24,8 @@\n import org.apache.wicket.core.request.handler.PageAndComponentProvider;\n import org.apache.wicket.core.request.handler.PageProvider;\n import org.apache.wicket.core.request.handler.RenderPageRequestHandler;\n+import org.apache.wicket.protocol.http.PageExpiredException;\n+import org.apache.wicket.protocol.http.WebApplication;\n import org.apache.wicket.request.IRequestHandler;\n import org.apache.wicket.request.IRequestHandlerDelegate;\n import org.apache.wicket.request.IRequestMapper;\n@@ -208,8 +210,17 @@ protected IRequestHandler processHybrid(PageInfo pageInfo,\n \t\tPageProvider provider = new PageProvider(pageInfo.getPageId(), pageClass, pageParameters,\n \t\t\trenderCount);\n \t\tprovider.setPageSource(getContext());\n+\t\tif (provider.isNewPageInstance() &&\n+\t\t\t!WebApplication.get().getPageSettings().getRecreateMountedPagesAfterExpiry())\n+\t\t{\n+\t\t\tthrow new PageExpiredException(String.format(\"Bookmarkable page id '%d' has expired.\",\n+\t\t\t\tpageInfo.getPageId()));\n+\t\t}\n+\t\telse\n+\t\t{\n \t\t\treturn new RenderPageRequestHandler(provider);\n \t\t}\n+\t}\n \n \t/**\n \t * Creates a {@code IRequestHandler} that processes a listener request.\n",
+    "project": "wicket"
+}

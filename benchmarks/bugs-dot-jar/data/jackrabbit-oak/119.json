@@ -1,0 +1,20 @@
+{
+    "bug_id": 119,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "daf9a4ef",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.core.RootImplTest"
+    ],
+    "files": 2,
+    "jira_id": "208",
+    "linesAdd": 2,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 203,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/core/RootImpl.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/core/RootImpl.java\nindex abda5d2690..a86895939a 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/core/RootImpl.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/core/RootImpl.java\n@@ -225,9 +225,7 @@ void purge() {\n      * All registered {@link PurgeListener}s are notified.\n      */\n     private void purgePendingChanges() {\n-        if (hasPendingChanges()) {\n         branch.setRoot(rootTree.getNodeState());\n-        }\n         notifyListeners();\n     }\n \ndiff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/kernel/KernelNodeStoreBranch.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/kernel/KernelNodeStoreBranch.java\nindex 79ffaffb1a..63b1ec553d 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/kernel/KernelNodeStoreBranch.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/kernel/KernelNodeStoreBranch.java\n@@ -80,9 +80,11 @@ public NodeState getBase() {\n \n     @Override\n     public void setRoot(NodeState newRoot) {\n+        if (!currentRoot.equals(newRoot)) {\n             currentRoot = newRoot;\n             commit(buildJsop());\n         }\n+    }\n \n     @Override\n     public boolean move(String source, String target) {\n",
+    "project": "jackrabbit-oak"
+}

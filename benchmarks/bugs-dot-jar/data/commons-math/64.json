@@ -1,0 +1,20 @@
+{
+    "bug_id": 64,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "2836a6f9",
+    "failing_tests": [
+        "org.apache.commons.math3.optimization.fitting.PolynomialFitterTest"
+    ],
+    "files": 2,
+    "jira_id": "924",
+    "linesAdd": 12,
+    "linesRem": 6,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 4,
+    "nb_test": 4502,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math3/optimization/Weight.java b/src/main/java/org/apache/commons/math3/optimization/Weight.java\nindex 8e7538f22..28c161903 100644\n--- a/src/main/java/org/apache/commons/math3/optimization/Weight.java\n+++ b/src/main/java/org/apache/commons/math3/optimization/Weight.java\n@@ -18,7 +18,7 @@\n package org.apache.commons.math3.optimization;\n \n import org.apache.commons.math3.linear.RealMatrix;\n-import org.apache.commons.math3.linear.Array2DRowRealMatrix;\n+import org.apache.commons.math3.linear.DiagonalMatrix;\n import org.apache.commons.math3.linear.NonSquareMatrixException;\n \n /**\n@@ -41,11 +41,7 @@\n      * @param weight List of the values of the diagonal.\n      */\n     public Weight(double[] weight) {\n-        final int dim = weight.length;\n-        weightMatrix = new Array2DRowRealMatrix(dim, dim);\n-        for (int i = 0; i < dim; i++) {\n-            weightMatrix.setEntry(i, i, weight[i]);\n-        }\n+        weightMatrix = new DiagonalMatrix(weight);\n     }\n \n     /**\ndiff --git a/src/main/java/org/apache/commons/math3/optimization/general/AbstractLeastSquaresOptimizer.java b/src/main/java/org/apache/commons/math3/optimization/general/AbstractLeastSquaresOptimizer.java\nindex b6c97e7e5..982e559eb 100644\n--- a/src/main/java/org/apache/commons/math3/optimization/general/AbstractLeastSquaresOptimizer.java\n+++ b/src/main/java/org/apache/commons/math3/optimization/general/AbstractLeastSquaresOptimizer.java\n@@ -26,6 +26,7 @@\n import org.apache.commons.math3.exception.util.LocalizedFormats;\n import org.apache.commons.math3.linear.ArrayRealVector;\n import org.apache.commons.math3.linear.RealMatrix;\n+import org.apache.commons.math3.linear.DiagonalMatrix;\n import org.apache.commons.math3.linear.DecompositionSolver;\n import org.apache.commons.math3.linear.MatrixUtils;\n import org.apache.commons.math3.linear.QRDecomposition;\n@@ -558,7 +559,16 @@ protected void setUp() {\n      * @return the square-root of the weight matrix.\n      */\n     private RealMatrix squareRoot(RealMatrix m) {\n+        if (m instanceof DiagonalMatrix) {\n+            final int dim = m.getRowDimension();\n+            final RealMatrix sqrtM = new DiagonalMatrix(dim);\n+            for (int i = 0; i < dim; i++) {\n+               sqrtM.setEntry(i, i, FastMath.sqrt(m.getEntry(i, i)));\n+            }\n+            return sqrtM;\n+        } else {\n             final EigenDecomposition dec = new EigenDecomposition(m);\n             return dec.getSquareRoot();\n         }\n     }\n+}\n",
+    "project": "commons-math"
+}

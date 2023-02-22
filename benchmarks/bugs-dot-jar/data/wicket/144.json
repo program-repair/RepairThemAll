@@ -1,0 +1,20 @@
+{
+    "bug_id": 144,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "724066f4",
+    "failing_tests": [
+        "org.apache.wicket.ajax.json.JsonUtilsTest"
+    ],
+    "files": 1,
+    "jira_id": "5497",
+    "linesAdd": 3,
+    "linesRem": 3,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 2,
+    "nb_test": 1575,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/ajax/json/JsonUtils.java b/wicket-core/src/main/java/org/apache/wicket/ajax/json/JsonUtils.java\nindex f4b8a9b062..ece4997152 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/ajax/json/JsonUtils.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/ajax/json/JsonUtils.java\n@@ -58,7 +58,9 @@ public static JSONArray asArray(Map<String, Object> map) throws JSONException\n \t\t\t\t\t\t}\n \t\t\t\t\t}\n \t\t\t\t}\n-\t\t\t\telse if (value.getClass().isArray())\n+\t\t\t\telse if (value != null)\n+\t\t\t\t{\n+\t\t\t\t\tif (value.getClass().isArray())\n \t\t\t\t\t{\n \t\t\t\t\t\tObject[] array = (Object[]) value;\n \t\t\t\t\t\tfor (Object v : array)\n@@ -73,8 +75,6 @@ else if (value.getClass().isArray())\n \t\t\t\t\t\t}\n \t\t\t\t\t}\n \t\t\t\t\telse\n-\t\t\t\t{\n-\t\t\t\t\tif (value != null)\n \t\t\t\t\t{\n \t\t\t\t\t\tJSONObject object = new JSONObject();\n \t\t\t\t\t\tobject.put(\"name\", name);\n",
+    "project": "wicket"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 1,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "2a489d05",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.query.FilterTest"
+    ],
+    "files": 1,
+    "jira_id": "4170",
+    "linesAdd": 0,
+    "linesRem": 10,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 2894,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/FullTextSearchImpl.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/FullTextSearchImpl.java\nindex 2e0505fc96..f3d11de3bc 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/FullTextSearchImpl.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/FullTextSearchImpl.java\n@@ -273,16 +273,6 @@ public void bindSelector(SourceImpl source) {\n \n     @Override\n     public void restrict(FilterImpl f) {\n-        if (propertyName != null) {\n-            if (f.getSelector().equals(selector)) {\n-                String p = propertyName;\n-                if (relativePath != null) {\n-                    p = PathUtils.concat(relativePath, p);\n-                }\n-                p = normalizePropertyName(p);\n-                restrictPropertyOnFilter(p, f);\n-            }\n-        }\n         f.restrictFulltextCondition(fullTextSearchExpression.currentValue().getValue(Type.STRING));\n     }\n \n",
+    "project": "jackrabbit-oak"
+}

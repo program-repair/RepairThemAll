@@ -1,0 +1,20 @@
+{
+    "bug_id": 42,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "8cdb461f",
+    "failing_tests": [
+        "org.apache.maven.plugin.PluginManagerTest"
+    ],
+    "files": 1,
+    "jira_id": "4761",
+    "linesAdd": 3,
+    "linesRem": 0,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 226,
+    "patch": "diff --git a/maven-core/src/main/java/org/apache/maven/plugin/internal/DefaultPluginDependenciesResolver.java b/maven-core/src/main/java/org/apache/maven/plugin/internal/DefaultPluginDependenciesResolver.java\nindex 954616f5f..57374d2e5 100644\n--- a/maven-core/src/main/java/org/apache/maven/plugin/internal/DefaultPluginDependenciesResolver.java\n+++ b/maven-core/src/main/java/org/apache/maven/plugin/internal/DefaultPluginDependenciesResolver.java\n@@ -97,8 +97,11 @@ public Artifact resolve( Plugin plugin, ArtifactResolutionRequest request )\n \n         Set<Artifact> overrideArtifacts = new LinkedHashSet<Artifact>();\n         for ( Dependency dependency : plugin.getDependencies() )\n+        {\n+\t          if ( !Artifact.SCOPE_SYSTEM.equals( dependency.getScope() ) )\n \t          {\n \t              dependency.setScope( Artifact.SCOPE_RUNTIME );\n+\t          }\n             overrideArtifacts.add( repositorySystem.createDependencyArtifact( dependency ) );\n         }\n \n",
+    "project": "maven"
+}

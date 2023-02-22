@@ -1,0 +1,20 @@
+{
+    "bug_id": 85,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "26041fe7",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.document.RevisionTest"
+    ],
+    "files": 1,
+    "jira_id": "1727",
+    "linesAdd": 6,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 9,
+    "nb_test": 1845,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Revision.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Revision.java\nindex db6a698cbc..79043e9fd9 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Revision.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Revision.java\n@@ -521,9 +521,14 @@ public int compare(Revision o1, Revision o2) {\n             if (range1 == FUTURE && range2 == FUTURE) {\n                 return o1.compareRevisionTimeThenClusterId(o2);\n             }\n-            if (range1 == null || range2 == null) {\n+            if (range1 == null && range2 == null) {\n                 return o1.compareRevisionTimeThenClusterId(o2);\n             }\n+            if (range1 == null) {\n+                return -1;\n+            } else if (range2 == null) {\n+                return 1;\n+            }\n             int comp = range1.compareRevisionTimeThenClusterId(range2);\n             if (comp != 0) {\n                 return comp;\n",
+    "project": "jackrabbit-oak"
+}

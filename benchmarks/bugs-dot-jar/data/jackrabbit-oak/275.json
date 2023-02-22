@@ -1,0 +1,20 @@
+{
+    "bug_id": 275,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "8ed779dc",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.jcr.RepositoryTest"
+    ],
+    "files": 1,
+    "jira_id": "738",
+    "linesAdd": 1,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 516,
+    "patch": "diff --git a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeImpl.java b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeImpl.java\nindex f93c2148ee..752a3e8913 100644\n--- a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeImpl.java\n+++ b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeImpl.java\n@@ -240,8 +240,7 @@ public Node perform() throws RepositoryException {\n                 String ntName = primaryNodeTypeName;\n                 if (ntName == null) {\n                     DefinitionProvider dp = getDefinitionProvider();\n-                    String childName = getOakName(PathUtils.getName(relPath));\n-                    NodeDefinition def = dp.getDefinition(parent.getTree(), childName);\n+                    NodeDefinition def = dp.getDefinition(parent.getTree(), oakName);\n                     ntName = def.getDefaultPrimaryTypeName();\n                     if (ntName == null) {\n                         throw new ConstraintViolationException(\n",
+    "project": "jackrabbit-oak"
+}

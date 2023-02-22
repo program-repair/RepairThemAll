@@ -1,0 +1,20 @@
+{
+    "bug_id": 74,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "8967eb2b",
+    "failing_tests": [
+        "org.apache.wicket.extensions.wizard.WizardModelTest"
+    ],
+    "files": 2,
+    "jira_id": "4121",
+    "linesAdd": 6,
+    "linesRem": 11,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 17,
+    "patch": "diff --git a/wicket-extensions/src/main/java/org/apache/wicket/extensions/wizard/Wizard.java b/wicket-extensions/src/main/java/org/apache/wicket/extensions/wizard/Wizard.java\nindex b6ebad429b..3bad8db6ae 100644\n--- a/wicket-extensions/src/main/java/org/apache/wicket/extensions/wizard/Wizard.java\n+++ b/wicket-extensions/src/main/java/org/apache/wicket/extensions/wizard/Wizard.java\n@@ -16,8 +16,6 @@\n  */\n package org.apache.wicket.extensions.wizard;\n \n-import java.util.Iterator;\n-\n import org.apache.wicket.Component;\n import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;\n import org.apache.wicket.markup.html.IHeaderResponse;\n@@ -276,15 +274,6 @@ protected void init(final IWizardModel wizardModel)\n \n \t\twizardModel.addListener(this);\n \n-\t\tIterator<IWizardStep> stepsIterator = wizardModel.stepIterator();\n-\t\tif (stepsIterator != null)\n-\t\t{\n-\t\t\twhile (stepsIterator.hasNext())\n-\t\t\t{\n-\t\t\t\t(stepsIterator.next()).init(wizardModel);\n-\t\t\t}\n-\t\t}\n-\n \t\t// reset model to prepare for action\n \t\twizardModel.reset();\n \t}\ndiff --git a/wicket-extensions/src/main/java/org/apache/wicket/extensions/wizard/WizardModel.java b/wicket-extensions/src/main/java/org/apache/wicket/extensions/wizard/WizardModel.java\nindex c66d352831..69c973f50a 100644\n--- a/wicket-extensions/src/main/java/org/apache/wicket/extensions/wizard/WizardModel.java\n+++ b/wicket-extensions/src/main/java/org/apache/wicket/extensions/wizard/WizardModel.java\n@@ -217,6 +217,12 @@ public void reset()\n \t{\n \t\thistory.clear();\n \t\tactiveStep = null;\n+\t\t\n+\t\tfor (IWizardStep step : steps)\n+\t\t{\n+\t\t\tstep.init(this);\n+\t\t}\n+\n \t\tsetActiveStep(findNextVisibleStep());\n \t}\n \n",
+    "project": "wicket"
+}

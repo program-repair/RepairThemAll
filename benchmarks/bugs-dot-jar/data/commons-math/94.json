@@ -1,0 +1,20 @@
+{
+    "bug_id": 94,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "b148046a",
+    "failing_tests": [
+        "org.apache.commons.math4.random.EmpiricalDistributionTest"
+    ],
+    "files": 1,
+    "jira_id": "1203",
+    "linesAdd": 7,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 3,
+    "nb_test": 5851,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math4/random/EmpiricalDistribution.java b/src/main/java/org/apache/commons/math4/random/EmpiricalDistribution.java\nindex 3b3a8642d..61bb65b77 100644\n--- a/src/main/java/org/apache/commons/math4/random/EmpiricalDistribution.java\n+++ b/src/main/java/org/apache/commons/math4/random/EmpiricalDistribution.java\n@@ -593,7 +593,9 @@ public double density(double x) {\n      * <li>Compute K(B) = the probability mass of B with respect to the within-bin kernel\n      * and K(B-) = the kernel distribution evaluated at the lower endpoint of B</li>\n      * <li>Return P(B-) + P(B) * [K(x) - K(B-)] / K(B) where\n-     * K(x) is the within-bin kernel distribution function evaluated at x.</li></ol></p>\n+     * K(x) is the within-bin kernel distribution function evaluated at x.</li></ol>\n+     * If K is a constant distribution, we return P(B-) + P(B) (counting the full\n+     * mass of B).</p>\n      *\n      * @since 3.1\n      */\n@@ -606,10 +608,13 @@ public double cumulativeProbability(double x) {\n         final int binIndex = findBin(x);\n         final double pBminus = pBminus(binIndex);\n         final double pB = pB(binIndex);\n+        final RealDistribution kernel = k(x);\n+        if (kernel instanceof ConstantRealDistribution) {\n+            return pBminus + pB;\n+        }\n         final double[] binBounds = getUpperBounds();\n         final double kB = kB(binIndex);\n         final double lower = binIndex == 0 ? min : binBounds[binIndex - 1];\n-        final RealDistribution kernel = k(x);\n         final double withinBinCum =\n             (kernel.cumulativeProbability(x) -  kernel.cumulativeProbability(lower)) / kB;\n         return pBminus + pB * withinBinCum;\n",
+    "project": "commons-math"
+}

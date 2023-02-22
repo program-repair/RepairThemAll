@@ -1,0 +1,21 @@
+{
+    "bug_id": 54,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "91228815",
+    "failing_tests": [
+        "org.apache.camel.impl.DefaultEndpointTest",
+        "org.apache.camel.management.ManagedThrottlerTest"
+    ],
+    "files": 1,
+    "jira_id": "7344",
+    "linesAdd": 7,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 1,
+    "nb_skipped": 3,
+    "nb_test": 4886,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/impl/DefaultEndpoint.java b/camel-core/src/main/java/org/apache/camel/impl/DefaultEndpoint.java\nindex 3dae2895bf..badd48ecb6 100644\n--- a/camel-core/src/main/java/org/apache/camel/impl/DefaultEndpoint.java\n+++ b/camel-core/src/main/java/org/apache/camel/impl/DefaultEndpoint.java\n@@ -136,7 +136,13 @@ public boolean equals(Object object) {\n \n     @Override\n     public String toString() {\n-        return String.format(\"Endpoint[%s]\", URISupport.sanitizeUri(getEndpointUri()));\n+        String value = null;\n+        try {\n+            value = getEndpointUri();\n+        } catch (RuntimeException e) {\n+            // ignore any exception and use null for building the string value\n+        }\n+        return String.format(\"Endpoint[%s]\", URISupport.sanitizeUri(value));\n     }\n \n     /**\n",
+    "project": "camel"
+}

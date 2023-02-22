@@ -1,0 +1,20 @@
+{
+    "bug_id": 146,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "57bd2dc5",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.document.DocumentNodeStoreTest"
+    ],
+    "files": 1,
+    "jira_id": "2288",
+    "linesAdd": 0,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 9,
+    "nb_test": 1964,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\nindex 077d4b3950..388cca2ec3 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\n@@ -1330,9 +1330,6 @@ private boolean isCommitted(@Nonnull RevisionContext context,\n                                 @Nonnull Revision revision,\n                                 @Nullable String commitValue,\n                                 @Nonnull Revision readRevision) {\n-        if (revision.equalsIgnoreBranch(readRevision)) {\n-            return true;\n-        }\n         if (commitValue == null) {\n             commitValue = getCommitValue(revision);\n         }\n",
+    "project": "jackrabbit-oak"
+}

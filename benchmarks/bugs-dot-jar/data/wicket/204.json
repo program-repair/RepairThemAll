@@ -1,0 +1,20 @@
+{
+    "bug_id": 204,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "e60bac5f",
+    "failing_tests": [
+        "org.apache.wicket.request.mapper.MountedMapperTest"
+    ],
+    "files": 1,
+    "jira_id": "4014",
+    "linesAdd": 40,
+    "linesRem": 0,
+    "nb_error": 2,
+    "nb_failure": 0,
+    "nb_skipped": 2,
+    "nb_test": 1184,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/request/mapper/MountedMapper.java b/wicket-core/src/main/java/org/apache/wicket/request/mapper/MountedMapper.java\nindex 1c5d039906..04fe4e828c 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/mapper/MountedMapper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/mapper/MountedMapper.java\n@@ -19,10 +19,15 @@\n import java.util.ArrayList;\n import java.util.List;\n \n+import org.apache.wicket.RequestListenerInterface;\n+import org.apache.wicket.request.IRequestHandler;\n import org.apache.wicket.request.Request;\n import org.apache.wicket.request.Url;\n import org.apache.wicket.request.component.IRequestablePage;\n+import org.apache.wicket.request.handler.ListenerInterfaceRequestHandler;\n+import org.apache.wicket.request.mapper.info.ComponentInfo;\n import org.apache.wicket.request.mapper.info.PageComponentInfo;\n+import org.apache.wicket.request.mapper.info.PageInfo;\n import org.apache.wicket.request.mapper.parameter.IPageParametersEncoder;\n import org.apache.wicket.request.mapper.parameter.PageParameters;\n import org.apache.wicket.request.mapper.parameter.PageParametersEncoder;\n@@ -354,6 +359,41 @@ protected PageParameters newPageParameters()\n \t\treturn new PageParameters();\n \t}\n \n+\t@Override\n+\tpublic Url mapHandler(IRequestHandler requestHandler)\n+\t{\n+\t\tUrl url = super.mapHandler(requestHandler);\n+\n+\t\tif (url == null && requestHandler instanceof ListenerInterfaceRequestHandler)\n+\t\t{\n+\t\t\tListenerInterfaceRequestHandler handler = (ListenerInterfaceRequestHandler)requestHandler;\n+\t\t\tIRequestablePage page = handler.getPage();\n+\t\t\tClass<? extends IRequestablePage> pageClass = page.getClass();\n+\t\t\tif (checkPageClass(pageClass))\n+\t\t\t{\n+\t\t\t\tString componentPath = handler.getComponentPath();\n+\t\t\t\tRequestListenerInterface listenerInterface = handler.getListenerInterface();\n+\n+\t\t\t\tInteger renderCount = null;\n+\t\t\t\tif (listenerInterface.isIncludeRenderCount())\n+\t\t\t\t{\n+\t\t\t\t\trenderCount = page.getRenderCount();\n+\t\t\t\t}\n+\n+\t\t\t\tPageInfo pageInfo = new PageInfo(page.getPageId());\n+\t\t\t\tComponentInfo componentInfo = new ComponentInfo(renderCount,\n+\t\t\t\t\trequestListenerInterfaceToString(listenerInterface), componentPath,\n+\t\t\t\t\thandler.getBehaviorIndex());\n+\t\t\t\tPageComponentInfo pageComponentInfo = new PageComponentInfo(pageInfo, componentInfo);\n+\t\t\t\tUrlInfo urlInfo = new UrlInfo(pageComponentInfo, page.getClass(),\n+\t\t\t\t\thandler.getPageParameters());\n+\t\t\t\turl = buildUrl(urlInfo);\n+\t\t\t}\n+\t\t}\n+\n+\t\treturn url;\n+\t}\n+\n \t/**\n \t * @see org.apache.wicket.request.mapper.AbstractBookmarkableMapper#buildUrl(org.apache.wicket.request.mapper.AbstractBookmarkableMapper.UrlInfo)\n \t */\n",
+    "project": "wicket"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 237,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "294b0b2f",
+    "failing_tests": [
+        "org.apache.wicket.protocol.http.WicketFilterTest"
+    ],
+    "files": 1,
+    "jira_id": "5980",
+    "linesAdd": 4,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 1864,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/protocol/http/WicketFilter.java b/wicket-core/src/main/java/org/apache/wicket/protocol/http/WicketFilter.java\nindex 679cfbf016..d73a4a7039 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/protocol/http/WicketFilter.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/protocol/http/WicketFilter.java\n@@ -519,6 +519,10 @@ protected String getFilterPathFromAnnotation(boolean isServlet)\n \t\t\t\tpattern = \"\";\n \t\t\t}\n \n+\t\t\tif (pattern.endsWith(\"*\"))\n+\t\t\t{\n+\t\t\t\tpattern = pattern.substring(0, pattern.length() - 1);\n+\t\t\t}\n \t\t\treturn pattern;\n \t\t}\n \t\treturn null;\n",
+    "project": "wicket"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 38,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "a3a5a40f",
+    "failing_tests": [
+        "org.apache.wicket.stateless.StatelessDynmicLinksTest"
+    ],
+    "files": 1,
+    "jira_id": "5460",
+    "linesAdd": 3,
+    "linesRem": 8,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 2,
+    "nb_test": 1546,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/Component.java b/wicket-core/src/main/java/org/apache/wicket/Component.java\nindex 62f1eba75c..e139f997ae 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/Component.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/Component.java\n@@ -4200,15 +4200,10 @@ public Component get(final String path)\n \t */\n \tvoid internalMarkRendering(boolean setRenderingFlag)\n \t{\n-\t\tif (setRenderingFlag)\n-\t\t{\n+\t\t// WICKET-5460 no longer prepared for render\n \t\tsetFlag(FLAG_PREPARED_FOR_RENDER, false);\n-\t\t\tsetFlag(FLAG_RENDERING, true);\n-\t\t}\n-\t\telse\n-\t\t{\n-\t\t\tsetFlag(FLAG_RENDERING, false);\n-\t\t}\n+\n+\t\tsetFlag(FLAG_RENDERING, setRenderingFlag);\n \t}\n \n \t/**\n",
+    "project": "wicket"
+}

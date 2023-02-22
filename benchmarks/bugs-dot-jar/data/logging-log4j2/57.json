@@ -1,0 +1,20 @@
+{
+    "bug_id": 57,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "8faf7f77",
+    "failing_tests": [
+        "org.apache.logging.log4j.flume.appender.FlumePersistentAppenderTest"
+    ],
+    "files": 1,
+    "jira_id": "268",
+    "linesAdd": 3,
+    "linesRem": 0,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 18,
+    "patch": "diff --git a/flume-ng/src/main/java/org/apache/logging/log4j/flume/appender/FlumeEvent.java b/flume-ng/src/main/java/org/apache/logging/log4j/flume/appender/FlumeEvent.java\nindex c8e45474b..d448a6603 100644\n--- a/flume-ng/src/main/java/org/apache/logging/log4j/flume/appender/FlumeEvent.java\n+++ b/flume-ng/src/main/java/org/apache/logging/log4j/flume/appender/FlumeEvent.java\n@@ -128,11 +128,14 @@ public FlumeEvent(final LogEvent event, final String includes, final String excl\n         final String guid =  UUIDUtil.getTimeBasedUUID().toString();\n         final Message message = event.getMessage();\n         if (message instanceof MapMessage) {\n+            // Add the guid to the Map so that it can be included in the Layout.\n             ((MapMessage) message).put(GUID, guid);\n             if (message instanceof StructuredDataMessage) {\n                 addStructuredData(eventPrefix, headers, (StructuredDataMessage) message);\n             }\n             addMapData(eventPrefix, headers, (MapMessage) message);\n+        } else {\n+            headers.put(GUID, guid);\n         }\n \n         addContextData(mdcPrefix, headers, ctx);\n",
+    "project": "logging-log4j2"
+}

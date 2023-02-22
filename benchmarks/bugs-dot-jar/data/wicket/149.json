@@ -1,0 +1,20 @@
+{
+    "bug_id": 149,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "be70e608",
+    "failing_tests": [
+        "org.apache.wicket.markup.html.header.testing3.HeaderTest"
+    ],
+    "files": 3,
+    "jira_id": "3197",
+    "linesAdd": 24,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 1003,
+    "patch": "diff --git a/wicket/src/main/java/org/apache/wicket/Component.java b/wicket/src/main/java/org/apache/wicket/Component.java\nindex aeba67441d..1660a1382b 100644\n--- a/wicket/src/main/java/org/apache/wicket/Component.java\n+++ b/wicket/src/main/java/org/apache/wicket/Component.java\n@@ -64,6 +64,7 @@\n import org.apache.wicket.settings.IDebugSettings;\n import org.apache.wicket.util.IHierarchical;\n import org.apache.wicket.util.convert.IConverter;\n+import org.apache.wicket.util.lang.Args;\n import org.apache.wicket.util.lang.Classes;\n import org.apache.wicket.util.lang.WicketObjects;\n import org.apache.wicket.util.string.ComponentStrings;\n@@ -2774,6 +2773,21 @@ public final void setMarkupIdImpl(Object markupId)\n \t\tsetOutputMarkupId(true);\n \t}\n \n+\t/**\n+\t * Copy markupId\n+\t * \n+\t * @param comp\n+\t */\n+\tfinal void setMarkupId(Component comp)\n+\t{\n+\t\tArgs.notNull(comp, \"comp\");\n+\n+\t\tgeneratedMarkupId = comp.generatedMarkupId;\n+\t\tsetMetaData(MARKUP_ID_KEY, comp.getMetaData(MARKUP_ID_KEY));\n+\t\tsetOutputMarkupId(comp.getOutputMarkupId());\n+\t\treturn;\n+\t}\n+\n \t/**\n \t * Sets this component's markup id to a user defined value. It is up to the user to ensure this\n \t * value is unique.\ndiff --git a/wicket/src/main/java/org/apache/wicket/MarkupContainer.java b/wicket/src/main/java/org/apache/wicket/MarkupContainer.java\nindex 07536ee720..cff90560fc 100644\n--- a/wicket/src/main/java/org/apache/wicket/MarkupContainer.java\n+++ b/wicket/src/main/java/org/apache/wicket/MarkupContainer.java\n@@ -804,7 +804,7 @@ public final MarkupContainer replace(final Component child)\n \t\t\taddedComponent(child);\n \n \t\t\t// The generated markup id remains the same\n-\t\t\tchild.setMarkupIdImpl(replaced.getMarkupIdImpl());\n+\t\t\tchild.setMarkupId(replaced);\n \t\t}\n \n \t\treturn this;\ndiff --git a/wicket/src/main/java/org/apache/wicket/markup/html/panel/Panel.java b/wicket/src/main/java/org/apache/wicket/markup/html/panel/Panel.java\nindex 8fa10e28a1..3245a542b2 100644\n--- a/wicket/src/main/java/org/apache/wicket/markup/html/panel/Panel.java\n+++ b/wicket/src/main/java/org/apache/wicket/markup/html/panel/Panel.java\n@@ -106,6 +106,13 @@ protected void onComponentTag(final ComponentTag tag)\n \t\t\t// <span wicket:id=\"myPanel\">...</span>\n \t\t\ttag.setType(XmlTag.OPEN);\n \t\t}\n+\n+// IMarkupFragment markup = getMarkup(null);\n+// ComponentTag panelTag = (ComponentTag)markup.get(0);\n+// for (String key : panelTag.getAttributes().keySet())\n+// {\n+// tag.append(key, panelTag.getAttribute(key), \", \");\n+// }\n \t\tsuper.onComponentTag(tag);\n \t}\n \n",
+    "project": "wicket"
+}

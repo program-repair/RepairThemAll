@@ -1,0 +1,20 @@
+{
+    "bug_id": 38,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "03340919",
+    "failing_tests": [
+        "org.apache.flink.api.common.io.EnumerateNestedFilesTest"
+    ],
+    "files": 1,
+    "jira_id": "2121",
+    "linesAdd": 6,
+    "linesRem": 4,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 860,
+    "patch": "diff --git a/flink-core/src/main/java/org/apache/flink/api/common/io/FileInputFormat.java b/flink-core/src/main/java/org/apache/flink/api/common/io/FileInputFormat.java\nindex 37739f547c..a8f334b8d2 100644\n--- a/flink-core/src/main/java/org/apache/flink/api/common/io/FileInputFormat.java\n+++ b/flink-core/src/main/java/org/apache/flink/api/common/io/FileInputFormat.java\n@@ -330,7 +330,7 @@ protected FileBaseStatistics getFileStats(FileBaseStatistics cachedStats, Path f\n \n \t\t// enumerate all files\n \t\tif (file.isDir()) {\n-\t\t\ttotalLength += addFilesInDir(file.getPath(), files, totalLength, false);\n+\t\t\ttotalLength += addFilesInDir(file.getPath(), files, false);\n \t\t} else {\n \t\t\tfiles.add(file);\n \t\t\ttestForUnsplittable(file);\n@@ -390,7 +390,7 @@ public LocatableInputSplitAssigner getInputSplitAssigner(FileInputSplit[] splits\n \t\tfinal FileStatus pathFile = fs.getFileStatus(path);\n \n \t\tif (pathFile.isDir()) {\n-\t\t\ttotalLength += addFilesInDir(path, files, totalLength, true);\n+\t\t\ttotalLength += addFilesInDir(path, files, true);\n \t\t} else {\n \t\t\ttestForUnsplittable(pathFile);\n \n@@ -497,14 +497,16 @@ public LocatableInputSplitAssigner getInputSplitAssigner(FileInputSplit[] splits\n \t * Enumerate all files in the directory and recursive if enumerateNestedFiles is true.\n \t * @return the total length of accepted files.\n \t */\n-\tprivate long addFilesInDir(Path path, List<FileStatus> files, long length, boolean logExcludedFiles)\n+\tprivate long addFilesInDir(Path path, List<FileStatus> files, boolean logExcludedFiles)\n \t\t\tthrows IOException {\n \t\tfinal FileSystem fs = path.getFileSystem();\n \n+\t\tlong length = 0;\n+\n \t\tfor(FileStatus dir: fs.listStatus(path)) {\n \t\t\tif (dir.isDir()) {\n \t\t\t\tif (acceptFile(dir) && enumerateNestedFiles) {\n-\t\t\t\t\tlength += addFilesInDir(dir.getPath(), files, length, logExcludedFiles);\n+\t\t\t\t\tlength += addFilesInDir(dir.getPath(), files, logExcludedFiles);\n \t\t\t\t} else {\n \t\t\t\t\tif (logExcludedFiles && LOG.isDebugEnabled()) {\n \t\t\t\t\t\tLOG.debug(\"Directory \"+dir.getPath().toString()+\" did not pass the file-filter and is excluded.\");\n",
+    "project": "flink"
+}

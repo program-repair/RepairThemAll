@@ -1,0 +1,20 @@
+{
+    "bug_id": 28,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "7164b2b6",
+    "failing_tests": [
+        "org.apache.flink.core.fs.PathTest"
+    ],
+    "files": 2,
+    "jira_id": "1848",
+    "linesAdd": 11,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 859,
+    "patch": "diff --git a/flink-core/src/main/java/org/apache/flink/core/fs/Path.java b/flink-core/src/main/java/org/apache/flink/core/fs/Path.java\nindex 75155eb08f..c47bc0de36 100644\n--- a/flink-core/src/main/java/org/apache/flink/core/fs/Path.java\n+++ b/flink-core/src/main/java/org/apache/flink/core/fs/Path.java\n@@ -260,7 +260,11 @@ private String normalizePath(String path) {\n \t\tpath = path.replaceAll(\"/+\", \"/\");\n \n \t\t// remove tailing separator\n-\t\tif(!path.equals(SEPARATOR) && path.endsWith(SEPARATOR)) {\n+\t\tif(!path.equals(SEPARATOR) &&         \t\t// UNIX root path\n+\t\t\t\t!path.matches(\"/\\\\p{Alpha}+:/\") &&  // Windows root path\n+\t\t\t\tpath.endsWith(SEPARATOR))\n+\t\t{\n+\t\t\t// remove tailing slash\n \t\t\tpath = path.substring(0, path.length() - SEPARATOR.length());\n \t\t}\n \ndiff --git a/flink-core/src/main/java/org/apache/flink/core/fs/local/LocalFileSystem.java b/flink-core/src/main/java/org/apache/flink/core/fs/local/LocalFileSystem.java\nindex 2313a41cca..9dd9e30b22 100644\n--- a/flink-core/src/main/java/org/apache/flink/core/fs/local/LocalFileSystem.java\n+++ b/flink-core/src/main/java/org/apache/flink/core/fs/local/LocalFileSystem.java\n@@ -228,8 +228,13 @@ private boolean delete(final File f) throws IOException {\n \t */\n \tpublic boolean mkdirs(final Path f) throws IOException {\n \n-\t\tfinal Path parent = f.getParent();\n \t\tfinal File p2f = pathToFile(f);\n+\n+\t\tif(p2f.isDirectory()) {\n+\t\t\treturn true;\n+\t\t}\n+\n+\t\tfinal Path parent = f.getParent();\n \t\treturn (parent == null || mkdirs(parent)) && (p2f.mkdir() || p2f.isDirectory());\n \t}\n \n",
+    "project": "flink"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 79,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "5cdc1c8d",
+    "failing_tests": [
+        "org.apache.wicket.util.tester.WicketTesterLazyIsPageStatelessRedirectToBufferTest"
+    ],
+    "files": 1,
+    "jira_id": "5578",
+    "linesAdd": 2,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 2,
+    "nb_test": 1659,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/Component.java b/wicket-core/src/main/java/org/apache/wicket/Component.java\nindex 9a72a11b84..c1d1826fe9 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/Component.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/Component.java\n@@ -4544,6 +4544,7 @@ public Component add(final Behavior... behaviors)\n \t@Override\n \tpublic boolean canCallListenerInterfaceAfterExpiry()\n \t{\n-\t\treturn getApplication().getPageSettings().getCallListenerInterfaceAfterExpiry();\n+        \treturn getApplication().getPageSettings()\n+        \t\t.getCallListenerInterfaceAfterExpiry() || isStateless();\n \t}\n }\n",
+    "project": "wicket"
+}

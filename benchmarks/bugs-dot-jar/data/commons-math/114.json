@@ -1,0 +1,20 @@
+{
+    "bug_id": 114,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "f4a4464b",
+    "failing_tests": [
+        "org.apache.commons.math.analysis.solvers.BisectionSolverTest"
+    ],
+    "files": 1,
+    "jira_id": "369",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 2167,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math/analysis/solvers/BisectionSolver.java b/src/main/java/org/apache/commons/math/analysis/solvers/BisectionSolver.java\nindex 3f669271a..180caefbc 100644\n--- a/src/main/java/org/apache/commons/math/analysis/solvers/BisectionSolver.java\n+++ b/src/main/java/org/apache/commons/math/analysis/solvers/BisectionSolver.java\n@@ -69,7 +69,7 @@ public double solve(double min, double max)\n     /** {@inheritDoc} */\n     public double solve(final UnivariateRealFunction f, double min, double max, double initial)\n         throws MaxIterationsExceededException, FunctionEvaluationException {\n-        return solve(min, max);\n+        return solve(f, min, max);\n     }\n \n     /** {@inheritDoc} */\n",
+    "project": "commons-math"
+}

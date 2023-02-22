@@ -1,0 +1,20 @@
+{
+    "bug_id": 92,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "320545cd",
+    "failing_tests": [
+        "org.apache.camel.impl.DefaultCamelContextTest"
+    ],
+    "files": 1,
+    "jira_id": "3428",
+    "linesAdd": 5,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 3006,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/impl/DefaultCamelContext.java b/camel-core/src/main/java/org/apache/camel/impl/DefaultCamelContext.java\nindex 751e35b48c..545444243a 100644\n--- a/camel-core/src/main/java/org/apache/camel/impl/DefaultCamelContext.java\n+++ b/camel-core/src/main/java/org/apache/camel/impl/DefaultCamelContext.java\n@@ -16,6 +16,8 @@\n  */\n package org.apache.camel.impl;\n \n+import static java.lang.String.format;\n+\n import java.io.IOException;\n import java.io.InputStream;\n import java.util.ArrayList;\n@@ -465,7 +467,9 @@ public Endpoint getEndpoint(String uri) {\n \n     public <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType) {\n         Endpoint endpoint = getEndpoint(name);\n-\n+        if(endpoint == null){\n+        \tthrow new IllegalArgumentException(\"No endpoint found with name: \" + name);\n+        }\n         if (endpoint instanceof InterceptSendToEndpoint) {\n             endpoint = ((InterceptSendToEndpoint) endpoint).getDelegate();\n         }\n",
+    "project": "camel"
+}

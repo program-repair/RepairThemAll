@@ -1,0 +1,20 @@
+{
+    "bug_id": 199,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ffc0cae9",
+    "failing_tests": [
+        "org.apache.wicket.request.cycle.RequestCycleListenerTest"
+    ],
+    "files": 1,
+    "jira_id": "3428",
+    "linesAdd": 2,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 0,
+    "nb_test": 1063,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/request/cycle/RequestCycle.java b/wicket-core/src/main/java/org/apache/wicket/request/cycle/RequestCycle.java\nindex 81923b6f16..4c933706da 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/cycle/RequestCycle.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/cycle/RequestCycle.java\n@@ -199,6 +199,8 @@ public boolean processRequest()\n \t\ttry\n \t\t{\n \t\t\tset(this);\n+\t\t\tlisteners.onBeginRequest(this);\n+\t\t\tonBeginRequest();\n \t\t\tIRequestHandler handler = resolveRequestHandler();\n \t\t\tif (handler != null)\n \t\t\t{\n@@ -242,8 +244,6 @@ public boolean processRequestAndDetach()\n \t\tboolean result;\n \t\ttry\n \t\t{\n-\t\t\tlisteners.onBeginRequest(this);\n-\t\t\tonBeginRequest();\n \t\t\tresult = processRequest();\n \t\t}\n \t\tfinally\n",
+    "project": "wicket"
+}

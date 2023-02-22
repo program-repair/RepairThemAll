@@ -1,0 +1,20 @@
+{
+    "bug_id": 100,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "7ba9dd66",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.document.VersionGarbageCollectorTest"
+    ],
+    "files": 2,
+    "jira_id": "1729",
+    "linesAdd": 29,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 8,
+    "nb_test": 1847,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\nindex 8f5e1ab94a..920cb9c5a6 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\n@@ -51,10 +51,12 @@\n import com.google.common.collect.Iterables;\n import com.google.common.collect.Lists;\n import com.google.common.collect.Maps;\n+import com.google.common.collect.Sets;\n \n import static com.google.common.base.Preconditions.checkNotNull;\n import static com.google.common.collect.Iterables.filter;\n import static com.google.common.collect.Iterables.transform;\n+import static java.util.Collections.disjoint;\n import static org.apache.jackrabbit.oak.plugins.document.UpdateOp.Key;\n import static org.apache.jackrabbit.oak.plugins.document.UpdateOp.Operation;\n \n@@ -1339,7 +1341,7 @@ private static void setSplitDocProps(NodeDocument mainDoc, NodeDocument oldDoc,\n         setSplitDocMaxRev(old, maxRev);\n \n         SplitDocType type = SplitDocType.DEFAULT;\n-        if(!mainDoc.hasChildren()){\n+        if(!mainDoc.hasChildren() && !referencesOldDocAfterSplit(mainDoc, oldDoc)){\n             type = SplitDocType.DEFAULT_NO_CHILD;\n         } else if (oldDoc.getLocalRevisions().isEmpty()){\n             type = SplitDocType.PROP_COMMIT_ONLY;\n@@ -1353,6 +1355,31 @@ private static void setSplitDocProps(NodeDocument mainDoc, NodeDocument oldDoc,\n         setSplitDocType(old,type);\n     }\n \n+    /**\n+     * Checks if the main document has changes referencing {@code oldDoc} after\n+     * the split.\n+     *\n+     * @param mainDoc the main document before the split.\n+     * @param oldDoc  the old document created by the split.\n+     * @return {@code true} if the main document contains references to the\n+     *         old document after the split; {@code false} otherwise.\n+     */\n+    private static boolean referencesOldDocAfterSplit(NodeDocument mainDoc,\n+                                                      NodeDocument oldDoc) {\n+        Set<Revision> revs = oldDoc.getLocalRevisions().keySet();\n+        for (String property : mainDoc.data.keySet()) {\n+            if (IGNORE_ON_SPLIT.contains(property)) {\n+                continue;\n+            }\n+            Set<Revision> changes = Sets.newHashSet(mainDoc.getLocalMap(property).keySet());\n+            changes.removeAll(oldDoc.getLocalMap(property).keySet());\n+            if (!disjoint(changes, revs)) {\n+                return true;\n+            }\n+        }\n+        return false;\n+    }\n+\n     /**\n      * Set various properties for intermediate split document\n      *\ndiff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/VersionGarbageCollector.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/VersionGarbageCollector.java\nindex 320afb7746..e671b66d0d 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/VersionGarbageCollector.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/VersionGarbageCollector.java\n@@ -46,8 +46,7 @@\n      */\n     private static final Set<NodeDocument.SplitDocType> GC_TYPES = EnumSet.of(\n             NodeDocument.SplitDocType.DEFAULT_NO_CHILD,\n-            NodeDocument.SplitDocType.PROP_COMMIT_ONLY,\n-            NodeDocument.SplitDocType.INTERMEDIATE);\n+            NodeDocument.SplitDocType.PROP_COMMIT_ONLY);\n \n \n     VersionGarbageCollector(DocumentNodeStore nodeStore) {\n",
+    "project": "jackrabbit-oak"
+}

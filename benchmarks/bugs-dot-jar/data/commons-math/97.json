@@ -1,0 +1,20 @@
+{
+    "bug_id": 97,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "aff82362",
+    "failing_tests": [
+        "org.apache.commons.math3.special.BetaTest"
+    ],
+    "files": 1,
+    "jira_id": "1067",
+    "linesAdd": 5,
+    "linesRem": 4,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 5,
+    "nb_test": 5476,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math3/special/Beta.java b/src/main/java/org/apache/commons/math3/special/Beta.java\nindex c6091b48c..04696f971 100644\n--- a/src/main/java/org/apache/commons/math3/special/Beta.java\n+++ b/src/main/java/org/apache/commons/math3/special/Beta.java\n@@ -189,11 +189,12 @@ public static double regularizedBeta(double x,\n             Double.isNaN(b) ||\n             x < 0 ||\n             x > 1 ||\n-            a <= 0.0 ||\n-            b <= 0.0) {\n+            a <= 0 ||\n+            b <= 0) {\n             ret = Double.NaN;\n-        } else if (x > (a + 1.0) / (a + b + 2.0)) {\n-            ret = 1.0 - regularizedBeta(1.0 - x, b, a, epsilon, maxIterations);\n+        } else if (x > (a + 1) / (2 + b + a) &&\n+                   1 - x <= (b + 1) / (2 + b + a)) {\n+            ret = 1 - regularizedBeta(1 - x, b, a, epsilon, maxIterations);\n         } else {\n             ContinuedFraction fraction = new ContinuedFraction() {\n \n",
+    "project": "commons-math"
+}

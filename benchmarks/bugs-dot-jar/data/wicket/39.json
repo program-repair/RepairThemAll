@@ -1,0 +1,21 @@
+{
+    "bug_id": 39,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "15477252",
+    "failing_tests": [
+        "org.apache.wicket.request.resource.WriteCallbackTest",
+        "org.apache.wicket.util.resource.UrlResourceStreamTest"
+    ],
+    "files": 2,
+    "jira_id": "2839",
+    "linesAdd": 13,
+    "linesRem": 9,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 1,
+    "nb_test": 880,
+    "patch": "diff --git a/wicket/src/main/java/org/apache/wicket/request/resource/AbstractResource.java b/wicket/src/main/java/org/apache/wicket/request/resource/AbstractResource.java\nindex 1f6f526560..00358a067c 100644\n--- a/wicket/src/main/java/org/apache/wicket/request/resource/AbstractResource.java\n+++ b/wicket/src/main/java/org/apache/wicket/request/resource/AbstractResource.java\n@@ -463,7 +463,7 @@ public void write(byte[] b) throws IOException\n \t\t\t\t@Override\n \t\t\t\tpublic void write(byte[] b, int off, int len) throws IOException\n \t\t\t\t{\n-\t\t\t\t\tif (off == 0 || len == b.length)\n+\t\t\t\t\tif (off == 0 && len == b.length)\n \t\t\t\t\t{\n \t\t\t\t\t\twrite(b);\n \t\t\t\t\t}\ndiff --git a/wicket/src/main/java/org/apache/wicket/util/resource/UrlResourceStream.java b/wicket/src/main/java/org/apache/wicket/util/resource/UrlResourceStream.java\nindex 8a0cef7c52..02a144bf39 100644\n--- a/wicket/src/main/java/org/apache/wicket/util/resource/UrlResourceStream.java\n+++ b/wicket/src/main/java/org/apache/wicket/util/resource/UrlResourceStream.java\n@@ -192,6 +192,8 @@ public URL getURL()\n \t */\n \t@Override\n \tpublic Time lastModifiedTime()\n+\t{\n+\t\ttry\n \t\t{\n \t\t\tif (file != null)\n \t\t\t{\n@@ -207,12 +209,10 @@ public Time lastModifiedTime()\n \t\t\t\tif (lastModified != this.lastModified)\n \t\t\t\t{\n \t\t\t\t\tthis.lastModified = lastModified;\n-\t\t\t\tcontentLength = (int)file.length();\n+\t\t\t\t\tsetContentLength();\n \t\t\t\t}\n \t\t\t}\n \t\t\telse\n-\t\t{\n-\t\t\ttry\n \t\t\t{\n \t\t\t\tlong lastModified = Connections.getLastModified(url);\n \n@@ -221,10 +221,10 @@ public Time lastModifiedTime()\n \t\t\t\t{\n \t\t\t\t\tthis.lastModified = lastModified;\n \n-\t\t\t\t\tURLConnection connection = url.openConnection();\n-\t\t\t\t\tcontentLength = connection.getContentLength();\n-\t\t\t\t\tConnections.close(connection);\n+\t\t\t\t\tsetContentLength();\n+\t\t\t\t}\n \t\t\t}\n+\t\t\treturn Time.milliseconds(lastModified);\n \t\t}\n \t\tcatch (IOException e)\n \t\t{\n@@ -243,9 +243,13 @@ public Time lastModifiedTime()\n \t\t\t// allow modification watcher to detect the problem\n \t\t\treturn null;\n \t\t}\n-\n \t}\n-\t\treturn Time.milliseconds(lastModified);\n+\n+\tprivate void setContentLength() throws IOException\n+\t{\n+\t\tURLConnection connection = url.openConnection();\n+\t\tcontentLength = connection.getContentLength();\n+\t\tConnections.close(connection);\n \t}\n \n \t/**\n",
+    "project": "wicket"
+}

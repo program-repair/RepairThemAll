@@ -1,0 +1,20 @@
+{
+    "bug_id": 93,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "b007b22e",
+    "failing_tests": [
+        "org.apache.accumulo.core.iterators.CombinerTest"
+    ],
+    "files": 1,
+    "jira_id": "151",
+    "linesAdd": 4,
+    "linesRem": 4,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 272,
+    "patch": "diff --git a/src/core/src/main/java/org/apache/accumulo/core/iterators/Combiner.java b/src/core/src/main/java/org/apache/accumulo/core/iterators/Combiner.java\nindex 4da51d3..173b00d 100644\n--- a/src/core/src/main/java/org/apache/accumulo/core/iterators/Combiner.java\n+++ b/src/core/src/main/java/org/apache/accumulo/core/iterators/Combiner.java\n@@ -152,15 +152,15 @@ public void next() throws IOException {\n   private Key workKey = new Key();\n   \n   /*\n-   * Sets the topKey and topValue based on the top key of the source. If the column of the source top key is in the set of combiners, or if there are no columns\n-   * in the set of combiners, topKey will be the top key of the source and topValue will be the result of the reduce method. Otherwise, topKey and topValue will\n-   * be null.\n+   * Sets the topKey and topValue based on the top key of the source. If the column of the source top key is in the set of combiners, topKey will be the top key\n+   * of the source and topValue will be the result of the reduce method. Otherwise, topKey and topValue will be unchanged. (They are always set to null before\n+   * this method is called.)\n    */\n   private void findTop() throws IOException {\n     // check if aggregation is needed\n     if (super.hasTop()) {\n       workKey.set(super.getTopKey());\n-      if (combiners.isEmpty() || combiners.contains(workKey)) {\n+      if (combiners.contains(workKey)) {\n         if (workKey.isDeleted())\n           return;\n         topKey = workKey;\n",
+    "project": "accumulo"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 151,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "1a2bc1bc",
+    "failing_tests": [
+        "org.apache.wicket.response.filter.ResponseFilterTest"
+    ],
+    "files": 2,
+    "jira_id": "3620",
+    "linesAdd": 8,
+    "linesRem": 6,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 0,
+    "nb_test": 1111,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/ajax/AjaxRequestTarget.java b/wicket-core/src/main/java/org/apache/wicket/ajax/AjaxRequestTarget.java\nindex 0c73aff3e4..f6ff1adadb 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/ajax/AjaxRequestTarget.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/ajax/AjaxRequestTarget.java\n@@ -600,8 +600,8 @@ public final void respond(final IRequestCycle requestCycle)\n \t\t\t{\n \t\t\t\tfinal StringResponse bodyResponse = new StringResponse();\n \t\t\t\tcontructResponseBody(bodyResponse, encoding);\n-\t\t\t\tinvokeResponseFilters(bodyResponse);\n-\t\t\t\tresponse.write(bodyResponse.getBuffer());\n+\t\t\t\tCharSequence filteredResponse = invokeResponseFilters(bodyResponse);\n+\t\t\t\tresponse.write(filteredResponse);\n \t\t\t}\n \t\t\tfinally\n \t\t\t{\n@@ -670,8 +670,9 @@ private void contructResponseBody(final Response bodyResponse, final String enco\n \t * \n \t * @param contentResponse\n \t *            the Ajax {@link Response} body\n+\t * @return filtered response\n \t */\n-\tprivate void invokeResponseFilters(final StringResponse contentResponse)\n+\tprivate AppendingStringBuffer invokeResponseFilters(final StringResponse contentResponse)\n \t{\n \t\tAppendingStringBuffer responseBuffer = new AppendingStringBuffer(\n \t\t\tcontentResponse.getBuffer());\n@@ -684,9 +685,10 @@ private void invokeResponseFilters(final StringResponse contentResponse)\n \t\t{\n \t\t\tfor (IResponseFilter filter : responseFilters)\n \t\t\t{\n-\t\t\t\tfilter.filter(responseBuffer);\n+\t\t\t\tresponseBuffer = filter.filter(responseBuffer);\n \t\t\t}\n \t\t}\n+\t\treturn responseBuffer;\n \t}\n \n \t/**\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/protocol/http/BufferedWebResponse.java b/wicket-core/src/main/java/org/apache/wicket/protocol/http/BufferedWebResponse.java\nindex 83c05561e4..03e18f9d09 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/protocol/http/BufferedWebResponse.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/protocol/http/BufferedWebResponse.java\n@@ -142,10 +142,10 @@ protected void invoke(WebResponse response)\n \t\t\t{\n \t\t\t\tfor (IResponseFilter filter : responseFilters)\n \t\t\t\t{\n-\t\t\t\t\tfilter.filter(responseBuffer);\n+\t\t\t\t\tresponseBuffer = filter.filter(responseBuffer);\n \t\t\t\t}\n \t\t\t}\n-\t\t\tresponse.write(builder);\n+\t\t\tresponse.write(responseBuffer);\n \t\t}\n \n \t\t@Override\n",
+    "project": "wicket"
+}

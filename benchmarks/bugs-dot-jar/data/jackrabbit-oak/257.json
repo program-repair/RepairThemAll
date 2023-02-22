@@ -1,0 +1,20 @@
+{
+    "bug_id": 257,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ab1a0cc2",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.memory.EmptyNodeStateTest"
+    ],
+    "files": 1,
+    "jira_id": "3763",
+    "linesAdd": 2,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 1,
+    "nb_test": 3093,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/EmptyNodeState.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/EmptyNodeState.java\nindex 62c757d99f..54415d42b3 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/EmptyNodeState.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/EmptyNodeState.java\n@@ -186,7 +186,8 @@ public boolean equals(Object object) {\n         } else if (object instanceof NodeState) {\n             NodeState that = (NodeState) object;\n             return that.getPropertyCount() == 0\n-                    && that.getChildNodeCount(1) == 0;\n+                    && that.getChildNodeCount(1) == 0\n+                    && (exists == that.exists());\n         } else {\n             return false;\n         }\n",
+    "project": "jackrabbit-oak"
+}

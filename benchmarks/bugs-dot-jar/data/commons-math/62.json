@@ -1,0 +1,20 @@
+{
+    "bug_id": 62,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "f6dd42b4",
+    "failing_tests": [
+        "org.apache.commons.math.analysis.solvers.BrentSolverTest"
+    ],
+    "files": 1,
+    "jira_id": "343",
+    "linesAdd": 11,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 2130,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math/analysis/solvers/BrentSolver.java b/src/main/java/org/apache/commons/math/analysis/solvers/BrentSolver.java\nindex 4e95ed5eb..e0cb42714 100644\n--- a/src/main/java/org/apache/commons/math/analysis/solvers/BrentSolver.java\n+++ b/src/main/java/org/apache/commons/math/analysis/solvers/BrentSolver.java\n@@ -32,6 +32,11 @@\n  */\n public class BrentSolver extends UnivariateRealSolverImpl {\n \n+    /** Error message for non-bracketing interval. */\n+    private static final String NON_BRACKETING_MESSAGE =\n+        \"function values at endpoints do not have different signs.  \" +\n+        \"Endpoints: [{0}, {1}], Values: [{2}, {3}]\";\n+\n     /** Serializable version identifier */\n     private static final long serialVersionUID = 7694577816772532779L;\n \n@@ -128,6 +133,11 @@ public double solve(final UnivariateRealFunction f,\n             return solve(f, initial, yInitial, max, yMax, initial, yInitial);\n         }\n \n+        if (yMin * yMax > 0) {\n+            throw MathRuntimeException.createIllegalArgumentException(\n+                  NON_BRACKETING_MESSAGE, min, max, yMin, yMax);\n+        }\n+\n         // full Brent algorithm starting with provided initial guess\n         return solve(f, min, yMin, max, yMax, initial, yInitial);\n \n@@ -176,9 +186,7 @@ public double solve(final UnivariateRealFunction f,\n             } else {\n                 // neither value is close to zero and min and max do not bracket root.\n                 throw MathRuntimeException.createIllegalArgumentException(\n-                        \"function values at endpoints do not have different signs.  \" +\n-                        \"Endpoints: [{0}, {1}], Values: [{2}, {3}]\",\n-                        min, max, yMin, yMax);\n+                        NON_BRACKETING_MESSAGE, min, max, yMin, yMax);\n             }\n         } else if (sign < 0){\n             // solve using only the first endpoint as initial guess\n",
+    "project": "commons-math"
+}

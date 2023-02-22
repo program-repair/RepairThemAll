@@ -1,0 +1,20 @@
+{
+    "bug_id": 158,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "5837817c",
+    "failing_tests": [
+        "org.apache.wicket.ajax.form.OnChangeAjaxBehaviorTest"
+    ],
+    "files": 1,
+    "jira_id": "5711",
+    "linesAdd": 6,
+    "linesRem": 9,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 1690,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/ajax/form/OnChangeAjaxBehavior.java b/wicket-core/src/main/java/org/apache/wicket/ajax/form/OnChangeAjaxBehavior.java\nindex f363cd88fa..27c229c36a 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/ajax/form/OnChangeAjaxBehavior.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/ajax/form/OnChangeAjaxBehavior.java\n@@ -47,7 +47,8 @@\n \t * for text input form component depending on the browser.\n \t * 'change' is used as a fallback for all other form component types.\n \t */\n-\tpublic static final String EVENT_INPUTCHANGE = \"inputchange\";\n+\tpublic static final String EVENT_NAME = \"inputchange change\";\n+\n \tpublic static final String EVENT_CHANGE = \"change\";\n \n \t/**\n@@ -55,7 +56,7 @@\n \t */\n \tpublic OnChangeAjaxBehavior()\n \t{\n-\t\tsuper(EVENT_INPUTCHANGE + \" \" + EVENT_CHANGE);\n+\t\tsuper(EVENT_NAME);\n \t}\n \n \t@Override\n@@ -65,13 +66,9 @@ protected void updateAjaxAttributes(AjaxRequestAttributes attributes)\n \n \t\tComponent component = getComponent();\n \n-\t\t//textfiels and textareas will trigger this behavior with event 'inputchange'\n-\t\t//while all the other components will use 'change'\n-\t\tif (component instanceof TextField || component instanceof TextArea) \n-\t\t{\n-\t\t\tattributes.setEventNames(EVENT_INPUTCHANGE);\n-\t\t} \n-\t\telse \n+\t\t// textfiels and textareas will trigger this behavior with either 'inputchange' or 'change' events\n+\t\t// all the other components will use just 'change'\n+\t\tif (!(component instanceof TextField || component instanceof TextArea))\n \t\t{\n \t\t\tattributes.setEventNames(EVENT_CHANGE);\n \t\t}\n",
+    "project": "wicket"
+}

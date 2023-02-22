@@ -1,0 +1,20 @@
+{
+    "bug_id": 224,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "705ce1d1",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.segment.RecordTest"
+    ],
+    "files": 1,
+    "jira_id": "1916",
+    "linesAdd": 6,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 9,
+    "nb_test": 1811,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentNodeState.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentNodeState.java\nindex fe5221b005..9eb6cd9ef4 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentNodeState.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentNodeState.java\n@@ -116,10 +116,14 @@ public boolean hasProperty(String name) {\n     public PropertyState getProperty(String name) {\n         checkNotNull(name);\n         Template template = getTemplate();\n+        PropertyState property = null;\n         if (JCR_PRIMARYTYPE.equals(name)) {\n-            return template.getPrimaryType();\n+            property = template.getPrimaryType();\n         } else if (JCR_MIXINTYPES.equals(name)) {\n-            return template.getMixinTypes();\n+            property = template.getMixinTypes();\n+        }\n+        if (property != null) {\n+            return property;\n         }\n \n         PropertyTemplate propertyTemplate =\n",
+    "project": "jackrabbit-oak"
+}

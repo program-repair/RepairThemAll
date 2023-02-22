@@ -1,0 +1,21 @@
+{
+    "bug_id": 63,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "bb005b56",
+    "failing_tests": [
+        "org.apache.commons.math.stat.correlation.SpearmansRankCorrelationTest",
+        "org.apache.commons.math.stat.correlation.PearsonsCorrelationTest"
+    ],
+    "files": 1,
+    "jira_id": "371",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 0,
+    "nb_test": 2169,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math/stat/correlation/PearsonsCorrelation.java b/src/main/java/org/apache/commons/math/stat/correlation/PearsonsCorrelation.java\nindex 83b4c4130..dc83314f6 100644\n--- a/src/main/java/org/apache/commons/math/stat/correlation/PearsonsCorrelation.java\n+++ b/src/main/java/org/apache/commons/math/stat/correlation/PearsonsCorrelation.java\n@@ -168,7 +168,7 @@ public RealMatrix getCorrelationPValues() throws MathException {\n                 } else {\n                     double r = correlationMatrix.getEntry(i, j);\n                     double t = Math.abs(r * Math.sqrt((nObs - 2)/(1 - r * r)));\n-                    out[i][j] = 2 * (1 - tDistribution.cumulativeProbability(t));\n+                    out[i][j] = 2 * tDistribution.cumulativeProbability(-t);\n                 }\n             }\n         }\n",
+    "project": "commons-math"
+}

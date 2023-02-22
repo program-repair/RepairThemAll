@@ -1,0 +1,20 @@
+{
+    "bug_id": 99,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "420ac965",
+    "failing_tests": [
+        "org.apache.wicket.ajax.form.AjaxFormSubmitTest"
+    ],
+    "files": 2,
+    "jira_id": "2033",
+    "linesAdd": 13,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 792,
+    "patch": "diff --git a/wicket/src/main/java/org/apache/wicket/ajax/AjaxEventBehavior.java b/wicket/src/main/java/org/apache/wicket/ajax/AjaxEventBehavior.java\nindex ca427191d9..7f6afe7683 100644\n--- a/wicket/src/main/java/org/apache/wicket/ajax/AjaxEventBehavior.java\n+++ b/wicket/src/main/java/org/apache/wicket/ajax/AjaxEventBehavior.java\n@@ -108,10 +108,21 @@ protected void onComponentTag(final ComponentTag tag)\n \t\tComponent myComponent = getComponent();\n \t\tif (myComponent.isEnabledInHierarchy())\n \t\t{\n-\t\t\ttag.put(event, getEventHandler());\n+\t\t\ttag.put(event, escapeAttribute(getEventHandler()));\n \t\t}\n \t}\n \t\n+\tprivate CharSequence escapeAttribute(final CharSequence attr)\n+\t{\n+\t\tif(null == attr)\n+\t\t{\n+\t\t\treturn null;\n+\t\t}\n+\t\tCharSequence escaped = Strings.escapeMarkup(attr.toString());\n+\t\t// No need to escape the apostrophe; it just clutters the markup\n+\t\treturn Strings.replaceAll(escaped, \"&#039;\", \"'\");\n+\t}\n+\n \t/**\n \t * \n \t * @return event handler\ndiff --git a/wicket/src/main/java/org/apache/wicket/ajax/form/AjaxFormSubmitBehavior.java b/wicket/src/main/java/org/apache/wicket/ajax/form/AjaxFormSubmitBehavior.java\nindex 5ae018a3d6..5a226c0d18 100644\n--- a/wicket/src/main/java/org/apache/wicket/ajax/form/AjaxFormSubmitBehavior.java\n+++ b/wicket/src/main/java/org/apache/wicket/ajax/form/AjaxFormSubmitBehavior.java\n@@ -176,6 +176,6 @@ protected void onEvent(AjaxRequestTarget target)\n \t@Override\n \tprotected CharSequence getPreconditionScript()\n \t{\n-\t\treturn \"return Wicket.$$(this)&amp;&amp;Wicket.$$('\" + getForm().getMarkupId() + \"')\";\n+\t\treturn \"return Wicket.$$(this)&&Wicket.$$('\" + getForm().getMarkupId() + \"')\";\n \t}\n }\n",
+    "project": "wicket"
+}

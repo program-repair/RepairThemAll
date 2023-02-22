@@ -1,0 +1,20 @@
+{
+    "bug_id": 55,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "e3759a5e",
+    "failing_tests": [
+        "org.apache.flink.cep.operator.CEPOperatorTest"
+    ],
+    "files": 2,
+    "jira_id": "3684",
+    "linesAdd": 4,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 0,
+    "nb_test": 15,
+    "patch": "diff --git a/flink-libraries/flink-cep/src/main/java/org/apache/flink/cep/operator/CEPPatternOperator.java b/flink-libraries/flink-cep/src/main/java/org/apache/flink/cep/operator/CEPPatternOperator.java\nindex 153c9c9554..77608177b2 100644\n--- a/flink-libraries/flink-cep/src/main/java/org/apache/flink/cep/operator/CEPPatternOperator.java\n+++ b/flink-libraries/flink-cep/src/main/java/org/apache/flink/cep/operator/CEPPatternOperator.java\n@@ -87,6 +87,8 @@ public void processWatermark(Watermark mark) throws Exception {\n \n \t\t\tprocessEvent(nfa, streamRecord.getValue(), streamRecord.getTimestamp());\n \t\t}\n+\n+\t\toutput.emitWatermark(mark);\n \t}\n \n \t@Override\ndiff --git a/flink-libraries/flink-cep/src/main/java/org/apache/flink/cep/operator/KeyedCEPPatternOperator.java b/flink-libraries/flink-cep/src/main/java/org/apache/flink/cep/operator/KeyedCEPPatternOperator.java\nindex 5d754cea52..5db8ef25a6 100644\n--- a/flink-libraries/flink-cep/src/main/java/org/apache/flink/cep/operator/KeyedCEPPatternOperator.java\n+++ b/flink-libraries/flink-cep/src/main/java/org/apache/flink/cep/operator/KeyedCEPPatternOperator.java\n@@ -163,6 +163,8 @@ public void processWatermark(Watermark mark) throws Exception {\n \t\t\t\tprocessEvent(nfa, streamRecord.getValue(), streamRecord.getTimestamp());\n \t\t\t}\n \t\t}\n+\n+\t\toutput.emitWatermark(mark);\n \t}\n \n \t@Override\n",
+    "project": "flink"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 154,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "dde7de85",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.document.DocumentNodeStoreTest"
+    ],
+    "files": 1,
+    "jira_id": "1467",
+    "linesAdd": 3,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 7,
+    "nb_test": 1579,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Commit.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Commit.java\nindex 75510da8d3..93b4bd055e 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Commit.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Commit.java\n@@ -408,7 +408,9 @@ private void rollback(List<UpdateOp> newDocuments,\n             store.createOrUpdate(NODES, reverse);\n         }\n         for (UpdateOp op : newDocuments) {\n-            store.remove(NODES, op.id);\n+            UpdateOp reverse = op.getReverseOperation();\n+            NodeDocument.unsetLastRev(reverse, revision.getClusterId());\n+            store.createOrUpdate(NODES, reverse);\n         }\n         UpdateOp removeCollision = new UpdateOp(commitRoot.getId(), false);\n         NodeDocument.removeCollision(removeCollision, revision);\n",
+    "project": "jackrabbit-oak"
+}

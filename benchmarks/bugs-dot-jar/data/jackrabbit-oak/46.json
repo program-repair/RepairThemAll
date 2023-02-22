@@ -1,0 +1,20 @@
+{
+    "bug_id": 46,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "306a9e00",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.index.lucene.LucenePropertyIndexTest"
+    ],
+    "files": 1,
+    "jira_id": "3769",
+    "linesAdd": 11,
+    "linesRem": 8,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 3,
+    "nb_test": 315,
+    "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LucenePropertyIndex.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LucenePropertyIndex.java\nindex e7cec2622b..e7f29cd7d6 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LucenePropertyIndex.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LucenePropertyIndex.java\n@@ -1337,7 +1337,7 @@ static Query tokenToQuery(String text, String fieldName, Analyzer analyzer) {\n     /**\n      * Following logic is taken from org.apache.jackrabbit.core.query.lucene.JackrabbitQueryParser#parse(java.lang.String)\n      */\n-    private static String rewriteQueryText(String textsearch) {\n+    static String rewriteQueryText(String textsearch) {\n         // replace escaped ' with just '\n         StringBuilder rewritten = new StringBuilder();\n         // the default lucene query parser recognizes 'AND' and 'NOT' as\n@@ -1346,27 +1346,30 @@ private static String rewriteQueryText(String textsearch) {\n         textsearch = textsearch.replaceAll(\"NOT\", \"not\");\n         boolean escaped = false;\n         for (int i = 0; i < textsearch.length(); i++) {\n-            if (textsearch.charAt(i) == '\\\\') {\n+            char c = textsearch.charAt(i);\n+            if (c == '\\\\') {\n                 if (escaped) {\n                     rewritten.append(\"\\\\\\\\\");\n                     escaped = false;\n                 } else {\n                     escaped = true;\n                 }\n-            } else if (textsearch.charAt(i) == '\\'') {\n+            } else if (c == '\\'') {\n                 if (escaped) {\n                     escaped = false;\n                 }\n-                rewritten.append(textsearch.charAt(i));\n-            } else if (textsearch.charAt(i) == ':') {\n-                // fields as known in lucene are not supported\n-                rewritten.append(\"\\\\:\");\n+                rewritten.append(c);\n+            } else if (c == ':' || c == '/') {\n+                //TODO Some other chars are also considered special See OAK-3769 for details\n+                //':' fields as known in lucene are not supported\n+                //'/' its a special char used for regex search in Lucene\n+                rewritten.append('\\\\').append(c);\n             } else {\n                 if (escaped) {\n                     rewritten.append('\\\\');\n                     escaped = false;\n                 }\n-                rewritten.append(textsearch.charAt(i));\n+                rewritten.append(c);\n             }\n         }\n         return rewritten.toString();\n",
+    "project": "jackrabbit-oak"
+}

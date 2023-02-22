@@ -1,0 +1,20 @@
+{
+    "bug_id": 7,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "9d817953",
+    "failing_tests": [
+        "org.apache.logging.log4j.core.layout.XMLLayoutTest"
+    ],
+    "files": 1,
+    "jira_id": "260",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 3,
+    "nb_test": 335,
+    "patch": "diff --git a/core/src/main/java/org/apache/logging/log4j/core/layout/XMLLayout.java b/core/src/main/java/org/apache/logging/log4j/core/layout/XMLLayout.java\nindex ddd45488a..aa40961f5 100644\n--- a/core/src/main/java/org/apache/logging/log4j/core/layout/XMLLayout.java\n+++ b/core/src/main/java/org/apache/logging/log4j/core/layout/XMLLayout.java\n@@ -239,7 +239,7 @@ public String toSerializable(final LogEvent event) {\n      * @return The content type.\n      */\n     public String getContentType() {\n-        return \"text/xml\";\n+        return \"text/xml; charset=\" + this.getCharset();\n     }\n \n     List<String> getThrowableString(final Throwable throwable) {\n",
+    "project": "logging-log4j2"
+}

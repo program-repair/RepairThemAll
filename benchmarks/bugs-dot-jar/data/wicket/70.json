@@ -1,0 +1,20 @@
+{
+    "bug_id": 70,
+    "classification": {
+        "singleLine": true
+    },
+    "commit": "b19a3d69",
+    "failing_tests": [
+        "org.apache.wicket.util.tester.WicketTesterTest"
+    ],
+    "files": 1,
+    "jira_id": "4610",
+    "linesAdd": 1,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 5,
+    "nb_test": 1374,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/protocol/http/mock/MockHttpServletResponse.java b/wicket-core/src/main/java/org/apache/wicket/protocol/http/mock/MockHttpServletResponse.java\nindex 01581ef201..af090609a4 100755\n--- a/wicket-core/src/main/java/org/apache/wicket/protocol/http/mock/MockHttpServletResponse.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/protocol/http/mock/MockHttpServletResponse.java\n@@ -604,6 +604,7 @@ private String getURL()\n \tpublic void sendRedirect(String location) throws IOException\n \t{\n \t\tredirectLocation = location;\n+\t\tstatus = HttpServletResponse.SC_FOUND;\n \t}\n \n \t/**\n",
+    "project": "wicket"
+}

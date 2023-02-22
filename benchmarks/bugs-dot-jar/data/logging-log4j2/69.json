@@ -1,0 +1,20 @@
+{
+    "bug_id": 69,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "11960820",
+    "failing_tests": [
+        "org.apache.logging.log4j.core.impl.ThrowableProxyTest"
+    ],
+    "files": 1,
+    "jira_id": "1046",
+    "linesAdd": 8,
+    "linesRem": 3,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 2,
+    "nb_test": 759,
+    "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/impl/ThrowableProxy.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/impl/ThrowableProxy.java\nindex dbbc808f3..75aa5b44c 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/impl/ThrowableProxy.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/impl/ThrowableProxy.java\n@@ -121,7 +121,8 @@ public ThrowableProxy(final Throwable throwable, Set<Throwable> visited) {\n         final Stack<Class<?>> stack = ReflectionUtil.getCurrentStackTrace();\n         this.extendedStackTrace = this.toExtendedStackTrace(stack, map, null, throwable.getStackTrace());\n         final Throwable throwableCause = throwable.getCause();\n-        this.causeProxy = throwableCause == null ? null : new ThrowableProxy(throwable, stack, map, throwableCause, visited);\n+        final Set<Throwable> causeVisited = new HashSet<>(1);\n+        this.causeProxy = throwableCause == null ? null : new ThrowableProxy(throwable, stack, map, throwableCause, visited, causeVisited);\n         this.suppressedProxies = this.toSuppressedProxies(throwable, visited);\n     }\n \n@@ -137,15 +138,19 @@ public ThrowableProxy(final Throwable throwable, Set<Throwable> visited) {\n      * @param cause\n      *        The Throwable to wrap.\n      * @param suppressedVisited TODO\n+     * @param causeVisited TODO\n      */\n     private ThrowableProxy(final Throwable parent, final Stack<Class<?>> stack, final Map<String, CacheEntry> map,\n-            final Throwable cause, Set<Throwable> suppressedVisited) {\n+            final Throwable cause, Set<Throwable> suppressedVisited, Set<Throwable> causeVisited) {\n+        causeVisited.add(cause);\n         this.throwable = cause;\n         this.name = cause.getClass().getName();\n         this.message = this.throwable.getMessage();\n         this.localizedMessage = this.throwable.getLocalizedMessage();\n         this.extendedStackTrace = this.toExtendedStackTrace(stack, map, parent.getStackTrace(), cause.getStackTrace());\n-        this.causeProxy = cause.getCause() == null ? null : new ThrowableProxy(parent, stack, map, cause.getCause(), suppressedVisited);\n+        final Throwable causeCause = cause.getCause();\n+        this.causeProxy = causeCause == null || causeVisited.contains(causeCause) ? null : new ThrowableProxy(parent,\n+                stack, map, causeCause, suppressedVisited, causeVisited);\n         this.suppressedProxies = this.toSuppressedProxies(cause, suppressedVisited);\n     }\n \n",
+    "project": "logging-log4j2"
+}

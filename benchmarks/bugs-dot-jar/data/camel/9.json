@@ -1,0 +1,20 @@
+{
+    "bug_id": 9,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "1f92fa42",
+    "failing_tests": [
+        "org.apache.camel.management.ManagedCamelContextNewProxyTest"
+    ],
+    "files": 2,
+    "jira_id": "7586",
+    "linesAdd": 1,
+    "linesRem": 8,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 3,
+    "nb_test": 5015,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/api/management/mbean/ManagedCamelContextMBean.java b/camel-core/src/main/java/org/apache/camel/api/management/mbean/ManagedCamelContextMBean.java\nindex 700ae2266c..9a58c0db86 100644\n--- a/camel-core/src/main/java/org/apache/camel/api/management/mbean/ManagedCamelContextMBean.java\n+++ b/camel-core/src/main/java/org/apache/camel/api/management/mbean/ManagedCamelContextMBean.java\n@@ -80,9 +80,6 @@\n     @ManagedAttribute(description = \"Tracing\")\n     void setTracing(Boolean tracing);\n \n-    @ManagedAttribute(description = \"Message History\")\n-    Boolean getMessageHistory();\n-\n     @ManagedAttribute(description = \"Current number of inflight Exchanges\")\n     Integer getInflightExchanges();\n \ndiff --git a/camel-core/src/main/java/org/apache/camel/management/mbean/ManagedCamelContext.java b/camel-core/src/main/java/org/apache/camel/management/mbean/ManagedCamelContext.java\nindex a641b685b4..19a58c04c5 100644\n--- a/camel-core/src/main/java/org/apache/camel/management/mbean/ManagedCamelContext.java\n+++ b/camel-core/src/main/java/org/apache/camel/management/mbean/ManagedCamelContext.java\n@@ -127,10 +127,6 @@ public void setTracing(Boolean tracing) {\n         context.setTracing(tracing);\n     }\n \n-    public Boolean getMessageHistory() {\n-        return context.isMessageHistory();\n-    }\n-\n     public Integer getInflightExchanges() {\n         return context.getInflightRepository().size();\n     }\n@@ -212,7 +208,7 @@ public boolean isAllowUseOriginalMessage() {\n     }\n \n     public boolean isMessageHistory() {\n-        return context.isMessageHistory();\n+        return context.isMessageHistory() != null ? context.isMessageHistory() : false;\n     }\n \n     public boolean isUseMDCLogging() {\n",
+    "project": "camel"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 22,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "96337372",
+    "failing_tests": [
+        "org.apache.maven.execution.scope.internal.MojoExecutionScopeTest"
+    ],
+    "files": 1,
+    "jira_id": "5655",
+    "linesAdd": 20,
+    "linesRem": 12,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 245,
+    "patch": "diff --git a/maven-core/src/main/java/org/apache/maven/execution/scope/internal/MojoExecutionScope.java b/maven-core/src/main/java/org/apache/maven/execution/scope/internal/MojoExecutionScope.java\nindex fc8b1e612..d8a5f6c9d 100644\n--- a/maven-core/src/main/java/org/apache/maven/execution/scope/internal/MojoExecutionScope.java\n+++ b/maven-core/src/main/java/org/apache/maven/execution/scope/internal/MojoExecutionScope.java\n@@ -19,6 +19,8 @@\n  * under the License.\n  */\n \n+import java.util.Collection;\n+import java.util.IdentityHashMap;\n import java.util.LinkedList;\n import java.util.Map;\n \n@@ -177,36 +179,42 @@ protected void configure()\n     public void beforeMojoExecution( MojoExecutionEvent event )\n         throws MojoExecutionException\n     {\n-        for ( Object provided : getScopeState().provided.values() )\n-        {\n-            if ( provided instanceof WeakMojoExecutionListener )\n+        for ( WeakMojoExecutionListener provided : getProvidedListeners() )\n         {\n-                ( (WeakMojoExecutionListener) provided ).beforeMojoExecution( event );\n-            }\n+            provided.beforeMojoExecution( event );\n         }\n     }\n \n     public void afterMojoExecutionSuccess( MojoExecutionEvent event )\n         throws MojoExecutionException\n     {\n-        for ( Object provided : getScopeState().provided.values() )\n-        {\n-            if ( provided instanceof WeakMojoExecutionListener )\n+        for ( WeakMojoExecutionListener provided : getProvidedListeners() )\n         {\n-                ( (WeakMojoExecutionListener) provided ).afterMojoExecutionSuccess( event );\n-            }\n+            provided.afterMojoExecutionSuccess( event );\n         }\n     }\n \n     public void afterExecutionFailure( MojoExecutionEvent event )\n     {\n+        for ( WeakMojoExecutionListener provided : getProvidedListeners() )\n+        {\n+            provided.afterExecutionFailure( event );\n+        }\n+    }\n+\n+    private Collection<WeakMojoExecutionListener> getProvidedListeners()\n+    {\n+        // the same instance can be provided multiple times under different Key's\n+        // deduplicate instances to avoid redundant beforeXXX/afterXXX callbacks\n+        IdentityHashMap<WeakMojoExecutionListener, Object> listeners =\n+            new IdentityHashMap<WeakMojoExecutionListener, Object>();\n         for ( Object provided : getScopeState().provided.values() )\n         {\n             if ( provided instanceof WeakMojoExecutionListener )\n             {\n-                ( (WeakMojoExecutionListener) provided ).afterExecutionFailure( event );\n+                listeners.put( (WeakMojoExecutionListener) provided, null );\n             }\n         }\n+        return listeners.keySet();\n     }\n-\n }\n",
+    "project": "maven"
+}

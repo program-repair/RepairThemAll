@@ -1,0 +1,22 @@
+{
+    "bug_id": 241,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "c3773d53",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.upgrade.RepositoryGroupMemberSplitUpgradeTest",
+        "org.apache.jackrabbit.oak.upgrade.RepositoryGroupMemberUpgradeTest",
+        "org.apache.jackrabbit.oak.upgrade.RepositoryUpgradeTest"
+    ],
+    "files": 1,
+    "jira_id": "1719",
+    "linesAdd": 6,
+    "linesRem": 10,
+    "nb_error": 13,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 13,
+    "patch": "diff --git a/oak-upgrade/src/main/java/org/apache/jackrabbit/oak/upgrade/RepositoryUpgrade.java b/oak-upgrade/src/main/java/org/apache/jackrabbit/oak/upgrade/RepositoryUpgrade.java\nindex e47aba3595..9c2446822a 100644\n--- a/oak-upgrade/src/main/java/org/apache/jackrabbit/oak/upgrade/RepositoryUpgrade.java\n+++ b/oak-upgrade/src/main/java/org/apache/jackrabbit/oak/upgrade/RepositoryUpgrade.java\n@@ -47,7 +46,6 @@\n import org.apache.jackrabbit.oak.plugins.name.Namespaces;\n import org.apache.jackrabbit.oak.plugins.nodetype.TypeEditorProvider;\n import org.apache.jackrabbit.oak.plugins.nodetype.write.InitialContent;\n-import org.apache.jackrabbit.oak.security.authorization.AuthorizationConfigurationImpl;\n import org.apache.jackrabbit.oak.spi.commit.CommitHook;\n import org.apache.jackrabbit.oak.spi.commit.CommitInfo;\n import org.apache.jackrabbit.oak.spi.commit.CompositeEditorProvider;\n@@ -71,7 +69,6 @@\n import org.slf4j.LoggerFactory;\n \n import static com.google.common.base.Preconditions.checkState;\n-import static com.google.common.collect.Lists.newArrayList;\n import static com.google.common.collect.Lists.newArrayListWithCapacity;\n import static com.google.common.collect.Maps.newHashMap;\n import static java.util.Arrays.asList;\n@@ -225,7 +222,6 @@ public void copy() throws RepositoryException {\n \n             NodeState root = builder.getNodeState();\n             copyVersionStore(builder, root, uriToPrefix, idxToPrefix);\n-            String workspaceName =\n             copyWorkspaces(builder, root, uriToPrefix, idxToPrefix);\n \n             logger.info(\"Applying default commit hooks\");\n@@ -237,15 +233,14 @@ public void copy() throws RepositoryException {\n                 groupsPath = UserConstants.DEFAULT_GROUP_PATH;\n             }\n             // TODO: default hooks?\n-            List<CommitHook> hooks = newArrayList();\n-            hooks.add(new EditorHook(new CompositeEditorProvider(\n-                            new GroupEditorProvider(groupsPath),\n+            CommitHook hook = new CompositeHook(\n+                    new EditorHook(new GroupEditorProvider(groupsPath)),\n+                    new EditorHook(new CompositeEditorProvider(\n                             new TypeEditorProvider(false),\n                             new IndexUpdateProvider(new CompositeIndexEditorProvider(\n                                     new ReferenceEditorProvider(),\n                                     new PropertyIndexEditorProvider())))));\n-            hooks.addAll(new AuthorizationConfigurationImpl().getCommitHooks(workspaceName));\n-            target.merge(builder, CompositeHook.compose(hooks), CommitInfo.EMPTY);\n+            target.merge(builder, hook, CommitInfo.EMPTY);\n         } catch (Exception e) {\n             throw new RepositoryException(\"Failed to copy content\", e);\n         }\n@@ -562,7 +557,7 @@ private void copyVersionStore(\n                 \"/jcr:system/jcr:activities\", copyBinariesByReference));\n     }   \n \n-    private String copyWorkspaces(\n+    private void copyWorkspaces(\n             NodeBuilder builder, NodeState root,\n             Map<String, String> uriToPrefix, Map<Integer, String> idxToPrefix)\n             throws RepositoryException, IOException {\n@@ -587,7 +582,7 @@ private String copyWorkspaces(\n             }\n         }\n \n-        return name;\n+        // TODO: Copy all the active open-scoped locks\n     }\n \n \n",
+    "project": "jackrabbit-oak"
+}

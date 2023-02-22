@@ -1,0 +1,20 @@
+{
+    "bug_id": 24,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "3270e761",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.jcr.nodetype.NodeTypeTest"
+    ],
+    "files": 1,
+    "jira_id": "479",
+    "linesAdd": 8,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 4,
+    "nb_test": 424,
+    "patch": "diff --git a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/ItemImpl.java b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/ItemImpl.java\nindex a584c106be..efde490678 100644\n--- a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/ItemImpl.java\n+++ b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/ItemImpl.java\n@@ -169,7 +169,14 @@ void checkStatus() throws RepositoryException {\n     }\n \n     void checkProtected() throws RepositoryException {\n-        ItemDefinition definition = (isNode()) ? ((Node) this).getDefinition() : ((Property) this).getDefinition();\n+        ItemDefinition definition;\n+        try {\n+            definition = (isNode()) ? ((Node) this).getDefinition() : ((Property) this).getDefinition();\n+        }\n+        catch (RepositoryException ignore) {\n+            // No definition -> not protected but a different error which should be handled else where\n+            return;\n+        }\n         checkProtected(definition);\n     }\n \n",
+    "project": "jackrabbit-oak"
+}

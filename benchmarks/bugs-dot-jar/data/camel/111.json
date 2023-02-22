@@ -1,0 +1,20 @@
+{
+    "bug_id": 111,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "08077733",
+    "failing_tests": [
+        "org.apache.camel.issues.ServicePoolAwareLeakyTest"
+    ],
+    "files": 1,
+    "jira_id": "9143",
+    "linesAdd": 14,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 4,
+    "nb_test": 5459,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/impl/ProducerCache.java b/camel-core/src/main/java/org/apache/camel/impl/ProducerCache.java\nindex 5b799547c0..586cc696e3 100644\n--- a/camel-core/src/main/java/org/apache/camel/impl/ProducerCache.java\n+++ b/camel-core/src/main/java/org/apache/camel/impl/ProducerCache.java\n@@ -60,23 +60,31 @@\n     private boolean eventNotifierEnabled = true;\n     private boolean extendedStatistics;\n     private int maxCacheSize;\n+    private boolean stopServicePool;\n \n     public ProducerCache(Object source, CamelContext camelContext) {\n         this(source, camelContext, CamelContextHelper.getMaximumCachePoolSize(camelContext));\n     }\n \n     public ProducerCache(Object source, CamelContext camelContext, int cacheSize) {\n-        this(source, camelContext, camelContext.getProducerServicePool(), createLRUCache(cacheSize));\n+        this(source, camelContext, null, createLRUCache(cacheSize));\n     }\n \n     public ProducerCache(Object source, CamelContext camelContext, Map<String, Producer> cache) {\n-        this(source, camelContext, camelContext.getProducerServicePool(), cache);\n+        this(source, camelContext, null, cache);\n     }\n \n     public ProducerCache(Object source, CamelContext camelContext, ServicePool<Endpoint, Producer> producerServicePool, Map<String, Producer> cache) {\n         this.source = source;\n         this.camelContext = camelContext;\n+        if (producerServicePool == null) {\n+            // use shared producer pool which lifecycle is managed by CamelContext\n+            this.pool = camelContext.getProducerServicePool();\n+            this.stopServicePool = false;\n+        } else {\n             this.pool = producerServicePool;\n+            this.stopServicePool = true;\n+        }\n         this.producers = cache;\n         if (producers instanceof LRUCache) {\n             maxCacheSize = ((LRUCache) producers).getMaxCacheSize();\n@@ -468,7 +476,10 @@ protected void doStart() throws Exception {\n \n     protected void doStop() throws Exception {\n         // when stopping we intend to shutdown\n-        ServiceHelper.stopAndShutdownServices(statistics, pool);\n+        ServiceHelper.stopAndShutdownService(statistics);\n+        if (stopServicePool) {\n+            ServiceHelper.stopAndShutdownService(pool);\n+        }\n         try {\n             ServiceHelper.stopAndShutdownServices(producers.values());\n         } finally {\n",
+    "project": "camel"
+}

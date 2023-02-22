@@ -1,0 +1,20 @@
+{
+    "bug_id": 194,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "b672cb2d",
+    "failing_tests": [
+        "org.apache.wicket.util.file.FilesTest"
+    ],
+    "files": 1,
+    "jira_id": "4509",
+    "linesAdd": 12,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 151,
+    "patch": "diff --git a/wicket-util/src/main/java/org/apache/wicket/util/file/Files.java b/wicket-util/src/main/java/org/apache/wicket/util/file/Files.java\nindex 3b5b97ce66..f9d25796b9 100644\n--- a/wicket-util/src/main/java/org/apache/wicket/util/file/Files.java\n+++ b/wicket-util/src/main/java/org/apache/wicket/util/file/Files.java\n@@ -23,7 +23,9 @@\n import java.io.FileOutputStream;\n import java.io.IOException;\n import java.io.InputStream;\n+import java.io.UnsupportedEncodingException;\n import java.net.URL;\n+import java.net.URLDecoder;\n \n import org.apache.wicket.util.io.IOUtils;\n import org.apache.wicket.util.io.Streams;\n@@ -363,7 +365,16 @@ public static void copy(final File sourceFile, final File targetFile) throws IOE\n \t */\n \tpublic static File getLocalFileFromUrl(URL url)\n \t{\n-\t\treturn getLocalFileFromUrl(Args.notNull(url, \"url\").toExternalForm());\n+\t\tfinal URL location = Args.notNull(url, \"url\");\n+\n+\t\ttry\n+\t\t{\n+\t\t\treturn getLocalFileFromUrl(URLDecoder.decode(location.toExternalForm(), \"UTF-8\"));\n+\t\t}\n+\t\tcatch (UnsupportedEncodingException ex)\n+\t\t{\n+\t\t\treturn null;\n+\t\t}\n \t}\n \n \t/**\n",
+    "project": "wicket"
+}

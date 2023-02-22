@@ -1,0 +1,20 @@
+{
+    "bug_id": 43,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "a49e443c",
+    "failing_tests": [
+        "org.apache.commons.math3.optimization.linear.SimplexSolverTest"
+    ],
+    "files": 1,
+    "jira_id": "828",
+    "linesAdd": 10,
+    "linesRem": 2,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 4,
+    "nb_test": 3967,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math3/optimization/linear/SimplexSolver.java b/src/main/java/org/apache/commons/math3/optimization/linear/SimplexSolver.java\nindex c2fa14dad..dec310beb 100644\n--- a/src/main/java/org/apache/commons/math3/optimization/linear/SimplexSolver.java\n+++ b/src/main/java/org/apache/commons/math3/optimization/linear/SimplexSolver.java\n@@ -116,6 +116,7 @@ private Integer getPivotRow(SimplexTableau tableau, final int col) {\n             // there's a degeneracy as indicated by a tie in the minimum ratio test\n \n             // 1. check if there's an artificial variable that can be forced out of the basis\n+            if (tableau.getNumArtificialVariables() > 0) {\n                 for (Integer row : minRatioPositions) {\n                     for (int i = 0; i < tableau.getNumArtificialVariables(); i++) {\n                         int column = i + tableau.getArtificialVariableOffset();\n@@ -125,16 +126,23 @@ private Integer getPivotRow(SimplexTableau tableau, final int col) {\n                         }\n                     }\n                 }\n+            }\n \n             // 2. apply Bland's rule to prevent cycling:\n             //    take the row for which the corresponding basic variable has the smallest index\n             //\n             // see http://www.stanford.edu/class/msande310/blandrule.pdf\n             // see http://en.wikipedia.org/wiki/Bland%27s_rule (not equivalent to the above paper)\n+            //\n+            // Additional heuristic: if we did not get a solution after half of maxIterations\n+            //                       revert to the simple case of just returning the top-most row\n+            // This heuristic is based on empirical data gathered while investigating MATH-828.\n+            if (getIterations() < getMaxIterations() / 2) {\n                 Integer minRow = null;\n                 int minIndex = tableau.getWidth();\n                 for (Integer row : minRatioPositions) {\n-                for (int i = tableau.getNumObjectiveFunctions(); i < tableau.getWidth() - 1 && minRow != row; i++) {\n+                    int i = tableau.getNumObjectiveFunctions();\n+                    for (; i < tableau.getWidth() - 1 && minRow != row; i++) {\n                         if (row == tableau.getBasicRow(i)) {\n                             if (i < minIndex) {\n                                 minIndex = i;\n@@ -143,9 +151,9 @@ private Integer getPivotRow(SimplexTableau tableau, final int col) {\n                         }\n                     }\n                 }\n-\n                 return minRow;\n             }\n+        }\n         return minRatioPositions.get(0);\n     }\n \n",
+    "project": "commons-math"
+}

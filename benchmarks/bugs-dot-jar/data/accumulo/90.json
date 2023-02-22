@@ -1,0 +1,23 @@
+{
+    "bug_id": 90,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "4d23d784",
+    "failing_tests": [
+        "org.apache.accumulo.core.util.shell.commands.CompactCommandTest",
+        "org.apache.accumulo.core.util.shell.commands.MergeCommandTest",
+        "org.apache.accumulo.core.util.shell.commands.DeleteRowsCommandTest",
+        "org.apache.accumulo.core.util.shell.commands.FlushCommandTest"
+    ],
+    "files": 1,
+    "jira_id": "4138",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 4,
+    "nb_skipped": 2,
+    "nb_test": 722,
+    "patch": "diff --git a/core/src/main/java/org/apache/accumulo/core/util/shell/commands/OptUtil.java b/core/src/main/java/org/apache/accumulo/core/util/shell/commands/OptUtil.java\nindex 432f17a38..99e09e362 100644\n--- a/core/src/main/java/org/apache/accumulo/core/util/shell/commands/OptUtil.java\n+++ b/core/src/main/java/org/apache/accumulo/core/util/shell/commands/OptUtil.java\n@@ -117,7 +117,7 @@ public static OptionGroup addListDeleteGroup(final String name) {\n   }\n \n   public static Option startRowOpt() {\n-    final Option o = new Option(START_ROW_OPT, \"begin-row\", true, \"begin row (NOT) inclusive\");\n+    final Option o = new Option(START_ROW_OPT, \"begin-row\", true, \"begin row (exclusive)\");\n     o.setArgName(\"begin-row\");\n     return o;\n   }\n",
+    "project": "accumulo"
+}

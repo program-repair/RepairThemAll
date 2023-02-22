@@ -1,0 +1,20 @@
+{
+    "bug_id": 10,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "c979a6f0",
+    "failing_tests": [
+        "org.apache.commons.math3.linear.EigenSolverTest"
+    ],
+    "files": 1,
+    "jira_id": "1045",
+    "linesAdd": 6,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 4,
+    "nb_test": 5393,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math3/linear/EigenDecomposition.java b/src/main/java/org/apache/commons/math3/linear/EigenDecomposition.java\nindex 4d4d794a2..2bb8fd754 100644\n--- a/src/main/java/org/apache/commons/math3/linear/EigenDecomposition.java\n+++ b/src/main/java/org/apache/commons/math3/linear/EigenDecomposition.java\n@@ -513,8 +513,12 @@ public RealMatrix solve(RealMatrix b) {\n          * @return true if the decomposed matrix is non-singular.\n          */\n         public boolean isNonSingular() {\n-            // The eigenvalues are sorted by size, descending\n-            double largestEigenvalueNorm = eigenvalueNorm(0);\n+            double largestEigenvalueNorm = 0.0;\n+            // Looping over all values (in case they are not sorted in decreasing\n+            // order of their norm).\n+            for (int i = 0; i < realEigenvalues.length; ++i) {\n+                largestEigenvalueNorm = FastMath.max(largestEigenvalueNorm, eigenvalueNorm(i));\n+            }\n             // Corner case: zero matrix, all exactly 0 eigenvalues\n             if (largestEigenvalueNorm == 0.0) {\n                 return false;\n",
+    "project": "commons-math"
+}

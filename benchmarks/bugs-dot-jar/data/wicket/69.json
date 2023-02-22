@@ -1,0 +1,21 @@
+{
+    "bug_id": 69,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "fb45a781",
+    "failing_tests": [
+        "org.apache.wicket.util.tester.WicketTesterLazyIsPageStatelessRedirectToRenderTest",
+        "org.apache.wicket.util.tester.WicketTesterLazyIsPageStatelessRedirectToBufferTest"
+    ],
+    "files": 1,
+    "jira_id": "5426",
+    "linesAdd": 3,
+    "linesRem": 4,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 2,
+    "nb_test": 1545,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/Page.java b/wicket-core/src/main/java/org/apache/wicket/Page.java\nindex 2be236d342..1a3e9aa2ad 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/Page.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/Page.java\n@@ -801,11 +801,8 @@ protected void onBeforeRender()\n \t\t// Make sure it is really empty\n \t\trenderedComponents = null;\n \n-\t\t// if the page is stateless, reset the flag so that it is tested again\n-\t\tif (Boolean.TRUE.equals(stateless))\n-\t\t{\n+\t\t// rendering might remove or add stateful components, so clear flag to force reevaluation\n \t\tstateless = null;\n-\t\t}\n \n \t\tsuper.onBeforeRender();\n \n@@ -1020,6 +1017,8 @@ public void renderPage()\n \t\t{\n \t\t\t++renderCount;\n \t\t\trender();\n+\n+\t\t\t// stateless = null;\n \t\t}\n \t\tfinally\n \t\t{\n",
+    "project": "wicket"
+}

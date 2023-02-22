@@ -1,0 +1,20 @@
+{
+    "bug_id": 59,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "02c08456",
+    "failing_tests": [
+        "type.extractor.TypeExtractorTest"
+    ],
+    "files": 1,
+    "jira_id": "1133",
+    "linesAdd": 1,
+    "linesRem": 4,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 1,
+    "nb_test": 456,
+    "patch": "diff --git a/flink-java/src/main/java/org/apache/flink/api/java/typeutils/TypeExtractor.java b/flink-java/src/main/java/org/apache/flink/api/java/typeutils/TypeExtractor.java\nindex d5f3619d84..55f6b1f1c9 100644\n--- a/flink-java/src/main/java/org/apache/flink/api/java/typeutils/TypeExtractor.java\n+++ b/flink-java/src/main/java/org/apache/flink/api/java/typeutils/TypeExtractor.java\n@@ -421,15 +421,12 @@ else if (inType instanceof ParameterizedType && Tuple.class.isAssignableFrom(((C\n \t\t\tType[] tupleElements = ((ParameterizedType) inType).getActualTypeArguments();\n \t\t\t// go thru all tuple elements and search for type variables\n \t\t\tfor(int i = 0; i < tupleElements.length; i++) {\n-\t\t\t\tif(tupleElements[i] instanceof TypeVariable) {\n-\t\t\t\t\tinType = materializeTypeVariable(returnTypeHierarchy, (TypeVariable<?>) tupleElements[i]);\n-\t\t\t\t\tinfo = findCorrespondingInfo(returnTypeVar, inType, ((TupleTypeInfo<?>) inTypeInfo).getTypeAt(i));\n+\t\t\t\tinfo = createTypeInfoFromInput(returnTypeVar, returnTypeHierarchy, tupleElements[i], ((TupleTypeInfo<?>) inTypeInfo).getTypeAt(i));\n \t\t\t\tif(info != null) {\n \t\t\t\t\tbreak;\n \t\t\t\t}\n \t\t\t}\n \t\t}\n-\t\t}\n \t\treturn info;\n \t}\n \t\n",
+    "project": "flink"
+}

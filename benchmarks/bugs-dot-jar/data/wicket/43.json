@@ -1,0 +1,20 @@
+{
+    "bug_id": 43,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "8b7946d8",
+    "failing_tests": [
+        "org.apache.wicket.util.resource.locator.CachingResourceStreamLocatorTest"
+    ],
+    "files": 1,
+    "jira_id": "5968",
+    "linesAdd": 34,
+    "linesRem": 17,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 1,
+    "nb_test": 1859,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/core/util/resource/locator/caching/CachingResourceStreamLocator.java b/wicket-core/src/main/java/org/apache/wicket/core/util/resource/locator/caching/CachingResourceStreamLocator.java\nindex ceeb59fec6..f9b3624320 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/core/util/resource/locator/caching/CachingResourceStreamLocator.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/core/util/resource/locator/caching/CachingResourceStreamLocator.java\n@@ -73,7 +73,7 @@ public CachingResourceStreamLocator(final IResourceStreamLocator resourceStreamL\n \t@Override\n \tpublic IResourceStream locate(Class<?> clazz, String path)\n \t{\n-\t\tCacheKey key = new CacheKey(clazz.getName(), path, null, null, null, null);\n+\t\tCacheKey key = new CacheKey(clazz.getName(), path, null, null, null, null, true);\n \t\tIResourceStreamReference resourceStreamReference = cache.get(key);\n \n \t\tfinal IResourceStream result;\n@@ -113,7 +113,7 @@ else if (stream instanceof UrlResourceStream)\n \tpublic IResourceStream locate(Class<?> scope, String path, String style, String variation,\n \t\tLocale locale, String extension, boolean strict)\n \t{\n-\t\tCacheKey key = new CacheKey(scope.getName(), path, extension, locale, style, variation);\n+\t\tCacheKey key = new CacheKey(scope.getName(), path, extension, locale, style, variation, strict);\n \t\tIResourceStreamReference resourceStreamReference = cache.get(key);\n \n \t\tfinal IResourceStream result;\n@@ -154,37 +154,54 @@ public void clearCache()\n \t */\n \tprivate static class CacheKey extends Key\n \t{\n+\t\tprivate static final long serialVersionUID = 1L;\n+\n \t\t/**\n \t\t * The file extension\n \t\t */\n \t\tprivate final String extension;\n \n-\t\tprivate CacheKey(String scope, String name, String extension, Locale locale, String style, String variation)\n+\t\t/** Whether the key was looked up using a strict matching search */\n+\t\tprivate final boolean strict;\n+\n+\t\tprivate CacheKey(String scope, String name, String extension, Locale locale, String style, String variation, boolean strict)\n \t\t{\n \t\t\tsuper(scope, name, locale, style, variation);\n \n \t\t\tthis.extension = extension;\n-\t\t}\n-\n-\t\t@Override\n-\t\tpublic boolean equals(Object o)\n-\t\t{\n-\t\t\tif (this == o) return true;\n-\t\t\tif (o == null || getClass() != o.getClass()) return false;\n-\t\t\tif (!super.equals(o)) return false;\n-\n-\t\t\tCacheKey cacheKey = (CacheKey) o;\n-\n-\t\t\treturn !(extension != null ? !extension.equals(cacheKey.extension) : cacheKey.extension != null);\n-\n+\t\t\tthis.strict = strict;\n \t\t}\n \n \t\t@Override\n \t\tpublic int hashCode()\n \t\t{\n+\t\t\tfinal int prime = 31;\n \t\t\tint result = super.hashCode();\n-\t\t\tresult = 31 * result + (extension != null ? extension.hashCode() : 0);\n+\t\t\tresult = prime * result + ((extension == null) ? 0 : extension.hashCode());\n+\t\t\tresult = prime * result + (strict ? 1231 : 1237);\n \t\t\treturn result;\n \t\t}\n+\n+\t\t@Override\n+\t\tpublic boolean equals(Object obj)\n+\t\t{\n+\t\t\tif (this == obj)\n+\t\t\t\treturn true;\n+\t\t\tif (!super.equals(obj))\n+\t\t\t\treturn false;\n+\t\t\tif (getClass() != obj.getClass())\n+\t\t\t\treturn false;\n+\t\t\tCacheKey other = (CacheKey)obj;\n+\t\t\tif (extension == null)\n+\t\t\t{\n+\t\t\t\tif (other.extension != null)\n+\t\t\t\t\treturn false;\n+\t\t\t}\n+\t\t\telse if (!extension.equals(other.extension))\n+\t\t\t\treturn false;\n+\t\t\tif (strict != other.strict)\n+\t\t\t\treturn false;\n+\t\t\treturn true;\n+\t\t}\n \t}\n }\n",
+    "project": "wicket"
+}

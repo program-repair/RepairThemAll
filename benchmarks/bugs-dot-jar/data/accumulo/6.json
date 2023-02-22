@@ -1,0 +1,20 @@
+{
+    "bug_id": 6,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "0dc92ca1",
+    "failing_tests": [
+        "org.apache.accumulo.core.util.StatTest"
+    ],
+    "files": 1,
+    "jira_id": "2494",
+    "linesAdd": 37,
+    "linesRem": 25,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 0,
+    "nb_test": 411,
+    "patch": "diff --git a/core/src/main/java/org/apache/accumulo/core/util/Stat.java b/core/src/main/java/org/apache/accumulo/core/util/Stat.java\nindex e65265c6d..d2d560eac 100644\n--- a/core/src/main/java/org/apache/accumulo/core/util/Stat.java\n+++ b/core/src/main/java/org/apache/accumulo/core/util/Stat.java\n@@ -16,54 +16,66 @@\n  */\n package org.apache.accumulo.core.util;\n \n-public class Stat {\n+import org.apache.commons.math.stat.descriptive.StorelessUnivariateStatistic;\n+import org.apache.commons.math.stat.descriptive.moment.Mean;\n+import org.apache.commons.math.stat.descriptive.moment.StandardDeviation;\n+import org.apache.commons.math.stat.descriptive.rank.Max;\n+import org.apache.commons.math.stat.descriptive.rank.Min;\n+import org.apache.commons.math.stat.descriptive.summary.Sum;\n \n-  long max = Long.MIN_VALUE;\n-  long min = Long.MAX_VALUE;\n-  long sum = 0;\n-  int count = 0;\n-  double partialStdDev = 0;\n+public class Stat {\n+  Min min;\n+  Max max;\n+  Sum sum;\n+  Mean mean;\n+  StandardDeviation sd;\n \n-  public void addStat(long stat) {\n-    if (stat > max)\n-      max = stat;\n-    if (stat < min)\n-      min = stat;\n+  StorelessUnivariateStatistic[] stats;\n \n-    sum += stat;\n+  public Stat() {\n+    min = new Min();\n+    max = new Max();\n+    sum = new Sum();\n+    mean = new Mean();\n+    sd = new StandardDeviation();\n \n-    partialStdDev += stat * stat;\n+    stats = new StorelessUnivariateStatistic[] {min, max, sum, mean, sd};\n+  }\n \n-    count++;\n+  public void addStat(long stat) {\n+    for (StorelessUnivariateStatistic statistic : stats) {\n+      statistic.increment(stat);\n+    }\n   }\n \n   public long getMin() {\n-    return min;\n+    return (long) min.getResult();\n   }\n \n   public long getMax() {\n-    return max;\n+    return (long) max.getResult();\n+  }\n+\n+  public long getSum() {\n+    return (long) sum.getResult();\n   }\n \n   public double getAverage() {\n-    return ((double) sum) / count;\n+    return mean.getResult();\n   }\n \n   public double getStdDev() {\n-    return Math.sqrt(partialStdDev / count - getAverage() * getAverage());\n+    return sd.getResult();\n   }\n \n   public String toString() {\n-    return String.format(\"%,d %,d %,.2f %,d\", getMin(), getMax(), getAverage(), count);\n+    return String.format(\"%,d %,d %,.2f %,d\", getMin(), getMax(), getAverage(), mean.getN());\n   }\n \n   public void clear() {\n-    sum = 0;\n-    count = 0;\n-    partialStdDev = 0;\n+    for (StorelessUnivariateStatistic statistic : stats) {\n+      statistic.clear();\n     }\n-  \n-  public long getSum() {\n-    return sum;\n   }\n+\n }\n",
+    "project": "accumulo"
+}

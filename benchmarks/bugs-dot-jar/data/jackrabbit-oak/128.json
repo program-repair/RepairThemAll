@@ -1,0 +1,20 @@
+{
+    "bug_id": 128,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "90ea7aa5",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.kernel.CheckpointTest"
+    ],
+    "files": 1,
+    "jira_id": "2363",
+    "linesAdd": 4,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 9,
+    "nb_test": 2033,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java\nindex 4efc6cb132..5c519c2e69 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java\n@@ -39,6 +39,7 @@\n import java.util.Map;\n import java.util.NavigableSet;\n import java.util.Set;\n+import java.util.SortedMap;\n import java.util.TimeZone;\n import java.util.concurrent.Callable;\n import java.util.concurrent.ConcurrentHashMap;\n@@ -70,6 +71,7 @@\n import org.apache.jackrabbit.oak.commons.json.JsopTokenizer;\n import org.apache.jackrabbit.oak.plugins.blob.BlobStoreBlob;\n import org.apache.jackrabbit.oak.plugins.blob.MarkSweepGarbageCollector;\n+import org.apache.jackrabbit.oak.plugins.document.Checkpoints.Info;\n import org.apache.jackrabbit.oak.plugins.document.mongo.MongoBlobReferenceIterator;\n import org.apache.jackrabbit.oak.plugins.document.mongo.MongoDocumentStore;\n import org.apache.jackrabbit.oak.plugins.document.persistentCache.PersistentCache;\n@@ -1404,7 +1406,8 @@ public String checkpoint(long lifetime) {\n     @Override\n     public NodeState retrieve(@Nonnull String checkpoint) {\n         Revision r = Revision.fromString(checkpoint);\n-        if (checkpoints.getCheckpoints().containsKey(r)) {\n+        SortedMap<Revision, Info> checkpoints = this.checkpoints.getCheckpoints();\n+        if (checkpoints != null && checkpoints.containsKey(r)) {\n             return getRoot(r);\n         } else {\n             return null;\n",
+    "project": "jackrabbit-oak"
+}

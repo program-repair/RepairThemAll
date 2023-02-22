@@ -1,0 +1,21 @@
+{
+    "bug_id": 91,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "d4f978dd",
+    "failing_tests": [
+        "org.apache.commons.math3.stat.descriptive.DescriptiveStatisticsTest",
+        "org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatisticsTest"
+    ],
+    "files": 1,
+    "jira_id": "1129",
+    "linesAdd": 8,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 3,
+    "nb_test": 5968,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math3/stat/descriptive/rank/Percentile.java b/src/main/java/org/apache/commons/math3/stat/descriptive/rank/Percentile.java\nindex db447aa8e..15631cf9e 100644\n--- a/src/main/java/org/apache/commons/math3/stat/descriptive/rank/Percentile.java\n+++ b/src/main/java/org/apache/commons/math3/stat/descriptive/rank/Percentile.java\n@@ -440,12 +440,18 @@ private int partition(final double[] work, final int begin, final int end, final\n      * @param end index after the last element of the slice to sort\n      */\n     private void insertionSort(final double[] work, final int begin, final int end) {\n+        // Arrays.sort(work, begin, end); // Would also fix MATH-1129\n         for (int j = begin + 1; j < end; j++) {\n             final double saved = work[j];\n             int i = j - 1;\n-            while ((i >= begin) && (saved < work[i])) {\n-                work[i + 1] = work[i];\n+            while (i >= begin) {\n+                final double wi = work[i];\n+                if (saved < wi || Double.isNaN(wi)) {\n+                    work[i + 1] = wi;\n                     i--;\n+                } else {\n+                    break;\n+                }\n             }\n             work[i + 1] = saved;\n         }\n",
+    "project": "commons-math"
+}

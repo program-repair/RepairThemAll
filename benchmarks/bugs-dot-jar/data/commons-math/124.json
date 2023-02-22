@@ -1,0 +1,20 @@
+{
+    "bug_id": 124,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "97b440fc",
+    "failing_tests": [
+        "org.apache.commons.math.complex.ComplexTest"
+    ],
+    "files": 1,
+    "jira_id": "657",
+    "linesAdd": 4,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 1,
+    "nb_test": 2949,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math/complex/Complex.java b/src/main/java/org/apache/commons/math/complex/Complex.java\nindex 137765c85..dd0b00a5b 100644\n--- a/src/main/java/org/apache/commons/math/complex/Complex.java\n+++ b/src/main/java/org/apache/commons/math/complex/Complex.java\n@@ -256,7 +256,8 @@ public Complex divide(Complex divisor)\n         }\n \n         if (divisor.isZero) {\n-            return isZero ? NaN : INF;\n+            // return isZero ? NaN : INF; // See MATH-657\n+            return NaN;\n         }\n \n         if (divisor.isInfinite() && !isInfinite()) {\n@@ -292,7 +293,8 @@ public Complex divide(double divisor) {\n             return NaN;\n         }\n         if (divisor == 0d) {\n-            return isZero ? NaN : INF;\n+            // return isZero ? NaN : INF; // See MATH-657\n+            return NaN;\n         }\n         if (Double.isInfinite(divisor)) {\n             return !isInfinite() ? ZERO : NaN;\n",
+    "project": "commons-math"
+}

@@ -1,0 +1,29 @@
+{
+    "bug_id": 85,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "1d635088",
+    "failing_tests": [
+        "org.apache.commons.math4.random.Well1024aTest",
+        "org.apache.commons.math4.random.Well44497bTest",
+        "org.apache.commons.math4.random.ISAACTest",
+        "org.apache.commons.math4.random.AbstractRandomGeneratorTest",
+        "org.apache.commons.math4.random.BitsStreamGeneratorTest",
+        "org.apache.commons.math4.random.Well512aTest",
+        "org.apache.commons.math4.random.Well19937aTest",
+        "org.apache.commons.math4.random.Well44497aTest",
+        "org.apache.commons.math4.random.MersenneTwisterTest",
+        "org.apache.commons.math4.random.Well19937cTest"
+    ],
+    "files": 2,
+    "jira_id": "1300",
+    "linesAdd": 4,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 10,
+    "nb_skipped": 4,
+    "nb_test": 5907,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math4/random/AbstractRandomGenerator.java b/src/main/java/org/apache/commons/math4/random/AbstractRandomGenerator.java\nindex 1b9cead20..173f4ee05 100644\n--- a/src/main/java/org/apache/commons/math4/random/AbstractRandomGenerator.java\n+++ b/src/main/java/org/apache/commons/math4/random/AbstractRandomGenerator.java\n@@ -114,6 +114,8 @@ public void nextBytes(byte[] bytes) {\n                 if (i > 0) {\n                     randInt >>= 8;\n                 }\n+            }\n+            if (bytesOut < bytes.length) {\n                 bytes[bytesOut++] = (byte) randInt;\n                 if (bytesOut == bytes.length) {\n                     return;\ndiff --git a/src/main/java/org/apache/commons/math4/random/BitsStreamGenerator.java b/src/main/java/org/apache/commons/math4/random/BitsStreamGenerator.java\nindex 81968e244..7c89b60cc 100644\n--- a/src/main/java/org/apache/commons/math4/random/BitsStreamGenerator.java\n+++ b/src/main/java/org/apache/commons/math4/random/BitsStreamGenerator.java\n@@ -82,12 +82,14 @@ public void nextBytes(byte[] bytes) {\n             bytes[i + 3] = (byte) ((random >> 24) & 0xff);\n             i += 4;\n         }\n+        if (i < bytes.length) {\n             int random = next(32);\n             while (i < bytes.length) {\n                 bytes[i++] = (byte) (random & 0xff);\n                 random >>= 8;\n             }\n         }\n+    }\n \n     /** {@inheritDoc} */\n     @Override\n",
+    "project": "commons-math"
+}

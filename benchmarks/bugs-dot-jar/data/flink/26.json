@@ -1,0 +1,20 @@
+{
+    "bug_id": 26,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "adb321d6",
+    "failing_tests": [
+        "org.apache.flink.optimizer.plantranslate.TempInIterationsTest"
+    ],
+    "files": 1,
+    "jira_id": "1951",
+    "linesAdd": 3,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 327,
+    "patch": "diff --git a/flink-optimizer/src/main/java/org/apache/flink/optimizer/plantranslate/JobGraphGenerator.java b/flink-optimizer/src/main/java/org/apache/flink/optimizer/plantranslate/JobGraphGenerator.java\nindex dc21c13795..26300196f3 100644\n--- a/flink-optimizer/src/main/java/org/apache/flink/optimizer/plantranslate/JobGraphGenerator.java\n+++ b/flink-optimizer/src/main/java/org/apache/flink/optimizer/plantranslate/JobGraphGenerator.java\n@@ -1163,8 +1163,9 @@ private void addLocalInfoFromChannelToConfig(Channel channel, TaskConfig config,\n \t\t\tfinal TempMode tm = channel.getTempMode();\n \n \t\t\tboolean needsMemory = false;\n-\t\t\t// Don't add a pipeline breaker if the data exchange is already blocking.\n-\t\t\tif (tm.breaksPipeline() && channel.getDataExchangeMode() != DataExchangeMode.BATCH) {\n+\t\t\t// Don't add a pipeline breaker if the data exchange is already blocking, EXCEPT the channel is within an iteration.\n+\t\t\tif (tm.breaksPipeline() &&\n+\t\t\t\t\t(channel.isOnDynamicPath() || channel.getDataExchangeMode() != DataExchangeMode.BATCH) ) {\n \t\t\t\tconfig.setInputAsynchronouslyMaterialized(inputNum, true);\n \t\t\t\tneedsMemory = true;\n \t\t\t}\n",
+    "project": "flink"
+}

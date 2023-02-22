@@ -1,0 +1,20 @@
+{
+    "bug_id": 154,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "34634266",
+    "failing_tests": [
+        "org.apache.wicket.model.StringResourceModelTest"
+    ],
+    "files": 1,
+    "jira_id": "5176",
+    "linesAdd": 2,
+    "linesRem": 5,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 4,
+    "nb_test": 1471,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/model/StringResourceModel.java b/wicket-core/src/main/java/org/apache/wicket/model/StringResourceModel.java\nindex 95b37f8121..35ef7bbe7d 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/model/StringResourceModel.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/model/StringResourceModel.java\n@@ -590,13 +590,10 @@ protected final String load()\n \t\treturn getString();\n \t}\n \n-\t/**\n-\t * @see org.apache.wicket.model.IDetachable#detach()\n-\t */\n \t@Override\n-\tprotected final void onDetach()\n+\tpublic final void detach()\n \t{\n-\t\tsuper.onDetach();\n+\t\tsuper.detach();\n \n \t\t// detach any model\n \t\tif (model != null)\n",
+    "project": "wicket"
+}

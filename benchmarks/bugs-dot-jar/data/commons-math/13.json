@@ -1,0 +1,20 @@
+{
+    "bug_id": 13,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "bda25b40",
+    "failing_tests": [
+        "org.apache.commons.math3.linear.EigenDecompositionTest"
+    ],
+    "files": 1,
+    "jira_id": "1051",
+    "linesAdd": 3,
+    "linesRem": 5,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 4,
+    "nb_test": 5400,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math3/linear/SchurTransformer.java b/src/main/java/org/apache/commons/math3/linear/SchurTransformer.java\nindex a2ea88ee4..b566de766 100644\n--- a/src/main/java/org/apache/commons/math3/linear/SchurTransformer.java\n+++ b/src/main/java/org/apache/commons/math3/linear/SchurTransformer.java\n@@ -364,15 +364,13 @@ private void performDoubleQRStep(final int il, final int im, final int iu,\n                 q = matrixT[k + 1][k - 1];\n                 r = notlast ? matrixT[k + 2][k - 1] : 0.0;\n                 shift.x = FastMath.abs(p) + FastMath.abs(q) + FastMath.abs(r);\n-                if (!Precision.equals(shift.x, 0.0, epsilon)) {\n+                if (Precision.equals(shift.x, 0.0, epsilon)) {\n+                    continue;\n+                }\n                 p = p / shift.x;\n                 q = q / shift.x;\n                 r = r / shift.x;\n             }\n-            }\n-            if (shift.x == 0.0) {\n-                break;\n-            }\n             double s = FastMath.sqrt(p * p + q * q + r * r);\n             if (p < 0.0) {\n                 s = -s;\n",
+    "project": "commons-math"
+}

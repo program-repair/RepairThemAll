@@ -1,0 +1,20 @@
+{
+    "bug_id": 184,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "5c4589bd",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.query.index.TraversingIndexQueryTest"
+    ],
+    "files": 1,
+    "jira_id": "2062",
+    "linesAdd": 12,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 9,
+    "nb_test": 1895,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/SelectorImpl.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/SelectorImpl.java\nindex 11427c3500..44e31c04ba 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/SelectorImpl.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/SelectorImpl.java\n@@ -58,6 +58,8 @@\n import org.apache.jackrabbit.oak.spi.query.QueryIndex.AdvancedQueryIndex;\n import org.apache.jackrabbit.oak.spi.query.QueryIndex.IndexPlan;\n import org.apache.jackrabbit.oak.spi.state.NodeState;\n+import org.slf4j.Logger;\n+import org.slf4j.LoggerFactory;\n \n import com.google.common.collect.ImmutableSet;\n import com.google.common.collect.Iterables;\n@@ -66,6 +68,7 @@\n  * A selector within a query.\n  */\n public class SelectorImpl extends SourceImpl {\n+    private static final Logger LOG = LoggerFactory.getLogger(SelectorImpl.class);\n     \n     // TODO possibly support using multiple indexes (using index intersection / index merge)\n     private SelectorExecutionPlan plan;\n@@ -547,6 +550,10 @@ private PropertyValue currentOakProperty(String oakPropertyName, Integer propert\n         boolean asterisk = oakPropertyName.indexOf('*') >= 0;\n         if (asterisk) {\n             Tree t = currentTree();\n+            if (t != null) {\n+                LOG.trace(\"currentOakProperty() - '*' case. looking for '{}' in '{}'\",\n+                    oakPropertyName, t.getPath());\n+            }\n             ArrayList<PropertyValue> list = new ArrayList<PropertyValue>();\n             readOakProperties(list, t, oakPropertyName, propertyType);\n             if (list.size() == 0) {\n@@ -630,10 +637,13 @@ private PropertyValue currentOakProperty(Tree t, String oakPropertyName, Integer\n     \n     private void readOakProperties(ArrayList<PropertyValue> target, Tree t, String oakPropertyName, Integer propertyType) {\n         boolean skipCurrentNode = false;\n-        while (true) {\n+\n+        while (!skipCurrentNode) {\n             if (t == null || !t.exists()) {\n                 return;\n             }\n+            LOG.trace(\"readOakProperties() - reading '{}' for '{}'\", t.getPath(),\n+                oakPropertyName);\n             int slash = oakPropertyName.indexOf('/');\n             if (slash < 0) {\n                 break;\n@@ -659,6 +669,7 @@ private void readOakProperties(ArrayList<PropertyValue> target, Tree t, String o\n         if (!\"*\".equals(oakPropertyName)) {\n             PropertyValue value = currentOakProperty(t, oakPropertyName, propertyType);\n             if (value != null) {\n+                LOG.trace(\"readOakProperties() - adding: '{}' from '{}'\", value, t.getPath());\n                 target.add(value);\n             }\n             return;\n",
+    "project": "jackrabbit-oak"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 48,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "50e19247",
+    "failing_tests": [
+        "org.apache.logging.log4j.core.appender.SocketAppenderTest"
+    ],
+    "files": 1,
+    "jira_id": "139",
+    "linesAdd": 1,
+    "linesRem": 2,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 2,
+    "nb_test": 341,
+    "patch": "diff --git a/core/src/main/java/org/apache/logging/log4j/core/appender/SocketAppender.java b/core/src/main/java/org/apache/logging/log4j/core/appender/SocketAppender.java\nindex f9d066592..01701f6cd 100644\n--- a/core/src/main/java/org/apache/logging/log4j/core/appender/SocketAppender.java\n+++ b/core/src/main/java/org/apache/logging/log4j/core/appender/SocketAppender.java\n@@ -115,8 +115,7 @@ public void stop() {\n             return null;\n         }\n \n-        final String prot = protocol != null ? protocol : Protocol.TCP.name();\n-        final Protocol p = EnglishEnums.valueOf(Protocol.class, protocol);\n+        final Protocol p = EnglishEnums.valueOf(Protocol.class, protocol != null ? protocol : Protocol.TCP.name());\n         if (p.equals(Protocol.UDP)) {\n             isFlush = true;\n         }\n",
+    "project": "logging-log4j2"
+}

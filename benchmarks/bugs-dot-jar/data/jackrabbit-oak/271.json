@@ -1,0 +1,20 @@
+{
+    "bug_id": 271,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "7fe28a0e",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.jcr.CRUDTest"
+    ],
+    "files": 2,
+    "jira_id": "185",
+    "linesAdd": 12,
+    "linesRem": 7,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 9,
+    "nb_test": 195,
+    "patch": "diff --git a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeDelegate.java b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeDelegate.java\nindex 351ae8bb5c..bda7280a1e 100644\n--- a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeDelegate.java\n+++ b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeDelegate.java\n@@ -291,6 +291,10 @@ public PropertyDelegate setProperty(String name, CoreValue value) throws Invalid\n         return new PropertyDelegate(sessionDelegate, getTree(), propertyState);\n     }\n \n+    public void removeProperty(String name) throws InvalidItemStateException {\n+        getTree().removeProperty(name);\n+    }\n+\n     /**\n      * Set a multi valued property\n      * @param name  oak name\ndiff --git a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeImpl.java b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeImpl.java\nindex 70d0494bfb..fbb8b1050e 100644\n--- a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeImpl.java\n+++ b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeImpl.java\n@@ -264,15 +264,16 @@ public Property setProperty(String jcrName, Value value, int type)\n             throws RepositoryException {\n         checkStatus();\n \n-        int targetType = getTargetType(value, type);\n-        Value targetValue = ValueHelper.convert(value, targetType, getValueFactory());\n+        String oakName = sessionDelegate.getOakPathOrThrow(jcrName);\n         if (value == null) {\n-            Property p = getProperty(jcrName);\n-            p.remove();\n-            return p;\n+            dlg.removeProperty(oakName);\n+            return null;\n         } else {\n-            String oakName = sessionDelegate.getOakPathOrThrow(jcrName);\n-            CoreValue oakValue = ValueConverter.toCoreValue(targetValue, sessionDelegate);\n+            int targetType = getTargetType(value, type);\n+            Value targetValue =\n+                    ValueHelper.convert(value, targetType, getValueFactory());\n+            CoreValue oakValue =\n+                    ValueConverter.toCoreValue(targetValue, sessionDelegate);\n             return new PropertyImpl(dlg.setProperty(oakName, oakValue));\n         }\n     }\n",
+    "project": "jackrabbit-oak"
+}

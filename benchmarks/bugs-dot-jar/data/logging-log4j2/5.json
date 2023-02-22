@@ -1,0 +1,20 @@
+{
+    "bug_id": 5,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "a523dcd5",
+    "failing_tests": [
+        "org.apache.logging.log4j.message.ReusableParameterizedMessageTest"
+    ],
+    "files": 1,
+    "jira_id": "1406",
+    "linesAdd": 3,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 434,
+    "patch": "diff --git a/log4j-api/src/main/java/org/apache/logging/log4j/message/ReusableParameterizedMessage.java b/log4j-api/src/main/java/org/apache/logging/log4j/message/ReusableParameterizedMessage.java\nindex abfd620da..1f4e8b95d 100644\n--- a/log4j-api/src/main/java/org/apache/logging/log4j/message/ReusableParameterizedMessage.java\n+++ b/log4j-api/src/main/java/org/apache/logging/log4j/message/ReusableParameterizedMessage.java\n@@ -121,8 +121,10 @@ private static int count(final String messagePattern, final int[] indices) {\n     }\n \n     private void initThrowable(final Object[] params, final int argCount, final int usedParams) {\n-        if (usedParams < argCount && this.throwable == null && params[argCount - 1] instanceof Throwable) {\n+        if (usedParams < argCount && params[argCount - 1] instanceof Throwable) {\n             this.throwable = (Throwable) params[argCount - 1];\n+        } else {\n+            this.throwable = null;\n         }\n     }\n \n",
+    "project": "logging-log4j2"
+}

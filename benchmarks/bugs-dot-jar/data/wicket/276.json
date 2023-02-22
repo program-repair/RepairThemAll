@@ -1,0 +1,20 @@
+{
+    "bug_id": 276,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "3fc7234e",
+    "failing_tests": [
+        "org.apache.wicket.request.UrlTest"
+    ],
+    "files": 1,
+    "jira_id": "5345",
+    "linesAdd": 9,
+    "linesRem": 5,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 99,
+    "patch": "diff --git a/wicket-request/src/main/java/org/apache/wicket/request/Url.java b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\nindex 11f6b47bc0..e950f6f90a 100755\n--- a/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n+++ b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n@@ -1219,18 +1219,22 @@ public Url canonical()\n \t\t\t// drop '.' from path\n \t\t\tif (\".\".equals(segment))\n \t\t\t{\n-\t\t\t\tcontinue;\n+\t\t\t\t// skip\n+\t\t\t}\n+\t\t\telse if (\"..\".equals(segment) && url.segments.isEmpty() == false)\n+\t\t\t{\n+\t\t\t\turl.segments.remove(url.segments.size() - 1);\n \t\t\t}\n-\n \t\t\t// skip segment if following segment is a '..'\n-\t\t\tif ((i + 1) < segments.size() && \"..\".equals(segments.get(i + 1)))\n+\t\t\telse if ((i + 1) < segments.size() && \"..\".equals(segments.get(i + 1)))\n \t\t\t{\n \t\t\t\ti++;\n-\t\t\t\tcontinue;\n \t\t\t}\n-\n+\t\t\telse\n+\t\t\t{\n \t\t\t\turl.segments.add(segment);\n \t\t\t}\n+\t\t}\n \t\treturn url;\n \t}\n }\n",
+    "project": "wicket"
+}

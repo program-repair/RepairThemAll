@@ -1,0 +1,22 @@
+{
+    "bug_id": 15,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "3b4b370e",
+    "failing_tests": [
+        "org.apache.logging.log4j.LoggerTest",
+        "org.apache.logging.log4j.core.config.TestConfigurator",
+        "org.apache.logging.log4j.core.FileConfigTest"
+    ],
+    "files": 1,
+    "jira_id": "619",
+    "linesAdd": 1,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 3,
+    "nb_skipped": 2,
+    "nb_test": 659,
+    "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/config/xml/XmlConfiguration.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/config/xml/XmlConfiguration.java\nindex fb7efa7c8..747f809a2 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/config/xml/XmlConfiguration.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/config/xml/XmlConfiguration.java\n@@ -242,9 +242,7 @@ public Configuration reconfigure() {\n                 final ConfigurationFactory.ConfigurationSource source =\n                     new ConfigurationFactory.ConfigurationSource(new FileInputStream(configFile), configFile);\n                 final XmlConfiguration config = new XmlConfiguration(source);\n-                if (config.rootElement == null) {\n-                    return null;\n-                }\n+                return (config.rootElement == null) ? null : config;\n             } catch (final FileNotFoundException ex) {\n                 LOGGER.error(\"Cannot locate file \" + configFile, ex);\n             }\n",
+    "project": "logging-log4j2"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 4,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "5efb8091",
+    "failing_tests": [
+        "org.apache.wicket.markup.resolver.issue5569.Issue5569Test"
+    ],
+    "files": 1,
+    "jira_id": "5569",
+    "linesAdd": 26,
+    "linesRem": 9,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 2,
+    "nb_test": 1646,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/html/panel/AbstractMarkupSourcingStrategy.java b/wicket-core/src/main/java/org/apache/wicket/markup/html/panel/AbstractMarkupSourcingStrategy.java\nindex c7fe735779..cbddd25609 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/html/panel/AbstractMarkupSourcingStrategy.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/html/panel/AbstractMarkupSourcingStrategy.java\n@@ -26,6 +26,8 @@\n import org.apache.wicket.markup.parser.XmlTag.TagType;\n import org.apache.wicket.markup.resolver.IComponentResolver;\n import org.apache.wicket.util.lang.Classes;\n+import org.apache.wicket.util.visit.IVisit;\n+import org.apache.wicket.util.visit.IVisitor;\n \n /**\n  * Implements boilerplate as needed by many markup sourcing strategies.\n@@ -60,22 +62,37 @@ public AbstractMarkupSourcingStrategy()\n \tprotected IMarkupFragment searchMarkupInTransparentResolvers(final MarkupContainer container,\n \t\tfinal Component child)\n \t{\n-\t\tIMarkupFragment markup = null;\n+\t\treturn container.visitChildren(MarkupContainer.class, new IVisitor<MarkupContainer, IMarkupFragment>()\n+\t\t{\n+\t\t\t@Override\n+\t\t\tpublic void component(MarkupContainer resolvingContainer, IVisit<IMarkupFragment> visit)\n+\t\t\t{\n+\t\t\t\tif (resolvingContainer instanceof IComponentResolver)\n+\t\t\t\t{\n+\t\t\t\t\tIMarkupFragment childMarkup = resolvingContainer.getMarkup(child);\n \n-\t\tfor (Component ch : container)\n+\t\t\t\t\tif (childMarkup != null && childMarkup.size() > 0)\n \t\t\t\t\t{\n-\t\t\tif ((ch != child) && (ch instanceof MarkupContainer) &&\n-\t\t\t\t(ch instanceof IComponentResolver))\n+\t\t\t\t\t\tIComponentResolver componentResolver = (IComponentResolver)resolvingContainer;\n+\n+\t\t\t\t\t\tMarkupStream stream = new MarkupStream(childMarkup);\n+\n+\t\t\t\t\t\tComponentTag tag = stream.getTag();\n+\n+\t\t\t\t\t\tComponent resolvedComponent = resolvingContainer.get(tag.getId());\n+\t\t\t\t\t\tif (resolvedComponent == null)\n \t\t\t\t\t\t{\n-\t\t\t\tmarkup = ((MarkupContainer)ch).getMarkup(child);\n-\t\t\t\tif (markup != null)\n+\t\t\t\t\t\t\tresolvedComponent = componentResolver.resolve(resolvingContainer, stream, tag);\n+\t\t\t\t\t\t}\n+\n+\t\t\t\t\t\tif (child == resolvedComponent)\n \t\t\t\t\t\t{\n-\t\t\t\t\tbreak;\n+\t\t\t\t\t\t\tvisit.stop(childMarkup);\n \t\t\t\t\t\t}\n \t\t\t\t\t}\n \t\t\t\t}\n-\n-\t\treturn markup;\n+\t\t\t}\n+\t\t});\n \t}\n \n \t/**\n",
+    "project": "wicket"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 62,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "29e5b734",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.security.authorization.accesscontrol.AccessControlManagerImplTest"
+    ],
+    "files": 1,
+    "jira_id": "3082",
+    "linesAdd": 32,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 1,
+    "nb_test": 2200,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/security/authorization/accesscontrol/AccessControlManagerImpl.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/security/authorization/accesscontrol/AccessControlManagerImpl.java\nindex 806e992901..0bad785d3d 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/security/authorization/accesscontrol/AccessControlManagerImpl.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/security/authorization/accesscontrol/AccessControlManagerImpl.java\n@@ -22,6 +22,7 @@\n import java.text.ParseException;\n import java.util.ArrayList;\n import java.util.Collections;\n+import java.util.Comparator;\n import java.util.HashMap;\n import java.util.HashSet;\n import java.util.Iterator;\n@@ -47,6 +48,8 @@\n import com.google.common.base.Objects;\n import com.google.common.collect.ImmutableSet;\n import com.google.common.collect.Lists;\n+import com.google.common.collect.Sets;\n+import com.google.common.primitives.Ints;\n import org.apache.jackrabbit.JcrConstants;\n import org.apache.jackrabbit.api.security.JackrabbitAccessControlList;\n import org.apache.jackrabbit.api.security.JackrabbitAccessControlPolicy;\n@@ -361,7 +364,30 @@ public void removePolicy(@Nullable String absPath, @Nonnull AccessControlPolicy\n         Root r = getLatestRoot();\n \n         Result aceResult = searchAces(principals, r);\n-        List<AccessControlPolicy> effective = new ArrayList<AccessControlPolicy>();\n+        Set<JackrabbitAccessControlList> effective = Sets.newTreeSet(new Comparator<JackrabbitAccessControlList>() {\n+            @Override\n+            public int compare(JackrabbitAccessControlList list1, JackrabbitAccessControlList list2) {\n+                if (list1.equals(list2)) {\n+                    return 0;\n+                } else {\n+                    String p1 = list1.getPath();\n+                    String p2 = list2.getPath();\n+\n+                    if (p1 == null) {\n+                        return -1;\n+                    } else if (p2 == null) {\n+                        return 1;\n+                    } else {\n+                        int depth1 = PathUtils.getDepth(p1);\n+                        int depth2 = PathUtils.getDepth(p2);\n+                        return (depth1 == depth2) ? p1.compareTo(p2) : Ints.compare(depth1, depth2);\n+                    }\n+\n+                }\n+            }\n+        });\n+\n+        Set<String> paths = Sets.newHashSet();\n         for (ResultRow row : aceResult.getRows()) {\n             String acePath = row.getPath();\n             String aclName = Text.getName(Text.getRelativeParent(acePath, 1));\n@@ -373,9 +399,13 @@ public void removePolicy(@Nullable String absPath, @Nonnull AccessControlPolicy\n             }\n \n             String path = (REP_REPO_POLICY.equals(aclName)) ? null : accessControlledTree.getPath();\n-            AccessControlPolicy policy = createACL(path, accessControlledTree, true);\n+            if (paths.contains(path)) {\n+                continue;\n+            }\n+            JackrabbitAccessControlList policy = createACL(path, accessControlledTree, true);\n             if (policy != null) {\n                 effective.add(policy);\n+                paths.add(path);\n             }\n         }\n         return effective.toArray(new AccessControlPolicy[effective.size()]);\n",
+    "project": "jackrabbit-oak"
+}

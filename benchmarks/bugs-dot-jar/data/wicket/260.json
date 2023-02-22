@@ -1,0 +1,20 @@
+{
+    "bug_id": 260,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ef880545",
+    "failing_tests": [
+        "org.apache.wicket.util.lang.PropertyResolverTest"
+    ],
+    "files": 2,
+    "jira_id": "2624",
+    "linesAdd": 5,
+    "linesRem": 2,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 940,
+    "patch": "diff --git a/wicket/src/main/java/org/apache/wicket/util/convert/ConverterLocator.java b/wicket/src/main/java/org/apache/wicket/util/convert/ConverterLocator.java\nindex fc09b994ab..0b9b093a03 100644\n--- a/wicket/src/main/java/org/apache/wicket/util/convert/ConverterLocator.java\n+++ b/wicket/src/main/java/org/apache/wicket/util/convert/ConverterLocator.java\n@@ -101,7 +101,7 @@ public Object convertToObject(String value, Locale locale)\n \t\t\t\telse\n \t\t\t\t{\n \t\t\t\t\tthrow new ConversionException(\"Could not convert value: \" + value +\n-\t\t\t\t\t\t\" to type: \" + theType.getName() + \"(Could not find compatible converter).\").setSourceValue(value);\n+\t\t\t\t\t\t\" to type: \" + theType.getName() + \". Could not find compatible converter.\").setSourceValue(value);\n \t\t\t\t}\n \t\t\t}\n \t\t\tcatch (Exception e)\ndiff --git a/wicket/src/main/java/org/apache/wicket/util/lang/PropertyResolver.java b/wicket/src/main/java/org/apache/wicket/util/lang/PropertyResolver.java\nindex d83ba146a3..64a717bf3a 100644\n--- a/wicket/src/main/java/org/apache/wicket/util/lang/PropertyResolver.java\n+++ b/wicket/src/main/java/org/apache/wicket/util/lang/PropertyResolver.java\n@@ -1094,6 +1094,9 @@ public final void setValue(final Object object, final Object value,\n \t\t\tClass type = null;\n \t\t\tif (setMethod != null)\n \t\t\t{\n+\t\t\t\t// getMethod is always there and if the value will be set through a setMethod then\n+\t\t\t\t// the getMethod return type will be its type. Else we have to look at the\n+\t\t\t\t// parameters if the setter but getting the return type is quicker\n \t\t\t\ttype = getMethod.getReturnType();\n \t\t\t}\n \t\t\telse if (field != null)\n@@ -1104,7 +1107,7 @@ else if (field != null)\n \t\t\tObject converted = null;\n \t\t\tif (type != null)\n \t\t\t{\n-\t\t\t\tconverted = converter.convert(value, getMethod.getReturnType());\n+\t\t\t\tconverted = converter.convert(value, type);\n \t\t\t\tif (converted == null)\n \t\t\t\t{\n \t\t\t\t\tif (value != null)\n",
+    "project": "wicket"
+}

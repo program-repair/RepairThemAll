@@ -1,0 +1,20 @@
+{
+    "bug_id": 108,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "3d8c9d75",
+    "failing_tests": [
+        "org.apache.wicket.ComponentInitializationTest"
+    ],
+    "files": 1,
+    "jira_id": "2961",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 3,
+    "nb_failure": 0,
+    "nb_skipped": 1,
+    "nb_test": 891,
+    "patch": "diff --git a/wicket/src/main/java/org/apache/wicket/Component.java b/wicket/src/main/java/org/apache/wicket/Component.java\nindex 380637be9c..f71a97a47b 100644\n--- a/wicket/src/main/java/org/apache/wicket/Component.java\n+++ b/wicket/src/main/java/org/apache/wicket/Component.java\n@@ -967,8 +967,8 @@ void initialize()\n \t{\n \t\tif (!getFlag(FLAG_INITIALIZED))\n \t\t{\n-\t\t\tonInitialize();\n \t\t\tsetFlag(FLAG_INITIALIZED, true);\n+\t\t\tonInitialize();\n \t\t}\n \t}\n \n",
+    "project": "wicket"
+}

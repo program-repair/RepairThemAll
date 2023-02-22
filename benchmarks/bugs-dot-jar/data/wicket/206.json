@@ -1,0 +1,20 @@
+{
+    "bug_id": 206,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "f88721fd",
+    "failing_tests": [
+        "org.apache.wicket.request.UrlTest"
+    ],
+    "files": 2,
+    "jira_id": "4398",
+    "linesAdd": 7,
+    "linesRem": 14,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 70,
+    "patch": "diff --git a/wicket-request/src/main/java/org/apache/wicket/request/Url.java b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\nindex bbaf6eafb1..d387a13c2b 100755\n--- a/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n+++ b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n@@ -297,10 +297,13 @@ public static Url parse(String url, Charset charset)\n \t\t{\n \t\t\tString queryArray[] = Strings.split(queryString, '&');\n \t\t\tfor (String s : queryArray)\n+\t\t\t{\n+\t\t\t\tif (Strings.isEmpty(s) == false)\n \t\t\t\t{\n \t\t\t\t\tresult.parameters.add(parseQueryParameter(s, charset));\n \t\t\t\t}\n \t\t\t}\n+\t\t}\n \n \t\treturn result;\n \t}\n@@ -315,23 +318,14 @@ private static QueryParameter parseQueryParameter(final String qp, final Charset\n \t{\n \t\tif (qp.indexOf('=') == -1)\n \t\t{\n+\t\t\t// name => empty value\n \t\t\treturn new QueryParameter(decodeParameter(qp, charset), \"\");\n \t\t}\n+\n \t\tString parts[] = Strings.split(qp, '=');\n-\t\tif (parts.length == 0)\n-\t\t{\n-\t\t\treturn new QueryParameter(\"\", \"\");\n-\t\t}\n-\t\telse if (parts.length == 1)\n-\t\t{\n-\t\t\treturn new QueryParameter(\"\", decodeParameter(parts[0], charset));\n-\t\t}\n-\t\telse\n-\t\t{\n \t\treturn new QueryParameter(decodeParameter(parts[0], charset), decodeParameter(parts[1],\n \t\t\tcharset));\n \t}\n-\t}\n \n \t/**\n \t * get default port number for protocol\ndiff --git a/wicket-request/src/main/java/org/apache/wicket/request/mapper/parameter/INamedParameters.java b/wicket-request/src/main/java/org/apache/wicket/request/mapper/parameter/INamedParameters.java\nindex e84ed21258..bcf16be283 100644\n--- a/wicket-request/src/main/java/org/apache/wicket/request/mapper/parameter/INamedParameters.java\n+++ b/wicket-request/src/main/java/org/apache/wicket/request/mapper/parameter/INamedParameters.java\n@@ -49,9 +49,8 @@\n \t\t */\r\n \t\tpublic NamedPair(final String key, final String value)\r\n \t\t{\r\n-\t\t\tArgs.notEmpty(key, \"key\");\r\n-\t\t\tthis.key = key;\r\n-\t\t\tthis.value = value;\r\n+\t\t\tthis.key = Args.notNull(key, \"key\");;\r\n+\t\t\tthis.value = Args.notNull(value, \"value\");\r\n \t\t}\r\n \r\n \t\t/**\r\n",
+    "project": "wicket"
+}

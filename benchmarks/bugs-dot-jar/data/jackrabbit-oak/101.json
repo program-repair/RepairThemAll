@@ -1,0 +1,20 @@
+{
+    "bug_id": 101,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "591e4d4a",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.index.AsyncIndexUpdateTest"
+    ],
+    "files": 1,
+    "jira_id": "1749",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 8,
+    "nb_test": 1839,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/AsyncIndexUpdate.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/AsyncIndexUpdate.java\nindex b509e1e7f1..ea8d9277c7 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/AsyncIndexUpdate.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/AsyncIndexUpdate.java\n@@ -148,7 +148,7 @@ public synchronized void run() {\n             return;\n         }\n \n-        NodeBuilder builder = store.getRoot().builder();\n+        NodeBuilder builder = after.builder();\n         NodeBuilder async = builder.child(ASYNC);\n \n         NodeState before = null;\n",
+    "project": "jackrabbit-oak"
+}

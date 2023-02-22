@@ -1,0 +1,21 @@
+{
+    "bug_id": 9,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "4aa4c6d3",
+    "failing_tests": [
+        "org.apache.commons.math4.random.EmpiricalDistributionTest",
+        "org.apache.commons.math4.ml.neuralnet.sofm.KohonenTrainingTaskTest"
+    ],
+    "files": 1,
+    "jira_id": "1203",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 1,
+    "nb_skipped": 3,
+    "nb_test": 5851,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math4/random/EmpiricalDistribution.java b/src/main/java/org/apache/commons/math4/random/EmpiricalDistribution.java\nindex 9458289fd..3b3a8642d 100644\n--- a/src/main/java/org/apache/commons/math4/random/EmpiricalDistribution.java\n+++ b/src/main/java/org/apache/commons/math4/random/EmpiricalDistribution.java\n@@ -799,7 +799,7 @@ private double cumBinP(int binIndex) {\n      * @return within-bin kernel parameterized by bStats\n      */\n     protected RealDistribution getKernel(SummaryStatistics bStats) {\n-        if (bStats.getN() == 1) {\n+        if (bStats.getN() == 1 || bStats.getVariance() == 0) {\n             return new ConstantRealDistribution(bStats.getMean());\n         } else {\n             return new NormalDistribution(randomData.getRandomGenerator(),\n",
+    "project": "commons-math"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 35,
+    "classification": {
+        "singleLine": true
+    },
+    "commit": "937963e3",
+    "failing_tests": [
+        "org.apache.flink.runtime.checkpoint.SavepointCoordinatorTest"
+    ],
+    "files": 1,
+    "jira_id": "3107",
+    "linesAdd": 1,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 964,
+    "patch": "diff --git a/flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint/SavepointCoordinator.java b/flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint/SavepointCoordinator.java\nindex 6ce6502064..ea4b8aeac3 100644\n--- a/flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint/SavepointCoordinator.java\n+++ b/flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint/SavepointCoordinator.java\n@@ -230,6 +230,7 @@ public ApplicationID restoreSavepoint(\n \n \t\t\t// Reset the checkpoint ID counter\n \t\t\tlong nextCheckpointId = checkpoint.getCheckpointID();\n+\t\t\tcheckpointIdCounter.start();\n \t\t\tcheckpointIdCounter.setCount(nextCheckpointId + 1);\n \t\t\tLOG.info(\"Reset the checkpoint ID to {}\", nextCheckpointId);\n \n",
+    "project": "flink"
+}

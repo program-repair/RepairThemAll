@@ -1,0 +1,20 @@
+{
+    "bug_id": 47,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "a450ac2f",
+    "failing_tests": [
+        "org.apache.accumulo.core.client.mock.TestBatchScanner821"
+    ],
+    "files": 2,
+    "jira_id": "821",
+    "linesAdd": 11,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 296,
+    "patch": "diff --git a/core/src/main/java/org/apache/accumulo/core/client/mock/MockBatchScanner.java b/core/src/main/java/org/apache/accumulo/core/client/mock/MockBatchScanner.java\nindex c33599b50..351fdf971 100644\n--- a/core/src/main/java/org/apache/accumulo/core/client/mock/MockBatchScanner.java\n+++ b/core/src/main/java/org/apache/accumulo/core/client/mock/MockBatchScanner.java\n@@ -24,10 +24,12 @@\n import java.util.Map.Entry;\n \n import org.apache.accumulo.core.client.BatchScanner;\n+import org.apache.accumulo.core.client.mock.MockScanner.RangeFilter;\n import org.apache.accumulo.core.data.Key;\n import org.apache.accumulo.core.data.Range;\n import org.apache.accumulo.core.data.Value;\n import org.apache.accumulo.core.iterators.Filter;\n+import org.apache.accumulo.core.iterators.IteratorEnvironment;\n import org.apache.accumulo.core.iterators.SortedKeyValueIterator;\n import org.apache.accumulo.core.iterators.SortedMapIterator;\n import org.apache.accumulo.core.security.Authorizations;\n@@ -53,7 +55,11 @@ public void setRanges(Collection<Range> ranges) {\n   static class RangesFilter extends Filter {\n     List<Range> ranges;\n     \n-    RangesFilter(SortedKeyValueIterator<Key,Value> iterator, List<Range> ranges) {\n+    public RangesFilter deepCopy(IteratorEnvironment env) {\n+      return new RangesFilter(getSource().deepCopy(env), ranges);\n+    }\n+    \n+    public RangesFilter(SortedKeyValueIterator<Key,Value> iterator, List<Range> ranges) {\n       setSource(iterator);\n       this.ranges = ranges;\n     }\n@@ -77,9 +83,9 @@ public boolean accept(Key k, Value v) {\n \n     IteratorChain chain = new IteratorChain();\n     for (Range range : ranges) {\n-      SortedKeyValueIterator<Key,Value> i = new SortedMapIterator(table.table);\n+      SortedKeyValueIterator<Key,Value> i = new RangesFilter(new SortedMapIterator(table.table), ranges);\n       try {\n-        i = new RangesFilter(createFilter(i), ranges);\n+        i = createFilter(i);\n         i.seek(range, createColumnBSS(fetchedColumns), !fetchedColumns.isEmpty());\n         chain.addIterator(new IteratorAdapter(i));\n       } catch (IOException e) {\ndiff --git a/core/src/main/java/org/apache/accumulo/core/client/mock/MockScanner.java b/core/src/main/java/org/apache/accumulo/core/client/mock/MockScanner.java\nindex 82b9b198e..2d78bbf38 100644\n--- a/core/src/main/java/org/apache/accumulo/core/client/mock/MockScanner.java\n+++ b/core/src/main/java/org/apache/accumulo/core/client/mock/MockScanner.java\n@@ -26,8 +26,10 @@\n import org.apache.accumulo.core.data.Range;\n import org.apache.accumulo.core.data.Value;\n import org.apache.accumulo.core.iterators.Filter;\n+import org.apache.accumulo.core.iterators.IteratorEnvironment;\n import org.apache.accumulo.core.iterators.SortedKeyValueIterator;\n import org.apache.accumulo.core.iterators.SortedMapIterator;\n+import org.apache.accumulo.core.iterators.system.DeletingIterator;\n import org.apache.accumulo.core.security.Authorizations;\n \n public class MockScanner extends MockScannerBase implements Scanner {\n",
+    "project": "accumulo"
+}

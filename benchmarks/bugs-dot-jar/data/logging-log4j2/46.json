@@ -1,0 +1,20 @@
+{
+    "bug_id": 46,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "1461f1f6",
+    "failing_tests": [
+        "org.apache.logging.log4j.core.pattern.MessagePatternConverterTest"
+    ],
+    "files": 1,
+    "jira_id": "143",
+    "linesAdd": 4,
+    "linesRem": 0,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 112,
+    "patch": "diff --git a/core/src/main/java/org/apache/logging/log4j/core/pattern/MessagePatternConverter.java b/core/src/main/java/org/apache/logging/log4j/core/pattern/MessagePatternConverter.java\nindex 8db9313d0..c3850b381 100644\n--- a/core/src/main/java/org/apache/logging/log4j/core/pattern/MessagePatternConverter.java\n+++ b/core/src/main/java/org/apache/logging/log4j/core/pattern/MessagePatternConverter.java\n@@ -67,8 +67,12 @@ public void format(final LogEvent event, final StringBuilder toAppendTo) {\n             } else {\n                 result = msg.getFormattedMessage();\n             }\n+            if (result != null) {\n                 toAppendTo.append(config != null && result.contains(\"${\") ?\n                     config.getSubst().replace(event, result) : result);\n+            } else {\n+                toAppendTo.append(\"null\");\n+            }\n         }\n     }\n }\n",
+    "project": "logging-log4j2"
+}

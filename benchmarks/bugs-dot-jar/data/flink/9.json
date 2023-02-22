@@ -1,0 +1,20 @@
+{
+    "bug_id": 9,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "9cd96df7",
+    "failing_tests": [
+        "typeutils.TypeInfoParserTest"
+    ],
+    "files": 1,
+    "jira_id": "1382",
+    "linesAdd": 19,
+    "linesRem": 2,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 638,
+    "patch": "diff --git a/flink-java/src/main/java/org/apache/flink/api/java/typeutils/TypeInfoParser.java b/flink-java/src/main/java/org/apache/flink/api/java/typeutils/TypeInfoParser.java\nindex e9d5dac52a..98373da3bc 100644\n--- a/flink-java/src/main/java/org/apache/flink/api/java/typeutils/TypeInfoParser.java\n+++ b/flink-java/src/main/java/org/apache/flink/api/java/typeutils/TypeInfoParser.java\n@@ -40,8 +40,9 @@\n \tprivate static final Pattern writablePattern = Pattern.compile(\"^((\" + WRITABLE_PACKAGE.replaceAll(\"\\\\.\", \"\\\\\\\\.\") + \"\\\\.)?Writable)<([^\\\\s,>]*)(,|>|$)\");\n \tprivate static final Pattern enumPattern = Pattern.compile(\"^((java\\\\.lang\\\\.)?Enum)<([^\\\\s,>]*)(,|>|$)\");\n \tprivate static final Pattern basicTypePattern = Pattern\n-\t\t\t.compile(\"^((java\\\\.lang\\\\.)?(String|Integer|Byte|Short|Character|Double|Float|Long|Boolean))(,|>|$)\");\n-\tprivate static final Pattern basicType2Pattern = Pattern.compile(\"^(int|byte|short|char|double|float|long|boolean)(,|>|$)\");\n+\t\t\t.compile(\"^((java\\\\.lang\\\\.)?(String|Integer|Byte|Short|Character|Double|Float|Long|Boolean|Void))(,|>|$)\");\n+\tprivate static final Pattern basicTypeDatePattern = Pattern.compile(\"^((java\\\\.util\\\\.)?Date)(,|>|$)\");\n+\tprivate static final Pattern basicType2Pattern = Pattern.compile(\"^(int|byte|short|char|double|float|long|boolean|void)(,|>|$)\");\n \tprivate static final Pattern valueTypePattern = Pattern.compile(\"^((\" + VALUE_PACKAGE.replaceAll(\"\\\\.\", \"\\\\\\\\.\")\n \t\t\t+ \"\\\\.)?(String|Int|Byte|Short|Char|Double|Float|Long|Boolean|List|Map|Null))Value(,|>|$)\");\n \tprivate static final Pattern basicArrayTypePattern = Pattern\n@@ -105,6 +106,7 @@\n \t\tfinal Matcher enumMatcher = enumPattern.matcher(infoString);\n \n \t\tfinal Matcher basicTypeMatcher = basicTypePattern.matcher(infoString);\n+\t\tfinal Matcher basicTypeDateMatcher = basicTypeDatePattern.matcher(infoString);\n \t\tfinal Matcher basicType2Matcher = basicType2Pattern.matcher(infoString);\n \n \t\tfinal Matcher valueTypeMatcher = valueTypePattern.matcher(infoString);\n@@ -194,6 +196,19 @@ else if (basicTypeMatcher.find()) {\n \t\t\t}\n \t\t\treturnType = BasicTypeInfo.getInfoFor(clazz);\n \t\t}\n+\t\t// special basic type \"Date\"\n+\t\telse if (basicTypeDateMatcher.find()) {\n+\t\t\tString className = basicTypeDateMatcher.group(1);\n+\t\t\tsb.delete(0, className.length());\n+\t\t\tClass<?> clazz;\n+\t\t\t// check if fully qualified\n+\t\t\tif (className.startsWith(\"java.util\")) {\n+\t\t\t\tclazz = Class.forName(className);\n+\t\t\t} else {\n+\t\t\t\tclazz = Class.forName(\"java.util.\" + className);\n+\t\t\t}\n+\t\t\treturnType = BasicTypeInfo.getInfoFor(clazz);\n+\t\t}\n \t\t// basic type of primitives\n \t\telse if (basicType2Matcher.find()) {\n \t\t\tString className = basicType2Matcher.group(1);\n@@ -216,6 +231,8 @@ else if (basicType2Matcher.find()) {\n \t\t\t\tclazz = Long.class;\n \t\t\t} else if (className.equals(\"boolean\")) {\n \t\t\t\tclazz = Boolean.class;\n+\t\t\t} else if (className.equals(\"void\")) {\n+\t\t\t\tclazz = Void.class;\n \t\t\t}\n \t\t\treturnType = BasicTypeInfo.getInfoFor(clazz);\n \t\t}\n",
+    "project": "flink"
+}

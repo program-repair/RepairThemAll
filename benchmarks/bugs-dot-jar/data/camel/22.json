@@ -1,0 +1,20 @@
+{
+    "bug_id": 22,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "2a3f3392",
+    "failing_tests": [
+        "org.apache.camel.impl.EndpointShutdownOnceTest"
+    ],
+    "files": 1,
+    "jira_id": "3690",
+    "linesAdd": 2,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 3167,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/impl/DefaultCamelContext.java b/camel-core/src/main/java/org/apache/camel/impl/DefaultCamelContext.java\nindex a8b9c80de7..f1dd98d19d 100644\n--- a/camel-core/src/main/java/org/apache/camel/impl/DefaultCamelContext.java\n+++ b/camel-core/src/main/java/org/apache/camel/impl/DefaultCamelContext.java\n@@ -891,7 +891,8 @@ public void addService(Object object) throws Exception {\n             if (service instanceof IsSingleton) {\n                 singleton = ((IsSingleton) service).isSingleton();\n             }\n-            if (singleton) {\n+            // do not add endpoints as they have their own list\n+            if (singleton && !(service instanceof Endpoint)) {\n                 servicesToClose.add(service);\n             }\n         }\n",
+    "project": "camel"
+}

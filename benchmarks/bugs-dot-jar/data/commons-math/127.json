@@ -1,0 +1,20 @@
+{
+    "bug_id": 127,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ef9b639a",
+    "failing_tests": [
+        "org.apache.commons.math.stat.clustering.KMeansPlusPlusClustererTest"
+    ],
+    "files": 1,
+    "jira_id": "305",
+    "linesAdd": 2,
+    "linesRem": 2,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 2091,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math/util/MathUtils.java b/src/main/java/org/apache/commons/math/util/MathUtils.java\nindex 46368dc9f..ad77a56eb 100644\n--- a/src/main/java/org/apache/commons/math/util/MathUtils.java\n+++ b/src/main/java/org/apache/commons/math/util/MathUtils.java\n@@ -1621,9 +1621,9 @@ public static double distance(double[] p1, double[] p2) {\n      * @return the L<sub>2</sub> distance between the two points\n      */\n     public static double distance(int[] p1, int[] p2) {\n-      int sum = 0;\n+      double sum = 0;\n       for (int i = 0; i < p1.length; i++) {\n-          final int dp = p1[i] - p2[i];\n+          final double dp = p1[i] - p2[i];\n           sum += dp * dp;\n       }\n       return Math.sqrt(sum);\n",
+    "project": "commons-math"
+}

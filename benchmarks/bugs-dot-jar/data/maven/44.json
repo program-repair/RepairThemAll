@@ -1,0 +1,20 @@
+{
+    "bug_id": 44,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "f0fcef7e",
+    "failing_tests": [
+        "org.apache.maven.artifact.versioning.ComparableVersionTest"
+    ],
+    "files": 1,
+    "jira_id": "2281",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 0,
+    "nb_test": 11,
+    "patch": "diff --git a/maven-artifact/src/main/java/org/apache/maven/artifact/versioning/ComparableVersion.java b/maven-artifact/src/main/java/org/apache/maven/artifact/versioning/ComparableVersion.java\nindex 3f36455ef..cf617d662 100644\n--- a/maven-artifact/src/main/java/org/apache/maven/artifact/versioning/ComparableVersion.java\n+++ b/maven-artifact/src/main/java/org/apache/maven/artifact/versioning/ComparableVersion.java\n@@ -145,7 +145,7 @@ public String toString()\n     private static class StringItem\n         implements Item\n     {\n-        private final static String[] QUALIFIERS = { \"snapshot\", \"alpha\", \"beta\", \"milestone\", \"rc\", \"\", \"sp\" };\n+        private final static String[] QUALIFIERS = { \"alpha\", \"beta\", \"milestone\", \"rc\", \"snapshot\", \"\", \"sp\" };\n \n         private final static List<String> _QUALIFIERS = Arrays.asList( QUALIFIERS );\n \n",
+    "project": "maven"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 67,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "4c4b3e2e",
+    "failing_tests": [
+        "org.apache.commons.math4.fraction.FractionTest"
+    ],
+    "files": 1,
+    "jira_id": "1261",
+    "linesAdd": 2,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 3,
+    "nb_test": 5826,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math4/fraction/Fraction.java b/src/main/java/org/apache/commons/math4/fraction/Fraction.java\nindex 0713b8596..39eba8dff 100644\n--- a/src/main/java/org/apache/commons/math4/fraction/Fraction.java\n+++ b/src/main/java/org/apache/commons/math4/fraction/Fraction.java\n@@ -566,7 +566,7 @@ public Fraction multiply(Fraction fraction) {\n      */\n     @Override\n     public Fraction multiply(final int i) {\n-        return new Fraction(numerator * i, denominator);\n+        return multiply(new Fraction(i));\n     }\n \n     /**\n@@ -597,7 +597,7 @@ public Fraction divide(Fraction fraction) {\n      * @return this * i\n      */\n     public Fraction divide(final int i) {\n-        return new Fraction(numerator, denominator * i);\n+        return divide(new Fraction(i));\n     }\n \n     /**\n",
+    "project": "commons-math"
+}

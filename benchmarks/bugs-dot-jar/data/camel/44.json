@@ -1,0 +1,21 @@
+{
+    "bug_id": 44,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "44cad623",
+    "failing_tests": [
+        "org.apache.camel.component.file.FileConsumerRelativeFileNameTest",
+        "org.apache.camel.processor.TryCatchRecipientListTest"
+    ],
+    "files": 3,
+    "jira_id": "7275",
+    "linesAdd": 9,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 3,
+    "nb_skipped": 3,
+    "nb_test": 4857,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/Exchange.java b/camel-core/src/main/java/org/apache/camel/Exchange.java\nindex 506ba29580..f9f3fe384b 100644\n--- a/camel-core/src/main/java/org/apache/camel/Exchange.java\n+++ b/camel-core/src/main/java/org/apache/camel/Exchange.java\n@@ -194,6 +194,7 @@\n     String TRACE_EVENT_NODE_ID   = \"CamelTraceEventNodeId\";\n     String TRACE_EVENT_TIMESTAMP = \"CamelTraceEventTimestamp\";\n     String TRACE_EVENT_EXCHANGE  = \"CamelTraceEventExchange\";\n+    String TRY_ROUTE_BLOCK       = \"TryRouteBlock\";\n     String TRANSFER_ENCODING     = \"Transfer-Encoding\";\n \n     String UNIT_OF_WORK_EXHAUSTED    = \"CamelUnitOfWorkExhausted\";\ndiff --git a/camel-core/src/main/java/org/apache/camel/processor/MulticastProcessor.java b/camel-core/src/main/java/org/apache/camel/processor/MulticastProcessor.java\nindex 69e4667cef..697ae329c1 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/MulticastProcessor.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/MulticastProcessor.java\n@@ -885,7 +885,10 @@ protected ProcessorExchangePair createProcessorExchangePair(int index, Processor\n     protected Processor createErrorHandler(RouteContext routeContext, Exchange exchange, Processor processor) {\n         Processor answer;\n \n-        if (routeContext != null) {\n+        boolean tryBlock = exchange.getProperty(Exchange.TRY_ROUTE_BLOCK, false, boolean.class);\n+\n+        // do not wrap in error handler if we are inside a try block\n+        if (!tryBlock && routeContext != null) {\n             // wrap the producer in error handler so we have fine grained error handling on\n             // the output side instead of the input side\n             // this is needed to support redelivery on that output alone and not doing redelivery\ndiff --git a/camel-core/src/main/java/org/apache/camel/processor/TryProcessor.java b/camel-core/src/main/java/org/apache/camel/processor/TryProcessor.java\nindex 1bfe5dd8e2..b53a14e195 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/TryProcessor.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/TryProcessor.java\n@@ -73,6 +73,7 @@ public boolean process(Exchange exchange, AsyncCallback callback) {\n         exchange.setProperty(Exchange.EXCEPTION_HANDLED, null);\n \n         while (continueRouting(processors, exchange)) {\n+            exchange.setProperty(Exchange.TRY_ROUTE_BLOCK, true);\n             ExchangeHelper.prepareOutToIn(exchange);\n \n             // process the next processor\n@@ -92,6 +93,7 @@ public boolean process(Exchange exchange, AsyncCallback callback) {\n         }\n \n         ExchangeHelper.prepareOutToIn(exchange);\n+        exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);\n         exchange.setProperty(Exchange.EXCEPTION_HANDLED, lastHandled);\n         LOG.trace(\"Processing complete for exchangeId: {} >>> {}\", exchange.getExchangeId(), exchange);\n         callback.done(true);\n@@ -115,6 +117,7 @@ public void done(boolean doneSync) {\n \n                 // continue processing the try .. catch .. finally asynchronously\n                 while (continueRouting(processors, exchange)) {\n+                    exchange.setProperty(Exchange.TRY_ROUTE_BLOCK, true);\n                     ExchangeHelper.prepareOutToIn(exchange);\n \n                     // process the next processor\n@@ -130,6 +133,7 @@ public void done(boolean doneSync) {\n                 }\n \n                 ExchangeHelper.prepareOutToIn(exchange);\n+                exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);\n                 exchange.setProperty(Exchange.EXCEPTION_HANDLED, lastHandled);\n                 LOG.trace(\"Processing complete for exchangeId: {} >>> {}\", exchange.getExchangeId(), exchange);\n                 callback.done(false);\n",
+    "project": "camel"
+}

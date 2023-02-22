@@ -1,0 +1,20 @@
+{
+    "bug_id": 12,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ba38c380",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.cache.CacheTest"
+    ],
+    "files": 1,
+    "jira_id": "3089",
+    "linesAdd": 2,
+    "linesRem": 2,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 1,
+    "nb_test": 2201,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/cache/CacheLIRS.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/cache/CacheLIRS.java\nindex 6eb74dcc3c..26e44e70d1 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/cache/CacheLIRS.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/cache/CacheLIRS.java\n@@ -409,8 +409,8 @@ public long getUsedMemory() {\n      * @param maxMemory the maximum size (1 or larger)\n      */\n     public void setMaxMemory(long maxMemory) {\n-        if (maxMemory <= 0) {\n-            throw new IllegalArgumentException(\"Max memory must be larger than 0\");\n+        if (maxMemory < 0) {\n+            throw new IllegalArgumentException(\"Max memory must not be negative\");\n         }\n         this.maxMemory = maxMemory;\n         if (segments != null) {\n",
+    "project": "jackrabbit-oak"
+}

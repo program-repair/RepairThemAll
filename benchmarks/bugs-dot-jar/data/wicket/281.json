@@ -1,0 +1,20 @@
+{
+    "bug_id": 281,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "2b6da516",
+    "failing_tests": [
+        "org.apache.wicket.request.mapper.CryptoMapperTest"
+    ],
+    "files": 1,
+    "jira_id": "3514",
+    "linesAdd": 7,
+    "linesRem": 10,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 2,
+    "nb_test": 1142,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/request/mapper/CryptoMapper.java b/wicket-core/src/main/java/org/apache/wicket/request/mapper/CryptoMapper.java\nindex 4e632f80e7..bc2b297d94 100755\n--- a/wicket-core/src/main/java/org/apache/wicket/request/mapper/CryptoMapper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/mapper/CryptoMapper.java\n@@ -125,10 +125,6 @@ private Url encryptUrl(final Url url)\n \t\tencryptedUrl.getSegments().add(encryptedUrlString);\r\n \r\n \t\tint numberOfSegments = url.getSegments().size();\r\n-\t\tif (numberOfSegments == 0 && !url.getQueryParameters().isEmpty())\r\n-\t\t{\r\n-\t\t\tnumberOfSegments = 1;\r\n-\t\t}\r\n \t\tchar[] encryptedChars = encryptedUrlString.toCharArray();\r\n \t\tint hash = 0;\r\n \t\tfor (int segNo = 0; segNo < numberOfSegments; segNo++)\r\n@@ -157,7 +153,7 @@ private Url decryptUrl(final Request request, final Url encryptedUrl)\n \t\t}\r\n \r\n \t\tList<String> segments = encryptedUrl.getSegments();\r\n-\t\tif (segments.size() < 2)\r\n+\t\tif (segments.size() < 1)\r\n \t\t{\r\n \t\t\treturn null;\r\n \t\t}\r\n@@ -175,11 +171,6 @@ private Url decryptUrl(final Request request, final Url encryptedUrl)\n \t\t\tUrl originalUrl = Url.parse(decryptedUrl, request.getCharset());\r\n \r\n \t\t\tint originalNumberOfSegments = originalUrl.getSegments().size();\r\n-\t\t\tif (originalNumberOfSegments == 0 &&\r\n-\t\t\t\toriginalUrl.getQueryParameters().isEmpty() == false)\r\n-\t\t\t{\r\n-\t\t\t\toriginalNumberOfSegments = 1;\r\n-\t\t\t}\r\n \t\t\tint numberOfSegments = encryptedUrl.getSegments().size();\r\n \r\n \t\t\tchar[] encryptedChars = encryptedUrlString.toCharArray();\r\n@@ -207,6 +198,12 @@ private Url decryptUrl(final Request request, final Url encryptedUrl)\n \t\t\t\t}\r\n \t\t\t\telse\r\n \t\t\t\t{\r\n+\t\t\t\t\t// append new segments from browser\r\n+\t\t\t\t\twhile (segNo < numberOfSegments)\r\n+\t\t\t\t\t{\r\n+\t\t\t\t\t\turl.getSegments().add(encryptedUrl.getSegments().get(segNo));\r\n+\t\t\t\t\t\tsegNo++;\r\n+\t\t\t\t\t}\r\n \t\t\t\t\tbreak;\r\n \t\t\t\t}\r\n \t\t\t}\r\n",
+    "project": "wicket"
+}

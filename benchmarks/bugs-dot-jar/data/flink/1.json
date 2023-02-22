@@ -1,0 +1,21 @@
+{
+    "bug_id": 1,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ccd574a4",
+    "failing_tests": [
+        "org.apache.flink.runtime.taskmanager.TaskManagerRegistrationTest",
+        "org.apache.flink.runtime.taskmanager.TaskInputSplitProviderTest"
+    ],
+    "files": 2,
+    "jira_id": "1922",
+    "linesAdd": 9,
+    "linesRem": 6,
+    "nb_error": 1,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 617,
+    "patch": "diff --git a/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/Execution.java b/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/Execution.java\nindex 3ba378c5f4..baed9474dc 100644\n--- a/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/Execution.java\n+++ b/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/Execution.java\n@@ -328,7 +328,7 @@ public void deployToSlot(final SimpleSlot slot) throws JobException {\n \t\t\t// register this execution at the execution graph, to receive call backs\n \t\t\tvertex.getExecutionGraph().registerExecution(this);\n \n-\t\t\tInstance instance = slot.getInstance();\n+\t\t\tfinal Instance instance = slot.getInstance();\n \t\t\tFuture<Object> deployAction = Patterns.ask(instance.getTaskManager(),\n \t\t\t\t\tnew SubmitTask(deployment), new Timeout(timeout));\n \n@@ -338,7 +338,9 @@ public void deployToSlot(final SimpleSlot slot) throws JobException {\n \t\t\t\tpublic void onComplete(Throwable failure, Object success) throws Throwable {\n \t\t\t\t\tif (failure != null) {\n \t\t\t\t\t\tif (failure instanceof TimeoutException) {\n-\t\t\t\t\t\t\tmarkFailed(new Exception(\"Cannot deploy task - TaskManager not responding.\", failure));\n+\t\t\t\t\t\t\tmarkFailed(new Exception(\n+\t\t\t\t\t\t\t\t\t\"Cannot deploy task - TaskManager \" + instance + \" not responding.\",\n+\t\t\t\t\t\t\t\t\tfailure));\n \t\t\t\t\t\t}\n \t\t\t\t\t\telse {\n \t\t\t\t\t\t\tmarkFailed(failure);\ndiff --git a/flink-runtime/src/main/java/org/apache/flink/runtime/taskmanager/TaskInputSplitProvider.java b/flink-runtime/src/main/java/org/apache/flink/runtime/taskmanager/TaskInputSplitProvider.java\nindex 1bdc34683b..5a698509c9 100644\n--- a/flink-runtime/src/main/java/org/apache/flink/runtime/taskmanager/TaskInputSplitProvider.java\n+++ b/flink-runtime/src/main/java/org/apache/flink/runtime/taskmanager/TaskInputSplitProvider.java\n@@ -68,10 +68,6 @@ public InputSplit getNextInputSplit() {\n \n \t\t\tfinal Object result = Await.result(response, timeout.duration());\n \n-\t\t\tif (result == null) {\n-\t\t\t\treturn null;\n-\t\t\t}\n-\n \t\t\tif(!(result instanceof JobManagerMessages.NextInputSplit)){\n \t\t\t\tthrow new RuntimeException(\"RequestNextInputSplit requires a response of type \" +\n \t\t\t\t\t\t\"NextInputSplit. Instead response is of type \" + result.getClass() + \".\");\n@@ -80,10 +76,15 @@ public InputSplit getNextInputSplit() {\n \t\t\t\t\t\t(JobManagerMessages.NextInputSplit) result;\n \n \t\t\t\tbyte[] serializedData = nextInputSplit.splitData();\n+\n+\t\t\t\tif(serializedData == null) {\n+\t\t\t\t\treturn null;\n+\t\t\t\t} else {\n \t\t\t\t\tObject deserialized = InstantiationUtil.deserializeObject(serializedData,\n \t\t\t\t\t\t\tusercodeClassLoader);\n \t\t\t\t\treturn (InputSplit) deserialized;\n \t\t\t\t}\n+\t\t\t}\n \t\t} catch (Exception e) {\n \t\t\tthrow new RuntimeException(\"Requesting the next InputSplit failed.\", e);\n \t\t}\n",
+    "project": "flink"
+}

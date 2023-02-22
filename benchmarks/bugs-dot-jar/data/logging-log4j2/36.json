@@ -1,0 +1,20 @@
+{
+    "bug_id": 36,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "8f0c4871",
+    "failing_tests": [
+        "org.apache.logging.slf4j.SerializeTest"
+    ],
+    "files": 1,
+    "jira_id": "410",
+    "linesAdd": 31,
+    "linesRem": 3,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 13,
+    "patch": "diff --git a/log4j-slf4j-impl/src/main/java/org/slf4j/impl/SLF4JLogger.java b/log4j-slf4j-impl/src/main/java/org/slf4j/impl/SLF4JLogger.java\nindex eaac80ea6..767941e8f 100644\n--- a/log4j-slf4j-impl/src/main/java/org/slf4j/impl/SLF4JLogger.java\n+++ b/log4j-slf4j-impl/src/main/java/org/slf4j/impl/SLF4JLogger.java\n@@ -17,6 +17,7 @@\n package org.slf4j.impl;\n \n import org.apache.logging.log4j.Level;\n+import org.apache.logging.log4j.LogManager;\n import org.apache.logging.log4j.message.Message;\n import org.apache.logging.log4j.message.ParameterizedMessage;\n import org.apache.logging.log4j.message.SimpleMessage;\n@@ -27,17 +28,23 @@\n import org.slf4j.helpers.EventDataConverter;\n import org.slf4j.spi.LocationAwareLogger;\n \n+import java.io.IOException;\n+import java.io.ObjectInputStream;\n+import java.io.ObjectOutputStream;\n+import java.io.Serializable;\n+\n /**\n  *\n  */\n-public class SLF4JLogger implements LocationAwareLogger {\n+public class SLF4JLogger implements LocationAwareLogger, Serializable {\n \n+    private static final long serialVersionUID = 7869000638091304316L;\n     private static final String FQCN = SLF4JLogger.class.getName();\n     private static final Marker EVENT_MARKER = MarkerFactory.getMarker(\"EVENT\");\n     private final boolean eventLogger;\n-    private final AbstractLoggerWrapper logger;\n+    private transient AbstractLoggerWrapper logger;\n     private final String name;\n-    private final EventDataConverter converter;\n+    private transient EventDataConverter converter;\n \n     public SLF4JLogger(final AbstractLogger logger, final String name) {\n         this.logger = new AbstractLoggerWrapper(logger, name, null);\n@@ -502,6 +509,27 @@ public String getName() {\n         return name;\n     }\n \n+    /**\n+     * Always treat de-serialization as a full-blown constructor, by\n+     * validating the final state of the de-serialized object.\n+     */\n+    private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {\n+        //always perform the default de-serialization first\n+        aInputStream.defaultReadObject();\n+        logger = new AbstractLoggerWrapper((AbstractLogger) LogManager.getLogger(name), name, null);\n+        converter = createConverter();\n+    }\n+\n+    /**\n+     * This is the default implementation of writeObject.\n+     * Customise if necessary.\n+     */\n+    private void writeObject(ObjectOutputStream aOutputStream\n+    ) throws IOException {\n+        //perform the default serialization for all non-transient, non-static fields\n+        aOutputStream.defaultWriteObject();\n+    }\n+\n     private EventDataConverter createConverter() {\n         try {\n             Class.forName(\"org.slf4j.ext.EventData\");\n",
+    "project": "logging-log4j2"
+}

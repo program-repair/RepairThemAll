@@ -1,0 +1,20 @@
+{
+    "bug_id": 141,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "8898d491",
+    "failing_tests": [
+        "org.apache.camel.component.bean.BeanHandlerMethodPredicateTest"
+    ],
+    "files": 1,
+    "jira_id": "5140",
+    "linesAdd": 23,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 4146,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/component/bean/BeanProcessor.java b/camel-core/src/main/java/org/apache/camel/component/bean/BeanProcessor.java\nindex 536a07fbfa..f3e54851d4 100644\n--- a/camel-core/src/main/java/org/apache/camel/component/bean/BeanProcessor.java\n+++ b/camel-core/src/main/java/org/apache/camel/component/bean/BeanProcessor.java\n@@ -89,9 +89,10 @@ public boolean process(Exchange exchange, AsyncCallback callback) {\n         }\n \n         // do we have a custom adapter for this POJO to a Processor\n-        // should not be invoked if an explicit method has been set\n+        // but only do this if allowed\n+        if (allowProcessor(explicitMethodName, beanInfo)) {\n             Processor processor = getProcessor();\n-        if (explicitMethodName == null && processor != null) {\n+            if (processor != null) {\n                 LOG.trace(\"Using a custom adapter as bean invocation: {}\", processor);\n                 try {\n                     processor.process(exchange);\n@@ -101,6 +102,7 @@ public boolean process(Exchange exchange, AsyncCallback callback) {\n                 callback.done(true);\n                 return true;\n             }\n+        }\n \n         Message in = exchange.getIn();\n \n@@ -253,4 +255,23 @@ protected void doStart() throws Exception {\n     protected void doStop() throws Exception {\n         ServiceHelper.stopService(getProcessor());\n     }\n+\n+    private boolean allowProcessor(String explicitMethodName, BeanInfo info) {\n+        if (explicitMethodName != null) {\n+            // don't allow if explicit method name is given, as we then must invoke this method\n+            return false;\n+        }\n+\n+        // don't allow if any of the methods has a @Handler annotation\n+        // as the @Handler annotation takes precedence and is supposed to trigger invocation\n+        // of the given method\n+        for (MethodInfo method : info.getMethods()) {\n+            if (method.hasHandlerAnnotation()) {\n+                return false;\n+            }\n+        }\n+\n+        // fallback and allow using the processor\n+        return true;\n+    }\n }\n",
+    "project": "camel"
+}

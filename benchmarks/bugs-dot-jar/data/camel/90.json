@@ -1,0 +1,20 @@
+{
+    "bug_id": 90,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "cabee0e9",
+    "failing_tests": [
+        "org.apache.camel.impl.JndiRegistryTest"
+    ],
+    "files": 1,
+    "jira_id": "7418",
+    "linesAdd": 2,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 3,
+    "nb_test": 4984,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/impl/JndiRegistry.java b/camel-core/src/main/java/org/apache/camel/impl/JndiRegistry.java\nindex dc663e3d4e..8a077b3ee1 100644\n--- a/camel-core/src/main/java/org/apache/camel/impl/JndiRegistry.java\n+++ b/camel-core/src/main/java/org/apache/camel/impl/JndiRegistry.java\n@@ -78,8 +78,8 @@ public Object lookupByName(String name) {\n             NamingEnumeration<NameClassPair> list = getContext().list(\"\");\n             while (list.hasMore()) {\n                 NameClassPair pair = list.next();\n-                if (type.isInstance(pair.getClass()) || type.getName().equals(pair.getClassName())) {\n                 Object instance = context.lookup(pair.getName());\n+                if (type.isInstance(instance)) {\n                     answer.put(pair.getName(), type.cast(instance));\n                 }\n             }\n@@ -96,8 +96,8 @@ public Object lookupByName(String name) {\n             NamingEnumeration<NameClassPair> list = getContext().list(\"\");\n             while (list.hasMore()) {\n                 NameClassPair pair = list.next();\n-                if (type.isInstance(pair.getClass()) || type.getName().equals(pair.getClassName())) {\n                 Object instance = context.lookup(pair.getName());\n+                if (type.isInstance(instance)) {\n                     answer.add(type.cast(instance));\n                 }\n             }\n",
+    "project": "camel"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 23,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "52ca008c",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.document.DocumentSplitTest"
+    ],
+    "files": 1,
+    "jira_id": "4050",
+    "linesAdd": 3,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 2801,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/SplitOperations.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/SplitOperations.java\nindex dc3eb5e872..75853cec30 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/SplitOperations.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/SplitOperations.java\n@@ -240,10 +240,10 @@ private void collectRevisionsAndCommitRoot() {\n             } else if (r.getClusterId() == context.getClusterId() \n                     && !changes.contains(r)) {\n                 // OAK-2528: _commitRoot entry without associated change\n-                // consider all but most recent as garbage (OAK-3333)\n-                if (mostRecent) {\n+                // consider all but most recent as garbage (OAK-3333, OAK-4050)\n+                if (mostRecent && doc.isCommitted(r)) {\n                     mostRecent = false;\n-                } else {\n+                } else if (isGarbage(r)) {\n                     addGarbage(r, COMMIT_ROOT);\n                 }\n             }\n",
+    "project": "jackrabbit-oak"
+}

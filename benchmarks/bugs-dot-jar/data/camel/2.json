@@ -1,0 +1,26 @@
+{
+    "bug_id": 2,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "02da984a",
+    "failing_tests": [
+        "org.apache.camel.component.vm.VmMultipleConsumersMultipleContextTest",
+        "org.apache.camel.component.vm.VmMultipleContextsStartStopTest",
+        "org.apache.camel.management.ManagedThrottlerTest",
+        "org.apache.camel.component.properties.PropertiesComponentLoadPropertiesFromFileTest",
+        "org.apache.camel.component.properties.PropertiesComponentTest",
+        "org.apache.camel.component.vm.VmShouldNotUseSameThreadTest",
+        "org.apache.camel.component.vm.VmQueueTest"
+    ],
+    "files": 1,
+    "jira_id": "7456",
+    "linesAdd": 6,
+    "linesRem": 0,
+    "nb_error": 5,
+    "nb_failure": 3,
+    "nb_skipped": 3,
+    "nb_test": 5030,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/component/properties/PropertiesComponent.java b/camel-core/src/main/java/org/apache/camel/component/properties/PropertiesComponent.java\nindex 7d0e75cc6a..3a7c13d280 100644\n--- a/camel-core/src/main/java/org/apache/camel/component/properties/PropertiesComponent.java\n+++ b/camel-core/src/main/java/org/apache/camel/component/properties/PropertiesComponent.java\n@@ -204,6 +204,9 @@ public String getPropertyPrefix() {\n \n     public void setPropertyPrefix(String propertyPrefix) {\n         this.propertyPrefix = propertyPrefix;\n+        if (ObjectHelper.isNotEmpty(this.propertyPrefix)) {\n+            this.propertyPrefix = FilePathResolver.resolvePath(this.propertyPrefix);\n+        }\n     }\n \n     public String getPropertySuffix() {\n@@ -212,6 +215,9 @@ public String getPropertySuffix() {\n \n     public void setPropertySuffix(String propertySuffix) {\n         this.propertySuffix = propertySuffix;\n+        if (ObjectHelper.isNotEmpty(this.propertySuffix)) {\n+            this.propertySuffix = FilePathResolver.resolvePath(this.propertySuffix);\n+        }\n     }\n \n     public boolean isFallbackToUnaugmentedProperty() {\n",
+    "project": "camel"
+}

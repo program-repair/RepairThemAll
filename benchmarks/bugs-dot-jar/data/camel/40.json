@@ -1,0 +1,20 @@
+{
+    "bug_id": 40,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "597883fa",
+    "failing_tests": [
+        "org.apache.camel.component.bean.issues.TransformerIssueTest"
+    ],
+    "files": 1,
+    "jira_id": "8624",
+    "linesAdd": 2,
+    "linesRem": 0,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 4,
+    "nb_test": 5287,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java b/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java\nindex d33eb7f782..67a08932e5 100644\n--- a/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java\n+++ b/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java\n@@ -759,6 +759,7 @@ private MethodInfo chooseBestPossibleMethodInfo(Exchange exchange, Collection<Me\n             MethodInfo matched = null;\n             int matchCounter = 0;\n             for (MethodInfo methodInfo : operationList) {\n+                if (methodInfo.getBodyParameterType() != null) {\n                     if (methodInfo.getBodyParameterType().isInstance(body)) {\n                         return methodInfo;\n                     }\n@@ -775,6 +776,7 @@ private MethodInfo chooseBestPossibleMethodInfo(Exchange exchange, Collection<Me\n                         matched = methodInfo;\n                     }\n                 }\n+            }\n             if (matchCounter > 1) {\n                 throw new AmbiguousMethodCallException(exchange, Arrays.asList(matched, matched));\n             }\n",
+    "project": "camel"
+}

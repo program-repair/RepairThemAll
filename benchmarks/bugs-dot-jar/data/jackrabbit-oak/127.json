@@ -1,0 +1,20 @@
+{
+    "bug_id": 127,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "25a70439",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.mongomk.MongoNodeStoreTest"
+    ],
+    "files": 1,
+    "jira_id": "1254",
+    "linesAdd": 8,
+    "linesRem": 6,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 6,
+    "nb_test": 1505,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/mongomk/MongoNodeStore.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/mongomk/MongoNodeStore.java\nindex ecd48c61a0..6fee0d657d 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/mongomk/MongoNodeStore.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/mongomk/MongoNodeStore.java\n@@ -1135,8 +1135,15 @@ void backgroundRead() {\n             Revision r = e.getValue();\n             Revision last = lastKnownRevision.get(machineId);\n             if (last == null || r.compareRevisionTime(last) > 0) {\n-                lastKnownRevision.put(machineId, r);\n+                if (!hasNewRevisions) {\n+                    // publish our revision once before any foreign revision\n+\n+                    // the latest revisions of the current cluster node\n+                    // happened before the latest revisions of other cluster nodes\n+                    revisionComparator.add(Revision.newRevision(clusterId), headSeen);\n+                }\n                 hasNewRevisions = true;\n+                lastKnownRevision.put(machineId, r);\n                 revisionComparator.add(r, otherSeen);\n             }\n         }\n@@ -1144,11 +1151,6 @@ void backgroundRead() {\n             store.invalidateCache();\n             // TODO only invalidate affected items\n             docChildrenCache.invalidateAll();\n-            // add a new revision, so that changes are visible\n-            Revision r = Revision.newRevision(clusterId);\n-            // the latest revisions of the current cluster node\n-            // happened before the latest revisions of other cluster nodes\n-            revisionComparator.add(r, headSeen);\n             // the head revision is after other revisions\n             setHeadRevision(Revision.newRevision(clusterId));\n         }\n",
+    "project": "jackrabbit-oak"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 30,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "4ed448c7",
+    "failing_tests": [
+        "org.apache.camel.management.ManagedRouteUpdateRouteFromXmlTest"
+    ],
+    "files": 1,
+    "jira_id": "7016",
+    "linesAdd": 10,
+    "linesRem": 0,
+    "nb_error": 1,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 4766,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/management/mbean/ManagedRoute.java b/camel-core/src/main/java/org/apache/camel/management/mbean/ManagedRoute.java\nindex b1cc984484..51ce287665 100644\n--- a/camel-core/src/main/java/org/apache/camel/management/mbean/ManagedRoute.java\n+++ b/camel-core/src/main/java/org/apache/camel/management/mbean/ManagedRoute.java\n@@ -230,6 +230,16 @@ public void updateRouteFromXml(String xml) throws Exception {\n             return;\n         }\n \n+        // if the xml does not contain the route-id then we fix this by adding the actual route id\n+        // this may be needed if the route-id was auto-generated, as the intend is to update this route\n+        // and not add a new route, adding a new route, use the MBean operation on ManagedCamelContext instead.\n+        if (ObjectHelper.isEmpty(def.getId())) {\n+            def.setId(getRouteId());\n+        } else if (!def.getId().equals(getRouteId())) {\n+            throw new IllegalArgumentException(\"Cannot update route from XML as routeIds does not match. routeId: \"\n+                    + getRouteId() + \", routeId from XML: \" + def.getId());\n+        }\n+\n         // add will remove existing route first\n         context.addRouteDefinition(def);\n     }\n",
+    "project": "camel"
+}

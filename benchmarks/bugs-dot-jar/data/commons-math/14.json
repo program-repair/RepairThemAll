@@ -1,0 +1,20 @@
+{
+    "bug_id": 14,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "7980a242",
+    "failing_tests": [
+        "org.apache.commons.math.ode.events.EventStateTest"
+    ],
+    "files": 1,
+    "jira_id": "695",
+    "linesAdd": 6,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 3070,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math/ode/AbstractIntegrator.java b/src/main/java/org/apache/commons/math/ode/AbstractIntegrator.java\nindex 2d878b15f..8f315e334 100644\n--- a/src/main/java/org/apache/commons/math/ode/AbstractIntegrator.java\n+++ b/src/main/java/org/apache/commons/math/ode/AbstractIntegrator.java\n@@ -40,7 +40,6 @@\n import org.apache.commons.math.ode.sampling.StepHandler;\n import org.apache.commons.math.util.FastMath;\n import org.apache.commons.math.util.Incrementor;\n-import org.apache.commons.math.util.MathUtils;\n import org.apache.commons.math.util.Precision;\n \n /**\n@@ -278,7 +277,6 @@ protected double acceptStep(final AbstractStepInterpolator interpolator,\n \n             double previousT = interpolator.getGlobalPreviousTime();\n             final double currentT = interpolator.getGlobalCurrentTime();\n-            resetOccurred = false;\n \n             // initialize the events states if needed\n             if (! statesInitialized) {\n@@ -332,6 +330,9 @@ public int compare(EventState es0, EventState es1) {\n                 if (isLastStep) {\n                     // the event asked to stop integration\n                     System.arraycopy(eventY, 0, y, 0, y.length);\n+                    for (final EventState remaining : occuringEvents) {\n+                        remaining.stepAccepted(eventT, eventY);\n+                    }\n                     return eventT;\n                 }\n \n@@ -341,6 +342,9 @@ public int compare(EventState es0, EventState es1) {\n                     System.arraycopy(eventY, 0, y, 0, y.length);\n                     computeDerivatives(eventT, y, yDot);\n                     resetOccurred = true;\n+                    for (final EventState remaining : occuringEvents) {\n+                        remaining.stepAccepted(eventT, eventY);\n+                    }\n                     return eventT;\n                 }\n \n",
+    "project": "commons-math"
+}

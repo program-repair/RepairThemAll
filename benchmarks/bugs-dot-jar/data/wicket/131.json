@@ -1,0 +1,20 @@
+{
+    "bug_id": 131,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "6122df49",
+    "failing_tests": [
+        "org.apache.wicket.request.resource.PackageResourceReferenceTest"
+    ],
+    "files": 3,
+    "jira_id": "5250",
+    "linesAdd": 22,
+    "linesRem": 4,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 3,
+    "nb_test": 1504,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/request/resource/CssResourceReference.java b/wicket-core/src/main/java/org/apache/wicket/request/resource/CssResourceReference.java\nindex 55955d7d90..7d15d6193f 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/resource/CssResourceReference.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/resource/CssResourceReference.java\n@@ -76,8 +76,10 @@ public CssResourceReference(Key key)\n \t@Override\n \tpublic CssPackageResource getResource()\n \t{\n-\t\treturn new CssPackageResource(getScope(), getName(), getLocale(), getStyle(),\n+        final CssPackageResource resource = new CssPackageResource(getScope(), getName(), getLocale(), getStyle(),\n                 getVariation());\n+        removeCompressFlagIfUnnecessary(resource);\n+        return resource;\n \t}\n \n }\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/request/resource/JavaScriptResourceReference.java b/wicket-core/src/main/java/org/apache/wicket/request/resource/JavaScriptResourceReference.java\nindex 43e4a0dd38..d320f5977b 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/resource/JavaScriptResourceReference.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/resource/JavaScriptResourceReference.java\n@@ -78,7 +78,9 @@ public JavaScriptResourceReference(Key key)\n \t@Override\n \tpublic JavaScriptPackageResource getResource()\n \t{\n-\t\treturn new JavaScriptPackageResource(getScope(), getName(), getLocale(), getStyle(),\n+        final JavaScriptPackageResource resource = new JavaScriptPackageResource(getScope(), getName(), getLocale(), getStyle(),\n                 getVariation());\n+        removeCompressFlagIfUnnecessary(resource);\n+        return resource;\n \t}\n }\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/request/resource/PackageResourceReference.java b/wicket-core/src/main/java/org/apache/wicket/request/resource/PackageResourceReference.java\nindex ca248a0f73..a127aa71b8 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/resource/PackageResourceReference.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/resource/PackageResourceReference.java\n@@ -129,13 +129,27 @@ else if (JAVASCRIPT_EXTENSION.equals(extension))\n \t\t\t\tgetVariation());\n \t\t}\n \n+        removeCompressFlagIfUnnecessary(resource);\n+\n+        return resource;\n+    }\n+\n+    /**\n+     * Method allowing to remove the compress flag if the resource has been detected as a minified one\n+     * (i.e. ending with .min.EXT)\n+     * This method is to be called by subclasses overriding <code>getResource</code>\n+     * if they want to rely on default minification detection handling\n+     *\n+     * see WICKET-5250 for further explanation\n+     * @param resource resource to check\n+     */\n+    protected void removeCompressFlagIfUnnecessary(final PackageResource resource)\n+    {\n         String minifiedName = MINIFIED_NAMES_CACHE.get(this);\n         if (minifiedName != null && minifiedName != NO_MINIFIED_NAME)\n         {\n             resource.setCompress(false);\n         }\n-\n-\t\treturn resource;\n     }\n \n     private ResourceReference.UrlAttributes getUrlAttributes(Locale locale, String style, String variation)\n",
+    "project": "wicket"
+}

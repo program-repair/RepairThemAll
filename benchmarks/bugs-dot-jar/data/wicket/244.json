@@ -1,0 +1,20 @@
+{
+    "bug_id": 244,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "afc7034d",
+    "failing_tests": [
+        "org.apache.wicket.request.HttpHeaderCollectionTest"
+    ],
+    "files": 1,
+    "jira_id": "3845",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 46,
+    "patch": "diff --git a/wicket-request/src/main/java/org/apache/wicket/request/HttpHeaderCollection.java b/wicket-request/src/main/java/org/apache/wicket/request/HttpHeaderCollection.java\nindex 3e97a1ec99..8e0cb55e35 100644\n--- a/wicket-request/src/main/java/org/apache/wicket/request/HttpHeaderCollection.java\n+++ b/wicket-request/src/main/java/org/apache/wicket/request/HttpHeaderCollection.java\n@@ -99,7 +99,7 @@ public void setHeader(String name, String value)\n \tpublic void addHeader(String name, String value)\n \t{\n \t\t// be lenient and strip leading / trailing blanks\n-\t\tvalue = Args.notEmpty(value, \"value\").trim();\n+\t\tvalue = Args.notNull(value, \"value\").trim();\n \n \t\tinternalAdd(name, value);\n \t}\n",
+    "project": "wicket"
+}

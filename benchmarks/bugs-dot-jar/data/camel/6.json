@@ -1,0 +1,20 @@
+{
+    "bug_id": 6,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "15e1077d",
+    "failing_tests": [
+        "org.apache.camel.processor.DataFormatStreamingTest"
+    ],
+    "files": 1,
+    "jira_id": "7055",
+    "linesAdd": 9,
+    "linesRem": 5,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 1,
+    "nb_test": 4772,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/converter/stream/CachedOutputStream.java b/camel-core/src/main/java/org/apache/camel/converter/stream/CachedOutputStream.java\nindex c5f3b49b01..0e3540c75a 100644\n--- a/camel-core/src/main/java/org/apache/camel/converter/stream/CachedOutputStream.java\n+++ b/camel-core/src/main/java/org/apache/camel/converter/stream/CachedOutputStream.java\n@@ -71,11 +71,10 @@ public CachedOutputStream(Exchange exchange) {\n         this(exchange, true);\n     }\n \n-    public CachedOutputStream(Exchange exchange, boolean closedOnCompletion) {\n+    public CachedOutputStream(Exchange exchange, final boolean closedOnCompletion) {\n         this.strategy = exchange.getContext().getStreamCachingStrategy();\n         currentStream = new CachedByteArrayOutputStream(strategy.getBufferSize());\n         \n-        if (closedOnCompletion) {\n         // add on completion so we can cleanup after the exchange is done such as deleting temporary files\n         exchange.addOnCompletion(new SynchronizationAdapter() {\n             @Override\n@@ -84,9 +83,16 @@ public void onDone(Exchange exchange) {\n                     if (fileInputStreamCache != null) {\n                         fileInputStreamCache.close();\n                     }\n+                    if (closedOnCompletion) {\n                         close();\n+                    }\n                 } catch (Exception e) {\n-                        LOG.warn(\"Error deleting temporary cache file: \" + tempFile, e);\n+                    LOG.warn(\"Error closing streams. This exception will be ignored.\", e);\n+                }\n+                try {\n+                    cleanUpTempFile();\n+                } catch (Exception e) {\n+                    LOG.warn(\"Error deleting temporary cache file: \" + tempFile + \". This exception will be ignored.\", e);\n                 }\n             }\n     \n@@ -96,7 +102,6 @@ public String toString() {\n             }\n         });\n     }\n-    }\n \n     public void flush() throws IOException {\n         currentStream.flush();       \n@@ -104,7 +109,6 @@ public void flush() throws IOException {\n \n     public void close() throws IOException {\n         currentStream.close();\n-        cleanUpTempFile();\n     }\n \n     public boolean equals(Object obj) {\n",
+    "project": "camel"
+}

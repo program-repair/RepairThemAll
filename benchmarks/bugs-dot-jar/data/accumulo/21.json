@@ -1,0 +1,20 @@
+{
+    "bug_id": 21,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "a3267d3e",
+    "failing_tests": [
+        "org.apache.accumulo.core.client.lexicoder.ReverseLexicoderTest"
+    ],
+    "files": 0,
+    "jira_id": "3385",
+    "linesAdd": 0,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 2,
+    "nb_test": 697,
+    "patch": "",
+    "project": "accumulo"
+}

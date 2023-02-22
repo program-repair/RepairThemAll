@@ -1,0 +1,20 @@
+{
+    "bug_id": 49,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "7e250001",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.document.UpdateOpTest"
+    ],
+    "files": 1,
+    "jira_id": "2435",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 9,
+    "nb_test": 1868,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/UpdateOp.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/UpdateOp.java\nindex b957c37b22..707149d723 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/UpdateOp.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/UpdateOp.java\n@@ -368,7 +368,7 @@ public boolean equals(Object obj) {\n             if (obj instanceof Key) {\n                 Key other = (Key) obj;\n                 return name.equals(other.name) &&\n-                        revision != null ? revision.equals(other.revision) : other.revision == null;\n+                        (revision != null ? revision.equals(other.revision) : other.revision == null);\n             }\n             return false;\n         }\n",
+    "project": "jackrabbit-oak"
+}

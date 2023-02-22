@@ -1,0 +1,20 @@
+{
+    "bug_id": 93,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "350f726c",
+    "failing_tests": [
+        "org.apache.commons.math3.optimization.univariate.BrentOptimizerTest"
+    ],
+    "files": 1,
+    "jira_id": "855",
+    "linesAdd": 30,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 4,
+    "nb_test": 4083,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math3/optimization/univariate/BrentOptimizer.java b/src/main/java/org/apache/commons/math3/optimization/univariate/BrentOptimizer.java\nindex ee2227cdb..cff5bfd33 100644\n--- a/src/main/java/org/apache/commons/math3/optimization/univariate/BrentOptimizer.java\n+++ b/src/main/java/org/apache/commons/math3/optimization/univariate/BrentOptimizer.java\n@@ -85,7 +86,7 @@ public BrentOptimizer(double rel,\n     }\n \n     /**\n-     * The arguments are used implement the original stopping criterion\n+     * The arguments are used for implementing the original stopping criterion\n      * of Brent's algorithm.\n      * {@code abs} and {@code rel} define a tolerance\n      * {@code tol = rel |x| + abs}. {@code rel} should be no smaller than\n@@ -226,7 +227,7 @@ protected UnivariatePointValuePair doOptimize() {\n \n                 if (checker != null) {\n                     if (checker.converged(iter, previous, current)) {\n-                        return current;\n+                        return best(current, previous, isMinim);\n                     }\n                 }\n \n@@ -263,9 +264,36 @@ protected UnivariatePointValuePair doOptimize() {\n                     }\n                 }\n             } else { // Default termination (Brent's criterion).\n-                return current;\n+                return best(current, previous, isMinim);\n             }\n             ++iter;\n         }\n     }\n+\n+    /**\n+     * Selects the best of two points.\n+     *\n+     * @param a Point and value.\n+     * @param b Point and value.\n+     * @param isMinim {@code true} if the selected point must be the one with\n+     * the lowest value.\n+     * @return the best point, or {@code null} if {@code a} and {@code b} are\n+     * both {@code null}.\n+     */\n+    private UnivariatePointValuePair best(UnivariatePointValuePair a,\n+                                          UnivariatePointValuePair b,\n+                                          boolean isMinim) {\n+        if (a == null) {\n+            return b;\n+        }\n+        if (b == null) {\n+            return a;\n+        }\n+\n+        if (isMinim) {\n+            return a.getValue() < b.getValue() ? a : b;\n+        } else {\n+            return a.getValue() > b.getValue() ? a : b;\n+        }\n+    }\n }\n",
+    "project": "commons-math"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 171,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "b939aa6e",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.jcr.security.user.UserImportHistoryTest"
+    ],
+    "files": 1,
+    "jira_id": "3930",
+    "linesAdd": 2,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 1,
+    "nb_test": 1229,
+    "patch": "diff --git a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/xml/SysViewImportHandler.java b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/xml/SysViewImportHandler.java\nindex d9cbf9c35f..121511a445 100644\n--- a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/xml/SysViewImportHandler.java\n+++ b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/xml/SysViewImportHandler.java\n@@ -277,7 +277,8 @@ public void endElement(String namespaceURI, String localName, String qName)\n                 PropInfo prop = new PropInfo(\n                         currentPropName == null ? null : currentPropName.getRepoQualifiedName(),\n                         currentPropType,\n-                        currentPropValues);\n+                        currentPropValues,\n+                        currentPropMultipleStatus);\n                 state.props.add(prop);\n             }\n             // reset temp fields\n",
+    "project": "jackrabbit-oak"
+}

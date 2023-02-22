@@ -1,0 +1,22 @@
+{
+    "bug_id": 10,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "5761250c",
+    "failing_tests": [
+        "org.apache.camel.component.vm.VmMultipleConsumersRemoteRouteTest",
+        "org.apache.camel.management.ManagedThrottlerTest",
+        "org.apache.camel.component.seda.SedaErrorTest"
+    ],
+    "files": 1,
+    "jira_id": "6918",
+    "linesAdd": 12,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 3,
+    "nb_skipped": 1,
+    "nb_test": 4744,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/SendProcessor.java b/camel-core/src/main/java/org/apache/camel/processor/SendProcessor.java\nindex b7d3c3c101..6ba6fc84d9 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/SendProcessor.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/SendProcessor.java\n@@ -107,7 +107,10 @@ public boolean process(Exchange exchange, final AsyncCallback callback) {\n \n             EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);\n             LOG.debug(\">>>> {} {}\", destination, exchange);\n-            return producer.process(exchange, new AsyncCallback() {\n+\n+            boolean sync = true;\n+            try {\n+                sync = producer.process(exchange, new AsyncCallback() {\n                     @Override\n                     public void done(boolean doneSync) {\n                         try {\n@@ -121,6 +124,14 @@ public void done(boolean doneSync) {\n                         }\n                     }\n                 });\n+            } catch (Throwable throwable) {\n+                if (exchange != null) {\n+                    exchange.setException(throwable);\n+                }\n+\n+            }\n+\n+            return sync;\n         }\n \n         // send the exchange to the destination using the producer cache for the non optimized producers\n",
+    "project": "camel"
+}

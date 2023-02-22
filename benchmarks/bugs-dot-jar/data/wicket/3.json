@@ -1,0 +1,20 @@
+{
+    "bug_id": 3,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "5b730c0b",
+    "failing_tests": [
+        "org.apache.wicket.request.handler.render.WebPageRendererTest"
+    ],
+    "files": 1,
+    "jira_id": "5522",
+    "linesAdd": 23,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 2,
+    "nb_test": 1634,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/request/handler/render/WebPageRenderer.java b/wicket-core/src/main/java/org/apache/wicket/request/handler/render/WebPageRenderer.java\nindex 1b98beda73..0b5dee4b4a 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/handler/render/WebPageRenderer.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/handler/render/WebPageRenderer.java\n@@ -33,6 +33,7 @@\n import org.apache.wicket.request.cycle.RequestCycle;\n import org.apache.wicket.request.http.WebRequest;\n import org.apache.wicket.request.http.WebResponse;\n+import org.apache.wicket.util.lang.Objects;\n import org.slf4j.Logger;\n import org.slf4j.LoggerFactory;\n \n@@ -338,11 +339,12 @@ protected boolean shouldRenderPageAndWriteResponse(RequestCycle cycle, Url curre\n \t\t\treturn false;\n \t\t}\n \n-\t\treturn neverRedirect(getRedirectPolicy())\n+\t\treturn (compatibleProtocols(currentUrl.getProtocol(), targetUrl.getProtocol())) &&\n+\t\t\t\t(neverRedirect(getRedirectPolicy())\n \t\t\t|| ((isOnePassRender() && notForcedRedirect(getRedirectPolicy())) || (targetUrl\n \t\t\t\t.equals(currentUrl) && notNewAndNotStatelessPage(isNewPageInstance(),\n \t\t\t\tisPageStateless()))) || (targetUrl.equals(currentUrl) && isRedirectToRender())\n-\t\t\t|| (shouldPreserveClientUrl(cycle) && notForcedRedirect(getRedirectPolicy()));\n+\t\t\t|| (shouldPreserveClientUrl(cycle) && notForcedRedirect(getRedirectPolicy())));\n \t}\n \n \tprivate static boolean notNewAndNotStatelessPage(boolean newPageInstance, boolean pageStateless)\n@@ -365,4 +367,23 @@ private static boolean notForcedRedirect(RedirectPolicy redirectPolicy)\n \t\treturn !alwaysRedirect(redirectPolicy);\n \t}\n \n+\t/**\n+\t * Compares the protocols of two {@link Url}s\n+\t *\n+\t * @param p1\n+\t *      the first protocol\n+\t * @param p2\n+\t *      the second protocol\n+\t * @return {@code false} if the protocols are both non-null and not equal,\n+\t *          {@code true} - otherwise\n+\t */\n+\tprotected boolean compatibleProtocols(String p1, String p2)\n+\t{\n+\t\tif (p1 != null && p2 != null)\n+\t\t{\n+\t\t\treturn Objects.equal(p1, p2);\n+\t\t}\n+\n+\t\treturn true;\n+\t}\n }\n",
+    "project": "wicket"
+}

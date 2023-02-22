@@ -1,0 +1,24 @@
+{
+    "bug_id": 108,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "b3377b16",
+    "failing_tests": [
+        "org.apache.camel.component.vm.VmQueueTest",
+        "org.apache.camel.component.vm.VmShouldNotUseSameThreadTest",
+        "org.apache.camel.component.vm.VmMultipleConsumersMultipleContextTest",
+        "org.apache.camel.component.vm.VmMultipleContextsStartStopTest",
+        "org.apache.camel.issues.OnCompletionIssueTest"
+    ],
+    "files": 1,
+    "jira_id": "7568",
+    "linesAdd": 8,
+    "linesRem": 0,
+    "nb_error": 3,
+    "nb_failure": 3,
+    "nb_skipped": 3,
+    "nb_test": 5063,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/OnCompletionProcessor.java b/camel-core/src/main/java/org/apache/camel/processor/OnCompletionProcessor.java\nindex abbdcd07b3..6575cb27e7 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/OnCompletionProcessor.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/OnCompletionProcessor.java\n@@ -131,6 +131,8 @@ protected static void doProcess(Processor processor, Exchange exchange) {\n         Object failureHandled = exchange.removeProperty(Exchange.FAILURE_HANDLED);\n         Object caught = exchange.removeProperty(Exchange.EXCEPTION_CAUGHT);\n         Object errorhandlerHandled = exchange.removeProperty(Exchange.ERRORHANDLER_HANDLED);\n+        Object rollbackOnly = exchange.removeProperty(Exchange.ROLLBACK_ONLY);\n+        Object rollbackOnlyLast = exchange.removeProperty(Exchange.ROLLBACK_ONLY_LAST);\n \n         Exception cause = exchange.getException();\n         exchange.setException(null);\n@@ -153,6 +155,12 @@ protected static void doProcess(Processor processor, Exchange exchange) {\n             if (errorhandlerHandled != null) {\n                 exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, errorhandlerHandled);\n             }\n+            if (rollbackOnly != null) {\n+                exchange.setProperty(Exchange.ROLLBACK_ONLY, rollbackOnly);\n+            }\n+            if (rollbackOnlyLast != null) {\n+                exchange.setProperty(Exchange.ROLLBACK_ONLY, rollbackOnlyLast);\n+            }\n             if (cause != null) {\n                 exchange.setException(cause);\n             }\n",
+    "project": "camel"
+}

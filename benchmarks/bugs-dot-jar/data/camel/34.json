@@ -1,0 +1,20 @@
+{
+    "bug_id": 34,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "53b4e90c",
+    "failing_tests": [
+        "org.apache.camel.language.simple.SimpleTest"
+    ],
+    "files": 1,
+    "jira_id": "8137",
+    "linesAdd": 6,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 4,
+    "nb_test": 5166,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java b/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java\nindex 1c19945e41..fb9c533200 100644\n--- a/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java\n+++ b/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java\n@@ -311,8 +311,12 @@ private void introspect(Class<?> clazz) {\n             methods.addAll(extraMethods);\n         }\n \n-        // it may have duplicate methods already, even from declared or from interfaces + declared\n         Set<Method> overrides = new HashSet<Method>();\n+\n+        // do not remove duplicates form class from the Java itself as they have some \"duplicates\" we need\n+        boolean javaClass = clazz.getName().startsWith(\"java.\") || clazz.getName().startsWith(\"javax.\");\n+        if (!javaClass) {\n+            // it may have duplicate methods already, even from declared or from interfaces + declared\n             for (Method source : methods) {\n                 for (Method target : methods) {\n                     // skip ourselves\n@@ -327,6 +331,7 @@ private void introspect(Class<?> clazz) {\n             }\n             methods.removeAll(overrides);\n             overrides.clear();\n+        }\n \n         // if we are a public class, then add non duplicate interface classes also\n         if (Modifier.isPublic(clazz.getModifiers())) {\n",
+    "project": "camel"
+}

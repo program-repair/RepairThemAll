@@ -1,0 +1,20 @@
+{
+    "bug_id": 180,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "5226978a",
+    "failing_tests": [
+        "org.apache.wicket.util.tester.WicketTesterTest"
+    ],
+    "files": 1,
+    "jira_id": "1886",
+    "linesAdd": 18,
+    "linesRem": 6,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 726,
+    "patch": "diff --git a/wicket/src/main/java/org/apache/wicket/protocol/http/MockWebApplication.java b/wicket/src/main/java/org/apache/wicket/protocol/http/MockWebApplication.java\nindex aaf95f6520..3ad878fc48 100644\n--- a/wicket/src/main/java/org/apache/wicket/protocol/http/MockWebApplication.java\n+++ b/wicket/src/main/java/org/apache/wicket/protocol/http/MockWebApplication.java\n@@ -16,16 +16,18 @@\n  */\n package org.apache.wicket.protocol.http;\n \n+import javax.servlet.FilterConfig;\n+import javax.servlet.ServletContext;\n+import javax.servlet.ServletException;\n+import javax.servlet.http.Cookie;\n+import javax.servlet.http.HttpServletResponse;\n import java.io.File;\n import java.util.Enumeration;\n import java.util.HashMap;\n+import java.util.HashSet;\n import java.util.Iterator;\n import java.util.Map;\n-\n-import javax.servlet.FilterConfig;\n-import javax.servlet.ServletContext;\n-import javax.servlet.ServletException;\n-import javax.servlet.http.HttpServletResponse;\n+import java.util.Set;\n \n import org.apache.wicket.Application;\n import org.apache.wicket.Component;\n@@ -121,6 +123,7 @@\n \tprivate final ServletContext context;\n \n \tprivate final WicketFilter filter;\n+\tprivate Set<Cookie> cookiesOfThisSession = new HashSet<Cookie>();\n \n \t/**\n \t * Create the mock http tester that can be used for testing.\n@@ -195,7 +198,15 @@ public String getFilterName()\n \t\tservletSession = new MockHttpSession(context);\n \t\tservletSession.setTemporary(initializeHttpSessionAsTemporary());\n \t\tservletRequest = new MockHttpServletRequest(this.application, servletSession, context);\n-\t\tservletResponse = new MockHttpServletResponse(servletRequest);\n+\t\tservletResponse = new MockHttpServletResponse(servletRequest)\n+\t\t{\n+\t\t\t@Override\n+\t\t\tpublic void addCookie(Cookie cookie)\n+\t\t\t{\n+\t\t\t\tsuper.addCookie(cookie);\n+\t\t\t\tcookiesOfThisSession.add(cookie);\n+\t\t\t}\n+\t\t};\n \n \t\t// Construct request and response using factories\n \t\twicketRequest = this.application.newWebRequest(servletRequest);\n@@ -620,6 +631,7 @@ public WebRequestCycle setupRequestAndResponse(boolean isAjax)\n \t{\n \t\tservletRequest.initialize();\n \t\tservletResponse.initialize();\n+\t\tservletRequest.addCookies(cookiesOfThisSession);\n \t\tservletRequest.setParameters(parametersForNextRequest);\n \t\tif (isAjax)\n \t\t{\n",
+    "project": "wicket"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 63,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ddd2c3bc",
+    "failing_tests": [
+        "org.apache.accumulo.core.client.mapreduce.InputTableConfigTest"
+    ],
+    "files": 1,
+    "jira_id": "3143",
+    "linesAdd": 2,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 700,
+    "patch": "diff --git a/core/src/main/java/org/apache/accumulo/core/client/mapreduce/InputTableConfig.java b/core/src/main/java/org/apache/accumulo/core/client/mapreduce/InputTableConfig.java\nindex e59451e83..fa3b7eb87 100644\n--- a/core/src/main/java/org/apache/accumulo/core/client/mapreduce/InputTableConfig.java\n+++ b/core/src/main/java/org/apache/accumulo/core/client/mapreduce/InputTableConfig.java\n@@ -281,6 +281,7 @@ public void write(DataOutput dataOutput) throws IOException {\n     dataOutput.writeBoolean(autoAdjustRanges);\n     dataOutput.writeBoolean(useLocalIterators);\n     dataOutput.writeBoolean(useIsolatedScanners);\n+    dataOutput.writeBoolean(offlineScan);\n   }\n \n   /**\n@@ -325,6 +326,7 @@ public void readFields(DataInput dataInput) throws IOException {\n     autoAdjustRanges = dataInput.readBoolean();\n     useLocalIterators = dataInput.readBoolean();\n     useIsolatedScanners = dataInput.readBoolean();\n+    offlineScan = dataInput.readBoolean();\n   }\n \n   @Override\n",
+    "project": "accumulo"
+}

@@ -1,0 +1,20 @@
+{
+    "bug_id": 92,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "83f18d52",
+    "failing_tests": [
+        "org.apache.commons.math.linear.EigenDecompositionImplTest"
+    ],
+    "files": 1,
+    "jira_id": "318",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 2087,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math/linear/EigenDecompositionImpl.java b/src/main/java/org/apache/commons/math/linear/EigenDecompositionImpl.java\nindex 3fc328d8b..9d1b797be 100644\n--- a/src/main/java/org/apache/commons/math/linear/EigenDecompositionImpl.java\n+++ b/src/main/java/org/apache/commons/math/linear/EigenDecompositionImpl.java\n@@ -1132,7 +1132,7 @@ private int goodStep(final int start, final int end) {\n     private boolean flipIfWarranted(final int n, final int step) {\n         if (1.5 * work[pingPong] < work[4 * (n - 1) + pingPong]) {\n             // flip array\n-            int j = 4 * n - 1;\n+            int j = 4 * (n - 1);\n             for (int i = 0; i < j; i += 4) {\n                 for (int k = 0; k < 4; k += step) {\n                     final double tmp = work[i + k];\n",
+    "project": "commons-math"
+}

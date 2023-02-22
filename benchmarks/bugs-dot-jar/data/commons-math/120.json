@@ -1,0 +1,20 @@
+{
+    "bug_id": 120,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "6d6649ef",
+    "failing_tests": [
+        "org.apache.commons.math.util.FastMathTest"
+    ],
+    "files": 1,
+    "jira_id": "482",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 2226,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math/util/FastMath.java b/src/main/java/org/apache/commons/math/util/FastMath.java\nindex 8cba4d484..4f7d447df 100644\n--- a/src/main/java/org/apache/commons/math/util/FastMath.java\n+++ b/src/main/java/org/apache/commons/math/util/FastMath.java\n@@ -3479,7 +3479,7 @@ public static long max(final long a, final long b) {\n      * @return b if a is lesser or equal to b, a otherwise\n      */\n     public static float max(final float a, final float b) {\n-        return (a <= b) ? b : (Float.isNaN(a + b) ? Float.NaN : b);\n+        return (a <= b) ? b : (Float.isNaN(a + b) ? Float.NaN : a);\n     }\n \n     /** Compute the maximum of two values\n",
+    "project": "commons-math"
+}

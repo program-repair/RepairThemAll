@@ -1,0 +1,20 @@
+{
+    "bug_id": 160,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "fdc54465",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.document.CheckpointsTest"
+    ],
+    "files": 1,
+    "jira_id": "1648",
+    "linesAdd": 9,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 2654,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Checkpoints.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Checkpoints.java\nindex e1d712d32a..8a6a98c80a 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Checkpoints.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Checkpoints.java\n@@ -26,6 +26,7 @@\n import java.util.concurrent.atomic.AtomicInteger;\n \n import javax.annotation.CheckForNull;\n+import javax.annotation.Nonnull;\n \n import org.apache.jackrabbit.oak.commons.json.JsopBuilder;\n import org.apache.jackrabbit.oak.commons.json.JsopReader;\n@@ -73,7 +74,14 @@\n     }\n \n     public Revision create(long lifetimeInMillis, Map<String, String> info) {\n-        Revision r = nodeStore.getHeadRevision();\n+        // create a unique dummy commit we can use as checkpoint revision\n+        Revision r = nodeStore.commitQueue.createRevision();\n+        nodeStore.commitQueue.done(r, new CommitQueue.Callback() {\n+            @Override\n+            public void headOfQueue(@Nonnull Revision revision) {\n+                // do nothing\n+            }\n+        });\n         createCounter.getAndIncrement();\n         performCleanupIfRequired();\n         UpdateOp op = new UpdateOp(ID, false);\n",
+    "project": "jackrabbit-oak"
+}

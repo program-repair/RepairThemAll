@@ -1,0 +1,20 @@
+{
+    "bug_id": 83,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "0d057fc6",
+    "failing_tests": [
+        "org.apache.commons.math3.distribution.DiscreteRealDistributionTest"
+    ],
+    "files": 1,
+    "jira_id": "942",
+    "linesAdd": 4,
+    "linesRem": 4,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 4,
+    "nb_test": 4818,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math3/distribution/DiscreteDistribution.java b/src/main/java/org/apache/commons/math3/distribution/DiscreteDistribution.java\nindex 8c08dbe36..879eb2a29 100644\n--- a/src/main/java/org/apache/commons/math3/distribution/DiscreteDistribution.java\n+++ b/src/main/java/org/apache/commons/math3/distribution/DiscreteDistribution.java\n@@ -16,9 +16,9 @@\n  */\n package org.apache.commons.math3.distribution;\n \n-import java.lang.reflect.Array;\n import java.util.ArrayList;\n import java.util.List;\n+\n import org.apache.commons.math3.exception.MathArithmeticException;\n import org.apache.commons.math3.exception.MathIllegalArgumentException;\n import org.apache.commons.math3.exception.NotPositiveException;\n@@ -178,13 +178,13 @@ public T sample() {\n      * @throws NotStrictlyPositiveException if {@code sampleSize} is not\n      * positive.\n      */\n-    public T[] sample(int sampleSize) throws NotStrictlyPositiveException {\n+    public Object[] sample(int sampleSize) throws NotStrictlyPositiveException {\n         if (sampleSize <= 0) {\n             throw new NotStrictlyPositiveException(LocalizedFormats.NUMBER_OF_SAMPLES,\n                     sampleSize);\n         }\n-        @SuppressWarnings(\"unchecked\")\n-        final T[]out = (T[]) Array.newInstance(singletons.get(0).getClass(), sampleSize);\n+\n+        final Object[] out = new Object[sampleSize];\n \n         for (int i = 0; i < sampleSize; i++) {\n             out[i] = sample();\n",
+    "project": "commons-math"
+}

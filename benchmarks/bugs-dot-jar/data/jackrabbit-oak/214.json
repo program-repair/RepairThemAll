@@ -1,0 +1,20 @@
+{
+    "bug_id": 214,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "90c45a02",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.kernel.KernelNodeBuilderTest"
+    ],
+    "files": 1,
+    "jira_id": "531",
+    "linesAdd": 3,
+    "linesRem": 14,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 0,
+    "nb_test": 403,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\nindex 0168d6e9e5..3efa027c6b 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\n@@ -187,22 +187,11 @@ private MutableNodeState getWriteState(String name) {\n         }\n     }\n \n-    /**\n-     * Determine whether the named child has been removed. This is the\n-     * case when the write state has a corresponding {@code null} entry.\n-     * Assumes {@code read()}, {@code write()} needs not be called.\n-     * @param name  name of the child\n-     * @return  {@code true} iff a child with the given name has been removed\n-     */\n-    private boolean removed(String name) {\n-        return writeState != null && writeState.isRemoved(name);\n-    }\n-\n     @Nonnull\n     private NodeState read() {\n         if (revision != root.revision) {\n             assert(!isRoot()); // root never gets here since revision == root.revision\n-            checkState(!parent.removed(name), \"This node has already been removed\");\n+            checkState(!isRemoved(), \"This node has already been removed\");\n             parent.read();\n \n             // The builder could have been reset, need to re-get base state\n@@ -232,7 +221,7 @@ private MutableNodeState write() {\n     private MutableNodeState write(long newRevision, boolean skipRemovedCheck) {\n         // make sure that all revision numbers up to the root gets updated\n         if (!isRoot()) {\n-            checkState(skipRemovedCheck || !parent.removed(name));\n+            checkState(skipRemovedCheck || !isRemoved());\n             parent.write(newRevision, skipRemovedCheck);\n         }\n \n@@ -244,7 +233,7 @@ private MutableNodeState write(long newRevision, boolean skipRemovedCheck) {\n \n             writeState = parent.getWriteState(name);\n             if (writeState == null) {\n-                if (parent.removed(name)) {\n+                if (isRemoved()) {\n                     writeState = new MutableNodeState(null);\n                 }\n                 else {\n",
+    "project": "jackrabbit-oak"
+}
