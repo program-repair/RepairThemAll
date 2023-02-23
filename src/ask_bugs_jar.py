@@ -2,7 +2,7 @@ import argparse
 import os
 import shutil
 from dotenv import dotenv_values
-from core.large_language_models.ask_codex_bugs_jar import get_bugs_config
+from core.large_language_models.ask_codex_bugs_jar import get_bugs_config, save_bug_config
 from core.tools.log import printlog
 
 from core.utils import get_benchmark
@@ -49,14 +49,13 @@ BUGS_DOT_JAR_BUG_SIZE = {
 }
 
 
-def handle_buggy_version(args, benchmark):
-    bug_data = get_bugs_config(args.project, args.id)
-    bug = benchmark.get_bug('{}_{}'.format(args.project, args.id))
+def handle_buggy_version(working_directory, project, bug_id, benchmark):
+    bug = benchmark.get_bug('{}_{}'.format(project, bug_id))
 
     # Checkout the buggy version
-    buggy_bug_path = os.path.join(args.working_directory,
+    buggy_bug_path = os.path.join(working_directory,
                                   "%s_%s_%s_%s" % (bug.benchmark.name, bug.project, bug.bug_id, 'buggy'))
-    print('buggy_bug_path', buggy_bug_path)
+    printlog('buggy_bug_path', buggy_bug_path)
     if os.path.exists(buggy_bug_path):
         print('will clean folder', buggy_bug_path)
         shutil.rmtree(buggy_bug_path)
@@ -68,30 +67,29 @@ def handle_buggy_version(args, benchmark):
     compile_success = not 'BUILD FAILURE' in compile_result
     test_success = False
     if compile_success:
-        print('buggy version compile passed')
+        printlog('buggy version compile passed')
         printlog('--run test on the buggy version--')
         test_result = bug.run_test()
         printlog('--test result of the buggy version--', test_result)
         if test_result['errors'] > 0 or test_result['failures'] > 0:
-            print('test failed')
+            printlog('test failed')
             test_success = False
         else:
-            print('test passed')
+            printlog('test passed')
             test_success = True
     else:
-        print('buggy version compile failed')
+        printlog('buggy version compile failed')
     printlog('--end---')
     return compile_success, test_success
 
 
-def handle_fixed_version(args, benchmark):
-    bug_data = get_bugs_config(args.project, args.id)
-    bug = benchmark.get_bug('{}_{}'.format(args.project, args.id))
+def handle_fixed_version(working_directory, project, bug_id, benchmark):
+    bug = benchmark.get_bug('{}_{}'.format(project, bug_id))
 
     # Checkout the fixed version
-    fixed_bug_path = os.path.join(args.working_directory,
+    fixed_bug_path = os.path.join(working_directory,
                                   "%s_%s_%s_%s" % (bug.benchmark.name, bug.project, bug.bug_id, 'fixed'))
-    print('fixed_bug_path', fixed_bug_path)
+    printlog('fixed_bug_path', fixed_bug_path)
     if os.path.exists(fixed_bug_path):
         print('will clean folder', fixed_bug_path)
         shutil.rmtree(fixed_bug_path)
@@ -103,33 +101,49 @@ def handle_fixed_version(args, benchmark):
     compile_success = not 'BUILD FAILURE' in compile_result
     test_success = False
     if compile_success:
-        print('fixed version compile passed')
+        printlog('fixed version compile passed')
         printlog('--run test on the fixed version--')
         test_result = bug.run_test()
         printlog('--test result of the fixed version--', test_result)
         if test_result['errors'] > 0 or test_result['failures'] > 0:
-            print('test failed')
+            printlog('test failed')
             test_success = False
         else:
-            print('test passed')
+            printlog('test passed')
             test_success = True
     else:
-        print('fixed version compile failed')
+        printlog('fixed version compile failed')
     printlog('--end---')
     return compile_success, test_success
 
 
-if __name__ == "__main__":
-    args = parser.parse_args()
+def run_compile_and_test(args):
     benchmark = get_benchmark(args.benchmark)
 
-    buggy_compile_success, buggy_test_success = handle_buggy_version(
-        args, benchmark)
-    fixed_compile_success, fixed_test_success = handle_fixed_version(
-        args, benchmark)
+    for project in BUGS_DOT_JAR_PROJECTS:
+        for bug_id in range(1, BUGS_DOT_JAR_BUG_SIZE[project] + 1):
+            bug_data = get_bugs_config(project, bug_id)
+            printlog('working on bug {}_{}'.format(project, bug_id))
+            buggy_compile_success, buggy_test_success = handle_buggy_version(args.working_directory,
+                                                                             project, bug_id, benchmark)
+            fixed_compile_success, fixed_test_success = handle_fixed_version(args.working_directory,
+                                                                             project, bug_id, benchmark)
 
-    print('------------------result for bug {}_{}------------------'.format(args.project, args.id))
-    print('buggy_compile_success: ', buggy_compile_success)
-    print('buggy_test_success: ', buggy_test_success)
-    print('fixed_compile_success: ', fixed_compile_success)
-    print('fixed_test_success: ', fixed_test_success)
+            printlog(
+                '------------------result for bug {}_{}------------------'.format(project, bug_id))
+            printlog('buggy_compile_success: ', buggy_compile_success)
+            printlog('buggy_test_success: ', buggy_test_success)
+            printlog('fixed_compile_success: ', fixed_compile_success)
+            printlog('fixed_test_success: ', fixed_test_success)
+
+            bug_data['buggy_compile_success'] = buggy_compile_success
+            bug_data['buggy_test_success'] = buggy_test_success
+            bug_data['fixed_compile_success'] = fixed_compile_success
+            bug_data['fixed_test_success'] = fixed_test_success
+
+            save_bug_config(project, bug_id, bug_data)
+
+
+if __name__ == "__main__":
+    args = parser.parse_args()
+    run_compile_and_test((args))

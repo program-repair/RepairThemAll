@@ -10,6 +10,14 @@ def get_bugs_config(project, bug_id):
     return bug_data
 
 
+def save_bug_config(project, id, bug_data):
+    bug_config_file_path = 'benchmarks/bugs-dot-jar/data/{}/{}.json'.format(
+        project, id)
+    f = open(bug_config_file_path, 'w')
+    json.dump(bug_data, f, indent=4)
+    f.close()
+
+
 def count_eligible_bugs(projects, total_bugs):
     total_eligible_bugs = 0
     for project in projects:
