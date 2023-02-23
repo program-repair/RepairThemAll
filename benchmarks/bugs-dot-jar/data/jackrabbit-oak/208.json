@@ -16,5 +16,9 @@
     "nb_skipped": 1,
     "nb_test": 194,
     "patch": "diff --git a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeImpl.java b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeImpl.java\nindex 90b9c74ee5..fbdc48d9c9 100644\n--- a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeImpl.java\n+++ b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeImpl.java\n@@ -16,8 +16,6 @@\n  */\n package org.apache.jackrabbit.oak.jcr;\n \n-import static org.apache.jackrabbit.oak.util.Iterators.filter;\n-\n import java.io.InputStream;\n import java.math.BigDecimal;\n import java.util.ArrayList;\n@@ -70,6 +68,8 @@\n import org.slf4j.Logger;\n import org.slf4j.LoggerFactory;\n \n+import static org.apache.jackrabbit.oak.util.Iterators.filter;\n+\n /**\n  * {@code NodeImpl}...\n  */\n@@ -441,7 +441,8 @@ public NodeIterator getNodes() throws RepositoryException {\n         checkStatus();\n \n         Iterator<NodeDelegate> children = dlg.getChildren();\n-        return new NodeIteratorAdapter(nodeIterator(children));\n+        long size = dlg.getChildCount();\n+        return new NodeIteratorAdapter(nodeIterator(children), size);\n     }\n \n     @Override\n@@ -505,7 +506,8 @@ public PropertyIterator getProperties() throws RepositoryException {\n         checkStatus();\n \n         Iterator<PropertyDelegate> properties = dlg.getProperties();\n-        return new PropertyIteratorAdapter(propertyIterator(properties));\n+        long size = dlg.getPropertyCount();\n+        return new PropertyIteratorAdapter(propertyIterator(properties), size);\n     }\n \n     @Override\n",
-    "project": "jackrabbit-oak"
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

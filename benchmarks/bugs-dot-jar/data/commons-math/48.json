@@ -16,5 +16,9 @@
     "nb_skipped": 3,
     "nb_test": 6185,
     "patch": "diff --git a/src/main/java/org/apache/commons/math4/analysis/solvers/UnivariateSolverUtils.java b/src/main/java/org/apache/commons/math4/analysis/solvers/UnivariateSolverUtils.java\nindex 2521c9b5a..49742d84b 100644\n--- a/src/main/java/org/apache/commons/math4/analysis/solvers/UnivariateSolverUtils.java\n+++ b/src/main/java/org/apache/commons/math4/analysis/solvers/UnivariateSolverUtils.java\n@@ -314,7 +314,7 @@ public static double forceSide(final int maxEval, final UnivariateFunction f,\n         double delta = 0;\n \n         for (int numIterations = 0;\n-             (numIterations < maximumIterations) && (a > lowerBound || b > upperBound);\n+             (numIterations < maximumIterations) && (a > lowerBound || b < upperBound);\n              ++numIterations) {\n \n             final double previousA  = a;\n",
-    "project": "commons-math"
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
 }

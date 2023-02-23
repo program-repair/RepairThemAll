@@ -16,5 +16,9 @@
     "nb_skipped": 1,
     "nb_test": 2656,
     "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/PersistedCompactionMap.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/PersistedCompactionMap.java\nindex ae5c14b0af..51a065b3c0 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/PersistedCompactionMap.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/PersistedCompactionMap.java\n@@ -229,9 +229,9 @@ private void compress(@Nonnull Set<UUID> removed) {\n                     \", baseId=\" + previousBaseId + '}';\n             writer.writeString(mapInfo);\n             writer.flush();\n-            recent.clear();\n         }\n \n+        recent.clear();\n         if (recordCount == 0) {\n             entries = null;\n         }\n",
-    "project": "jackrabbit-oak"
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
 }

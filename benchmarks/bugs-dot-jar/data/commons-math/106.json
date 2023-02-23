@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 2130,
     "patch": "diff --git a/src/main/java/org/apache/commons/math/analysis/solvers/BrentSolver.java b/src/main/java/org/apache/commons/math/analysis/solvers/BrentSolver.java\nindex e0cb42714..7fc090e2b 100644\n--- a/src/main/java/org/apache/commons/math/analysis/solvers/BrentSolver.java\n+++ b/src/main/java/org/apache/commons/math/analysis/solvers/BrentSolver.java\n@@ -112,7 +112,7 @@ public double solve(final UnivariateRealFunction f,\n         // return the first endpoint if it is good enough\n         double yMin = f.value(min);\n         if (Math.abs(yMin) <= functionValueAccuracy) {\n-            setResult(yMin, 0);\n+            setResult(min, 0);\n             return result;\n         }\n \n@@ -124,7 +124,7 @@ public double solve(final UnivariateRealFunction f,\n         // return the second endpoint if it is good enough\n         double yMax = f.value(max);\n         if (Math.abs(yMax) <= functionValueAccuracy) {\n-            setResult(yMax, 0);\n+            setResult(max, 0);\n             return result;\n         }\n \n",
-    "project": "commons-math"
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
 }

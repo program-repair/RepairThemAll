@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 136,
     "patch": "diff --git a/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/api/streamvertex/StreamIterationTail.java b/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/api/streamvertex/StreamIterationTail.java\nindex 7b654be845..ab09aff6fe 100755\n--- a/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/api/streamvertex/StreamIterationTail.java\n+++ b/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/api/streamvertex/StreamIterationTail.java\n@@ -49,7 +49,7 @@ public void setInputsOutputs() {\n \t\t\titerationId = configuration.getIterationId();\n \t\t\titerationWaitTime = configuration.getIterationWaitTime();\n \t\t\tshouldWait = iterationWaitTime > 0;\n-\t\t\tBlockingQueueBroker.instance().get(iterationId.toString()+\"-\"\n+\t\t\tdataChannel = BlockingQueueBroker.instance().get(iterationId.toString()+\"-\"\n \t\t\t\t\t+getEnvironment().getIndexInSubtaskGroup());\n \t\t} catch (Exception e) {\n \t\t\tthrow new StreamVertexException(String.format(\n",
-    "project": "flink"
+    "project": "flink",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

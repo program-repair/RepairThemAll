@@ -28,5 +28,9 @@
     "nb_skipped": 0,
     "nb_test": 467,
     "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/spi/commit/ValidatingHook.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/spi/commit/ValidatingHook.java\nindex b3d10b30d4..7840ecab81 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/spi/commit/ValidatingHook.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/spi/commit/ValidatingHook.java\n@@ -151,7 +151,19 @@ public void propertyDeleted(PropertyState before) {\n \n         @Override\n         public void childNodeAdded(String name, NodeState after) {\n-            childNodeChanged(name, EMPTY_NODE, after);\n+            if (NodeStateUtils.isHidden(name)) {\n+                return;\n+            }\n+            if (exception == null) {\n+                try {\n+                    Validator v = validator.childNodeAdded(name, after);\n+                    if (v != null) {\n+                        validate(v, EMPTY_NODE, after);\n+                    }\n+                } catch (CommitFailedException e) {\n+                    exception = e;\n+                }\n+            }\n         }\n \n         @Override\n@@ -175,7 +187,19 @@ public void childNodeChanged(\n \n         @Override\n         public void childNodeDeleted(String name, NodeState before) {\n-            childNodeChanged(name, before, EMPTY_NODE);\n+            if (NodeStateUtils.isHidden(name)) {\n+                return;\n+            }\n+            if (exception == null) {\n+                try {\n+                    Validator v = validator.childNodeDeleted(name, before);\n+                    if (v != null) {\n+                        validate(v, before, EMPTY_NODE);\n+                    }\n+                } catch (CommitFailedException e) {\n+                    exception = e;\n+                }\n+            }\n         }\n \n     }\n",
-    "project": "jackrabbit-oak"
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

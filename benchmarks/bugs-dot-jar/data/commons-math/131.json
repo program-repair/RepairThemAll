@@ -16,5 +16,9 @@
     "nb_skipped": 5,
     "nb_test": 5605,
     "patch": "diff --git a/src/main/java/org/apache/commons/math3/util/MultidimensionalCounter.java b/src/main/java/org/apache/commons/math3/util/MultidimensionalCounter.java\nindex 0553c6b03..3c87fba4c 100644\n--- a/src/main/java/org/apache/commons/math3/util/MultidimensionalCounter.java\n+++ b/src/main/java/org/apache/commons/math3/util/MultidimensionalCounter.java\n@@ -17,6 +17,7 @@\n \n package org.apache.commons.math3.util;\n \n+import java.util.NoSuchElementException;\n import org.apache.commons.math3.exception.DimensionMismatchException;\n import org.apache.commons.math3.exception.NotStrictlyPositiveException;\n import org.apache.commons.math3.exception.OutOfRangeException;\n@@ -77,6 +78,10 @@\n          * Unidimensional counter.\n          */\n         private int count = -1;\n+        /**\n+         * Maximum value for {@link #count}.\n+         */\n+        private final int maxCount = totalSize - 1;\n \n         /**\n          * Create an iterator\n@@ -90,19 +95,20 @@\n          * {@inheritDoc}\n          */\n         public boolean hasNext() {\n-            for (int i = 0; i < dimension; i++) {\n-                if (counter[i] != size[i] - 1) {\n-                    return true;\n-                }\n-            }\n-            return false;\n+            return count < maxCount;\n         }\n \n         /**\n          * @return the unidimensional count after the counter has been\n          * incremented by {@code 1}.\n+         * @throws NoSuchElementException if {@link #hasNext()} would have\n+         * returned {@code false}.\n          */\n         public Integer next() {\n+            if (!hasNext()) {\n+                throw new NoSuchElementException();\n+            }\n+\n             for (int i = last; i >= 0; i--) {\n                 if (counter[i] == size[i] - 1) {\n                     counter[i] = 0;\n",
-    "project": "commons-math"
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

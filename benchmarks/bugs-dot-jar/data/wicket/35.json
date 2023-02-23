@@ -16,5 +16,9 @@
     "nb_skipped": 8,
     "nb_test": 1325,
     "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/core/request/handler/PageProvider.java b/wicket-core/src/main/java/org/apache/wicket/core/request/handler/PageProvider.java\nindex f239c4dea3..50402f65ee 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/core/request/handler/PageProvider.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/core/request/handler/PageProvider.java\n@@ -294,18 +294,22 @@ private void resolvePageInstance(Integer pageId, Class<? extends IRequestablePag\n \tprivate IRequestablePage getStoredPage(final int pageId)\n \t{\n \t\tIRequestablePage storedPageInstance = getPageSource().getPageInstance(pageId);\n-\t\tif (storedPageInstance != null &&\n-\t\t\t(pageClass == null || pageClass.equals(storedPageInstance.getClass())))\n+\t\tif (storedPageInstance != null)\n+\t\t{\n+\t\t\tif (pageClass == null || pageClass.equals(storedPageInstance.getClass()))\n \t\t\t{\n \t\t\t\tpageInstance = storedPageInstance;\n \t\t\t\tpageInstanceIsFresh = false;\n-\t\t\tif (pageInstance != null)\n-\t\t\t{\n \t\t\t\tif (renderCount != null && pageInstance.getRenderCount() != renderCount)\n \t\t\t\t{\n \t\t\t\t\tthrow new StalePageException(pageInstance);\n \t\t\t\t}\n \t\t\t}\n+\t\t\telse\n+\t\t\t{\n+\t\t\t\t// the found page class doesn't match the requested one\n+\t\t\t\tstoredPageInstance = null;\n+\t\t\t}\n \t\t}\n \t\treturn storedPageInstance;\n \t}\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
 }

@@ -16,5 +16,9 @@
     "nb_skipped": 4,
     "nb_test": 5294,
     "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/aggregate/AbstractListAggregationStrategy.java b/camel-core/src/main/java/org/apache/camel/processor/aggregate/AbstractListAggregationStrategy.java\nindex ad2ec8ed6a..d4ff93f1ae 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/aggregate/AbstractListAggregationStrategy.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/aggregate/AbstractListAggregationStrategy.java\n@@ -62,7 +62,7 @@ public boolean isStoreAsBodyOnCompletion() {\n \n     @SuppressWarnings(\"unchecked\")\n     public void onCompletion(Exchange exchange) {\n-        if (isStoreAsBodyOnCompletion()) {\n+        if (exchange != null && isStoreAsBodyOnCompletion()) {\n             List<V> list = (List<V>) exchange.removeProperty(Exchange.GROUPED_EXCHANGE);\n             if (list != null) {\n                 exchange.getIn().setBody(list);\n",
-    "project": "camel"
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

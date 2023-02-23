@@ -16,5 +16,9 @@
     "nb_skipped": 4,
     "nb_test": 262,
     "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LucenePropertyIndex.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LucenePropertyIndex.java\nindex b01ff99bf5..1c84164207 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LucenePropertyIndex.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LucenePropertyIndex.java\n@@ -206,8 +206,8 @@ public String getIndexName() {\n     public List<IndexPlan> getPlans(Filter filter, List<OrderEntry> sortOrder, NodeState rootState) {\n         Collection<String> indexPaths = new LuceneIndexLookup(rootState).collectIndexNodePaths(filter);\n         List<IndexPlan> plans = Lists.newArrayListWithCapacity(indexPaths.size());\n-        IndexNode indexNode = null;\n         for (String path : indexPaths) {\n+            IndexNode indexNode = null;\n             try {\n                 indexNode = tracker.acquireIndexNode(path);\n \n",
-    "project": "jackrabbit-oak"
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
 }

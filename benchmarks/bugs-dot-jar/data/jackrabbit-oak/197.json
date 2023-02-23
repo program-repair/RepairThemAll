@@ -19,5 +19,9 @@
     "nb_skipped": 7,
     "nb_test": 265,
     "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/security/SecurityProviderImpl.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/security/SecurityProviderImpl.java\nindex 5e199bf464..6d6487bb54 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/security/SecurityProviderImpl.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/security/SecurityProviderImpl.java\n@@ -77,6 +77,11 @@ public LoginContextProvider getLoginContextProvider(NodeStore nodeStore) {\n             loginConfig = new OakConfiguration();\n             Configuration.setConfiguration(loginConfig);\n         }\n+        if (loginConfig.getAppConfigurationEntry(appName) == null) {\n+            log.warn(\"Failed to retrieve login configuration for {}: using default configuration.\", appName);\n+            loginConfig = new OakConfiguration();\n+            Configuration.setConfiguration(loginConfig);\n+        }\n         return new LoginContextProviderImpl(appName, loginConfig, nodeStore, this);\n     }\n \n",
-    "project": "jackrabbit-oak"
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

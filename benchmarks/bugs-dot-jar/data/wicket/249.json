@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 89,
     "patch": "diff --git a/wicket-request/src/main/java/org/apache/wicket/request/Url.java b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\nindex 9fb454cb63..191ebbef11 100755\n--- a/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n+++ b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n@@ -232,8 +232,11 @@ public static Url parse(CharSequence _url, Charset charset)\n \t\t\tfinal String afterProto = absoluteUrl.substring(protocolAt + 3);\n \t\t\tfinal String hostAndPort;\n \n-\t\t\tfinal int relativeAt = afterProto.indexOf('/');\n-\n+\t\t\tint relativeAt = afterProto.indexOf('/');\n+\t\t\tif (relativeAt == -1)\n+\t\t\t{\n+\t\t\t\trelativeAt = afterProto.indexOf(';');\n+\t\t\t}\n \t\t\tif (relativeAt == -1)\n \t\t\t{\n \t\t\t\trelativeUrl = \"\";\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
 }

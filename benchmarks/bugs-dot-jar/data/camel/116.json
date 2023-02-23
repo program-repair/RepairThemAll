@@ -17,5 +17,9 @@
     "nb_skipped": 3,
     "nb_test": 4980,
     "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/model/ProcessorDefinitionHelper.java b/camel-core/src/main/java/org/apache/camel/model/ProcessorDefinitionHelper.java\nindex 5575d36453..2ae283b34c 100644\n--- a/camel-core/src/main/java/org/apache/camel/model/ProcessorDefinitionHelper.java\n+++ b/camel-core/src/main/java/org/apache/camel/model/ProcessorDefinitionHelper.java\n@@ -198,9 +198,6 @@ public static String getRouteId(ProcessorDefinition<?> node) {\n         }\n \n         for (ProcessorDefinition out : outputs) {\n-            if (type.isInstance(out)) {\n-                found.add((T)out);\n-            }\n \n             // send is much common\n             if (out instanceof SendDefinition) {\n@@ -222,6 +219,9 @@ public static String getRouteId(ProcessorDefinition<?> node) {\n                     List<ProcessorDefinition<?>> children = choice.getOtherwise().getOutputs();\n                     doFindType(children, type, found);\n                 }\n+\n+                // do not check children as we already did that\n+                continue;\n             }\n \n             // special for try ... catch ... finally\n@@ -253,6 +253,10 @@ public static String getRouteId(ProcessorDefinition<?> node) {\n                 continue;\n             }\n \n+            if (type.isInstance(out)) {\n+                found.add((T)out);\n+            }\n+\n             // try children as well\n             List<ProcessorDefinition<?>> children = out.getOutputs();\n             doFindType(children, type, found);\n",
-    "project": "camel"
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

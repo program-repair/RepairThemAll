@@ -16,5 +16,9 @@
     "nb_skipped": 1,
     "nb_test": 3096,
     "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\nindex fbcb6468c1..f4006d4c5f 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\n@@ -757,6 +757,15 @@ Revision getNewestRevision(final RevisionContext context,\n                     clusterIds.add(prevRev.getClusterId());\n                 }\n             }\n+            if (!clusterIds.isEmpty()) {\n+                // add clusterIds of local changes as well\n+                for (Revision r : getLocalCommitRoot().keySet()) {\n+                    clusterIds.add(r.getClusterId());\n+                }\n+                for (Revision r : getLocalRevisions().keySet()) {\n+                    clusterIds.add(r.getClusterId());\n+                }\n+            }\n         }\n         // if we don't have clusterIds, we can use the local changes only\n         boolean fullScan = true;\n@@ -786,7 +795,8 @@ Revision getNewestRevision(final RevisionContext context,\n             }\n             if (!fullScan) {\n                 // check if we can stop going through changes\n-                if (clusterIds.contains(r.getClusterId())) {\n+                if (isRevisionNewer(context, lower, r)\n+                        && newestRevs.containsKey(r.getClusterId())) {\n                     if (isRevisionNewer(context, lower, r)) {\n                         clusterIds.remove(r.getClusterId());\n                         if (clusterIds.isEmpty()) {\n",
-    "project": "jackrabbit-oak"
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

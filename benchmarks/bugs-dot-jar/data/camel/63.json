@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 3736,
     "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/component/file/GenericFile.java b/camel-core/src/main/java/org/apache/camel/component/file/GenericFile.java\nindex 69b15d5aef..ead41ea3c3 100644\n--- a/camel-core/src/main/java/org/apache/camel/component/file/GenericFile.java\n+++ b/camel-core/src/main/java/org/apache/camel/component/file/GenericFile.java\n@@ -18,6 +18,7 @@\n \n import java.io.File;\n import java.util.Date;\n+import java.util.Map;\n \n import org.apache.camel.Exchange;\n import org.apache.camel.util.FileUtil;\n@@ -93,10 +94,25 @@ public void copyFromPopulateAdditional(GenericFile<T> source, GenericFile<T> res\n      * Bind this GenericFile to an Exchange\n      */\n     public void bindToExchange(Exchange exchange) {\n+        Map<String, Object> headers;\n+\n         exchange.setProperty(FileComponent.FILE_EXCHANGE_FILE, this);\n-        GenericFileMessage<T> in = new GenericFileMessage<T>(this);\n-        exchange.setIn(in);\n-        populateHeaders(in);\n+        GenericFileMessage<T> msg = new GenericFileMessage<T>(this);\n+        if (exchange.hasOut()) {\n+            headers = exchange.getOut().hasHeaders() ? exchange.getOut().getHeaders() : null;\n+            exchange.setOut(msg);\n+        } else {\n+            headers = exchange.getIn().hasHeaders() ? exchange.getIn().getHeaders() : null;\n+            exchange.setIn(msg);\n+        }\n+\n+        // preserve any existing (non file) headers, before we re-populate headers\n+        if (headers != null) {\n+            msg.setHeaders(headers);\n+            // remove any file related headers, as we will re-populate file headers\n+            msg.removeHeaders(\"CamelFile*\");\n+        }\n+        populateHeaders(msg);\n     }\n \n     /**\n",
-    "project": "camel"
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

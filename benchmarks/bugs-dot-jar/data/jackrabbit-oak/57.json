@@ -16,5 +16,9 @@
     "nb_skipped": 3,
     "nb_test": 1596,
     "patch": "diff --git a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/query/RowImpl.java b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/query/RowImpl.java\nindex e337f39e79..e50d30dfc5 100644\n--- a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/query/RowImpl.java\n+++ b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/query/RowImpl.java\n@@ -100,7 +100,7 @@ public Value getValue(String columnName) throws RepositoryException {\n         int len = values.length;\n         Value[] v2 = new Value[values.length];\n         for (int i = 0; i < len; i++) {\n-            if(values[i].isArray()){\n+            if (values[i] != null && values[i].isArray()) {\n                 v2[i] = result.createValue(mvpToString(values[i]));\n             } else {\n                 v2[i] = result.createValue(values[i]);\n",
-    "project": "jackrabbit-oak"
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

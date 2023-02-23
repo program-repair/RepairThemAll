@@ -16,5 +16,9 @@
     "nb_skipped": 3,
     "nb_test": 5823,
     "patch": "diff --git a/src/main/java/org/apache/commons/math4/distribution/NormalDistribution.java b/src/main/java/org/apache/commons/math4/distribution/NormalDistribution.java\nindex 6313ef04d..52168672a 100644\n--- a/src/main/java/org/apache/commons/math4/distribution/NormalDistribution.java\n+++ b/src/main/java/org/apache/commons/math4/distribution/NormalDistribution.java\n@@ -193,7 +193,7 @@ public double cumulativeProbability(double x)  {\n         if (FastMath.abs(dev) > 40 * standardDeviation) {\n             return dev < 0 ? 0.0d : 1.0d;\n         }\n-        return 0.5 * (1 + Erf.erf(dev / (standardDeviation * SQRT2)));\n+        return 0.5 * Erf.erfc(-dev / (standardDeviation * SQRT2));\n     }\n \n     /** {@inheritDoc}\n",
-    "project": "commons-math"
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
 }

@@ -16,5 +16,9 @@
     "nb_skipped": 1,
     "nb_test": 954,
     "patch": "diff --git a/flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint/stats/SimpleCheckpointStatsTracker.java b/flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint/stats/SimpleCheckpointStatsTracker.java\nindex fba3f22114..5ee4fc3e9c 100644\n--- a/flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint/stats/SimpleCheckpointStatsTracker.java\n+++ b/flink-runtime/src/main/java/org/apache/flink/runtime/checkpoint/stats/SimpleCheckpointStatsTracker.java\n@@ -136,7 +136,7 @@ public void onCompletedCheckpoint(CompletedCheckpoint checkpoint) {\n \t\t}\n \n \t\tsynchronized (statsLock) {\n-\t\t\tint overallStateSize = 0;\n+\t\t\tlong overallStateSize = 0;\n \n \t\t\t// Operator stats\n \t\t\tMap<JobVertexID, long[][]> statsForSubTasks = new HashMap<>();\n",
-    "project": "flink"
+    "project": "flink",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

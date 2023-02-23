@@ -17,5 +17,9 @@
     "nb_skipped": 1,
     "nb_test": 4322,
     "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/builder/NotifyBuilder.java b/camel-core/src/main/java/org/apache/camel/builder/NotifyBuilder.java\nindex 547efaba79..d5a346c721 100644\n--- a/camel-core/src/main/java/org/apache/camel/builder/NotifyBuilder.java\n+++ b/camel-core/src/main/java/org/apache/camel/builder/NotifyBuilder.java\n@@ -444,7 +444,7 @@ public boolean onExchangeCreated(Exchange exchange) {\n             @Override\n             public boolean onExchangeCompleted(Exchange exchange) {\n                 if (exchange.getExchangeId().equals(id)) {\n-                    done.set(false);\n+                    done.set(true);\n                 }\n                 return true;\n             }\n",
-    "project": "camel"
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

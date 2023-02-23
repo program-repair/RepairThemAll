@@ -17,5 +17,9 @@
     "nb_skipped": 1,
     "nb_test": 4300,
     "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java b/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java\nindex 4a8ddef91a..880c4007aa 100644\n--- a/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java\n+++ b/camel-core/src/main/java/org/apache/camel/component/bean/BeanInfo.java\n@@ -52,8 +52,6 @@\n import org.slf4j.Logger;\n import org.slf4j.LoggerFactory;\n \n-import static org.apache.camel.util.ExchangeHelper.convertToType;\n-\n /**\n  * Represents the metadata about a bean type created via a combination of\n  * introspection and annotations together with some useful sensible defaults\n@@ -572,7 +570,8 @@ private MethodInfo chooseBestPossibleMethodInfo(Exchange exchange, Collection<Me\n                     return methodInfo;\n                 }\n \n-                Object value = convertToType(exchange, methodInfo.getBodyParameterType(), body);\n+                // we should only try to convert, as we are looking for best match\n+                Object value = exchange.getContext().getTypeConverter().tryConvertTo(methodInfo.getBodyParameterType(), exchange, body);\n                 if (value != null) {\n                     if (LOG.isTraceEnabled()) {\n                         LOG.trace(\"Converted body from: {} to: {}\",\n",
-    "project": "camel"
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

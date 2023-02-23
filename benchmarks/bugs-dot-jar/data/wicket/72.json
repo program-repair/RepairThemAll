@@ -16,5 +16,9 @@
     "nb_skipped": 3,
     "nb_test": 1466,
     "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/validation/validator/UrlValidator.java b/wicket-core/src/main/java/org/apache/wicket/validation/validator/UrlValidator.java\nindex a259c51175..b7eee1510a 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/validation/validator/UrlValidator.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/validation/validator/UrlValidator.java\n@@ -115,7 +115,7 @@\n \tprivate static final int PARSE_AUTHORITY_PORT = 4;\n \tprivate static final int PARSE_AUTHORITY_EXTRA = 5; // Should always be empty.\n \n-\tprivate static final String PATH_PATTERN = \"^(/[-\\\\w:@&?=+,.!/~*'%$_;]*)?$\";\n+\tprivate static final String PATH_PATTERN = \"^(/[-\\\\w:@&?=+,.!/~*'%$_;\\\\(\\\\)]*)?$\";\n \n \tprivate static final String QUERY_PATTERN = \"^(.*)$\";\n \n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

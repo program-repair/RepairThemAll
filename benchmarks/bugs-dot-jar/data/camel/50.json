@@ -25,5 +25,9 @@
     "nb_skipped": 1,
     "nb_test": 4269,
     "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/model/ProcessorDefinition.java b/camel-core/src/main/java/org/apache/camel/model/ProcessorDefinition.java\nindex 28b7eb9aa8..3ba39cb1be 100644\n--- a/camel-core/src/main/java/org/apache/camel/model/ProcessorDefinition.java\n+++ b/camel-core/src/main/java/org/apache/camel/model/ProcessorDefinition.java\n@@ -1130,7 +1130,7 @@ public ThreadsDefinition threads() {\n      * @return the builder\n      */\n     public ThreadsDefinition threads(int poolSize) {\n-        ThreadsDefinition answer = threads();\n+        ThreadsDefinition answer = new ThreadsDefinition();\n         answer.setPoolSize(poolSize);\n         addOutput(answer);\n         return answer;\n@@ -1144,7 +1144,7 @@ public ThreadsDefinition threads(int poolSize) {\n      * @return the builder\n      */\n     public ThreadsDefinition threads(int poolSize, int maxPoolSize) {\n-        ThreadsDefinition answer = threads();\n+        ThreadsDefinition answer = new ThreadsDefinition();\n         answer.setPoolSize(poolSize);\n         answer.setMaxPoolSize(maxPoolSize);\n         addOutput(answer);\n@@ -1160,7 +1160,7 @@ public ThreadsDefinition threads(int poolSize, int maxPoolSize) {\n      * @return the builder\n      */\n     public ThreadsDefinition threads(int poolSize, int maxPoolSize, String threadName) {\n-        ThreadsDefinition answer = threads();\n+        ThreadsDefinition answer = new ThreadsDefinition();\n         answer.setPoolSize(poolSize);\n         answer.setMaxPoolSize(maxPoolSize);\n         answer.setThreadName(threadName);\n",
-    "project": "camel"
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

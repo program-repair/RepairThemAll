@@ -16,5 +16,9 @@
     "nb_skipped": 1,
     "nb_test": 3542,
     "patch": "diff --git a/src/main/java/org/apache/commons/math3/geometry/euclidean/twod/PolygonsSet.java b/src/main/java/org/apache/commons/math3/geometry/euclidean/twod/PolygonsSet.java\nindex 6ba72be94..add24acea 100644\n--- a/src/main/java/org/apache/commons/math3/geometry/euclidean/twod/PolygonsSet.java\n+++ b/src/main/java/org/apache/commons/math3/geometry/euclidean/twod/PolygonsSet.java\n@@ -132,7 +132,9 @@ protected void computeGeometricalProperties() {\n         final Vector2D[][] v = getVertices();\n \n         if (v.length == 0) {\n-            if ((Boolean) getTree(false).getAttribute()) {\n+            final BSPTree<Euclidean2D> tree = getTree(false);\n+            if (tree.getCut() == null && (Boolean) tree.getAttribute()) {\n+                // the instance covers the whole space\n                 setSize(Double.POSITIVE_INFINITY);\n                 setBarycenter(Vector2D.NaN);\n             } else {\n",
-    "project": "commons-math"
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

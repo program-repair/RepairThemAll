@@ -16,5 +16,9 @@
     "nb_skipped": 2,
     "nb_test": 375,
     "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/Aggregate.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/Aggregate.java\nindex 1143b81f31..8c94e08625 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/Aggregate.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/Aggregate.java\n@@ -242,7 +242,7 @@ public boolean match(String name, NodeState nodeState, int depth) {\n         public void collectResults(NodeInclude rootInclude, String rootIncludePath, String nodePath,\n                                    NodeState nodeState, ResultCollector results) throws CommitFailedException {\n             //For supporting jcr:contains(jcr:content, 'foo')\n-            if (rootInclude != this && rootInclude.relativeNode){\n+            if (rootInclude.relativeNode){\n                 results.onResult(new NodeIncludeResult(nodePath, rootIncludePath, nodeState));\n             }\n \n@@ -511,7 +511,10 @@ public Matcher match(String name, NodeState nodeState) {\n         public void collectResults(ResultCollector results)\n                 throws CommitFailedException {\n             checkArgument(status == Status.MATCH_FOUND);\n-            String rootIncludePath = aggregateStack.isEmpty() ?  null : aggregateStack.get(0);\n+\n+            //If result being collected as part of reaggregation then take path\n+            //from the stack otherwise its the current path\n+            String rootIncludePath = aggregateStack.isEmpty() ?  currentPath : aggregateStack.get(0);\n             currentInclude.collectResults(rootState.rootInclude, rootIncludePath,\n                     currentPath, matchedNodeState, results);\n         }\n",
-    "project": "jackrabbit-oak"
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
 }

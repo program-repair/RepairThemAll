@@ -16,5 +16,9 @@
     "nb_skipped": 2,
     "nb_test": 183,
     "patch": "diff --git a/wicket-util/src/main/java/org/apache/wicket/util/collections/IntHashMap.java b/wicket-util/src/main/java/org/apache/wicket/util/collections/IntHashMap.java\nindex 7b377fc9c9..7a8d180929 100644\n--- a/wicket-util/src/main/java/org/apache/wicket/util/collections/IntHashMap.java\n+++ b/wicket-util/src/main/java/org/apache/wicket/util/collections/IntHashMap.java\n@@ -1145,6 +1145,8 @@ private void writeObject(final java.io.ObjectOutputStream s) throws IOException\n \tprivate void readObject(final java.io.ObjectInputStream s) throws IOException,\n \t\tClassNotFoundException\n \t{\n+\t\tmodCount = new AtomicInteger(0);\n+\n \t\t// Read in the threshold, loadfactor, and any hidden stuff\n \t\ts.defaultReadObject();\n \n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

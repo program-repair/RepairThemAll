@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 1013,
     "patch": "diff --git a/wicket/src/main/java/org/apache/wicket/validation/validator/UrlValidator.java b/wicket/src/main/java/org/apache/wicket/validation/validator/UrlValidator.java\nindex cf42f3e55c..b9db5ee7c8 100644\n--- a/wicket/src/main/java/org/apache/wicket/validation/validator/UrlValidator.java\n+++ b/wicket/src/main/java/org/apache/wicket/validation/validator/UrlValidator.java\n@@ -484,7 +484,7 @@ protected boolean isValidPath(String path)\n \t\t}\n \n \t\tint slashCount = countToken(\"/\", path);\n-\t\tint dot2Count = countToken(\"..\", path);\n+\t\tint dot2Count = countToken(\"/..\", path);\n \t\tif (dot2Count > 0)\n \t\t{\n \t\t\tif ((slashCount - slash2Count - 1) <= dot2Count)\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

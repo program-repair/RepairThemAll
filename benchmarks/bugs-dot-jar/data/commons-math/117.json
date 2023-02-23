@@ -16,5 +16,9 @@
     "nb_skipped": 3,
     "nb_test": 5905,
     "patch": "diff --git a/src/main/java/org/apache/commons/math3/fitting/leastsquares/LevenbergMarquardtOptimizer.java b/src/main/java/org/apache/commons/math3/fitting/leastsquares/LevenbergMarquardtOptimizer.java\nindex 5f0527c33..864faae3e 100644\n--- a/src/main/java/org/apache/commons/math3/fitting/leastsquares/LevenbergMarquardtOptimizer.java\n+++ b/src/main/java/org/apache/commons/math3/fitting/leastsquares/LevenbergMarquardtOptimizer.java\n@@ -506,7 +506,7 @@ public Optimum optimize(final LeastSquaresProblem problem) {\n \n                     // tests for convergence.\n                     if (checker != null && checker.converged(iterationCounter.getCount(), previous, current)) {\n-                        return new OptimumImpl(current, iterationCounter.getCount(), evaluationCounter.getCount());\n+                        return new OptimumImpl(current, evaluationCounter.getCount(), iterationCounter.getCount());\n                     }\n                 } else {\n                     // failed iteration, reset the previous values\n@@ -527,7 +527,7 @@ public Optimum optimize(final LeastSquaresProblem problem) {\n                      preRed <= costRelativeTolerance &&\n                      ratio <= 2.0) ||\n                     delta <= parRelativeTolerance * xNorm) {\n-                    return new OptimumImpl(current, iterationCounter.getCount(), evaluationCounter.getCount());\n+                    return new OptimumImpl(current, evaluationCounter.getCount(), iterationCounter.getCount());\n                 }\n \n                 // tests for termination and stringent tolerances\n",
-    "project": "commons-math"
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

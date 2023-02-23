@@ -16,5 +16,9 @@
     "nb_skipped": 9,
     "nb_test": 1846,
     "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\nindex bb5984c169..bd753f7d7f 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\n@@ -969,7 +969,8 @@ boolean isConflicting(@Nonnull UpdateOp op,\n             UpdateUtils.applyChanges(oldDoc, old, context.getRevisionComparator());\n             setSplitDocProps(this, oldDoc, old, high);\n             // only split if enough of the data can be moved to old document\n-            if (oldDoc.getMemory() > getMemory() * SPLIT_RATIO) {\n+            if (oldDoc.getMemory() > getMemory() * SPLIT_RATIO\n+                    || numValues >= NUM_REVS_THRESHOLD) {\n                 splitOps.add(old);\n             } else {\n                 main = null;\n",
-    "project": "jackrabbit-oak"
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

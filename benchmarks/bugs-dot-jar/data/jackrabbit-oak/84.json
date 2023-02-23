@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 7,
     "patch": "diff --git a/oak-tarmk-standby/src/main/java/org/apache/jackrabbit/oak/plugins/segment/standby/client/StandbyClient.java b/oak-tarmk-standby/src/main/java/org/apache/jackrabbit/oak/plugins/segment/standby/client/StandbyClient.java\nindex bdcf51341c..79b348fd6c 100644\n--- a/oak-tarmk-standby/src/main/java/org/apache/jackrabbit/oak/plugins/segment/standby/client/StandbyClient.java\n+++ b/oak-tarmk-standby/src/main/java/org/apache/jackrabbit/oak/plugins/segment/standby/client/StandbyClient.java\n@@ -81,7 +81,7 @@\n     private final AtomicBoolean running = new AtomicBoolean(true);\n \n     public StandbyClient(String host, int port, SegmentStore store) throws SSLException {\n-        this(host, port, store, false, 5000);\n+        this(host, port, store, false, 10000);\n     }\n \n     public StandbyClient(String host, int port, SegmentStore store, boolean secure, int readTimeoutMs) throws SSLException {\n",
-    "project": "jackrabbit-oak"
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

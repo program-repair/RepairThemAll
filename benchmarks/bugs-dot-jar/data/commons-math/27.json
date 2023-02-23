@@ -16,5 +16,9 @@
     "nb_skipped": 4,
     "nb_test": 4990,
     "patch": "diff --git a/src/main/java/org/apache/commons/math3/geometry/euclidean/threed/SubLine.java b/src/main/java/org/apache/commons/math3/geometry/euclidean/threed/SubLine.java\nindex a146cb661..aad7b65a5 100644\n--- a/src/main/java/org/apache/commons/math3/geometry/euclidean/threed/SubLine.java\n+++ b/src/main/java/org/apache/commons/math3/geometry/euclidean/threed/SubLine.java\n@@ -111,6 +111,9 @@ public Vector3D intersection(final SubLine subLine, final boolean includeEndPoin\n \n         // compute the intersection on infinite line\n         Vector3D v1D = line.intersection(subLine.line);\n+        if (v1D == null) {\n+            return null;\n+        }\n \n         // check location of point with respect to first sub-line\n         Location loc1 = remainingRegion.checkPoint(line.toSubSpace(v1D));\ndiff --git a/src/main/java/org/apache/commons/math3/geometry/euclidean/twod/SubLine.java b/src/main/java/org/apache/commons/math3/geometry/euclidean/twod/SubLine.java\nindex a9d621a44..ea9e96a49 100644\n--- a/src/main/java/org/apache/commons/math3/geometry/euclidean/twod/SubLine.java\n+++ b/src/main/java/org/apache/commons/math3/geometry/euclidean/twod/SubLine.java\n@@ -115,6 +115,9 @@ public Vector2D intersection(final SubLine subLine, final boolean includeEndPoin\n \n         // compute the intersection on infinite line\n         Vector2D v2D = line1.intersection(line2);\n+        if (v2D == null) {\n+            return null;\n+        }\n \n         // check location of point with respect to first sub-line\n         Location loc1 = getRemainingRegion().checkPoint(line1.toSubSpace(v2D));\n",
-    "project": "commons-math"
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

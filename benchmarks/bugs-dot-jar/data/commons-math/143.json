@@ -16,5 +16,9 @@
     "nb_skipped": 4,
     "nb_test": 4919,
     "patch": "diff --git a/src/main/java/org/apache/commons/math3/complex/Complex.java b/src/main/java/org/apache/commons/math3/complex/Complex.java\nindex 22b23f24e..ac8185b17 100644\n--- a/src/main/java/org/apache/commons/math3/complex/Complex.java\n+++ b/src/main/java/org/apache/commons/math3/complex/Complex.java\n@@ -302,7 +302,7 @@ public Complex reciprocal() {\n         }\n \n         if (real == 0.0 && imaginary == 0.0) {\n-            return NaN;\n+            return INF;\n         }\n \n         if (isInfinite) {\n",
-    "project": "commons-math"
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

@@ -30,5 +30,9 @@
     "nb_skipped": 0,
     "nb_test": 1077,
     "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/util/string/JavaScriptUtils.java b/wicket-core/src/main/java/org/apache/wicket/util/string/JavaScriptUtils.java\nindex 6101006071..8897e62110 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/util/string/JavaScriptUtils.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/util/string/JavaScriptUtils.java\n@@ -27,22 +27,22 @@\n public class JavaScriptUtils\n {\n \t/** Script open tag */\n-\tpublic final static String SCRIPT_OPEN_TAG = \"<script type=\\\"text/javascript\\\"><!--/*--><![CDATA[/*><!--*/\\n\";\n+\tpublic final static String SCRIPT_OPEN_TAG = \"<script type=\\\"text/javascript\\\">\\n/*<![CDATA[*/\\n\";\n \n \t/** Script close tag */\n-\tpublic final static String SCRIPT_CLOSE_TAG = \"\\n/*-->]]>*/</script>\\n\";\n+\tpublic final static String SCRIPT_CLOSE_TAG = \"\\n/*]]>*/\\n</script>\\n\";\n \n \t/**\n \t * Script open tag. If this tag is changed, also update Wicket.Head.Contributor.processScript()\n \t * function from wicket-ajax.js\n \t */\n-\tpublic final static String SCRIPT_CONTENT_PREFIX = \"<!--/*--><![CDATA[/*><!--*/\\n\";\n+\tpublic final static String SCRIPT_CONTENT_PREFIX = \"\\n/*<![CDATA[*/\\n\";\n \n \t/**\n \t * Script close tag. If this tag is changed, also update Wicket.Head.Contributor.processScript()\n \t * function from wicket-ajax.js\n \t */\n-\tpublic final static String SCRIPT_CONTENT_SUFFIX = \"\\n/*-->]]>*/\";\n+\tpublic final static String SCRIPT_CONTENT_SUFFIX = \"\\n/*]]>*/\\n\";\n \n \n \t/** The response object */\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

@@ -17,5 +17,9 @@
     "nb_skipped": 0,
     "nb_test": 30,
     "patch": "diff --git a/start/src/main/java/org/apache/accumulo/start/classloader/vfs/AccumuloVFSClassLoader.java b/start/src/main/java/org/apache/accumulo/start/classloader/vfs/AccumuloVFSClassLoader.java\nindex b1e829a80..eb653bcbd 100644\n--- a/start/src/main/java/org/apache/accumulo/start/classloader/vfs/AccumuloVFSClassLoader.java\n+++ b/start/src/main/java/org/apache/accumulo/start/classloader/vfs/AccumuloVFSClassLoader.java\n@@ -134,10 +134,15 @@ public void run() {\n       \n       switch (fo.getType()) {\n         case FILE:\n-        case FOLDER:\n           classpath.add(fo);\n           pathsToMonitor.add(fo);\n           break;\n+        case FOLDER:\n+          pathsToMonitor.add(fo);\n+          for (FileObject child : fo.getChildren()) {\n+            classpath.add(child);\n+          }\n+          break;\n         case IMAGINARY:\n           // assume its a pattern\n           String pattern = fo.getName().getBaseName();\n",
-    "project": "accumulo"
+    "project": "accumulo",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

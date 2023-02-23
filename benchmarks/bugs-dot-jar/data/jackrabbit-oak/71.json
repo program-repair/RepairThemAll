@@ -17,5 +17,9 @@
     "nb_skipped": 6,
     "nb_test": 351,
     "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/util/SuggestHelper.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/util/SuggestHelper.java\nindex 4d0aa5cf5c..e6de6fb59e 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/util/SuggestHelper.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/util/SuggestHelper.java\n@@ -66,8 +66,10 @@ public static void updateSuggester(Directory directory, Analyzer analyzer, Index\n             tempDir = Files.createTempDir();\n             File tempSubChild = new File(tempDir, \"non-existing-sub-child\");\n \n+            if (reader.getDocCount(FieldNames.SUGGEST) > 0) {\n                 Dictionary dictionary = new LuceneDictionary(reader, FieldNames.SUGGEST);\n                 getLookup(directory, analyzer, tempSubChild).build(dictionary);\n+            }\n         } catch (RuntimeException e) {\n             log.debug(\"could not update the suggester\", e);\n         } finally {\n",
-    "project": "jackrabbit-oak"
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

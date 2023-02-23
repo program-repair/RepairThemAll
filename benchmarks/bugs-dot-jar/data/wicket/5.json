@@ -16,5 +16,9 @@
     "nb_skipped": 1,
     "nb_test": 1719,
     "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/protocol/http/AbstractRequestLogger.java b/wicket-core/src/main/java/org/apache/wicket/protocol/http/AbstractRequestLogger.java\nindex d6a3287af0..34964d33e2 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/protocol/http/AbstractRequestLogger.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/protocol/http/AbstractRequestLogger.java\n@@ -160,20 +160,17 @@ public int getPeakSessions()\n \t */\n \tprivate void copyRequestsInOrder(RequestData[] copy)\n \t{\n+\t\tint destPos = 0;\n+\t\t\n \t\tif (hasBufferRolledOver())\n \t\t{\n-\t\t\t// first copy the oldest requests stored behind the cursor into the copy\n-\t\t\tint oldestPos = indexInWindow + 1;\n-\t\t\tif (oldestPos < requestWindow.length)\n-\t\t\t\tarraycopy(requestWindow, oldestPos, copy, 0, requestWindow.length - oldestPos);\n+\t\t\tdestPos = requestWindow.length - indexInWindow;\n \t\t\t\n-\t\t\t// then append the newer requests stored from index 0 til the cursor position.\n-\t\t\tarraycopy(requestWindow, 0, copy, requestWindow.length - oldestPos, indexInWindow);\n-\t\t}\n-\t\telse\n-\t\t{\n-\t\t\tarraycopy(requestWindow, 0, copy, 0, indexInWindow);\n+\t\t\t// first copy the oldest requests stored behind the cursor into the copy\n+\t\t\tarraycopy(requestWindow, indexInWindow, copy, 0, destPos);\n \t\t}\n+\t\t\n+\t\tarraycopy(requestWindow, 0, copy, destPos, indexInWindow);\n \t}\n \n \t/**\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

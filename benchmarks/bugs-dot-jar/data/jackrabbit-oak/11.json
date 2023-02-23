@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 7,
     "patch": "diff --git a/oak-tarmk-standby/src/main/java/org/apache/jackrabbit/oak/plugins/segment/standby/client/SegmentLoaderHandler.java b/oak-tarmk-standby/src/main/java/org/apache/jackrabbit/oak/plugins/segment/standby/client/SegmentLoaderHandler.java\nindex ba7e775a28..633652c5b2 100644\n--- a/oak-tarmk-standby/src/main/java/org/apache/jackrabbit/oak/plugins/segment/standby/client/SegmentLoaderHandler.java\n+++ b/oak-tarmk-standby/src/main/java/org/apache/jackrabbit/oak/plugins/segment/standby/client/SegmentLoaderHandler.java\n@@ -133,7 +133,7 @@ private void initSync() {\n     @Override\n     public Segment readSegment(final String id) {\n         ctx.writeAndFlush(newGetSegmentReq(this.clientID, id));\n-        return getSegment();\n+        return getSegment(id);\n     }\n \n     @Override\n@@ -145,15 +145,18 @@ public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)\n \n     // implementation of RemoteSegmentLoader\n \n-    public Segment getSegment() {\n+    public Segment getSegment(final String id) {\n         boolean interrupted = false;\n         try {\n             for (;;) {\n                 try {\n-                    // log.debug(\"polling segment\");\n                     Segment s = segment.poll(timeoutMs, TimeUnit.MILLISECONDS);\n-                    // log.debug(\"returning segment \" + s.getSegmentId());\n+                    if (s == null) {\n+                        return null;\n+                    }\n+                    if (s.getSegmentId().toString().equals(id)) {\n                         return s;\n+                    }\n                 } catch (InterruptedException ignore) {\n                     interrupted = true;\n                 }\n",
-    "project": "jackrabbit-oak"
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

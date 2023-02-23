@@ -17,5 +17,9 @@
     "nb_skipped": 1,
     "nb_test": 4371,
     "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/WrapProcessor.java b/camel-core/src/main/java/org/apache/camel/processor/WrapProcessor.java\nindex cb7eb9fda5..adb508ab65 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/WrapProcessor.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/WrapProcessor.java\n@@ -19,14 +19,14 @@\n import java.util.List;\n \n import org.apache.camel.Processor;\n-import org.apache.camel.Traceable;\n import org.apache.camel.util.ServiceHelper;\n \n /**\n  * A processor which ensures wrapping processors is having lifecycle handled.\n+ *\n+ * @version \n  */\n-public class WrapProcessor extends DelegateAsyncProcessor implements Traceable {\n-\n+public class WrapProcessor extends DelegateAsyncProcessor {\n     private final Processor wrapped;\n \n     public WrapProcessor(Processor processor, Processor wrapped) {\n@@ -39,10 +39,6 @@ public String toString() {\n         return \"Wrap[\" + wrapped + \"] -> \" + processor;\n     }\n \n-    public String getTraceLabel() {\n-        return \"wrap[\" + wrapped + \"]\";\n-    }\n-\n     @Override\n     public List<Processor> next() {\n         // must include wrapped in navigate\n",
-    "project": "camel"
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

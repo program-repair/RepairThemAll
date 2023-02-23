@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 48,
     "patch": "diff --git a/wicket-request/src/main/java/org/apache/wicket/request/mapper/parameter/PageParameters.java b/wicket-request/src/main/java/org/apache/wicket/request/mapper/parameter/PageParameters.java\nindex 03c3dc57bd..bb11fa49f3 100644\n--- a/wicket-request/src/main/java/org/apache/wicket/request/mapper/parameter/PageParameters.java\n+++ b/wicket-request/src/main/java/org/apache/wicket/request/mapper/parameter/PageParameters.java\n@@ -483,7 +483,8 @@ public PageParameters set(final String name, final Object value, final int index\n \t */\n \tpublic PageParameters set(final String name, final Object value)\n \t{\n-\t\tset(name, value, -1);\n+\t\tint position = getPosition(name);\n+\t\tset(name, value, position);\n \t\treturn this;\n \t}\n \n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

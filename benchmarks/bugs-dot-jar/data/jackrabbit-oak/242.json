@@ -17,5 +17,9 @@
     "nb_skipped": 1,
     "nb_test": 2233,
     "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/XPathToSQL2Converter.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/XPathToSQL2Converter.java\nindex af95c65c71..fb046c53dd 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/XPathToSQL2Converter.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/XPathToSQL2Converter.java\n@@ -497,8 +497,14 @@ private Expression parseExpression() throws ParseException {\n         if (readIf(\"@\")) {\n             return readProperty();\n         } else if (readIf(\"true\")) {\n+            if (readIf(\"(\")) {\n+                read(\")\");\n+            }\n             return Expression.Literal.newBoolean(true);\n         } else if (readIf(\"false\")) {\n+            if (readIf(\"(\")) {\n+                read(\")\");\n+            }\n             return Expression.Literal.newBoolean(false);\n         } else if (currentTokenType == VALUE_NUMBER) {\n             Expression.Literal l = Expression.Literal.newNumber(currentToken);\n",
-    "project": "jackrabbit-oak"
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
 }

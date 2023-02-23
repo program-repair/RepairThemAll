@@ -17,5 +17,9 @@
     "nb_skipped": 3,
     "nb_test": 5054,
     "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/Throttler.java b/camel-core/src/main/java/org/apache/camel/processor/Throttler.java\nindex f70325de76..c986bf7dae 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/Throttler.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/Throttler.java\n@@ -108,7 +108,7 @@ public void setTimePeriodMillis(long timePeriodMillis) {\n     protected long calculateDelay(Exchange exchange) {\n         // evaluate as Object first to see if we get any result at all\n         Object result = maxRequestsPerPeriodExpression.evaluate(exchange, Object.class);\n-        if (result == null) {\n+        if (maximumRequestsPerPeriod == 0 && result == null) {\n             throw new RuntimeExchangeException(\"The max requests per period expression was evaluated as null: \" + maxRequestsPerPeriodExpression, exchange);\n         }\n \n",
-    "project": "camel"
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

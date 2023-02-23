@@ -18,5 +18,9 @@
     "nb_skipped": 2,
     "nb_test": 1525,
     "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/Component.java b/wicket-core/src/main/java/org/apache/wicket/Component.java\nindex 0c56063d15..b78f8bfb95 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/Component.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/Component.java\n@@ -3334,7 +3334,8 @@ public final CharSequence urlFor(final Behavior behaviour,\n \t\tPage page = getPage();\n \t\tPageAndComponentProvider provider = new PageAndComponentProvider(page, this, parameters);\n \t\tIRequestHandler handler;\n-\t\tif (page.isBookmarkable())\n+\t\tif (getApplication().getPageSettings().getRecreateMountedPagesAfterExpiry() &&\n+\t\t\t((page.isBookmarkable() && page.wasCreatedBookmarkable()) || page.isPageStateless()))\n \t\t{\n \t\t\thandler = new BookmarkableListenerInterfaceRequestHandler(provider, listener, id);\n \t\t}\n@@ -3377,7 +3378,8 @@ public final CharSequence urlFor(final RequestListenerInterface listener,\n \t\tPage page = getPage();\n \t\tPageAndComponentProvider provider = new PageAndComponentProvider(page, this, parameters);\n \t\tIRequestHandler handler;\n-\t\tif (page.isBookmarkable())\n+\t\tif (getApplication().getPageSettings().getRecreateMountedPagesAfterExpiry() &&\n+\t\t\t((page.isBookmarkable() && page.wasCreatedBookmarkable()) || page.isPageStateless()))\n \t\t{\n \t\t\thandler = new BookmarkableListenerInterfaceRequestHandler(provider, listener);\n \t\t}\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

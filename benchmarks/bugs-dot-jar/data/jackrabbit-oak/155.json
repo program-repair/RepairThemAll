@@ -16,5 +16,9 @@
     "nb_skipped": 6,
     "nb_test": 1517,
     "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/XPathToSQL2Converter.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/XPathToSQL2Converter.java\nindex 91a257bffa..3cf0717291 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/XPathToSQL2Converter.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/XPathToSQL2Converter.java\n@@ -516,7 +516,7 @@ private Expression parsePropertyOrFunction() throws ParseException {\n         boolean isPath = false;\n         while (true) {\n             if (currentTokenType == IDENTIFIER) {\n-                String name = readIdentifier();\n+                String name = readPathSegment();\n                 buff.append(name);\n             } else if (readIf(\"*\")) {\n                 // any node\n@@ -533,7 +533,7 @@ private Expression parsePropertyOrFunction() throws ParseException {\n                     // xpath supports @*, even thought jackrabbit may not\n                     buff.append('*');\n                 } else {\n-                    buff.append(readIdentifier());\n+                    buff.append(readPathSegment());\n                 }\n                 return new Expression.Property(currentSelector, buff.toString());\n             } else {\n@@ -649,7 +649,7 @@ private void read(String expected) throws ParseException {\n         if (readIf(\"*\")) {\n             return new Expression.Property(currentSelector, \"*\");\n         }\n-        return new Expression.Property(currentSelector, readIdentifier());\n+        return new Expression.Property(currentSelector, readPathSegment());\n     }\n     \n     private void readExcerpt() throws ParseException {\n",
-    "project": "jackrabbit-oak"
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

@@ -16,5 +16,9 @@
     "nb_skipped": 2,
     "nb_test": 1170,
     "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/protocol/http/servlet/ServletWebResponse.java b/wicket-core/src/main/java/org/apache/wicket/protocol/http/servlet/ServletWebResponse.java\nindex a1d03122d2..c5bc8c73e6 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/protocol/http/servlet/ServletWebResponse.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/protocol/http/servlet/ServletWebResponse.java\n@@ -241,7 +241,6 @@ public void sendRedirect(String url)\n \t\ttry\n \t\t{\n \t\t\tredirect = true;\n-\t\t\turl = getAbsoluteURL(url);\n \t\t\turl = encodeRedirectURL(url);\n \n \t\t\t// wicket redirects should never be cached\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

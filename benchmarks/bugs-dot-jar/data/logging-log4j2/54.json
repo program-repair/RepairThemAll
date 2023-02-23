@@ -16,5 +16,9 @@
     "nb_skipped": 2,
     "nb_test": 204,
     "patch": "diff --git a/log4j-api/src/main/java/org/apache/logging/log4j/message/ObjectMessage.java b/log4j-api/src/main/java/org/apache/logging/log4j/message/ObjectMessage.java\nindex 021adcc21..3441edbe4 100644\n--- a/log4j-api/src/main/java/org/apache/logging/log4j/message/ObjectMessage.java\n+++ b/log4j-api/src/main/java/org/apache/logging/log4j/message/ObjectMessage.java\n@@ -83,7 +83,11 @@ public boolean equals(final Object o) {\n         }\n \n         final ObjectMessage that = (ObjectMessage) o;\n-        return obj == null ? that.obj == null : obj.equals(that.obj);\n+        return obj == null ? that.obj == null : equalObjectsOrStrings(obj, that.obj);\n+    }\n+    \n+    private boolean equalObjectsOrStrings(Object left, Object right) {\n+        return left.equals(right) || String.valueOf(left).equals(String.valueOf(right));\n     }\n \n     @Override\n",
-    "project": "logging-log4j2"
+    "project": "logging-log4j2",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

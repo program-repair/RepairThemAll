@@ -16,5 +16,9 @@
     "nb_skipped": 3,
     "nb_test": 5866,
     "patch": "diff --git a/src/main/java/org/apache/commons/math4/util/FastMath.java b/src/main/java/org/apache/commons/math4/util/FastMath.java\nindex 3d6d27d27..2532c6269 100644\n--- a/src/main/java/org/apache/commons/math4/util/FastMath.java\n+++ b/src/main/java/org/apache/commons/math4/util/FastMath.java\n@@ -968,6 +968,13 @@ full double precision (52 bits).  Since z < 2^-10, we will have\n        much larger than the others.  If there are extra bits specified from the\n        pow() function, use them. */\n         final double tempC = tempB + tempA;\n+\n+        // If tempC is positive infinite, the evaluation below could result in NaN,\n+        // because z could be negative at the same time.\n+        if (tempC == Double.POSITIVE_INFINITY) {\n+            return Double.POSITIVE_INFINITY;\n+        }\n+\n         final double result;\n         if (extra != 0.0) {\n             result = tempC*extra*z + tempC*extra + tempC*z + tempB + tempA;\n",
-    "project": "commons-math"
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
 }

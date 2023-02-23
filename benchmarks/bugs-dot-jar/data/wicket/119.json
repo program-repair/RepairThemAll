@@ -16,5 +16,9 @@
     "nb_skipped": 3,
     "nb_test": 1460,
     "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/AbstractBookmarkableMapper.java b/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/AbstractBookmarkableMapper.java\nindex 668d0a46fd..93c22d2df7 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/AbstractBookmarkableMapper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/AbstractBookmarkableMapper.java\n@@ -246,9 +246,14 @@ protected IRequestHandler processListener(PageComponentInfo pageComponentInfo,\n \n \t\tif (listenerInterface != null)\n \t\t{\n-\t\t\t// WICKET-4594 - ignore the parsed parameters as they have nothing to do with the page\n+\t\t\tif (pageInfo.getPageId() != null)\n+\t\t\t{\n+\t\t\t\t// WICKET-4594 - ignore the parsed parameters for stateful pages\n+\t\t\t\tpageParameters = null;\n+\t\t\t}\n+\n \t\t\tPageAndComponentProvider provider = new PageAndComponentProvider(pageInfo.getPageId(),\n-\t\t\t\tpageClass, null, renderCount, componentInfo.getComponentPath());\n+\t\t\t\tpageClass, pageParameters, renderCount, componentInfo.getComponentPath());\n \n \t\t\tprovider.setPageSource(getContext());\n \n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

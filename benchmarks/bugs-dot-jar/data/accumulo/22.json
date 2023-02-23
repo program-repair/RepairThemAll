@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 279,
     "patch": "diff --git a/src/core/src/main/java/org/apache/accumulo/core/iterators/user/RegExFilter.java b/src/core/src/main/java/org/apache/accumulo/core/iterators/user/RegExFilter.java\nindex fcf77c401..0b3b73f11 100644\n--- a/src/core/src/main/java/org/apache/accumulo/core/iterators/user/RegExFilter.java\n+++ b/src/core/src/main/java/org/apache/accumulo/core/iterators/user/RegExFilter.java\n@@ -39,10 +39,10 @@\n   public SortedKeyValueIterator<Key,Value> deepCopy(IteratorEnvironment env) {\n     RegExFilter result = new RegExFilter();\n     result.setSource(getSource().deepCopy(env));\n-    result.rowMatcher = rowMatcher.pattern().matcher(\"\");\n-    result.colfMatcher = colfMatcher.pattern().matcher(\"\");\n-    result.colqMatcher = colqMatcher.pattern().matcher(\"\");\n-    result.valueMatcher = valueMatcher.pattern().matcher(\"\");\n+    result.rowMatcher = copyMatcher(rowMatcher);\n+    result.colfMatcher = copyMatcher(colfMatcher);\n+    result.colqMatcher = copyMatcher(colqMatcher);\n+    result.valueMatcher = copyMatcher(valueMatcher);\n     result.orFields = orFields;\n     return result;\n   }\n@@ -61,6 +61,14 @@\n   \n   private ByteArrayBackedCharSequence babcs = new ByteArrayBackedCharSequence();\n   \n+  private Matcher copyMatcher(Matcher m)\n+  {\n+\t  if(m == null)\n+\t\t  return m;\n+\t  else\n+\t\t  return m.pattern().matcher(\"\");\n+  }\n+  \n   private boolean matches(Matcher matcher, ByteSequence bs) {\n     if (matcher != null) {\n       babcs.set(bs);\n",
-    "project": "accumulo"
+    "project": "accumulo",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

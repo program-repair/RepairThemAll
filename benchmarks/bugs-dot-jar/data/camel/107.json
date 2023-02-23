@@ -20,5 +20,9 @@
     "nb_skipped": 0,
     "nb_test": 3243,
     "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/management/DefaultManagementNamingStrategy.java b/camel-core/src/main/java/org/apache/camel/management/DefaultManagementNamingStrategy.java\nindex 473c07fe69..ef21e26f90 100644\n--- a/camel-core/src/main/java/org/apache/camel/management/DefaultManagementNamingStrategy.java\n+++ b/camel-core/src/main/java/org/apache/camel/management/DefaultManagementNamingStrategy.java\n@@ -254,11 +254,13 @@ public ObjectName getObjectNameForThreadPool(CamelContext context, ThreadPoolExe\n         buffer.append(domainName).append(\":\");\n         buffer.append(KEY_CONTEXT + \"=\").append(getContextId(context)).append(\",\");\n         buffer.append(KEY_TYPE + \"=\" + TYPE_THREAD_POOL + \",\");\n-        buffer.append(KEY_NAME + \"=\").append(id);\n+\n+        String name = id;\n         if (sourceId != null) {\n             // provide source id if we know it, this helps end user to know where the pool is used\n-            buffer.append(\"(\").append(sourceId).append(\")\");\n+            name = name + \"(\" + sourceId + \")\";\n         }\n+        buffer.append(KEY_NAME + \"=\").append(ObjectName.quote(name));\n         return createObjectName(buffer);\n     }\n \n",
-    "project": "camel"
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

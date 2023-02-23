@@ -16,5 +16,9 @@
     "nb_skipped": 4,
     "nb_test": 5392,
     "patch": "diff --git a/src/main/java/org/apache/commons/math3/linear/EigenDecomposition.java b/src/main/java/org/apache/commons/math3/linear/EigenDecomposition.java\nindex 4652f618b..b5e93ce2b 100644\n--- a/src/main/java/org/apache/commons/math3/linear/EigenDecomposition.java\n+++ b/src/main/java/org/apache/commons/math3/linear/EigenDecomposition.java\n@@ -513,15 +513,32 @@ public RealMatrix solve(RealMatrix b) {\n          * @return true if the decomposed matrix is non-singular.\n          */\n         public boolean isNonSingular() {\n+            // The eigenvalues are sorted by size, descending\n+            double largestEigenvalueNorm = eigenvalueNorm(0);\n+            // Corner case: zero matrix, all exactly 0 eigenvalues\n+            if (largestEigenvalueNorm == 0.0) {\n+                return false;\n+            }\n             for (int i = 0; i < realEigenvalues.length; ++i) {\n-                if (realEigenvalues[i] == 0 &&\n-                    imagEigenvalues[i] == 0) {\n+                // Looking for eigenvalues that are 0, where we consider anything much much smaller\n+                // than the largest eigenvalue to be effectively 0.\n+                if (Precision.equals(eigenvalueNorm(i) / largestEigenvalueNorm, 0, EPSILON)) {\n                     return false;\n                 }\n             }\n             return true;\n         }\n \n+        /**\n+         * @param i which eigenvalue to find the norm of\n+         * @return the norm of ith (complex) eigenvalue.\n+         */\n+        private double eigenvalueNorm(int i) {\n+            final double re = realEigenvalues[i];\n+            final double im = imagEigenvalues[i];\n+            return FastMath.sqrt(re * re + im * im);\n+        }\n+\n         /**\n          * Get the inverse of the decomposed matrix.\n          *\n",
-    "project": "commons-math"
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

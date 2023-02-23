@@ -16,5 +16,9 @@
     "nb_skipped": 1,
     "nb_test": 1871,
     "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/parser/filter/HtmlHeaderSectionHandler.java b/wicket-core/src/main/java/org/apache/wicket/markup/parser/filter/HtmlHeaderSectionHandler.java\nindex 5b79f80d43..b695713a89 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/parser/filter/HtmlHeaderSectionHandler.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/parser/filter/HtmlHeaderSectionHandler.java\n@@ -31,6 +31,7 @@\n import org.apache.wicket.markup.parser.AbstractMarkupFilter;\n import org.apache.wicket.markup.parser.XmlTag.TagType;\n import org.apache.wicket.markup.resolver.HtmlHeaderResolver;\n+import org.apache.wicket.util.tester.BaseWicketTester;\n \n \n /**\n@@ -172,7 +173,7 @@ private void handleBodyTag()\n \t */\n \tprivate void handleHeaderItemsTag(ComponentTag tag)\n \t{\n-\t\tif (foundHeaderItemsTag)\n+\t\tif ((tag.isOpen() || tag.isOpenClose()) && foundHeaderItemsTag)\n \t\t{\n \t\t\tthrow new MarkupException(new MarkupStream(markup),\n \t\t\t\t\t\"More than one <wicket:header-items/> detected in the <head> element. Only one is allowed.\");\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

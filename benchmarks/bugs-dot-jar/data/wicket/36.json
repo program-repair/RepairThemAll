@@ -16,5 +16,9 @@
     "nb_skipped": 2,
     "nb_test": 1196,
     "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java\nindex 17fe546fe7..e97e0b193f 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java\n@@ -797,6 +797,7 @@ public void process(IFormSubmitter submittingComponent)\n \t\t\tif (hasError())\n \t\t\t{\n \t\t\t\tcallOnError(submittingComponent);\n+\t\t\t\treturn;\n \t\t\t}\n \n \t\t\t// Form has no error\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

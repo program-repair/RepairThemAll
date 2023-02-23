@@ -16,5 +16,9 @@
     "nb_skipped": 5,
     "nb_test": 5478,
     "patch": "diff --git a/src/main/java/org/apache/commons/math3/optim/linear/LinearConstraintSet.java b/src/main/java/org/apache/commons/math3/optim/linear/LinearConstraintSet.java\nindex cf5279a34..b2a120996 100644\n--- a/src/main/java/org/apache/commons/math3/optim/linear/LinearConstraintSet.java\n+++ b/src/main/java/org/apache/commons/math3/optim/linear/LinearConstraintSet.java\n@@ -16,10 +16,11 @@\n  */\n package org.apache.commons.math3.optim.linear;\n \n+import java.util.LinkedHashSet;\n import java.util.Set;\n-import java.util.HashSet;\n import java.util.Collection;\n import java.util.Collections;\n+\n import org.apache.commons.math3.optim.OptimizationData;\n \n /**\n@@ -30,8 +31,7 @@\n  */\n public class LinearConstraintSet implements OptimizationData {\n     /** Set of constraints. */\n-    private final Set<LinearConstraint> linearConstraints\n-        = new HashSet<LinearConstraint>();\n+    private final Set<LinearConstraint> linearConstraints = new LinkedHashSet<LinearConstraint>();\n \n     /**\n      * Creates a set containing the given constraints.\n",
-    "project": "commons-math"
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

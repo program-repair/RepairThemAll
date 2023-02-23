@@ -36,5 +36,9 @@
     "nb_skipped": 3,
     "nb_test": 5008,
     "patch": "",
-    "project": "camel"
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

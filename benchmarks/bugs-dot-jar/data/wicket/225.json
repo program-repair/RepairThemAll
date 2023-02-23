@@ -18,5 +18,9 @@
     "nb_skipped": 2,
     "nb_test": 1201,
     "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/request/handler/PageProvider.java b/wicket-core/src/main/java/org/apache/wicket/request/handler/PageProvider.java\nindex ed01ddb28b..f000badad4 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/handler/PageProvider.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/handler/PageProvider.java\n@@ -292,12 +292,6 @@ private IRequestablePage getStoredPage(final int pageId)\n \t\t\t(pageClass == null || pageClass.equals(storedPageInstance.getClass())))\n \t\t{\n \t\t\tpageInstance = storedPageInstance;\n-\n-\t\t\tif (pageParameters != null)\n-\t\t\t{\n-\t\t\t\tstoredPageInstance.getPageParameters().overwriteWith(pageParameters);\n-\t\t\t}\n-\n \t\t}\n \t\treturn storedPageInstance;\n \t}\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

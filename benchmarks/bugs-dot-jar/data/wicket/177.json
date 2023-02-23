@@ -16,5 +16,9 @@
     "nb_skipped": 2,
     "nb_test": 1201,
     "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/RestartResponseAtInterceptPageException.java b/wicket-core/src/main/java/org/apache/wicket/RestartResponseAtInterceptPageException.java\nindex 819df8872c..1a3187887f 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/RestartResponseAtInterceptPageException.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/RestartResponseAtInterceptPageException.java\n@@ -52,7 +52,7 @@\n \tpublic RestartResponseAtInterceptPageException(Page interceptPage)\n \t{\n \t\tsuper(new RenderPageRequestHandler(new PageProvider(interceptPage),\n-\t\t\tRedirectPolicy.ALWAYS_REDIRECT));\n+\t\t\tRedirectPolicy.AUTO_REDIRECT));\n \t\tInterceptData.set();\n \t}\n \n@@ -76,7 +76,7 @@ public RestartResponseAtInterceptPageException(Class<? extends Page> interceptPa\n \t\tPageParameters parameters)\n \t{\n \t\tsuper(new RenderPageRequestHandler(new PageProvider(interceptPageClass, parameters),\n-\t\t\tRedirectPolicy.ALWAYS_REDIRECT));\n+\t\t\tRedirectPolicy.AUTO_REDIRECT));\n \t\tInterceptData.set();\n \t}\n \n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

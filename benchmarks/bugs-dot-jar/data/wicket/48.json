@@ -16,5 +16,9 @@
     "nb_skipped": 1,
     "nb_test": 1792,
     "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/html/internal/HtmlHeaderContainer.java b/wicket-core/src/main/java/org/apache/wicket/markup/html/internal/HtmlHeaderContainer.java\nindex 1ce6809861..e906560db6 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/html/internal/HtmlHeaderContainer.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/html/internal/HtmlHeaderContainer.java\n@@ -314,9 +314,8 @@ public boolean okToRenderComponent(final String scope, final String id)\n \t}\n \n \t@Override\n-\tprotected void onDetach()\n-\t{\n-\t\tsuper.onDetach();\n+\tprotected void onAfterRender() {\n+\t\tsuper.onAfterRender();\n \n \t\trenderedComponentsPerScope = null;\n \t\theaderResponse = null;\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

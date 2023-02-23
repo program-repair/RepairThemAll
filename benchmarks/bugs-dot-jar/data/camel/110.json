@@ -16,5 +16,9 @@
     "nb_skipped": 1,
     "nb_test": 4324,
     "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/aggregate/AggregateProcessor.java b/camel-core/src/main/java/org/apache/camel/processor/aggregate/AggregateProcessor.java\nindex a5c592bc95..00cb744018 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/aggregate/AggregateProcessor.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/aggregate/AggregateProcessor.java\n@@ -313,6 +313,9 @@ protected String isCompleted(String key, Exchange exchange) {\n                 int size = exchange.getProperty(Exchange.AGGREGATED_SIZE, 1, Integer.class);\n                 if (size >= value) {\n                     return \"size\";\n+                } else {\n+                    // not completed yet\n+                    return null;\n                 }\n             }\n         }\n",
-    "project": "camel"
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

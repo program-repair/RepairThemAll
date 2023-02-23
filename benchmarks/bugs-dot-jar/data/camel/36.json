@@ -16,5 +16,9 @@
     "nb_skipped": 1,
     "nb_test": 4618,
     "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/RoutingSlip.java b/camel-core/src/main/java/org/apache/camel/processor/RoutingSlip.java\nindex cd4a864963..bde0f42f8e 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/RoutingSlip.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/RoutingSlip.java\n@@ -36,6 +36,7 @@\n import org.apache.camel.support.ServiceSupport;\n import org.apache.camel.util.AsyncProcessorHelper;\n import org.apache.camel.util.ExchangeHelper;\n+import org.apache.camel.util.MessageHelper;\n import org.apache.camel.util.ObjectHelper;\n import org.apache.camel.util.ServiceHelper;\n import org.slf4j.Logger;\n@@ -268,6 +269,10 @@ protected Exchange prepareExchangeForRoutingSlip(Exchange current, Endpoint endp\n         // exchange being routed.\n         copy.setExchangeId(current.getExchangeId());\n         copyOutToIn(copy, current);\n+\n+        // ensure stream caching is reset\n+        MessageHelper.resetStreamCache(copy.getIn());\n+\n         return copy;\n     }\n \n",
-    "project": "camel"
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

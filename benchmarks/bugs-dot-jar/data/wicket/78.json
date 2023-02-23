@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 96,
     "patch": "diff --git a/wicket-request/src/main/java/org/apache/wicket/request/Url.java b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\nindex 6aa6e2565d..5297857c17 100755\n--- a/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n+++ b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n@@ -337,15 +337,16 @@ public static Url parse(CharSequence _url, Charset charset)\n \t */\n \tprivate static QueryParameter parseQueryParameter(final String qp, final Charset charset)\n \t{\n-\t\tif (qp.indexOf('=') == -1)\n+\t\tint idxOfEquals = qp.indexOf('=');\n+\t\tif (idxOfEquals == -1)\n \t\t{\n \t\t\t// name => empty value\n \t\t\treturn new QueryParameter(decodeParameter(qp, charset), \"\");\n \t\t}\n \n-\t\tString parts[] = Strings.split(qp, '=');\n-\t\treturn new QueryParameter(decodeParameter(parts[0], charset), decodeParameter(parts[1],\n-\t\t\tcharset));\n+\t\tString parameterName = qp.substring(0, idxOfEquals);\n+\t\tString parameterValue = qp.substring(idxOfEquals + 1);\n+\t\treturn new QueryParameter(decodeParameter(parameterName, charset), decodeParameter(parameterValue, charset));\n \t}\n \n \t/**\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

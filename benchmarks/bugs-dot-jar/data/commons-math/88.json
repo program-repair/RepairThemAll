@@ -16,5 +16,9 @@
     "nb_skipped": 3,
     "nb_test": 5822,
     "patch": "diff --git a/src/main/java/org/apache/commons/math4/geometry/euclidean/oned/Interval.java b/src/main/java/org/apache/commons/math4/geometry/euclidean/oned/Interval.java\nindex 97857761b..87dbba16c 100644\n--- a/src/main/java/org/apache/commons/math4/geometry/euclidean/oned/Interval.java\n+++ b/src/main/java/org/apache/commons/math4/geometry/euclidean/oned/Interval.java\n@@ -17,6 +17,8 @@\n package org.apache.commons.math4.geometry.euclidean.oned;\n \n import org.apache.commons.math4.geometry.partitioning.Region.Location;\n+import org.apache.commons.math4.exception.NumberIsTooSmallException;\n+import org.apache.commons.math4.exception.util.LocalizedFormats;\n \n \n /** This class represents a 1D interval.\n@@ -36,6 +38,10 @@\n      * @param upper upper bound of the interval\n      */\n     public Interval(final double lower, final double upper) {\n+        if (upper < lower) {\n+            throw new NumberIsTooSmallException(LocalizedFormats.ENDPOINTS_NOT_AN_INTERVAL,\n+                                                upper, lower, true);\n+        }\n         this.lower = lower;\n         this.upper = upper;\n     }\n",
-    "project": "commons-math"
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
 }

@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 377,
     "patch": "diff --git a/wicket/src/main/java/wicket/Session.java b/wicket/src/main/java/wicket/Session.java\nindex 0a64238b46..1de82b76ce 100644\n--- a/wicket/src/main/java/wicket/Session.java\n+++ b/wicket/src/main/java/wicket/Session.java\n@@ -16,8 +16,6 @@\n  */\n package wicket;\n \n-import java.io.ByteArrayOutputStream;\n-import java.io.ObjectOutputStream;\n import java.io.Serializable;\n import java.util.ArrayList;\n import java.util.HashMap;\n@@ -41,7 +39,6 @@\n import wicket.request.ClientInfo;\n import wicket.session.ISessionStore;\n import wicket.util.convert.IConverter;\n-import wicket.util.lang.Bytes;\n import wicket.util.lang.Objects;\n import wicket.util.string.Strings;\n import wicket.util.time.Duration;\n@@ -1036,20 +1033,6 @@ protected final void setAttribute(String name, Object value)\n \t\t\t\t}\n \t\t\t}\n \t\t}\n-\t\tString valueTypeName = (value != null ? value.getClass().getName() : \"null\");\n-\t\ttry\n-\t\t{\n-\t\t\tfinal ByteArrayOutputStream out = new ByteArrayOutputStream();\n-\t\t\tnew ObjectOutputStream(out).writeObject(value);\n-\t\t\tlog.debug(\"Stored attribute \" + name + \"{ \" + valueTypeName + \"} with size: \"\n-\t\t\t\t\t+ Bytes.bytes(out.size()));\n-\t\t}\n-\t\tcatch (Exception e)\n-\t\t{\n-\t\t\tthrow new WicketRuntimeException(\n-\t\t\t\t\t\"Internal error cloning object. Make sure all dependent objects implement Serializable. Class: \"\n-\t\t\t\t\t\t\t+ valueTypeName, e);\n-\t\t}\n \n \t\t// Set the actual attribute\n \t\tstore.setAttribute(request, name, value);\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

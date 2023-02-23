@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 831,
     "patch": "diff --git a/flink-runtime/src/main/java/org/apache/flink/runtime/operators/sort/FixedLengthRecordSorter.java b/flink-runtime/src/main/java/org/apache/flink/runtime/operators/sort/FixedLengthRecordSorter.java\nindex da96b17506..3a44ab5b12 100644\n--- a/flink-runtime/src/main/java/org/apache/flink/runtime/operators/sort/FixedLengthRecordSorter.java\n+++ b/flink-runtime/src/main/java/org/apache/flink/runtime/operators/sort/FixedLengthRecordSorter.java\n@@ -447,11 +447,13 @@ public void writeToOutput(final ChannelWriterOutputView output, final int start,\n \t\t\t\tnum -= recordsPerSegment;\n \t\t\t} else {\n \t\t\t\t// partially filled segment\n-\t\t\t\tfor (; num > 0; num--) {\n+\t\t\t\tfor (; num > 0 && offset <= this.lastEntryOffset; num--, offset += this.recordSize) {\n \t\t\t\t\trecord = comparator.readWithKeyDenormalization(record, inView);\n \t\t\t\t\tserializer.serialize(record, output);\n \t\t\t\t}\n \t\t\t}\n+\n+\t\t\toffset = 0;\n \t\t}\n \t}\n \t\n",
-    "project": "flink"
+    "project": "flink",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

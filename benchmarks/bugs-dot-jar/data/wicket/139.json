@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 8,
     "patch": "diff --git a/wicket-request/src/main/java/org/apache/wicket/request/UrlEncoder.java b/wicket-request/src/main/java/org/apache/wicket/request/UrlEncoder.java\nindex 3bfc78af7a..aadac5ef2e 100644\n--- a/wicket-request/src/main/java/org/apache/wicket/request/UrlEncoder.java\n+++ b/wicket-request/src/main/java/org/apache/wicket/request/UrlEncoder.java\n@@ -174,7 +174,6 @@ protected UrlEncoder(final Type type, final char stopChar)\n \t\tdontNeedEncoding.set('!');\r\n \t\tdontNeedEncoding.set('$');\r\n \t\t// \"&\" needs to be encoded for query stings\r\n-\t\tdontNeedEncoding.set('\\'');\r\n \t\t// \"(\" and \")\" probably don't need encoding, but we'll be conservative\r\n \t\tdontNeedEncoding.set('*');\r\n \t\t// \"+\" needs to be encoded for query strings (since it means =\r\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 98,
     "patch": "diff --git a/wicket-request/src/main/java/org/apache/wicket/request/Url.java b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\nindex b9769e85fd..596163e9ac 100755\n--- a/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n+++ b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n@@ -263,7 +263,8 @@ public static Url parse(CharSequence _url, Charset charset)\n \t\t\t\thostAndPort = afterProto.substring(0, relativeAt);\n \t\t\t}\n \n-\t\t\tfinal int portAt = hostAndPort.lastIndexOf(':');\n+\t\t\tfinal int credentialsAt = hostAndPort.lastIndexOf('@') + 1;\n+\t\t\tfinal int portAt = hostAndPort.substring(credentialsAt).lastIndexOf(':');\n \n \t\t\tif (portAt == -1)\n \t\t\t{\n@@ -272,8 +273,8 @@ public static Url parse(CharSequence _url, Charset charset)\n \t\t\t}\n \t\t\telse\n \t\t\t{\n-\t\t\t\tresult.host = hostAndPort.substring(0, portAt);\n-\t\t\t\tresult.port = Integer.parseInt(hostAndPort.substring(portAt + 1));\n+\t\t\t\tresult.host = hostAndPort.substring(0, portAt + credentialsAt);\n+\t\t\t\tresult.port = Integer.parseInt(hostAndPort.substring(portAt + credentialsAt + 1));\n \t\t\t}\n \n \t\t\tif (relativeAt < 0)\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

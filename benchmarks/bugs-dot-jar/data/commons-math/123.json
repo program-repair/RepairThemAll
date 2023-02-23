@@ -16,5 +16,9 @@
     "nb_skipped": 3,
     "nb_test": 6076,
     "patch": "diff --git a/src/main/java/org/apache/commons/math3/distribution/BinomialDistribution.java b/src/main/java/org/apache/commons/math3/distribution/BinomialDistribution.java\nindex 15747e13e..9a882a05b 100644\n--- a/src/main/java/org/apache/commons/math3/distribution/BinomialDistribution.java\n+++ b/src/main/java/org/apache/commons/math3/distribution/BinomialDistribution.java\n@@ -106,6 +106,9 @@ public double probability(int x) {\n     /** {@inheritDoc} **/\n     @Override\n     public double logProbability(int x) {\n+        if (numberOfTrials == 0) {\n+            return (x == 0) ? 0. : Double.NEGATIVE_INFINITY;\n+        }\n         double ret;\n         if (x < 0 || x > numberOfTrials) {\n             ret = Double.NEGATIVE_INFINITY;\n",
-    "project": "commons-math"
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

@@ -16,5 +16,9 @@
     "nb_skipped": 2,
     "nb_test": 637,
     "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\nindex 38544661e5..9faa23f69b 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\n@@ -254,7 +254,9 @@ private MutableNodeState write(long newRevision, boolean reconnect) {\n             writeState = parent.getWriteState(name);\n             if (writeState == null) {\n                 if (exists()) {\n-                    writeState = new MutableNodeState(baseState);\n+                    NodeState writeBase =\n+                            parent.writeState.base.getChildNode(name);\n+                    writeState = new MutableNodeState(writeBase);\n                 }\n                 else {\n                     writeState = new MutableNodeState(null);\n",
-    "project": "jackrabbit-oak"
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

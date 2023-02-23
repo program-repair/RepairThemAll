@@ -16,5 +16,9 @@
     "nb_skipped": 1,
     "nb_test": 1705,
     "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java b/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java\nindex 0a3cab4e84..3eef517b1c 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java\n@@ -2096,7 +2096,7 @@ public void dequeue(DequeueContext dequeue)\n \t\t\t{\n \t\t\t\t// could not dequeue, or does not contain children\n \t\n-\t\t\t\tif (tag.isOpen())\n+\t\t\t\tif (tag.isOpen() && !tag.hasNoCloseTag())\n \t\t\t\t{\n \t\t\t\t\tdequeue.skipToCloseTag();\n \t\t\t\t}\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 1038,
     "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/request/mapper/AbstractComponentMapper.java b/wicket-core/src/main/java/org/apache/wicket/request/mapper/AbstractComponentMapper.java\nindex 0512fadee0..57573323c5 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/mapper/AbstractComponentMapper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/mapper/AbstractComponentMapper.java\n@@ -80,18 +80,24 @@ protected RequestListenerInterface requestListenerInterfaceFromString(String int\n \t * \n \t * @return PageComponentInfo instance if one was encoded in URL, <code>null</code> otherwise.\n \t */\n-\tprotected PageComponentInfo getPageComponentInfo(Url url)\n+\tprotected PageComponentInfo getPageComponentInfo(final Url url)\n \t{\n \t\tif (url == null)\n \t\t{\n \t\t\tthrow new IllegalStateException(\"Argument 'url' may not be null.\");\n \t\t}\n-\t\tif (url.getQueryParameters().size() > 0)\n+\t\telse\n \t\t{\n-\t\t\tQueryParameter param = url.getQueryParameters().get(0);\n-\t\t\tif (Strings.isEmpty(param.getValue()))\n+\t\t\tfor (QueryParameter queryParameter : url.getQueryParameters())\n \t\t\t{\n-\t\t\t\treturn PageComponentInfo.parse(param.getName());\n+\t\t\t\tif (Strings.isEmpty(queryParameter.getValue()))\n+\t\t\t\t{\n+\t\t\t\t\tPageComponentInfo pageComponentInfo = PageComponentInfo.parse(queryParameter.getName());\n+\t\t\t\t\tif (pageComponentInfo != null)\n+\t\t\t\t\t{\n+\t\t\t\t\t\treturn pageComponentInfo;\n+\t\t\t\t\t}\n+\t\t\t\t}\n \t\t\t}\n \t\t}\n \t\treturn null;\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

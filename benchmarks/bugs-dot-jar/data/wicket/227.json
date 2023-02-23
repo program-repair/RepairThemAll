@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 4,
     "patch": "diff --git a/wicket-cdi/src/main/java/org/apache/wicket/cdi/ComponentInjector.java b/wicket-cdi/src/main/java/org/apache/wicket/cdi/ComponentInjector.java\nindex 0316004c1c..c921706b7c 100644\n--- a/wicket-cdi/src/main/java/org/apache/wicket/cdi/ComponentInjector.java\n+++ b/wicket-cdi/src/main/java/org/apache/wicket/cdi/ComponentInjector.java\n@@ -48,7 +48,8 @@ public void onInstantiation(Component component)\n \t{\r\n \t\tClass<? extends Component> componentClass = component.getClass();\r\n \r\n-\t\tif (componentClass.isMemberClass() && Modifier.isStatic(componentClass.getModifiers()) == false)\r\n+\t\tif (componentClass.isAnonymousClass() ||\r\n+\t\t\t(componentClass.isMemberClass() && Modifier.isStatic(componentClass.getModifiers()) == false))\r\n \t\t{\r\n \t\t\tLOG.debug(\"Skipping non-static inner class '{}' \", componentClass);\r\n \t\t}\r\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

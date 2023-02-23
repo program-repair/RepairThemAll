@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 422,
     "patch": "diff --git a/core/src/main/java/org/apache/accumulo/core/client/mapreduce/RangeInputSplit.java b/core/src/main/java/org/apache/accumulo/core/client/mapreduce/RangeInputSplit.java\nindex 05316a1ae..15c6185d3 100644\n--- a/core/src/main/java/org/apache/accumulo/core/client/mapreduce/RangeInputSplit.java\n+++ b/core/src/main/java/org/apache/accumulo/core/client/mapreduce/RangeInputSplit.java\n@@ -144,6 +144,9 @@ public long getLength() throws IOException {\n   @Override\n   public void readFields(DataInput in) throws IOException {\n     range.readFields(in);\n+    if (in.readBoolean()) {\n+      table = in.readUTF();\n+    }\n     int numLocs = in.readInt();\n     locations = new String[numLocs];\n     for (int i = 0; i < numLocs; ++i)\n@@ -220,6 +223,12 @@ public void readFields(DataInput in) throws IOException {\n   @Override\n   public void write(DataOutput out) throws IOException {\n     range.write(out);\n+\n+    out.writeBoolean(null != table);\n+    if (null != table) {\n+      out.writeUTF(table);\n+    }\n+\n     out.writeInt(locations.length);\n     for (int i = 0; i < locations.length; ++i)\n       out.writeUTF(locations[i]);\n",
-    "project": "accumulo"
+    "project": "accumulo",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
 }

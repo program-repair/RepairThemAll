@@ -17,5 +17,9 @@
     "nb_skipped": 3,
     "nb_test": 5964,
     "patch": "diff --git a/src/main/java/org/apache/commons/math3/geometry/partitioning/BSPTree.java b/src/main/java/org/apache/commons/math3/geometry/partitioning/BSPTree.java\nindex c81832b07..5aec175fc 100644\n--- a/src/main/java/org/apache/commons/math3/geometry/partitioning/BSPTree.java\n+++ b/src/main/java/org/apache/commons/math3/geometry/partitioning/BSPTree.java\n@@ -294,7 +294,7 @@ public void visit(final BSPTreeVisitor<S> visitor) {\n      */\n     private SubHyperplane<S> fitToCell(final SubHyperplane<S> sub) {\n         SubHyperplane<S> s = sub;\n-        for (BSPTree<S> tree = this; tree.parent != null; tree = tree.parent) {\n+        for (BSPTree<S> tree = this; tree.parent != null && s != null; tree = tree.parent) {\n             if (tree == tree.parent.plus) {\n                 s = s.split(tree.parent.cut.getHyperplane()).getPlus();\n             } else {\n",
-    "project": "commons-math"
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

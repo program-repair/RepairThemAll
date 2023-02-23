@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 2041,
     "patch": "diff --git a/src/main/java/org/apache/commons/math/optimization/linear/SimplexSolver.java b/src/main/java/org/apache/commons/math/optimization/linear/SimplexSolver.java\nindex 16d3baea1..60a1b3ac5 100644\n--- a/src/main/java/org/apache/commons/math/optimization/linear/SimplexSolver.java\n+++ b/src/main/java/org/apache/commons/math/optimization/linear/SimplexSolver.java\n@@ -77,9 +77,10 @@ private Integer getPivotRow(final int col, final SimplexTableau tableau) {\n         double minRatio = Double.MAX_VALUE;\n         Integer minRatioPos = null;\n         for (int i = tableau.getNumObjectiveFunctions(); i < tableau.getHeight(); i++) {\n-            double rhs = tableau.getEntry(i, tableau.getWidth() - 1);\n-            if (MathUtils.compareTo(tableau.getEntry(i, col), 0, epsilon) >= 0) {\n-                double ratio = rhs / tableau.getEntry(i, col);\n+            final double rhs = tableau.getEntry(i, tableau.getWidth() - 1);\n+            final double entry = tableau.getEntry(i, col);\n+            if (MathUtils.compareTo(entry, 0, epsilon) > 0) {\n+                final double ratio = rhs / entry;\n                 if (ratio < minRatio) {\n                     minRatio = ratio;\n                     minRatioPos = i; \n",
-    "project": "commons-math"
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
 }

@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 2125,
     "patch": "diff --git a/src/main/java/org/apache/commons/math/stat/Frequency.java b/src/main/java/org/apache/commons/math/stat/Frequency.java\nindex c45d72883..68c8bf2de 100644\n--- a/src/main/java/org/apache/commons/math/stat/Frequency.java\n+++ b/src/main/java/org/apache/commons/math/stat/Frequency.java\n@@ -300,7 +300,7 @@ public long getCount(char v) {\n      */\n     @Deprecated\n     public double getPct(Object v) {\n-        return getCumPct((Comparable<?>) v);\n+        return getPct((Comparable<?>) v);\n     }\n \n     /**\n",
-    "project": "commons-math"
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
 }

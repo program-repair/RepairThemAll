@@ -16,5 +16,9 @@
     "nb_skipped": 9,
     "nb_test": 1851,
     "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/VersionGarbageCollector.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/VersionGarbageCollector.java\nindex 885f7218c5..74b4a84954 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/VersionGarbageCollector.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/VersionGarbageCollector.java\n@@ -20,7 +20,7 @@\n package org.apache.jackrabbit.oak.plugins.document;\n \n import java.util.ArrayList;\n-import java.util.EnumSet;\n+import java.util.Collections;\n import java.util.List;\n import java.util.Set;\n import java.util.concurrent.TimeUnit;\n@@ -43,11 +43,10 @@\n \n     /**\n      * Split document types which can be safely Garbage Collected\n+     * OAK-1793: SplitDocType.DEFAULT_NO_CHILD and SplitDocType.PROP_COMMIT_ONLY\n+     * have been removed, but should be added again when OAK-1794 is fixed.\n      */\n-    private static final Set<NodeDocument.SplitDocType> GC_TYPES = EnumSet.of(\n-            NodeDocument.SplitDocType.DEFAULT_NO_CHILD,\n-            NodeDocument.SplitDocType.PROP_COMMIT_ONLY);\n-\n+    private static final Set<NodeDocument.SplitDocType> GC_TYPES = Collections.emptySet();\n \n     VersionGarbageCollector(DocumentNodeStore nodeStore) {\n         this.nodeStore = nodeStore;\n",
-    "project": "jackrabbit-oak"
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

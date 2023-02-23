@@ -16,5 +16,9 @@
     "nb_skipped": 1,
     "nb_test": 141,
     "patch": "diff --git a/oak-segment-tar/src/main/java/org/apache/jackrabbit/oak/segment/SegmentNodeStore.java b/oak-segment-tar/src/main/java/org/apache/jackrabbit/oak/segment/SegmentNodeStore.java\nindex 61d16aa9f7..af2ade62f6 100644\n--- a/oak-segment-tar/src/main/java/org/apache/jackrabbit/oak/segment/SegmentNodeStore.java\n+++ b/oak-segment-tar/src/main/java/org/apache/jackrabbit/oak/segment/SegmentNodeStore.java\n@@ -404,7 +404,11 @@ public Boolean call() {\n             }\n \n             NodeBuilder cp = checkpoints.child(name);\n+            if (Long.MAX_VALUE - now > lifetime) {\n                 cp.setProperty(\"timestamp\", now + lifetime);\n+            } else {\n+                cp.setProperty(\"timestamp\", Long.MAX_VALUE);\n+            }\n             cp.setProperty(\"created\", now);\n \n             NodeBuilder props = cp.setChildNode(\"properties\");\n",
-    "project": "jackrabbit-oak"
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

@@ -16,5 +16,9 @@
     "nb_skipped": 3,
     "nb_test": 5813,
     "patch": "diff --git a/src/main/java/org/apache/commons/math4/special/Gamma.java b/src/main/java/org/apache/commons/math4/special/Gamma.java\nindex eb3fb5b2e..aa0e90c23 100644\n--- a/src/main/java/org/apache/commons/math4/special/Gamma.java\n+++ b/src/main/java/org/apache/commons/math4/special/Gamma.java\n@@ -442,6 +442,10 @@ protected double getB(int n, double x) {\n      * @since 2.0\n      */\n     public static double digamma(double x) {\n+        if (Double.isNaN(x) || Double.isInfinite(x)) {\n+            return x;\n+        }\n+\n         if (x > 0 && x <= S_LIMIT) {\n             // use method 5 from Bernardo AS103\n             // accurate to O(x)\n@@ -472,6 +476,10 @@ public static double digamma(double x) {\n      * @since 2.0\n      */\n     public static double trigamma(double x) {\n+        if (Double.isNaN(x) || Double.isInfinite(x)) {\n+            return x;\n+        }\n+\n         if (x > 0 && x <= S_LIMIT) {\n             return 1 / (x * x);\n         }\n",
-    "project": "commons-math"
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
 }

@@ -18,5 +18,9 @@
     "nb_skipped": 3,
     "nb_test": 4839,
     "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/converter/NIOConverter.java b/camel-core/src/main/java/org/apache/camel/converter/NIOConverter.java\nindex 41273b6b56..e1cf6d6796 100644\n--- a/camel-core/src/main/java/org/apache/camel/converter/NIOConverter.java\n+++ b/camel-core/src/main/java/org/apache/camel/converter/NIOConverter.java\n@@ -54,7 +54,7 @@ private NIOConverter() {\n \n     @Converter\n     public static String toString(ByteBuffer buffer, Exchange exchange) throws IOException {\n-        return IOConverter.toString(buffer.array(), exchange);\n+        return IOConverter.toString(toByteArray(buffer), exchange);\n     }\n \n     @Converter\n",
-    "project": "camel"
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

@@ -16,5 +16,9 @@
     "nb_skipped": 1,
     "nb_test": 1742,
     "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/FormComponent.java b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/FormComponent.java\nindex 88c53506d6..c0f4f1083c 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/FormComponent.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/FormComponent.java\n@@ -1613,6 +1613,9 @@ public final void updateAutoLabels(AjaxRequestTarget target)\n \tpublic static <S> void updateCollectionModel(FormComponent<Collection<S>> formComponent)\n \t{\n \t\tCollection<S> convertedInput = formComponent.getConvertedInput();\n+\t\tif (convertedInput == null) {\n+\t\t\tconvertedInput = Collections.emptyList();\n+\t\t}\n \n \t\tCollection<S> collection = formComponent.getModelObject();\n \t\tif (collection == null)\n@@ -1629,10 +1632,7 @@ public final void updateAutoLabels(AjaxRequestTarget target)\n \t\t\ttry\n \t\t\t{\n \t\t\t\tcollection.clear();\n-\t\t\t\tif (convertedInput != null)\n-\t\t\t\t{\n \t\t\t\tcollection.addAll(convertedInput);\n-\t\t\t\t}\n \t\t\t\tmodified = true;\n \t\t\t}\n \t\t\tcatch (UnsupportedOperationException unmodifiable)\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

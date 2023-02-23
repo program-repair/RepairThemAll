@@ -16,5 +16,9 @@
     "nb_skipped": 2,
     "nb_test": 290,
     "patch": "diff --git a/server/base/src/main/java/org/apache/accumulo/server/security/delegation/ZooAuthenticationKeyWatcher.java b/server/base/src/main/java/org/apache/accumulo/server/security/delegation/ZooAuthenticationKeyWatcher.java\nindex 2913343f9..fe4407e71 100644\n--- a/server/base/src/main/java/org/apache/accumulo/server/security/delegation/ZooAuthenticationKeyWatcher.java\n+++ b/server/base/src/main/java/org/apache/accumulo/server/security/delegation/ZooAuthenticationKeyWatcher.java\n@@ -22,6 +22,7 @@\n \n import org.apache.accumulo.fate.zookeeper.ZooReader;\n import org.apache.zookeeper.KeeperException;\n+import org.apache.zookeeper.KeeperException.NoNodeException;\n import org.apache.zookeeper.WatchedEvent;\n import org.apache.zookeeper.Watcher;\n import org.apache.zookeeper.Watcher.Event.EventType;\n@@ -131,10 +132,15 @@ private int updateAuthKeys(String path) throws KeeperException, InterruptedExcep\n     int keysAdded = 0;\n     for (String child : zk.getChildren(path, this)) {\n       String childPath = path + \"/\" + child;\n+      try {\n         // Get the node data and reset the watcher\n         AuthenticationKey key = deserializeKey(zk.getData(childPath, this, null));\n         secretManager.addKey(key);\n         keysAdded++;\n+      } catch (NoNodeException e) {\n+        // The master expired(deleted) the key between when we saw it in getChildren() and when we went to add it to our secret manager.\n+        log.trace(\"{} was deleted when we tried to access it\", childPath);\n+      }\n     }\n     return keysAdded;\n   }\n",
-    "project": "accumulo"
+    "project": "accumulo",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

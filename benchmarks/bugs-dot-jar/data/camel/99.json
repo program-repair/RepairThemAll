@@ -17,5 +17,9 @@
     "nb_skipped": 3,
     "nb_test": 4887,
     "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/language/simple/ast/SimpleFunctionExpression.java b/camel-core/src/main/java/org/apache/camel/language/simple/ast/SimpleFunctionExpression.java\nindex d02f050919..32a22b2019 100644\n--- a/camel-core/src/main/java/org/apache/camel/language/simple/ast/SimpleFunctionExpression.java\n+++ b/camel-core/src/main/java/org/apache/camel/language/simple/ast/SimpleFunctionExpression.java\n@@ -195,9 +195,11 @@ private Expression createSimpleExpressionBodyOrHeader(String function, boolean s\n         String remainder = ifStartsWithReturnRemainder(\"bodyAs\", function);\n         if (remainder != null) {\n             String type = ObjectHelper.between(remainder, \"(\", \")\");\n-            if (type == null) {\n+            remainder = ObjectHelper.after(remainder, \")\");\n+            if (type == null || ObjectHelper.isNotEmpty(remainder)) {\n                 throw new SimpleParserException(\"Valid syntax: ${bodyAs(type)} was: \" + function, token.getIndex());\n             }\n+            \n             type = StringHelper.removeQuotes(type);\n             return ExpressionBuilder.bodyExpression(type);\n         }\n@@ -205,7 +207,8 @@ private Expression createSimpleExpressionBodyOrHeader(String function, boolean s\n         remainder = ifStartsWithReturnRemainder(\"mandatoryBodyAs\", function);\n         if (remainder != null) {\n             String type = ObjectHelper.between(remainder, \"(\", \")\");\n-            if (type == null) {\n+            remainder = ObjectHelper.after(remainder, \")\");\n+            if (type == null || ObjectHelper.isNotEmpty(remainder)) {\n                 throw new SimpleParserException(\"Valid syntax: ${mandatoryBodyAs(type)} was: \" + function, token.getIndex());\n             }\n             type = StringHelper.removeQuotes(type);\n",
-    "project": "camel"
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

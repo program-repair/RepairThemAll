@@ -17,5 +17,9 @@
     "nb_skipped": 0,
     "nb_test": 791,
     "patch": "diff --git a/wicket/src/main/java/org/apache/wicket/protocol/http/MockWebApplication.java b/wicket/src/main/java/org/apache/wicket/protocol/http/MockWebApplication.java\nindex 59e69e021a..bde3d6715b 100644\n--- a/wicket/src/main/java/org/apache/wicket/protocol/http/MockWebApplication.java\n+++ b/wicket/src/main/java/org/apache/wicket/protocol/http/MockWebApplication.java\n@@ -544,7 +544,22 @@ public final void postProcessRequestCycle(WebRequestCycle cycle)\n \t\t\t\tcycle = createRequestCycle();\n \t\t\t\tcycle.request();\n \t\t\t}\n+\t\t\telse\n+\t\t\t{\n+\t\t\t\tString url = httpResponse.getHeader(\"Ajax-Location\");\n+\t\t\t\tif (url != null)\n+\t\t\t\t{\n+\t\t\t\t\tMockHttpServletRequest newHttpRequest = new MockHttpServletRequest(application,\n+\t\t\t\t\t\tservletSession, application.getServletContext());\n+\t\t\t\t\tnewHttpRequest.setRequestToRedirectString(url);\n+\t\t\t\t\twicketRequest = application.newWebRequest(newHttpRequest);\n+\n+\t\t\t\t\tcycle = createRequestCycle();\n+\t\t\t\t\tcycle.request();\n \t\t\t\t}\n+\t\t\t}\n+\t\t}\n+\n \t\tlastRenderedPage = generateLastRenderedPage(cycle);\n \n \t\tSession.set(getWicketSession());\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

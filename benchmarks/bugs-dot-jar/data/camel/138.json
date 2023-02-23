@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 3226,
     "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/model/FromDefinition.java b/camel-core/src/main/java/org/apache/camel/model/FromDefinition.java\nindex 63e4710256..7fb66669eb 100644\n--- a/camel-core/src/main/java/org/apache/camel/model/FromDefinition.java\n+++ b/camel-core/src/main/java/org/apache/camel/model/FromDefinition.java\n@@ -77,8 +77,15 @@ public Endpoint resolveEndpoint(RouteContext context) {\n \n     // Properties\n     // -----------------------------------------------------------------------\n+\n     public String getUri() {\n+        if (uri != null) {\n             return uri;\n+        } else if (endpoint != null) {\n+            return endpoint.getEndpointUri();\n+        } else {\n+            return null;\n+        }\n     }\n \n     /**\n",
-    "project": "camel"
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

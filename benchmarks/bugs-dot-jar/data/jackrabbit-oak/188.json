@@ -16,5 +16,9 @@
     "nb_skipped": 9,
     "nb_test": 2184,
     "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/UnionQueryImpl.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/UnionQueryImpl.java\nindex 90cb3ff8a0..2f9bf8d4e7 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/UnionQueryImpl.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/UnionQueryImpl.java\n@@ -91,13 +91,19 @@ public void setOrderings(OrderingImpl[] orderings) {\n     @Override\n     public void setLimit(long limit) {\n         this.limit = limit;\n-        left.setLimit(limit);\n-        right.setLimit(limit);\n+        applyLimitOffset();\n     }\n \n     @Override\n     public void setOffset(long offset) {\n         this.offset = offset;\n+        applyLimitOffset();\n+    }\n+\n+    private void applyLimitOffset() {\n+        long subqueryLimit = QueryImpl.saturatedAdd(limit, offset);\n+        left.setLimit(subqueryLimit);\n+        right.setLimit(subqueryLimit);\n     }\n \n     @Override\n",
-    "project": "jackrabbit-oak"
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

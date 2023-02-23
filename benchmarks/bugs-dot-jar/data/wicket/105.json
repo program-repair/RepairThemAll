@@ -16,5 +16,9 @@
     "nb_skipped": 1,
     "nb_test": 1196,
     "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/mock/MockSessionStore.java b/wicket-core/src/main/java/org/apache/wicket/mock/MockSessionStore.java\nindex 0eb0abe9be..61c1581445 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/mock/MockSessionStore.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/mock/MockSessionStore.java\n@@ -86,12 +86,13 @@ private void cleanup()\n \n \tpublic void invalidate(Request request)\n \t{\n+\t\tString sessId = sessionId;\n+\t\tcleanup();\n \t\tfor (UnboundListener l : unboundListeners)\n \t\t{\n-\t\t\tl.sessionUnbound(sessionId);\n+\t\t\tl.sessionUnbound(sessId);\n \t\t}\n \n-\t\tcleanup();\n \t}\n \n \tpublic Session lookup(Request request)\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

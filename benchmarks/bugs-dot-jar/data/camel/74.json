@@ -16,5 +16,9 @@
     "nb_skipped": 3,
     "nb_test": 5022,
     "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/builder/AdviceWithTasks.java b/camel-core/src/main/java/org/apache/camel/builder/AdviceWithTasks.java\nindex 69f5a0a81a..694841ceda 100644\n--- a/camel-core/src/main/java/org/apache/camel/builder/AdviceWithTasks.java\n+++ b/camel-core/src/main/java/org/apache/camel/builder/AdviceWithTasks.java\n@@ -312,7 +312,7 @@ public void task() throws Exception {\n     /**\n      * Gets the outputs from the given parent.\n      * <p/>\n-     * This implementation deals with that outputs can be abstract and retrieves the correct non-nested output.\n+     * This implementation deals with that outputs can be abstract and retrieves the <i>correct</i> parent output.\n      *\n      * @param parent the parent\n      * @return <tt>null</tt> if no parent\n@@ -323,13 +323,10 @@ public void task() throws Exception {\n             return null;\n         }\n         List<ProcessorDefinition> outputs = parent.getOutputs();\n-        if (outputs.size() >= 1) {\n-            // if the 1st output is abstract, then its onException,transacted,intercept etc so we should\n-            // get the 'actual' outputs from that\n-            if (outputs.get(0).isAbstract()) {\n+        if (outputs.size() == 1 && outputs.get(0).isAbstract()) {\n+            // if the output is abstract then get its output, as\n             outputs = outputs.get(0).getOutputs();\n         }\n-        }\n         return outputs;\n     }\n \n",
-    "project": "camel"
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

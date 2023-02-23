@@ -16,5 +16,9 @@
     "nb_skipped": 2,
     "nb_test": 711,
     "patch": "diff --git a/core/src/main/java/org/apache/accumulo/core/util/UnsynchronizedBuffer.java b/core/src/main/java/org/apache/accumulo/core/util/UnsynchronizedBuffer.java\nindex 6947d64f6..f35361384 100644\n--- a/core/src/main/java/org/apache/accumulo/core/util/UnsynchronizedBuffer.java\n+++ b/core/src/main/java/org/apache/accumulo/core/util/UnsynchronizedBuffer.java\n@@ -118,8 +118,8 @@ public Reader(byte b[]) {\n     }\n \n     public Reader(ByteBuffer buffer) {\n-      if (buffer.hasArray()) {\n-        offset = buffer.arrayOffset();\n+      if (buffer.hasArray() && buffer.array().length == buffer.arrayOffset() + buffer.limit()) {\n+        offset = buffer.arrayOffset() + buffer.position();\n         data = buffer.array();\n       } else {\n         data = new byte[buffer.remaining()];\n",
-    "project": "accumulo"
+    "project": "accumulo",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

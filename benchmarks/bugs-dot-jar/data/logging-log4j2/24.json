@@ -16,5 +16,9 @@
     "nb_skipped": 3,
     "nb_test": 915,
     "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/config/properties/PropertiesConfigurationFactory.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/config/properties/PropertiesConfigurationFactory.java\nindex 58094f0ce..6be86833f 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/config/properties/PropertiesConfigurationFactory.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/config/properties/PropertiesConfigurationFactory.java\n@@ -151,7 +151,7 @@ public PropertiesConfiguration getConfiguration(ConfigurationSource source) {\n             }\n         }\n         String loggerProp = properties.getProperty(\"loggers\");\n-        if (appenderProp != null) {\n+        if (loggerProp != null) {\n             String[] loggerNames = loggerProp.split(\",\");\n             for (String loggerName : loggerNames) {\n                 String name = loggerName.trim();\n@@ -400,7 +400,6 @@ private LayoutComponentBuilder createLayout(ConfigurationBuilder<PropertiesConfi\n         return componentBuilder;\n     }\n \n-    @SuppressWarnings({\"unchecked\", \"rawtypes\"})\n     private void processRemainingProperties(ComponentBuilder<?> builder, String name, Properties properties) {\n         while (properties.size() > 0) {\n             String propertyName = properties.stringPropertyNames().iterator().next();\n",
-    "project": "logging-log4j2"
+    "project": "logging-log4j2",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

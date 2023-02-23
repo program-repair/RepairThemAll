@@ -16,5 +16,9 @@
     "nb_skipped": 4,
     "nb_test": 5035,
     "patch": "diff --git a/src/main/java/org/apache/commons/math3/util/MathArrays.java b/src/main/java/org/apache/commons/math3/util/MathArrays.java\nindex 1aa56cc7d..8f83d96a5 100644\n--- a/src/main/java/org/apache/commons/math3/util/MathArrays.java\n+++ b/src/main/java/org/apache/commons/math3/util/MathArrays.java\n@@ -818,6 +818,11 @@ public static double linearCombination(final double[] a, final double[] b)\n             throw new DimensionMismatchException(len, b.length);\n         }\n \n+        if (len == 1) {\n+            // Revert to scalar multiplication.\n+            return a[0] * b[0];\n+        }\n+\n         final double[] prodHigh = new double[len];\n         double prodLowSum = 0;\n \n",
-    "project": "commons-math"
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

@@ -16,5 +16,9 @@
     "nb_skipped": 9,
     "nb_test": 1847,
     "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java\nindex d57f8759b9..35a5f773ec 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java\n@@ -589,6 +589,10 @@ public CacheStats getDocChildrenCacheStats() {\n         return docChildrenCacheStats;\n     }\n \n+    void invalidateDocChildrenCache() {\n+        docChildrenCache.invalidateAll();\n+    }\n+\n     public int getPendingWriteCount() {\n         return unsavedLastRevisions.getPaths().size();\n     }\ndiff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/VersionGarbageCollector.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/VersionGarbageCollector.java\nindex e671b66d0d..885f7218c5 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/VersionGarbageCollector.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/VersionGarbageCollector.java\n@@ -121,6 +121,7 @@ private void collectDeletedDocuments(VersionGCStats stats, Revision headRevision\n             log.debug(sb.toString());\n         }\n         nodeStore.getDocumentStore().remove(Collection.NODES, docIdsToDelete);\n+        nodeStore.invalidateDocChildrenCache();\n         stats.deletedDocGCCount += docIdsToDelete.size();\n     }\n \n",
-    "project": "jackrabbit-oak"
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
 }

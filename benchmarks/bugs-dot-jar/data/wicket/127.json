@@ -16,5 +16,9 @@
     "nb_skipped": 3,
     "nb_test": 1458,
     "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/protocol/http/mock/Cookies.java b/wicket-core/src/main/java/org/apache/wicket/protocol/http/mock/Cookies.java\nindex 68f3083918..d3a8a6e17e 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/protocol/http/mock/Cookies.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/protocol/http/mock/Cookies.java\n@@ -19,6 +19,7 @@\n import javax.servlet.http.Cookie;\n \n import org.apache.wicket.util.lang.Args;\n+import org.apache.wicket.util.lang.Objects;\n \n /**\n  * A helper class for dealing with cookies\n@@ -59,7 +60,7 @@ public static boolean isEqual(Cookie c1, Cookie c2)\n \t\tArgs.notNull(c2, \"c2\");\n \n \t\treturn c1.getName().equals(c2.getName()) &&\n-\t\t\t\t((c1.getPath() == null && c2.getPath() == null) || (c1.getPath().equals(c2.getPath()))) &&\n-\t\t\t\t((c1.getDomain() == null && c2.getDomain() == null) || (c1.getDomain().equals(c2.getDomain())));\n+\t\t\t\tObjects.isEqual(c1.getPath(), c2.getPath()) &&\n+\t\t\t\tObjects.isEqual(c1.getDomain(), c2.getDomain());\n \t}\n }\n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

@@ -16,5 +16,9 @@
     "nb_skipped": 2,
     "nb_test": 1187,
     "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/request/mapper/AbstractBookmarkableMapper.java b/wicket-core/src/main/java/org/apache/wicket/request/mapper/AbstractBookmarkableMapper.java\nindex 2f6bfc682b..caa61ca139 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/mapper/AbstractBookmarkableMapper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/mapper/AbstractBookmarkableMapper.java\n@@ -88,13 +88,16 @@ public UrlInfo(PageComponentInfo pageComponentInfo,\n \t\t */\n \t\tprivate PageParameters cleanPageParameters(final PageParameters originalParameters)\n \t\t{\n-\t\t\tPageParameters cleanParameters = new PageParameters(originalParameters);\n+\t\t\tPageParameters cleanParameters = null;\n+\t\t\tif (originalParameters != null)\n+\t\t\t{\n+\t\t\t\tcleanParameters = new PageParameters(originalParameters);\n \n \t\t\t\t// WICKET-4038: Ajax related parameters are set by wicket-ajax.js when needed.\n \t\t\t\t// They shouldn't be propagated to the next requests\n \t\t\t\tcleanParameters.remove(WebRequest.PARAM_AJAX);\n \t\t\t\tcleanParameters.remove(WebRequest.PARAM_AJAX_BASE_URL);\n-\n+\t\t\t}\n \t\t\treturn cleanParameters;\n \t\t}\n \n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

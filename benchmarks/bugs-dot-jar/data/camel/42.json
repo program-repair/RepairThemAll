@@ -16,5 +16,9 @@
     "nb_skipped": 3,
     "nb_test": 5053,
     "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/util/MessageHelper.java b/camel-core/src/main/java/org/apache/camel/util/MessageHelper.java\nindex 6576c98663..502da6adc7 100644\n--- a/camel-core/src/main/java/org/apache/camel/util/MessageHelper.java\n+++ b/camel-core/src/main/java/org/apache/camel/util/MessageHelper.java\n@@ -17,6 +17,7 @@\n package org.apache.camel.util;\n \n import java.io.File;\n+import java.io.IOException;\n import java.io.InputStream;\n import java.io.OutputStream;\n import java.io.Reader;\n@@ -285,12 +286,15 @@ public static String extractValueForLogging(Object obj, Message message, String\n             }\n         }\n \n-        // is the body a stream cache\n-        StreamCache cache;\n+        // is the body a stream cache or input stream\n+        StreamCache cache = null;\n+        InputStream is = null;\n         if (obj instanceof StreamCache) {\n             cache = (StreamCache)obj;\n-        } else {\n+            is = null;\n+        } else if (obj instanceof InputStream) {\n             cache = null;\n+            is = (InputStream) obj;\n         }\n \n         // grab the message body as a string\n@@ -309,6 +313,12 @@ public static String extractValueForLogging(Object obj, Message message, String\n         // reset stream cache after use\n         if (cache != null) {\n             cache.reset();\n+        } else if (is != null && is.markSupported()) {\n+            try {\n+                is.reset();\n+            } catch (IOException e) {\n+                // ignore\n+            }\n         }\n \n         if (body == null) {\n",
-    "project": "camel"
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }

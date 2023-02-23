@@ -16,5 +16,9 @@
     "nb_skipped": 0,
     "nb_test": 1119,
     "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/request/cycle/RequestCycle.java b/wicket-core/src/main/java/org/apache/wicket/request/cycle/RequestCycle.java\nindex d4a45d2ea1..f1208b6ac6 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/cycle/RequestCycle.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/cycle/RequestCycle.java\n@@ -668,6 +668,9 @@ public void scheduleRequestHandlerAfterCurrent(IRequestHandler handler)\n \t{\n \t\t// just delegating the call to {@link IRequestHandlerExecutor} and invoking listeners\n \t\trequestHandlerExecutor.schedule(handler);\n+\n+\t\t// only forward calls to the listeners when handler is null\n+\t\tif (handler != null)\n \t\t\tlisteners.onRequestHandlerScheduled(handler);\n \t}\n \n",
-    "project": "wicket"
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
 }
