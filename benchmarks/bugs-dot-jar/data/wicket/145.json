@@ -1,0 +1,25 @@
+{
+    "bug_id": 145,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "57d8f051",
+    "failing_tests": [
+        "org.apache.wicket.ajax.markup.html.componentMap.SimpleTestPanelTest",
+        "org.apache.wicket.ajax.AjaxTimerBehaviorTest"
+    ],
+    "files": 1,
+    "jira_id": "5570",
+    "linesAdd": 3,
+    "linesRem": 22,
+    "nb_error": 0,
+    "nb_failure": 7,
+    "nb_skipped": 2,
+    "nb_test": 1636,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/ajax/AbstractAjaxTimerBehavior.java b/wicket-core/src/main/java/org/apache/wicket/ajax/AbstractAjaxTimerBehavior.java\nindex 39c3cc6aa3..5ecf56eb04 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/ajax/AbstractAjaxTimerBehavior.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/ajax/AbstractAjaxTimerBehavior.java\n@@ -18,9 +18,7 @@\n \n import org.apache.wicket.Component;\n import org.apache.wicket.Page;\n-import org.apache.wicket.core.util.string.JavaScriptUtils;\n import org.apache.wicket.markup.head.IHeaderResponse;\n-import org.apache.wicket.markup.head.JavaScriptHeaderItem;\n import org.apache.wicket.markup.head.OnLoadHeaderItem;\n import org.apache.wicket.util.time.Duration;\n \n@@ -36,7 +34,6 @@\n {\n \tprivate static final long serialVersionUID = 1L;\n \n-\tprivate static final String WICKET_TIMERS_ID = AbstractAjaxTimerBehavior.class.getSimpleName() + \"-timers\";\n \t/** The update interval */\n \tprivate Duration updateInterval;\n \n@@ -88,10 +85,6 @@ public void renderHead(Component component, IHeaderResponse response)\n \t{\n \t\tsuper.renderHead(component, response);\n \n-\t\tresponse.render(JavaScriptHeaderItem.forScript(\n-\t\t\t\"if (typeof(Wicket.TimerHandles) === 'undefined') {Wicket.TimerHandles = {}}\",\n-\t\t\tWICKET_TIMERS_ID));\n-\n \t\tif (component.getRequestCycle().find(AjaxRequestTarget.class) == null)\n \t\t{\n \t\t\t// complete page is rendered, so timeout has to be rendered again\n@@ -112,19 +105,9 @@ public void renderHead(Component component, IHeaderResponse response)\n \tprotected final String getJsTimeoutCall(final Duration updateInterval)\n \t{\n \t\tCharSequence js = getCallbackScript();\n-\t\tjs = JavaScriptUtils.escapeQuotes(js);\n-\n-\t\tString timeoutHandle = getTimeoutHandle();\n-\t\t// this might look strange, but it is necessary for IE not to leak :(\n-\t\treturn timeoutHandle+\" = setTimeout('\" + js + \"', \" +\n-\t\t\tupdateInterval.getMilliseconds() + ')';\n-\t}\n \n-\t/**\n-\t * @return the name of the handle that is used to stop any scheduled timer\n-\t */\n-\tprivate String getTimeoutHandle() {\n-\t\treturn \"Wicket.TimerHandles['\"+getComponent().getMarkupId() + \"']\";\n+\t\treturn String.format(\"Wicket.Timer.set('%s', function(){%s}, %d);\",\n+\t\t\t\tgetComponent().getMarkupId(), js, updateInterval.getMilliseconds());\n \t}\n \n \t/**\n@@ -218,9 +201,7 @@ private void clearTimeout(IHeaderResponse headerResponse)\n \t\t{\n \t\t\thasTimeout = false;\n \n-\t\t\tString timeoutHandle = getTimeoutHandle();\n-\t\t\theaderResponse.render(OnLoadHeaderItem.forScript(\"clearTimeout(\" + timeoutHandle\n-\t\t\t\t+ \"); delete \" + timeoutHandle + \";\"));\n+\t\t\theaderResponse.render(OnLoadHeaderItem.forScript(\"Wicket.Timer.clear('\" + getComponent().getMarkupId() + \"');\"));\n \t\t}\n \t}\n \n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

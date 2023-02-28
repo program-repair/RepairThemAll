@@ -1,0 +1,25 @@
+{
+    "bug_id": 121,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "2fcb3417",
+    "failing_tests": [
+        "org.apache.wicket.request.UrlTest",
+        "org.apache.wicket.request.mapper.parameter.UrlPathPageParametersEncoderTest"
+    ],
+    "files": 1,
+    "jira_id": "4664",
+    "linesAdd": 6,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 26,
+    "nb_skipped": 0,
+    "nb_test": 96,
+    "patch": "diff --git a/wicket-request/src/main/java/org/apache/wicket/request/Url.java b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\nindex c9ddc699f5..2e24b5cad7 100755\n--- a/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n+++ b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n@@ -714,7 +714,12 @@ else if (Strings.isEmpty(protocol) && Strings.isEmpty(host) == false)\n \n \n \t\tresult.append(path);\n-\t\tresult.append(getQueryString(charset));\n+        \n+        final String queryString = getQueryString(charset);\n+        if (queryString != null)\n+        {\n+            result.append('?').append(queryString);\n+        }\n \t\treturn result.toString();\n \t}\n \n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

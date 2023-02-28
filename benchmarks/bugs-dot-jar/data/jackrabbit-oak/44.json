@@ -1,0 +1,24 @@
+{
+    "bug_id": 44,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ce0b0955",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.index.property.PropertyIndexQueryTest"
+    ],
+    "files": 2,
+    "jira_id": "1369",
+    "linesAdd": 20,
+    "linesRem": 12,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 6,
+    "nb_test": 1563,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/Expression.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/Expression.java\nindex f6ad95a88d..5c3716232f 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/Expression.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/Expression.java\n@@ -180,10 +180,6 @@ public String toString() {\n             if (right == null) {\n                 rightExpr = \"\";\n             } else {\n-                if (left != null && left instanceof Property && ((Property) left).implicitAsterisk) {\n-                    throw new IllegalArgumentException(\n-                            \"Missing @ in front of the property name: \" + left);\n-                }\n                 if (leftExprIsName && !\"like\".equals(operator)) {\n                     // need to de-escape _x0020_ and so on\n                     if (!(right instanceof Literal)) {\n@@ -275,8 +271,16 @@ public String getCommonLeftPart() {\n     \n         @Override\n         public String toString() {\n-            StringBuilder buff = new StringBuilder(\"contains\").\n-                    append('(').append(left).append(\", \").append(right).append(')');\n+            StringBuilder buff = new StringBuilder(\"contains(\");\n+            Expression l = left;\n+            if (l instanceof Property) {\n+                Property p = (Property) l;\n+                if (p.thereWasNoAt) {\n+                    l = new Property(p.selector, p.name + \"/*\", true);\n+                }\n+            }\n+            buff.append(l);\n+            buff.append(\", \").append(right).append(')');\n             return buff.toString();\n         }\n     \n@@ -386,12 +390,18 @@ public String toString() {\n     \n         final Selector selector;\n         final String name;\n-        final boolean implicitAsterisk;\n         \n-        Property(Selector selector, String name, boolean implicitAsterisk) {\n+        /**\n+         * If there was no \"@\" character in front of the property name. If that\n+         * was the case, then it is still considered a property, except for\n+         * \"contains(x, 'y')\", where \"x\" is considered to be a node.\n+         */\n+        final boolean thereWasNoAt;\n+    \n+        Property(Selector selector, String name, boolean thereWasNoAt) {\n             this.selector = selector;\n             this.name = name;\n-            this.implicitAsterisk = implicitAsterisk;\n+            this.thereWasNoAt = thereWasNoAt;\n         }\n     \n         @Override\ndiff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/XPathToSQL2Converter.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/XPathToSQL2Converter.java\nindex 5ac0529a74..76955a0c8a 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/XPathToSQL2Converter.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/XPathToSQL2Converter.java\n@@ -552,9 +552,7 @@ private Expression parsePropertyOrFunction() throws ParseException {\n             // path without all attributes, as in:\n             // jcr:contains(jcr:content, 'x')\n             if (buff.toString().equals(\".\")) {\n-                buff = new StringBuilder(\"*\");\n-            } else {\n-                buff.append(\"/*\");\n+                return new Expression.Property(currentSelector, \"*\", false);\n             }\n             return new Expression.Property(currentSelector, buff.toString(), true);\n         }\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

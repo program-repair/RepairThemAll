@@ -1,0 +1,25 @@
+{
+    "bug_id": 45,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "1d12bf0e",
+    "failing_tests": [
+        "org.apache.logging.log4j.core.appender.XmlCompleteFileAppenderTest",
+        "org.apache.logging.log4j.core.appender.XmlFileAppenderTest"
+    ],
+    "files": 1,
+    "jira_id": "1372",
+    "linesAdd": 38,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 3,
+    "nb_skipped": 3,
+    "nb_test": 1168,
+    "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/layout/JacksonFactory.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/layout/JacksonFactory.java\nindex 763f42ab7..3b34957c5 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/layout/JacksonFactory.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/layout/JacksonFactory.java\n@@ -19,12 +19,15 @@\n import java.util.HashSet;\n import java.util.Set;\n \n+import javax.xml.stream.XMLStreamException;\n+\n import org.apache.logging.log4j.core.impl.Log4jLogEvent;\n import org.apache.logging.log4j.core.jackson.JsonConstants;\n import org.apache.logging.log4j.core.jackson.Log4jJsonObjectMapper;\n import org.apache.logging.log4j.core.jackson.Log4jXmlObjectMapper;\n import org.apache.logging.log4j.core.jackson.Log4jYamlObjectMapper;\n import org.apache.logging.log4j.core.jackson.XmlConstants;\n+import org.codehaus.stax2.XMLStreamWriter2;\n \n import com.fasterxml.jackson.core.PrettyPrinter;\n import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;\n@@ -72,6 +75,8 @@ protected PrettyPrinter newPrettyPrinter() {\n \n     static class XML extends JacksonFactory {\n \n+        static final int DEFAULT_INDENT = 1;\n+        \n         @Override\n         protected String getPropertNameForContextMap() {\n             return XmlConstants.ELT_CONTEXT_MAP;\n@@ -100,7 +105,7 @@ protected ObjectMapper newObjectMapper() {\n \n         @Override\n         protected PrettyPrinter newPrettyPrinter() {\n-            return new DefaultXmlPrettyPrinter();\n+            return new Log4jXmlPrettyPrinter(DEFAULT_INDENT);\n         }\n     }\n \n@@ -137,6 +142,38 @@ protected PrettyPrinter newPrettyPrinter() {\n         }\n     }\n \n+    /**\n+     * When &lt;Event&gt;s are written into a XML file; the \"Event\" object is not the root element, but an element named\n+     * &lt;Events&gt; created using {@link #getHeader()} and {@link #getFooter()} methods.<br/>\n+     * {@link com.fasterxml.jackson.dataformat.xml.util.DefaultXmlPrettyPrinter} is used to print the Event object into\n+     * XML; hence it assumes &lt;Event&gt; tag as the root element, so it prints the &lt;Event&gt; tag without any\n+     * indentation. To add an indentation to the &lt;Event&gt; tag; hence an additional indentation for any\n+     * sub-elements, this class is written. As an additional task, to avoid the blank line printed after the ending\n+     * &lt;/Event&gt; tag, {@link #writePrologLinefeed(XMLStreamWriter2)} method is also overridden.\n+     */\n+    static class Log4jXmlPrettyPrinter extends DefaultXmlPrettyPrinter {\n+\n+        private static final long serialVersionUID = 1L;\n+\n+        Log4jXmlPrettyPrinter(int nesting) {\n+            _nesting = nesting;\n+        }\n+\n+        @Override\n+        public void writePrologLinefeed(XMLStreamWriter2 sw) throws XMLStreamException {\n+            // nothing\n+        }\n+\n+        /**\n+         * Sets the nesting level to 1 rather than 0, so the \"Event\" tag will get indentation of next level below root.\n+         */\n+        @Override\n+        public DefaultXmlPrettyPrinter createInstance() {\n+            return new Log4jXmlPrettyPrinter(XML.DEFAULT_INDENT);\n+        }\n+\n+    }\n+\n     abstract protected String getPropertNameForContextMap();\n \n     abstract protected String getPropertNameForSource();\n",
+    "project": "logging-log4j2",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

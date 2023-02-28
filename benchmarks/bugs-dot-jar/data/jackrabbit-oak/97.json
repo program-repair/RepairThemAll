@@ -1,0 +1,25 @@
+{
+    "bug_id": 97,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "7c320b1e",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.commons.json.JsopTest",
+        "org.apache.jackrabbit.oak.commons.json.JsopStreamTest"
+    ],
+    "files": 1,
+    "jira_id": "2389",
+    "linesAdd": 15,
+    "linesRem": 19,
+    "nb_error": 0,
+    "nb_failure": 3,
+    "nb_skipped": 0,
+    "nb_test": 52,
+    "patch": "diff --git a/oak-commons/src/main/java/org/apache/jackrabbit/oak/commons/json/JsopBuilder.java b/oak-commons/src/main/java/org/apache/jackrabbit/oak/commons/json/JsopBuilder.java\nindex b42beffe75..a9a8b9a777 100644\n--- a/oak-commons/src/main/java/org/apache/jackrabbit/oak/commons/json/JsopBuilder.java\n+++ b/oak-commons/src/main/java/org/apache/jackrabbit/oak/commons/json/JsopBuilder.java\n@@ -254,7 +254,7 @@ public static String encode(String s) {\n         }\n         for (int i = 0; i < length; i++) {\n             char c = s.charAt(i);\n-            if (c == '\\\"' || c == '\\\\' || c < ' ' || c >= 127) {\n+            if (c == '\\\"' || c == '\\\\' || c < ' ') {\n                 StringBuilder buff = new StringBuilder(length + 2 + length / 8);\n                 buff.append('\\\"');\n                 escape(s, length, buff);\n@@ -265,6 +265,16 @@ public static String encode(String s) {\n         return buff.append('\\\"').append(s).append('\\\"').toString();\n     }\n \n+    /**\n+     * Escape a string into the target buffer.\n+     *\n+     * @param s      the string to escape\n+     * @param buff   the target buffer\n+     */\n+    public static void escape(String s, StringBuilder buff) {\n+        escape(s, s.length(), buff);\n+    }\n+\n     /**\n      * Escape a string into the target buffer.\n      *\n@@ -272,10 +282,7 @@ public static String encode(String s) {\n      * @param length the number of characters.\n      * @param buff   the target buffer\n      */\n-    public static void escape(String s, int length, StringBuilder buff) {\n-        // TODO only backslashes, double quotes, and characters < 32 need to be\n-        // escaped - but currently all special characters are escaped, which\n-        // needs more time, memory, and storage space\n+    private static void escape(String s, int length, StringBuilder buff) {\n         for (int i = 0; i < length; i++) {\n             char c = s.charAt(i);\n             switch (c) {\n@@ -309,21 +316,10 @@ public static void escape(String s, int length, StringBuilder buff) {\n                 break;\n             default:\n                 if (c < ' ') {\n-                    // guaranteed to be 1 or 2 hex digits only\n                     buff.append(\"\\\\u00\");\n-                    String hex = Integer.toHexString(c);\n-                    if (hex.length() == 1) {\n-                        buff.append('0');\n-                    }\n-                    buff.append(hex);\n-                } else if (c >= 127) {\n-                    // ascii only mode\n-                    buff.append(\"\\\\u\");\n-                    String hex = Integer.toHexString(c);\n-                    for (int len = hex.length(); len < 4; len++) {\n-                        buff.append('0');\n-                    }\n-                    buff.append(hex);\n+                    // guaranteed to be 1 or 2 hex digits only\n+                    buff.append(Character.forDigit(c >>> 4, 16));\n+                    buff.append(Character.forDigit(c & 15, 16));\n                 } else {\n                     buff.append(c);\n                 }\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 81,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "093b9128",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.spi.security.authentication.external.ExternalLoginModuleTest"
+    ],
+    "files": 1,
+    "jira_id": "1848",
+    "linesAdd": 5,
+    "linesRem": 0,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 5,
+    "patch": "diff --git a/oak-auth-external/src/main/java/org/apache/jackrabbit/oak/spi/security/authentication/external/impl/DefaultSyncHandler.java b/oak-auth-external/src/main/java/org/apache/jackrabbit/oak/spi/security/authentication/external/impl/DefaultSyncHandler.java\nindex 43afa31067..be7be374dc 100644\n--- a/oak-auth-external/src/main/java/org/apache/jackrabbit/oak/spi/security/authentication/external/impl/DefaultSyncHandler.java\n+++ b/oak-auth-external/src/main/java/org/apache/jackrabbit/oak/spi/security/authentication/external/impl/DefaultSyncHandler.java\n@@ -644,7 +644,12 @@ private void syncProperties(ExternalIdentity ext, Authorizable auth, Map<String,\n                 String name = entry.getValue();\n                 Object obj = properties.get(name);\n                 if (obj == null) {\n+                    int nameLen = name.length();\n+                    if (nameLen > 1 && name.charAt(0) == '\"' && name.charAt(nameLen-1) == '\"') {\n+                        auth.setProperty(relPath, valueFactory.createValue(name.substring(1, nameLen - 1)));\n+                    } else {\n                         auth.removeProperty(relPath);\n+                    }\n                 } else {\n                     if (obj instanceof Collection) {\n                         auth.setProperty(relPath, createValues((Collection) obj));\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

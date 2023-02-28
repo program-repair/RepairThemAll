@@ -1,0 +1,24 @@
+{
+    "bug_id": 84,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "a64151e6",
+    "failing_tests": [
+        "org.apache.accumulo.gc.GarbageCollectionTest"
+    ],
+    "files": 1,
+    "jira_id": "2520",
+    "linesAdd": 10,
+    "linesRem": 7,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 14,
+    "patch": "diff --git a/server/gc/src/main/java/org/apache/accumulo/gc/GarbageCollectionAlgorithm.java b/server/gc/src/main/java/org/apache/accumulo/gc/GarbageCollectionAlgorithm.java\nindex 464d0d998..40fb8475b 100644\n--- a/server/gc/src/main/java/org/apache/accumulo/gc/GarbageCollectionAlgorithm.java\n+++ b/server/gc/src/main/java/org/apache/accumulo/gc/GarbageCollectionAlgorithm.java\n@@ -85,10 +85,7 @@ private String makeRelative(String path, int expectedLen) {\n       tokens = tmp.toArray(new String[tmp.size()]);\n     }\n \n-    if (tokens.length > 3) {\n-      if (!path.contains(\":\"))\n-        throw new IllegalArgumentException(path);\n-\n+    if (tokens.length > 3 && path.contains(\":\")) {\n       if (tokens[tokens.length - 4].equals(ServerConstants.TABLE_DIR) && (expectedLen == 0 || expectedLen == 3)) {\n         relPath = tokens[tokens.length - 3] + \"/\" + tokens[tokens.length - 2] + \"/\" + tokens[tokens.length - 1];\n       } else if (tokens[tokens.length - 3].equals(ServerConstants.TABLE_DIR) && (expectedLen == 0 || expectedLen == 2)) {\n@@ -96,9 +93,9 @@ private String makeRelative(String path, int expectedLen) {\n       } else {\n         throw new IllegalArgumentException(path);\n       }\n-    } else if (tokens.length == 3 && (expectedLen == 0 || expectedLen == 3)) {\n+    } else if (tokens.length == 3 && (expectedLen == 0 || expectedLen == 3) && !path.contains(\":\")) {\n       relPath = tokens[0] + \"/\" + tokens[1] + \"/\" + tokens[2];\n-    } else if (tokens.length == 2 && (expectedLen == 0 || expectedLen == 2)) {\n+    } else if (tokens.length == 2 && (expectedLen == 0 || expectedLen == 2) && !path.contains(\":\")) {\n       relPath = tokens[0] + \"/\" + tokens[1];\n     } else {\n       throw new IllegalArgumentException(path);\n@@ -112,7 +109,13 @@ private String makeRelative(String path, int expectedLen) {\n     SortedMap<String,String> ret = new TreeMap<String,String>();\n \n     for (String candidate : candidates) {\n-      String relPath = makeRelative(candidate, 0);\n+      String relPath;\n+      try {\n+        relPath = makeRelative(candidate, 0);\n+      } catch (IllegalArgumentException iae) {\n+        log.warn(\"Ingoring invalid deletion candidate \" + candidate);\n+        continue;\n+      }\n       ret.put(relPath, candidate);\n     }\n \n",
+    "project": "accumulo",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

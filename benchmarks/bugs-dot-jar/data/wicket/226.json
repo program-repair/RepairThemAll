@@ -1,0 +1,24 @@
+{
+    "bug_id": 226,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "f45ce896",
+    "failing_tests": [
+        "org.apache.wicket.request.mapper.CompoundRequestMapperTest"
+    ],
+    "files": 1,
+    "jira_id": "5698",
+    "linesAdd": 6,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 103,
+    "patch": "diff --git a/wicket-request/src/main/java/org/apache/wicket/request/mapper/CompoundRequestMapper.java b/wicket-request/src/main/java/org/apache/wicket/request/mapper/CompoundRequestMapper.java\nindex bbd6277ca6..94635b392a 100644\n--- a/wicket-request/src/main/java/org/apache/wicket/request/mapper/CompoundRequestMapper.java\n+++ b/wicket-request/src/main/java/org/apache/wicket/request/mapper/CompoundRequestMapper.java\n@@ -251,7 +251,12 @@ public void unmount(String path)\n \n \t\tfor (IRequestMapper mapper : this)\n \t\t{\n-\t\t\tif (mapper.mapRequest(request) != null)\n+\t\t\tif (mapper instanceof ICompoundRequestMapper)\n+\t\t\t{\n+\t\t\t\tICompoundRequestMapper inner = (ICompoundRequestMapper) mapper;\n+\t\t\t\tinner.unmount(path);\n+\t\t\t}\n+\t\t\telse if (mapper.mapRequest(request) != null)\n \t\t\t{\n \t\t\t\tremove(mapper);\n \t\t\t}\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

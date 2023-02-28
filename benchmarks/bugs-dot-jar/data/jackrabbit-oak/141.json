@@ -1,0 +1,24 @@
+{
+    "bug_id": 141,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "b481a14c",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.cache.ConcurrentTest"
+    ],
+    "files": 1,
+    "jira_id": "1364",
+    "linesAdd": 22,
+    "linesRem": 16,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 6,
+    "nb_test": 1564,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/cache/CacheLIRS.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/cache/CacheLIRS.java\nindex 8392b7f1f7..34ca662491 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/cache/CacheLIRS.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/cache/CacheLIRS.java\n@@ -619,7 +619,9 @@ public CacheStats stats() {\n         int queue2Size;\n \n         /**\n-         * The map array. The size is always a power of 2.\n+         * The map array. The size is always a power of 2. The bit mask that is\n+         * applied to the key hash code to get the index in the map array. The\n+         * mask is the length of the array minus one.\n          */\n         Entry<K, V>[] entries;\n \n@@ -656,12 +658,6 @@ public CacheStats stats() {\n          */\n         private int averageMemory;\n \n-        /**\n-         * The bit mask that is applied to the key hash code to get the index in the\n-         * map array. The mask is the length of the array minus one.\n-         */\n-        private int mask;\n-\n         /**\n          * The LIRS stack size.\n          */\n@@ -722,8 +718,6 @@ synchronized void clear() {\n             }\n             // the array size is at most 2^31 elements\n             int len = (int) Math.min(1L << 31, l);\n-            // the bit mask has all bits set\n-            mask = len - 1;\n \n             // initialize the stack and queue heads\n             stack = new Entry<K, V>();\n@@ -733,8 +727,10 @@ synchronized void clear() {\n             queue2 = new Entry<K, V>();\n             queue2.queuePrev = queue2.queueNext = queue2;\n \n-            // first set to null - avoiding out of memory\n-            entries = null;\n+            // first set to a small array, to avoiding out of memory\n+            @SuppressWarnings(\"unchecked\")\n+            Entry<K, V>[] small = new Entry[1];\n+            entries = small;\n             @SuppressWarnings(\"unchecked\")\n             Entry<K, V>[] e = new Entry[len];\n             entries = e;\n@@ -920,6 +916,10 @@ synchronized V putIfAbsent(K key, int hash, V value, int memory) {\n         }\n \n         synchronized void refresh(K key, int hash, CacheLoader<K, V> loader) throws ExecutionException {\n+            if (loader == null) {\n+                // no loader - no refresh\n+                return;\n+            }            \n             V value;\n             V old = get(key, hash);\n             long start = System.nanoTime();\n@@ -968,9 +968,11 @@ synchronized V put(K key, int hash, V value, int memory) {\n             e.key = key;\n             e.value = value;\n             e.memory = memory;\n+            Entry<K, V>[] array = entries;\n+            int mask = array.length - 1;\n             int index = hash & mask;\n-            e.mapNext = entries[index];\n-            entries[index] = e;\n+            e.mapNext = array[index];\n+            array[index] = e;\n             usedMemory += memory;\n             if (usedMemory > maxMemory && mapSize > 0) {\n                 // an old entry needs to be removed\n@@ -990,13 +992,15 @@ synchronized V put(K key, int hash, V value, int memory) {\n          * @param hash the hash\n          */\n         synchronized void invalidate(Object key, int hash) {\n+            Entry<K, V>[] array = entries;\n+            int mask = array.length - 1;            \n             int index = hash & mask;\n-            Entry<K, V> e = entries[index];\n+            Entry<K, V> e = array[index];\n             if (e == null) {\n                 return;\n             }\n             if (e.key.equals(key)) {\n-                entries[index] = e.mapNext;\n+                array[index] = e.mapNext;\n             } else {\n                 Entry<K, V> last;\n                 do {\n@@ -1107,8 +1111,10 @@ private void pruneStack() {\n          * @return the entry (might be a non-resident)\n          */\n         Entry<K, V> find(Object key, int hash) {\n+            Entry<K, V>[] array = entries;\n+            int mask = array.length - 1;                \n             int index = hash & mask;\n-            Entry<K, V> e = entries[index];\n+            Entry<K, V> e = array[index];\n             while (e != null && !e.key.equals(key)) {\n                 e = e.mapNext;\n             }\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

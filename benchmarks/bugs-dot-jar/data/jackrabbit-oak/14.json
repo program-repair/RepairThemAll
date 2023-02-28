@@ -1,0 +1,24 @@
+{
+    "bug_id": 14,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "db19e70f",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.core.TreeImplTest"
+    ],
+    "files": 1,
+    "jira_id": "278",
+    "linesAdd": 10,
+    "linesRem": 7,
+    "nb_error": 2,
+    "nb_failure": 0,
+    "nb_skipped": 1,
+    "nb_test": 231,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/core/TreeImpl.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/core/TreeImpl.java\nindex a3d3536fc6..abc942a48c 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/core/TreeImpl.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/core/TreeImpl.java\n@@ -50,9 +50,12 @@\n     /** Underlying {@code Root} of this {@code Tree} instance */\n     private final RootImpl root;\n \n-    /** Parent of this tree. Null for the root and this for removed trees. */\n+    /** Parent of this tree. Null for the root. */\n     private TreeImpl parent;\n \n+    /** Marker for removed trees */\n+    private boolean removed;\n+\n     /** Name of this tree */\n     private String name;\n \n@@ -254,7 +257,7 @@ public boolean remove() {\n             NodeBuilder builder = parent.getNodeBuilder();\n             builder.removeNode(name);\n             parent.children.remove(name);\n-            parent = this;\n+            removed = true;\n             root.purge();\n             return true;\n         } else {\n@@ -390,6 +393,10 @@ private PropertyState internalGetProperty(String propertyName) {\n     }\n \n     private Status internalGetPropertyStatus(String name) {\n+        if (isRemoved()) {\n+            return Status.REMOVED;\n+        }\n+\n         NodeState baseState = getBaseState();\n         boolean exists = internalGetProperty(name) != null;\n         if (baseState == null) {\n@@ -433,14 +440,10 @@ private Status internalGetPropertyStatus(String name) {\n     }\n \n     private boolean isRemoved() {\n-        return parent == this;\n+        return removed || (parent != null && parent.isRemoved());\n     }\n \n     private void buildPath(StringBuilder sb) {\n-        if (isRemoved()) {\n-            throw new IllegalStateException(\"Cannot build the path of a removed tree\");\n-        }\n-\n         if (!isRoot()) {\n             parent.buildPath(sb);\n             sb.append('/').append(name);\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

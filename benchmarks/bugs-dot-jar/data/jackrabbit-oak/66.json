@@ -1,0 +1,24 @@
+{
+    "bug_id": 66,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "8188ef54",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.query.index.TraversingIndexQueryTest"
+    ],
+    "files": 1,
+    "jira_id": "1739",
+    "linesAdd": 17,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 8,
+    "nb_test": 1836,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/ComparisonImpl.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/ComparisonImpl.java\nindex a77a85ce1f..585b44e0ac 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/ComparisonImpl.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/ComparisonImpl.java\n@@ -24,8 +24,10 @@\n \n import javax.jcr.PropertyType;\n \n+import org.apache.jackrabbit.oak.api.PropertyState;\n import org.apache.jackrabbit.oak.api.PropertyValue;\n import org.apache.jackrabbit.oak.api.Type;\n+import org.apache.jackrabbit.oak.plugins.memory.PropertyStates;\n import org.apache.jackrabbit.oak.query.fulltext.LikePattern;\n import org.apache.jackrabbit.oak.query.index.FilterImpl;\n import org.apache.jackrabbit.oak.spi.query.PropertyValues;\n@@ -101,8 +103,23 @@ public boolean evaluate() {\n             // unable to convert, just skip this node\n             return false;\n         }\n+        if (p1.isArray()) {\n+            // JCR 2.0 spec, 6.7.16 Comparison:\n+            // \"... constraint is satisfied as a whole if the comparison\n+            // against any element of the array is satisfied.\"\n+            Type<?> base = p1.getType().getBaseType();\n+            for (int i = 0; i < p1.count(); i++) {\n+                PropertyState value = PropertyStates.createProperty(\n+                        \"value\", p1.getValue(base, i), base);\n+                if (evaluate(PropertyValues.create(value), p2)) {\n+                    return true;\n+                }\n+            }\n+            return false;\n+        } else {\n             return evaluate(p1, p2);\n         }\n+    }\n \n     /**\n      * \"operand2 always evaluates to a scalar value\"\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 130,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "4954d573",
+    "failing_tests": [
+        "org.apache.camel.component.file.FileConsumerIdempotentTest"
+    ],
+    "files": 1,
+    "jira_id": "6936",
+    "linesAdd": 14,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 4742,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/component/file/GenericFileConsumer.java b/camel-core/src/main/java/org/apache/camel/component/file/GenericFileConsumer.java\nindex c8452fd4e9..02130d286e 100644\n--- a/camel-core/src/main/java/org/apache/camel/component/file/GenericFileConsumer.java\n+++ b/camel-core/src/main/java/org/apache/camel/component/file/GenericFileConsumer.java\n@@ -484,22 +484,32 @@ protected boolean isValidFile(GenericFile<T> file, boolean isDirectory, List<T>\n             return false;\n         }\n \n+        boolean answer = true;\n+        String key = null;\n+        try {\n             // if its a file then check we have the file in the idempotent registry already\n             if (!isDirectory && endpoint.isIdempotent()) {\n                 // use absolute file path as default key, but evaluate if an expression key was configured\n-            String key = file.getAbsoluteFilePath();\n+                key = file.getAbsoluteFilePath();\n                 if (endpoint.getIdempotentKey() != null) {\n                     Exchange dummy = endpoint.createExchange(file);\n                     key = endpoint.getIdempotentKey().evaluate(dummy, String.class);\n                 }\n                 if (key != null && endpoint.getIdempotentRepository().contains(key)) {\n                     log.trace(\"This consumer is idempotent and the file has been consumed before. Will skip this file: {}\", file);\n-                return false;\n+                    answer = false;\n+                }\n+            }\n+        } finally {\n+            // ensure to run this in finally block in case of runtime exceptions being thrown\n+            if (!answer) {\n+                // remove file from the in progress list as its no longer in progress\n+                endpoint.getInProgressRepository().remove(key);\n             }\n         }\n \n         // file matched\n-        return true;\n+        return answer;\n     }\n \n     /**\n@@ -607,6 +617,7 @@ protected boolean isMatched(GenericFile<T> file, boolean isDirectory, List<T> fi\n      */\n     protected boolean isInProgress(GenericFile<T> file) {\n         String key = file.getAbsoluteFilePath();\n+        // must use add, to have operation as atomic\n         return !endpoint.getInProgressRepository().add(key);\n     }\n \n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 68,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "88641f49",
+    "failing_tests": [
+        "org.apache.logging.log4j.core.pattern.PatternParserTest"
+    ],
+    "files": 1,
+    "jira_id": "107",
+    "linesAdd": 2,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 95,
+    "patch": "diff --git a/core/src/main/java/org/apache/logging/log4j/core/pattern/PatternParser.java b/core/src/main/java/org/apache/logging/log4j/core/pattern/PatternParser.java\nindex 99fd17d99..fd53a004b 100644\n--- a/core/src/main/java/org/apache/logging/log4j/core/pattern/PatternParser.java\n+++ b/core/src/main/java/org/apache/logging/log4j/core/pattern/PatternParser.java\n@@ -210,13 +210,13 @@ private static int extractConverter(\n      */\n     private static int extractOptions(String pattern, int i, List<String> options) {\n         while ((i < pattern.length()) && (pattern.charAt(i) == '{')) {\n-            int begin = i;\n+            int begin = i++;\n             int end;\n             int depth = 0;\n             do {\n                 end = pattern.indexOf('}', i);\n                 if (end != -1) {\n-                    int next = pattern.indexOf(\"{\", i + 1);\n+                    int next = pattern.indexOf(\"{\", i);\n                     if (next != -1 && next < end) {\n                         i = end + 1;\n                         ++depth;\n",
+    "project": "logging-log4j2",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

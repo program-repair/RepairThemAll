@@ -1,0 +1,24 @@
+{
+    "bug_id": 56,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "c79a743b",
+    "failing_tests": [
+        "org.apache.logging.log4j.core.appender.SyslogAppenderTest"
+    ],
+    "files": 1,
+    "jira_id": "101",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 88,
+    "patch": "diff --git a/core/src/main/java/org/apache/logging/log4j/core/appender/SyslogAppender.java b/core/src/main/java/org/apache/logging/log4j/core/appender/SyslogAppender.java\nindex d2392e9ec..39fbd3871 100644\n--- a/core/src/main/java/org/apache/logging/log4j/core/appender/SyslogAppender.java\n+++ b/core/src/main/java/org/apache/logging/log4j/core/appender/SyslogAppender.java\n@@ -111,7 +111,7 @@ public static SyslogAppender createAppender(@PluginAttr(\"host\") String host,\n                 LOGGER.error(\"Charset \" + charset + \" is not supported for layout, using \" + c.displayName());\n             }\n         }\n-        Layout layout = (format.equalsIgnoreCase(RFC5424)) ?\n+        Layout layout = (RFC5424.equalsIgnoreCase(format)) ?\n             RFC5424Layout.createLayout(facility, id, ein, includeMDC, mdcId, includeNL, appName,  msgId,\n                 excludes, includes, required, charset, config) :\n             SyslogLayout.createLayout(facility, includeNL, charset);\n",
+    "project": "logging-log4j2",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 31,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "95d15eff",
+    "failing_tests": [
+        "org.apache.commons.math.complex.ComplexTest"
+    ],
+    "files": 1,
+    "jira_id": "722",
+    "linesAdd": 22,
+    "linesRem": 11,
+    "nb_error": 0,
+    "nb_failure": 4,
+    "nb_skipped": 1,
+    "nb_test": 3531,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math/complex/Complex.java b/src/main/java/org/apache/commons/math/complex/Complex.java\nindex 3822a89e6..ed76a2950 100644\n--- a/src/main/java/org/apache/commons/math/complex/Complex.java\n+++ b/src/main/java/org/apache/commons/math/complex/Complex.java\n@@ -993,8 +993,8 @@ public Complex sqrt1z() {\n      *  </code>\n      * </pre>\n      * where the (real) functions on the right-hand side are\n-     * {@link java.lang.Math#sin}, {@link java.lang.Math#cos},\n-     * {@link FastMath#cosh} and {@link FastMath#sinh}.\n+     * {@link FastMath#sin}, {@link FastMath#cos}, {@link FastMath#cosh} and\n+     * {@link FastMath#sinh}.\n      * <br/>\n      * Returns {@link Complex#NaN} if either real or imaginary part of the\n      * input argument is {@code NaN}.\n@@ -1004,8 +1004,8 @@ public Complex sqrt1z() {\n      * <pre>\n      *  Examples:\n      *  <code>\n-     *   tan(1 &plusmn; INFINITY i) = 0 + NaN i\n-     *   tan(&plusmn;INFINITY + i) = NaN + NaN i\n+     *   tan(a &plusmn; INFINITY i) = 0 &plusmn; i\n+     *   tan(&plusmn;INFINITY + bi) = NaN + NaN i\n      *   tan(&plusmn;INFINITY &plusmn; INFINITY i) = NaN + NaN i\n      *   tan(&plusmn;&pi;/2 + 0 i) = &plusmn;INFINITY + NaN i\n      *  </code>\n@@ -1015,9 +1015,15 @@ public Complex sqrt1z() {\n      * @since 1.2\n      */\n     public Complex tan() {\n-        if (isNaN) {\n+        if (isNaN || Double.isInfinite(real)) {\n             return NaN;\n         }\n+        if (imaginary > 20.0) {\n+            return createComplex(0.0, 1.0);\n+        }\n+        if (imaginary < -20.0) {\n+            return createComplex(0.0, -1.0);\n+        }\n \n         double real2 = 2.0 * real;\n         double imaginary2 = 2.0 * imaginary;\n@@ -1038,8 +1044,8 @@ public Complex tan() {\n      *  </code>\n      * </pre>\n      * where the (real) functions on the right-hand side are\n-     * {@link java.lang.Math#sin}, {@link java.lang.Math#cos},\n-     * {@link FastMath#cosh} and {@link FastMath#sinh}.\n+     * {@link FastMath#sin}, {@link FastMath#cos}, {@link FastMath#cosh} and\n+     * {@link FastMath#sinh}.\n      * <br/>\n      * Returns {@link Complex#NaN} if either real or imaginary part of the\n      * input argument is {@code NaN}.\n@@ -1049,8 +1055,8 @@ public Complex tan() {\n      * <pre>\n      *  Examples:\n      *  <code>\n-     *   tanh(1 &plusmn; INFINITY i) = NaN + NaN i\n-     *   tanh(&plusmn;INFINITY + i) = NaN + 0 i\n+     *   tanh(a &plusmn; INFINITY i) = NaN + NaN i\n+     *   tanh(&plusmn;INFINITY + bi) = &plusmn;1 + 0 i\n      *   tanh(&plusmn;INFINITY &plusmn; INFINITY i) = NaN + NaN i\n      *   tanh(0 + (&pi;/2)i) = NaN + INFINITY i\n      *  </code>\n@@ -1060,10 +1066,15 @@ public Complex tan() {\n      * @since 1.2\n      */\n     public Complex tanh() {\n-        if (isNaN) {\n+        if (isNaN || Double.isInfinite(imaginary)) {\n             return NaN;\n         }\n-\n+        if (real > 20.0) {\n+            return createComplex(1.0, 0.0);\n+        }\n+        if (real < -20.0) {\n+            return createComplex(-1.0, 0.0);\n+        }\n         double real2 = 2.0 * real;\n         double imaginary2 = 2.0 * imaginary;\n         double d = FastMath.cosh(real2) + FastMath.cos(imaginary2);\n",
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

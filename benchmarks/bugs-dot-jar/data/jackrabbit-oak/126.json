@@ -1,0 +1,24 @@
+{
+    "bug_id": 126,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "6fc5ea9d",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.security.authorization.evaluation.RootTest"
+    ],
+    "files": 2,
+    "jira_id": "766",
+    "linesAdd": 9,
+    "linesRem": 18,
+    "nb_error": 0,
+    "nb_failure": 4,
+    "nb_skipped": 1,
+    "nb_test": 684,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/core/AbstractNodeLocation.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/core/AbstractNodeLocation.java\nindex e70a1b11af..89df0acd50 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/core/AbstractNodeLocation.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/core/AbstractNodeLocation.java\n@@ -57,15 +57,15 @@ public TreeLocation getParent() {\n \n     @Override\n     public TreeLocation getChild(String name) {\n-        T child = getChildTree(name);\n-        if (child != null) {\n-            return createNodeLocation(child);\n-        }\n-\n         PropertyState prop = getPropertyState(name);\n         if (prop != null) {\n             return createPropertyLocation(this, name);\n         }\n+\n+        T child = getChildTree(name);\n+        if (child != null) {\n+            return createNodeLocation(child);\n+        }\n         return new NullLocation(this, name);\n     }\n \ndiff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/core/TreeImpl.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/core/TreeImpl.java\nindex 8bda9f2f28..efb5ec9e27 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/core/TreeImpl.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/core/TreeImpl.java\n@@ -91,7 +91,7 @@ private TreeImpl(RootImpl root, TreeImpl parent, String name, Move pendingMoves)\n         this.root = checkNotNull(root);\n         this.parent = checkNotNull(parent);\n         this.name = checkNotNull(name);\n-        this.nodeBuilder = parent.nodeBuilder.child(name);\n+        this.nodeBuilder = parent.nodeBuilder.getChildNode(name);\n         this.pendingMoves = checkNotNull(pendingMoves);\n     }\n \n@@ -187,11 +187,7 @@ public TreeImpl getChild(@Nonnull String name) {\n         checkNotNull(name);\n         enter();\n         TreeImpl child = internalGetChild(name);\n-        if (child != null && canRead(child)) {\n-            return child;\n-        } else {\n-            return null;\n-        }\n+        return canRead(child) ? child : null;\n     }\n \n     @Override\n@@ -438,11 +434,8 @@ TreeImpl getTree(String path) {\n         TreeImpl child = this;\n         for (String name : elements(path)) {\n             child = child.internalGetChild(name);\n-            if (child == null) {\n-                return null;\n-            }\n         }\n-        return (canRead(child)) ? child : null;\n+        return canRead(child) ? child : null;\n     }\n \n     /**\n@@ -526,9 +519,7 @@ private void applyPendingMoves() {\n     }\n \n     private TreeImpl internalGetChild(String childName) {\n-        return nodeBuilder.hasChildNode(childName)\n-            ? new TreeImpl(root, this, childName, pendingMoves)\n-            : null;\n+        return new TreeImpl(root, this, childName, pendingMoves);\n     }\n \n     private PropertyState internalGetProperty(String propertyName) {\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 25,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "86066852",
+    "failing_tests": [
+        "org.apache.wicket.queueing.transparentresolvers.DequeueingTransparentWebMarkupContainerTest"
+    ],
+    "files": 1,
+    "jira_id": "5964",
+    "linesAdd": 45,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 1,
+    "nb_test": 1859,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/html/internal/Enclosure.java b/wicket-core/src/main/java/org/apache/wicket/markup/html/internal/Enclosure.java\nindex 49d55c341f..882a3bae34 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/html/internal/Enclosure.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/html/internal/Enclosure.java\n@@ -16,12 +16,17 @@\n  */\n package org.apache.wicket.markup.html.internal;\n \n+import java.util.Iterator;\n+\n import org.apache.wicket.Component;\n+import org.apache.wicket.DequeueContext;\n import org.apache.wicket.MarkupContainer;\n import org.apache.wicket.WicketRuntimeException;\n import org.apache.wicket.markup.ComponentTag;\n+import org.apache.wicket.markup.IMarkupFragment;\n import org.apache.wicket.markup.MarkupException;\n import org.apache.wicket.markup.MarkupStream;\n+import org.apache.wicket.markup.html.TransparentWebMarkupContainer;\n import org.apache.wicket.markup.html.WebMarkupContainer;\n import org.apache.wicket.markup.html.basic.EnclosureContainer;\n import org.apache.wicket.markup.parser.filter.EnclosureHandler;\n@@ -125,7 +130,7 @@ protected final Component getChild()\n \t\tif (childComponent == null)\n \t\t{\n \t\t\t// try to find child when queued\n-\t\t\tchildComponent = get(childId);\n+\t\t\tchildComponent = resolveChild(this);\n \t\t}\n \t\tif (childComponent == null)\n \t\t{\n@@ -135,6 +140,33 @@ protected final Component getChild()\n \t\treturn childComponent;\n \t}\n \t\n+\t/**\n+\t * Searches for the controlling child component looking also \n+\t * through transparent components.\n+\t * \n+\t * @param container\n+\t * \t\t\tthe current container\n+\t * @return the controlling child component, null if no one is found \n+\t */\n+\tprivate Component resolveChild(MarkupContainer container)\n+\t{\n+\t\tComponent childController = container.get(childId);\n+\t\t\n+\t\tIterator<Component> children = container.iterator();\n+\t\t\n+\t\twhile (children.hasNext() && childController == null)\n+\t\t{\n+\t\t\tComponent transparentChild = children.next();\n+\t\t\t\n+\t\t\tif(transparentChild instanceof TransparentWebMarkupContainer)\n+\t\t\t{\n+\t\t\t\tchildController = resolveChild((MarkupContainer)transparentChild);\n+\t\t\t}\n+\t\t}\n+\t\t\n+\t\treturn childController;\n+\t}\n+\n \t@Override\n \tpublic boolean isVisible()\n \t{\n@@ -274,4 +306,16 @@ else if (controller == this)\n \t\t\t\t\"Programming error: childComponent == enclose component; endless loop\");\n \t\t}\n \t}\n+\t\n+\t@Override\n+\tpublic DequeueContext newDequeueContext()\n+\t{\n+\t\tIMarkupFragment markup = getMarkupSourcingStrategy().getMarkup(this, null);\n+\t\tif (markup == null)\n+\t\t{\n+\t\t\treturn null;\n+\t\t}\n+\n+\t\treturn new DequeueContext(markup, this, true);\n+\t}\n }\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

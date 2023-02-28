@@ -1,0 +1,25 @@
+{
+    "bug_id": 100,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "7c9326f4",
+    "failing_tests": [
+        "org.apache.camel.component.xslt.XsltDTDTest",
+        "org.apache.camel.management.ManagedThrottlerTest"
+    ],
+    "files": 1,
+    "jira_id": "7130",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 1,
+    "nb_skipped": 2,
+    "nb_test": 4781,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/builder/xml/XsltBuilder.java b/camel-core/src/main/java/org/apache/camel/builder/xml/XsltBuilder.java\nindex 8984828968..3a7b9a4fff 100644\n--- a/camel-core/src/main/java/org/apache/camel/builder/xml/XsltBuilder.java\n+++ b/camel-core/src/main/java/org/apache/camel/builder/xml/XsltBuilder.java\n@@ -79,7 +79,7 @@\n     private URIResolver uriResolver;\n     private boolean deleteOutputFile;\n     private ErrorListener errorListener = new XsltErrorListener();\n-    private boolean allowStAX;\n+    private boolean allowStAX = true;\n \n     public XsltBuilder() {\n     }\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

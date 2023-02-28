@@ -1,0 +1,24 @@
+{
+    "bug_id": 4,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "6ecd0f82",
+    "failing_tests": [
+        "org.apache.flink.compiler.PartitionPushdownTest"
+    ],
+    "files": 1,
+    "jira_id": "1214",
+    "linesAdd": 13,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 96,
+    "patch": "diff --git a/flink-compiler/src/main/java/org/apache/flink/compiler/dag/SingleInputNode.java b/flink-compiler/src/main/java/org/apache/flink/compiler/dag/SingleInputNode.java\nindex b3d639bd44..730c1bb0bb 100644\n--- a/flink-compiler/src/main/java/org/apache/flink/compiler/dag/SingleInputNode.java\n+++ b/flink-compiler/src/main/java/org/apache/flink/compiler/dag/SingleInputNode.java\n@@ -220,8 +220,21 @@ public void computeInterestingPropertiesForInputs(CostEstimator estimator) {\n \t\t// add all properties relevant to this node\n \t\tfor (OperatorDescriptorSingle dps : getPossibleProperties()) {\n \t\t\tfor (RequestedGlobalProperties gp : dps.getPossibleGlobalProperties()) {\n+\t\t\t\t\n+\t\t\t\tif (gp.getPartitioning().isPartitionedOnKey()) {\n+\t\t\t\t\t// make sure that among the same partitioning types, we do not push anything down that has fewer key fields\n+\t\t\t\t\t\n+\t\t\t\t\tfor (RequestedGlobalProperties contained : props.getGlobalProperties()) {\n+\t\t\t\t\t\tif (contained.getPartitioning() == gp.getPartitioning() && gp.getPartitionedFields().isValidSubset(contained.getPartitionedFields())) {\n+\t\t\t\t\t\t\tprops.getGlobalProperties().remove(contained);\n+\t\t\t\t\t\t\tbreak;\n+\t\t\t\t\t\t}\n+\t\t\t\t\t}\n+\t\t\t\t}\n+\t\t\t\t\n \t\t\t\tprops.addGlobalProperties(gp);\n \t\t\t}\n+\t\t\t\n \t\t\tfor (RequestedLocalProperties lp : dps.getPossibleLocalProperties()) {\n \t\t\t\tprops.addLocalProperties(lp);\n \t\t\t}\n",
+    "project": "flink",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

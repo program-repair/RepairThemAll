@@ -1,0 +1,24 @@
+{
+    "bug_id": 22,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "7441a3d5",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexTest"
+    ],
+    "files": 1,
+    "jira_id": "4431",
+    "linesAdd": 3,
+    "linesRem": 5,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 6,
+    "nb_test": 361,
+    "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexCopier.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexCopier.java\nindex 09914c6bd0..8eac46e012 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexCopier.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexCopier.java\n@@ -137,13 +137,13 @@ public IndexCopier(Executor executor, File indexRootDir, boolean prefetchEnabled\n     public Directory wrapForRead(String indexPath, IndexDefinition definition,\n             Directory remote) throws IOException {\n         Directory local = createLocalDirForIndexReader(indexPath, definition);\n-        return new CopyOnReadDirectory(remote, local, prefetchEnabled, indexPath, getSharedWorkingSet(definition));\n+        return new CopyOnReadDirectory(remote, local, prefetchEnabled, indexPath, getSharedWorkingSet(indexPath));\n     }\n \n     public Directory wrapForWrite(IndexDefinition definition, Directory remote, boolean reindexMode) throws IOException {\n         Directory local = createLocalDirForIndexWriter(definition);\n         return new CopyOnWriteDirectory(remote, local, reindexMode,\n-                getIndexPathForLogging(definition), getSharedWorkingSet(definition));\n+                getIndexPathForLogging(definition), getSharedWorkingSet(definition.getIndexPathFromConfig()));\n     }\n \n     @Override\n@@ -238,9 +238,7 @@ private void successfullyDeleted(LocalIndexFile file, boolean fileExisted){\n      * @param defn index definition for which the directory is being created\n      * @return a set to maintain the state of new files being created by the COW Directory\n      */\n-    private Set<String> getSharedWorkingSet(IndexDefinition defn){\n-        String indexPath = defn.getIndexPathFromConfig();\n-\n+    private Set<String> getSharedWorkingSet(String indexPath){\n         Set<String> sharedSet;\n         synchronized (sharedWorkingSetMap){\n             sharedSet = sharedWorkingSetMap.get(indexPath);\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

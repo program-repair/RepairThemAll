@@ -1,0 +1,24 @@
+{
+    "bug_id": 118,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "0598498e",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.document.DocumentNodeStoreTest"
+    ],
+    "files": 2,
+    "jira_id": "2695",
+    "linesAdd": 25,
+    "linesRem": 20,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 9,
+    "nb_test": 2013,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeState.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeState.java\nindex 4b83da95d7..9cf769b262 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeState.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeState.java\n@@ -168,18 +168,7 @@ public boolean hasChildNode(String name) {\n     @Nonnull\n     @Override\n     public NodeState getChildNode(@Nonnull String name) {\n-        if (!hasChildren) {\n-            checkValidName(name);\n-            return EmptyNodeState.MISSING_NODE;\n-        }\n-        String p = PathUtils.concat(getPath(), name);\n-        DocumentNodeState child = store.getNode(p, lastRevision);\n-        if (child == null) {\n-            checkValidName(name);\n-            return EmptyNodeState.MISSING_NODE;\n-        } else {\n-            return child;\n-        }\n+        return getChildNode(name, lastRevision);\n     }\n \n     @Override\n@@ -282,6 +271,23 @@ public boolean compareAgainstBaseState(NodeState base, NodeStateDiff diff) {\n         return super.compareAgainstBaseState(base, diff);\n     }\n \n+    @Nonnull\n+    NodeState getChildNode(@Nonnull String name,\n+                           @Nonnull Revision revision) {\n+        if (!hasChildren) {\n+            checkValidName(name);\n+            return EmptyNodeState.MISSING_NODE;\n+        }\n+        String p = PathUtils.concat(getPath(), name);\n+        DocumentNodeState child = store.getNode(p, checkNotNull(revision));\n+        if (child == null) {\n+            checkValidName(name);\n+            return EmptyNodeState.MISSING_NODE;\n+        } else {\n+            return child;\n+        }\n+    }\n+\n     void setProperty(String propertyName, String value) {\n         if (value == null) {\n             properties.remove(propertyName);\ndiff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java\nindex 1087f533c2..1ed7072c5b 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java\n@@ -1905,14 +1905,14 @@ private boolean dispatch(@Nonnull String jsonDiff,\n                     while (t.read() != '}') {\n                         // skip properties\n                     }\n-                    NodeState child = getNode(concat(node.getPath(), name), nodeRev);\n-                    continueComparison = diff.childNodeAdded(name, child);\n+                    continueComparison = diff.childNodeAdded(name,\n+                            node.getChildNode(name, nodeRev));\n                     break;\n                 }\n                 case '-': {\n                     String name = unshareString(t.readString());\n-                    NodeState child = getNode(concat(base.getPath(), name), baseRev);\n-                    continueComparison = diff.childNodeDeleted(name, child);\n+                    continueComparison = diff.childNodeDeleted(name,\n+                            base.getChildNode(name, baseRev));\n                     break;\n                 }\n                 case '^': {\n@@ -1920,10 +1920,9 @@ private boolean dispatch(@Nonnull String jsonDiff,\n                     t.read(':');\n                     if (t.matches('{')) {\n                         t.read('}');\n-                        NodeState nodeChild = getNode(concat(node.getPath(), name), nodeRev);\n-                        NodeState baseChild = getNode(concat(base.getPath(), name), baseRev);\n-                        continueComparison = diff.childNodeChanged(\n-                                name, baseChild, nodeChild);\n+                        continueComparison = diff.childNodeChanged(name,\n+                                base.getChildNode(name, baseRev),\n+                                node.getChildNode(name, nodeRev));\n                     } else if (t.matches('[')) {\n                         // ignore multi valued property\n                         while (t.read() != ']') {\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

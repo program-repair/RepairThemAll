@@ -1,0 +1,24 @@
+{
+    "bug_id": 4,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "4786a739",
+    "failing_tests": [
+        "org.apache.logging.log4j.core.impl.ThrowableProxyTest"
+    ],
+    "files": 1,
+    "jira_id": "1067",
+    "linesAdd": 2,
+    "linesRem": 2,
+    "nb_error": 3,
+    "nb_failure": 0,
+    "nb_skipped": 2,
+    "nb_test": 766,
+    "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/impl/ThrowableProxy.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/impl/ThrowableProxy.java\nindex 67d55ece6..d0800cc5a 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/impl/ThrowableProxy.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/impl/ThrowableProxy.java\n@@ -207,8 +207,8 @@ private void formatCause(final StringBuilder sb, final ThrowableProxy cause, fin\n \t\t\treturn;\n \t\t}\n \t\tsb.append(\"Caused by: \").append(cause).append(EOL);\n-        this.formatElements(sb, cause.commonElementCount, cause.getThrowable().getStackTrace(),\n-                cause.extendedStackTrace, ignorePackages);\n+\t\tthis.formatElements(sb, cause.commonElementCount, cause.getStackTrace(), cause.extendedStackTrace,\n+\t\t\t\tignorePackages);\n \t\tthis.formatCause(sb, cause.causeProxy, ignorePackages);\n \t}\n \n",
+    "project": "logging-log4j2",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

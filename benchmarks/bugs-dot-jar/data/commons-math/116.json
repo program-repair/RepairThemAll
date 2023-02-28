@@ -1,0 +1,24 @@
+{
+    "bug_id": 116,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "2a6c6409",
+    "failing_tests": [
+        "org.apache.commons.math3.geometry.euclidean.threed.PolyhedronsSetTest"
+    ],
+    "files": 1,
+    "jira_id": "1115",
+    "linesAdd": 14,
+    "linesRem": 0,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 3,
+    "nb_test": 5960,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math3/geometry/euclidean/threed/PolyhedronsSet.java b/src/main/java/org/apache/commons/math3/geometry/euclidean/threed/PolyhedronsSet.java\nindex 31b78a61a..0c5a9a7e3 100644\n--- a/src/main/java/org/apache/commons/math3/geometry/euclidean/threed/PolyhedronsSet.java\n+++ b/src/main/java/org/apache/commons/math3/geometry/euclidean/threed/PolyhedronsSet.java\n@@ -59,6 +59,16 @@ public PolyhedronsSet(final double tolerance) {\n      * cells). In order to avoid building too many small objects, it is\n      * recommended to use the predefined constants\n      * {@code Boolean.TRUE} and {@code Boolean.FALSE}</p>\n+     * <p>\n+     * This constructor is aimed at expert use, as building the tree may\n+     * be a difficult taks. It is not intended for general use and for\n+     * performances reasons does not check thoroughly its input, as this would\n+     * require walking the full tree each time. Failing to provide a tree with\n+     * the proper attributes, <em>will</em> therefore generate problems like\n+     * {@link NullPointerException} or {@link ClassCastException} only later on.\n+     * This limitation is known and explains why this constructor is for expert\n+     * use only. The caller does have the responsibility to provided correct arguments.\n+     * </p>\n      * @param tree inside/outside BSP tree representing the region\n      * @param tolerance tolerance below which points are considered identical\n      * @since 3.3\n@@ -190,6 +200,10 @@ public PolyhedronsSet(final double xMin, final double xMax,\n                                                       final double yMin, final double yMax,\n                                                       final double zMin, final double zMax,\n                                                       final double tolerance) {\n+        if ((xMin >= xMax - tolerance) || (yMin >= yMax - tolerance) || (zMin >= zMax - tolerance)) {\n+            // too thin box, build an empty polygons set\n+            return new BSPTree<Euclidean3D>(Boolean.FALSE);\n+        }\n         final Plane pxMin = new Plane(new Vector3D(xMin, 0,    0),   Vector3D.MINUS_I, tolerance);\n         final Plane pxMax = new Plane(new Vector3D(xMax, 0,    0),   Vector3D.PLUS_I,  tolerance);\n         final Plane pyMin = new Plane(new Vector3D(0,    yMin, 0),   Vector3D.MINUS_J, tolerance);\n",
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

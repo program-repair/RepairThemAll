@@ -1,0 +1,24 @@
+{
+    "bug_id": 142,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "c1b2f2f8",
+    "failing_tests": [
+        "org.apache.camel.processor.interceptor.AdviceWithMockEndpointsHavingParameterTest"
+    ],
+    "files": 3,
+    "jira_id": "3757",
+    "linesAdd": 6,
+    "linesRem": 2,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 3243,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/builder/AdviceWithRouteBuilder.java b/camel-core/src/main/java/org/apache/camel/builder/AdviceWithRouteBuilder.java\nindex cf6cf02b3b..fb472a7a0b 100644\n--- a/camel-core/src/main/java/org/apache/camel/builder/AdviceWithRouteBuilder.java\n+++ b/camel-core/src/main/java/org/apache/camel/builder/AdviceWithRouteBuilder.java\n@@ -68,7 +68,6 @@ public RouteDefinition getOriginalRoute() {\n      * @throws Exception can be thrown if error occurred\n      */\n     public void mockEndpoints() throws Exception {\n-        getContext().removeEndpoints(\"*\");\n         getContext().addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(null));\n     }\n \n@@ -80,7 +79,6 @@ public void mockEndpoints() throws Exception {\n      * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)\n      */\n     public void mockEndpoints(String pattern) throws Exception {\n-        getContext().removeEndpoints(pattern);\n         getContext().addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern));\n     }\n \ndiff --git a/camel-core/src/main/java/org/apache/camel/impl/InterceptSendToEndpoint.java b/camel-core/src/main/java/org/apache/camel/impl/InterceptSendToEndpoint.java\nindex bd97de1f2e..80c5b11be8 100644\n--- a/camel-core/src/main/java/org/apache/camel/impl/InterceptSendToEndpoint.java\n+++ b/camel-core/src/main/java/org/apache/camel/impl/InterceptSendToEndpoint.java\n@@ -114,6 +114,7 @@ public void process(Exchange exchange) throws Exception {\n                 if (LOG.isDebugEnabled()) {\n                     LOG.debug(\"Sending to endpoint: \" + getEndpointUri() + \" is intercepted and detoured to: \" + detour + \" for exchange: \" + exchange);\n                 }\n+                LOG.info(\"Sending to endpoint: \" + getEndpointUri() + \" is intercepted and detoured to: \" + detour + \" for exchange: \" + exchange);\n                 // add header with the real endpoint uri\n                 exchange.getIn().setHeader(Exchange.INTERCEPTED_ENDPOINT, delegate.getEndpointUri());\n \ndiff --git a/camel-core/src/main/java/org/apache/camel/impl/InterceptSendToMockEndpointStrategy.java b/camel-core/src/main/java/org/apache/camel/impl/InterceptSendToMockEndpointStrategy.java\nindex e0b168c860..e1d52d1b0e 100644\n--- a/camel-core/src/main/java/org/apache/camel/impl/InterceptSendToMockEndpointStrategy.java\n+++ b/camel-core/src/main/java/org/apache/camel/impl/InterceptSendToMockEndpointStrategy.java\n@@ -21,6 +21,7 @@\n import org.apache.camel.component.mock.MockEndpoint;\n import org.apache.camel.spi.EndpointStrategy;\n import org.apache.camel.util.EndpointHelper;\n+import org.apache.camel.util.ObjectHelper;\n import org.slf4j.Logger;\n import org.slf4j.LoggerFactory;\n \n@@ -73,6 +74,10 @@ public Endpoint registerEndpoint(String uri, Endpoint endpoint) {\n             // create mock endpoint which we will use as interceptor\n             // replace :// from scheme to make it easy to lookup the mock endpoint without having double :// in uri\n             String key = \"mock:\" + endpoint.getEndpointKey().replaceFirst(\"://\", \":\");\n+            // strip off parameters as well\n+            if (key.contains(\"?\")) {\n+                key = ObjectHelper.before(key, \"?\");\n+            }\n             LOG.info(\"Adviced endpoint [\" + uri + \"] with mock endpoint [\" + key + \"]\");\n \n             MockEndpoint mock = endpoint.getCamelContext().getEndpoint(key, MockEndpoint.class);\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

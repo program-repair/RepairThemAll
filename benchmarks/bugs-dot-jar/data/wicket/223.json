@@ -1,0 +1,24 @@
+{
+    "bug_id": 223,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "66bfc885",
+    "failing_tests": [
+        "org.apache.wicket.util.string.StringsTest"
+    ],
+    "files": 1,
+    "jira_id": "4816",
+    "linesAdd": 5,
+    "linesRem": 4,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 164,
+    "patch": "diff --git a/wicket-util/src/main/java/org/apache/wicket/util/string/Strings.java b/wicket-util/src/main/java/org/apache/wicket/util/string/Strings.java\nindex fceb4990a2..27a9987dfe 100755\n--- a/wicket-util/src/main/java/org/apache/wicket/util/string/Strings.java\n+++ b/wicket-util/src/main/java/org/apache/wicket/util/string/Strings.java\n@@ -22,6 +22,7 @@\n import java.security.PrivilegedAction;\r\n import java.util.ArrayList;\r\n import java.util.List;\r\n+import java.util.Locale;\r\n import java.util.regex.Matcher;\r\n import java.util.regex.Pattern;\r\n \r\n@@ -906,19 +907,19 @@ public static String stripEnding(final String s, final String ending)\n \t */\r\n \tpublic static String stripJSessionId(final String url)\r\n \t{\r\n-\t\tif (url == null)\r\n+\t\tif (Strings.isEmpty(url))\r\n \t\t{\r\n-\t\t\treturn null;\r\n+\t\t\treturn url;\r\n \t\t}\r\n \r\n \t\t// http://.../abc;jsessionid=...?param=...\r\n-\t\tint ixSemiColon = url.indexOf(\";\");\r\n+\t\tint ixSemiColon = url.toLowerCase(Locale.ENGLISH).indexOf(\";jsessionid=\");\r\n \t\tif (ixSemiColon == -1)\r\n \t\t{\r\n \t\t\treturn url;\r\n \t\t}\r\n \r\n-\t\tint ixQuestionMark = url.indexOf(\"?\");\r\n+\t\tint ixQuestionMark = url.indexOf('?');\r\n \t\tif (ixQuestionMark == -1)\r\n \t\t{\r\n \t\t\t// no query paramaters; cut off at \";\"\r\n",
+    "project": "wicket",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

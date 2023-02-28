@@ -1,0 +1,20 @@
+{
+    "bug_id": 38,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "1bdeeccc",
+    "failing_tests": [
+        "org.apache.maven.artifact.resolver.DefaultArtifactCollectorTest"
+    ],
+    "files": 2,
+    "jira_id": "1205",
+    "linesAdd": 7,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 30,
+    "patch": "diff --git a/maven-artifact/src/main/java/org/apache/maven/artifact/resolver/DefaultArtifactCollector.java b/maven-artifact/src/main/java/org/apache/maven/artifact/resolver/DefaultArtifactCollector.java\nindex 8f26cc7d9..3daff677e 100644\n--- a/maven-artifact/src/main/java/org/apache/maven/artifact/resolver/DefaultArtifactCollector.java\n+++ b/maven-artifact/src/main/java/org/apache/maven/artifact/resolver/DefaultArtifactCollector.java\n@@ -82,7 +82,7 @@ public ArtifactResolutionResult collect( Set artifacts, Artifact originatingArti\n                     if ( node.filterTrail( filter ) )\n                     {\n                         // If it was optional, we don't add it or its children, just allow the update of the version and scope\n-                        if ( !artifact.isOptional() )\n+                        if ( node.isChildOfRootNode() || !artifact.isOptional() )\n                         {\n                             artifact.setDependencyTrail( node.getDependencyTrail() );\n \n@@ -224,7 +224,7 @@ else if ( currentRange == null )\n             {\n                 ResolutionNode child = (ResolutionNode) i.next();\n                 // We leave in optional ones, but don't pick up its dependencies\n-                if ( !child.isResolved() && !child.getArtifact().isOptional() )\n+                if ( !child.isResolved() && ( !child.getArtifact().isOptional() || child.isChildOfRootNode() ) )\n                 {\n                     Artifact artifact = child.getArtifact();\n                     try\ndiff --git a/maven-artifact/src/main/java/org/apache/maven/artifact/resolver/ResolutionNode.java b/maven-artifact/src/main/java/org/apache/maven/artifact/resolver/ResolutionNode.java\nindex ef477942d..c3f1f666b 100644\n--- a/maven-artifact/src/main/java/org/apache/maven/artifact/resolver/ResolutionNode.java\n+++ b/maven-artifact/src/main/java/org/apache/maven/artifact/resolver/ResolutionNode.java\n@@ -147,6 +147,11 @@ public boolean isResolved()\n         return children != null;\n     }\n     \n+    public boolean isChildOfRootNode()\n+    {\n+        return parent != null && parent.parent == null;\n+    }\n+\n     public Iterator getChildrenIterator()\n     {\n         return children.iterator();\n",
+    "project": "maven"
+}

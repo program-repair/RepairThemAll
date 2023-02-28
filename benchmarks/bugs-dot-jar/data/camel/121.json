@@ -1,0 +1,25 @@
+{
+    "bug_id": 121,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "6d63a502",
+    "failing_tests": [
+        "org.apache.camel.processor.ResequenceStreamRejectOldExchangesTest",
+        "org.apache.camel.component.log.LogFormatterTest"
+    ],
+    "files": 1,
+    "jira_id": "5699",
+    "linesAdd": 15,
+    "linesRem": 3,
+    "nb_error": 1,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 4359,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/component/log/LogFormatter.java b/camel-core/src/main/java/org/apache/camel/component/log/LogFormatter.java\nindex 19eba1b882..c19097444e 100644\n--- a/camel-core/src/main/java/org/apache/camel/component/log/LogFormatter.java\n+++ b/camel-core/src/main/java/org/apache/camel/component/log/LogFormatter.java\n@@ -167,12 +167,24 @@ public String format(Exchange exchange) {\n                 }\n             }\n \n-            // get rid of the leading space comma if needed\n-            return \"Exchange[\" + (multiline ? answer.append(']').toString() : answer.toString().substring(2) + \"]\");\n+            // switch string buffer\n+            sb = answer;\n         }\n \n+        if (multiline) {\n+            sb.insert(0, \"Exchange[\");\n+            sb.append(\"]\");\n+            return sb.toString();\n+        } else {\n             // get rid of the leading space comma if needed\n-        return \"Exchange[\" + (multiline ? sb.append(']').toString() : sb.toString().substring(2) + \"]\");\n+            if (sb.length() > 0 && sb.charAt(0) == ',' && sb.charAt(1) == ' ') {\n+                sb.replace(0, 2, \"\");\n+            }\n+            sb.insert(0, \"Exchange[\");\n+            sb.append(\"]\");\n+\n+            return sb.toString();\n+        }\n     }\n \n     public boolean isShowExchangeId() {\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

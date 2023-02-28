@@ -35,13 +35,12 @@ class BugDotJar(Benchmark):
         if "_" in bug_id:
             separator = "_"
         split = bug_id.split(separator)
-        commit = split[-1]
         project = "-".join(split[:-1])
-        for bug in self.get_bugs():
-            if project.lower() in bug.project.lower():
-                if bug.bug_id[:8].lower() == commit[:8]:
-                    return bug
-        return None
+        project_path = os.path.join(self.path, "data", "project")
+        bug_config_path = os.path.join(project_path, "%s.json" % split[1])
+        if not bug_config_path:
+            return None
+        return Bug(self, project.title(), split[1])
 
     def get_bugs(self):
         if self.bugs is not None:
@@ -52,17 +51,17 @@ class BugDotJar(Benchmark):
             project_path = os.path.join(dataset_path, project)
             if os.path.isfile(project_path):
                 continue
-            for commit in os.listdir(project_path):
-                commit_path = os.path.join(project_path, commit)
-                if not os.path.isfile(commit_path) or commit[-5:] != ".json":
+            for bug_filename in os.listdir(project_path):
+                bug_path = os.path.join(project_path, bug_filename)
+                if not os.path.isfile(bug_path) or bug_filename[-5:] != ".json":
                     continue
-                bug = Bug(self, project.title(), commit[:-5])
+                bug = Bug(self, project.title(), bug_filename[:-5])
                 self.bugs += [bug]
         return self.bugs
 
     def checkout(self, bug, working_directory, buggy_version=True):
         dataset_path = os.path.join(
-            self.path, "data", bug.project.lower(), "%s.json" % bug.bug_id[:8])
+            self.path, "data", bug.project.lower(), "%s.json" % bug.bug_id)
         with open(dataset_path) as fd:
             data = json.load(fd)
             project = bug.project.split("-")[-1].upper()
@@ -73,8 +72,12 @@ class BugDotJar(Benchmark):
                 project, data['jira_id'], commit)
             cmd = "cd " + os.path.join(self.path, "repositories",
                                        bug.project.lower()) + "; git reset .; git checkout -- .; git clean -x -d --force; git checkout master; git checkout " + branch_id
-            subprocess.call(cmd, shell=True, stdout=FNULL,
-                            stderr=subprocess.STDOUT)
+            if buggy_version == False:
+                cmd += "; git apply .bugs-dot-jar/developer-patch.diff -v; exit 0"
+
+            out = subprocess.check_output(
+                cmd, shell=True, stderr=subprocess.STDOUT)
+            print('checkout output: ', out)
             shutil.copytree(os.path.join(self.path, "repositories",
                             bug.project.lower()), working_directory)
         pass
@@ -87,26 +90,32 @@ class BugDotJar(Benchmark):
         export JAVA_HOME="%s";
         export PATH="%s:$PATH";
         export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true;
-        mvn -Dhttps.protocols=TLSv1.2 install -V -B -DskipTests -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true; 
+        mvn -Dhttps.protocols=TLSv1.2 install -V -B -DskipTests -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true;
         mvn -Dhttps.protocols=TLSv1.2 test -DskipTests -V -B -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true -Dhttps.protocols=TLSv1.2;
         mvn dependency:build-classpath -Dmdep.outputFile="classpath.info";
+        exit 0
         """ % (working_directory, java_version, MAVEN_BIN)
-        subprocess.call(cmd, shell=True, stdout=FNULL,
-                        stderr=subprocess.STDOUT)
-        pass
+        out = subprocess.check_output(
+            cmd, shell=True, stderr=subprocess.STDOUT)
+        return out.decode("utf-8")
 
     def run_test(self, bug, working_directory, test=None):
         java_version = os.path.join(JAVA8_HOME, '..')
         if bug.project == "Wicket":
             java_version = os.path.join(JAVA7_HOME, '..')
-        cmd = """cd %s; 
+        cmd = """cd %s;
         export JAVA_HOME="%s";
         export PATH="%s:$PATH";
         export _JAVA_OPTIONS=-Djdk.net.URLClassPath.disableClassPathURLCheck=true;
         rm -rf .git; git init; git commit -m 'init' --allow-empty;
-        mvn -Dhttps.protocols=TLSv1.2 test -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true -Djacoco.skip=true -Dhttps.protocols=TLSv1.2;""" % (working_directory, java_version, MAVEN_BIN)
-        subprocess.call(cmd, shell=True, stdout=FNULL,
-                        stderr=subprocess.STDOUT)
+        mvn -Dhttps.protocols=TLSv1.2 test -Denforcer.skip=true -Dcheckstyle.skip=true -Dcobertura.skip=true -DskipITs=true -Drat.skip=true -Dlicense.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -Dskip.npm=true -Dskip.gulp=true -Dskip.bower=true -Djacoco.skip=true -Dhttps.protocols=TLSv1.2; exit 0""" % (working_directory, java_version, MAVEN_BIN)
+
+        print('BugDotJar run_test cmd: ', cmd)
+        out = subprocess.check_output(
+            cmd, shell=True, stderr=subprocess.STDOUT)
+        print('running on working_directory: ', working_directory)
+        testing_output = out.decode("utf-8")
+        print('testing_output: ', testing_output)
         return self.get_maven_test_results(bug, working_directory)
 
     def failing_module(self, bug):

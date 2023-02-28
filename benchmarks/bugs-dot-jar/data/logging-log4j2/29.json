@@ -1,0 +1,24 @@
+{
+    "bug_id": 29,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "c6318b63",
+    "failing_tests": [
+        "org.apache.logging.log4j.core.lookup.JndiLookupTest"
+    ],
+    "files": 1,
+    "jira_id": "1310",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 3,
+    "nb_test": 1114,
+    "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/lookup/JndiLookup.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/lookup/JndiLookup.java\nindex d7d50cb67..1cd4290d3 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/lookup/JndiLookup.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/lookup/JndiLookup.java\n@@ -52,7 +52,7 @@ public String lookup(final LogEvent event, final String key) {\n         final String jndiName = convertJndiName(key);\n         final JndiManager jndiManager = JndiManager.getDefaultManager();\n         try {\n-            return jndiManager.lookup(jndiName);\n+            return String.valueOf(jndiManager.lookup(jndiName));\n         } catch (final NamingException e) {\n             LOGGER.warn(LOOKUP, \"Error looking up JNDI resource [{}].\", jndiName, e);\n             return null;\n",
+    "project": "logging-log4j2",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

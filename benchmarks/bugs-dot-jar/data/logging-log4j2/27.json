@@ -1,0 +1,24 @@
+{
+    "bug_id": 27,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "2c966ad9",
+    "failing_tests": [
+        "org.apache.logging.log4j.core.LoggerDateTest"
+    ],
+    "files": 1,
+    "jira_id": "398",
+    "linesAdd": 16,
+    "linesRem": 10,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 516,
+    "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/config/BaseConfiguration.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/config/BaseConfiguration.java\nindex 986d2b921..b203fb328 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/config/BaseConfiguration.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/config/BaseConfiguration.java\n@@ -243,22 +243,28 @@ public void addComponent(final String name, final Object obj) {\n     protected void doConfigure() {\n         boolean setRoot = false;\n         boolean setLoggers = false;\n-        for (final Node child : rootNode.getChildren()) {\n-            createConfiguration(child, null);\n-            if (child.getObject() == null) {\n-                continue;\n+        if (rootNode.hasChildren() && rootNode.getChildren().get(0).getName().equalsIgnoreCase(\"Properties\")) {\n+            Node first = rootNode.getChildren().get(0);\n+            createConfiguration(first, null);\n+            if (first.getObject() != null) {\n+                subst.setVariableResolver((StrLookup) first.getObject());\n+            }\n+        } else {\n+            final Map<String, String> map = (Map<String, String>) componentMap.get(CONTEXT_PROPERTIES);\n+            final StrLookup lookup = map == null ? null : new MapLookup(map);\n+            subst.setVariableResolver(new Interpolator(lookup));\n         }\n+\n+        for (final Node child : rootNode.getChildren()) {\n             if (child.getName().equalsIgnoreCase(\"Properties\")) {\n                 if (tempLookup == subst.getVariableResolver()) {\n-                    subst.setVariableResolver((StrLookup) child.getObject());\n-                } else {\n                     LOGGER.error(\"Properties declaration must be the first element in the configuration\");\n                 }\n                 continue;\n-            } else if (tempLookup == subst.getVariableResolver()) {\n-                final Map<String, String> map = (Map<String, String>) componentMap.get(CONTEXT_PROPERTIES);\n-                final StrLookup lookup = map == null ? null : new MapLookup(map);\n-                subst.setVariableResolver(new Interpolator(lookup));\n+            }\n+            createConfiguration(child, null);\n+            if (child.getObject() == null) {\n+                continue;\n             }\n             if (child.getName().equalsIgnoreCase(\"Appenders\")) {\n                 appenders = (ConcurrentMap<String, Appender>) child.getObject();\n",
+    "project": "logging-log4j2",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

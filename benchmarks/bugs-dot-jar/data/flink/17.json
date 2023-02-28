@@ -1,0 +1,24 @@
+{
+    "bug_id": 17,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "0a4c7694",
+    "failing_tests": [
+        "org.apache.flink.runtime.io.network.api.reader.BufferReaderTest"
+    ],
+    "files": 1,
+    "jira_id": "1496",
+    "linesAdd": 25,
+    "linesRem": 6,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 535,
+    "patch": "diff --git a/flink-runtime/src/main/java/org/apache/flink/runtime/io/network/api/reader/BufferReader.java b/flink-runtime/src/main/java/org/apache/flink/runtime/io/network/api/reader/BufferReader.java\nindex 91784f6771..fca27faede 100644\n--- a/flink-runtime/src/main/java/org/apache/flink/runtime/io/network/api/reader/BufferReader.java\n+++ b/flink-runtime/src/main/java/org/apache/flink/runtime/io/network/api/reader/BufferReader.java\n@@ -49,6 +49,8 @@\n import org.slf4j.LoggerFactory;\n \n import java.io.IOException;\n+import java.util.ArrayList;\n+import java.util.List;\n import java.util.Map;\n import java.util.concurrent.BlockingQueue;\n import java.util.concurrent.LinkedBlockingQueue;\n@@ -91,6 +93,10 @@\n \n \tprivate final AtomicReference<EventListener<BufferReaderBase>> readerListener = new AtomicReference<EventListener<BufferReaderBase>>(null);\n \n+\tprivate final List<TaskEvent> pendingEvents = new ArrayList<TaskEvent>();\n+\n+\tprivate int numberOfUninitializedChannels;\n+\n \t// ------------------------------------------------------------------------\n \n \tprivate boolean isIterativeReader;\n@@ -149,17 +155,13 @@ public ConnectionManager getConnectionManager() {\n \t\treturn networkEnvironment.getConnectionManager();\n \t}\n \n-\t// TODO This is a work-around for the union reader\n-\tboolean hasInputChannelWithData() {\n-\t\treturn !inputChannelsWithData.isEmpty();\n-\t}\n-\n \t/**\n \t * Returns the total number of input channels for this reader.\n \t * <p>\n \t * Note: This number might be smaller the current number of input channels\n \t * of the reader as channels are possibly updated during runtime.\n \t */\n+\t@Override\n \tpublic int getNumberOfInputChannels() {\n \t\treturn totalNumberOfInputChannels;\n \t}\n@@ -170,7 +172,11 @@ public BufferProvider getBufferProvider() {\n \n \tpublic void setInputChannel(IntermediateResultPartitionID partitionId, InputChannel inputChannel) {\n \t\tsynchronized (requestLock) {\n-\t\t\tinputChannels.put(checkNotNull(partitionId), checkNotNull(inputChannel));\n+\t\t\tif (inputChannels.put(checkNotNull(partitionId), checkNotNull(inputChannel)) == null &&\n+\t\t\t\t\tinputChannel.getClass() == UnknownInputChannel.class) {\n+\n+\t\t\t\tnumberOfUninitializedChannels++;\n+\t\t\t}\n \t\t}\n \t}\n \n@@ -202,7 +208,16 @@ else if (partitionInfo.getProducerLocation() == PartitionLocation.LOCAL) {\n \n \t\t\t\tinputChannels.put(partitionId, newChannel);\n \n+\n \t\t\t\tnewChannel.requestIntermediateResultPartition(queueToRequest);\n+\n+\t\t\t\tfor (TaskEvent event : pendingEvents) {\n+\t\t\t\t\tnewChannel.sendTaskEvent(event);\n+\t\t\t\t}\n+\n+\t\t\t\tif (--numberOfUninitializedChannels == 0) {\n+\t\t\t\t\tpendingEvents.clear();\n+\t\t\t\t}\n \t\t\t}\n \t\t}\n \t}\n@@ -387,6 +402,10 @@ public void sendTaskEvent(TaskEvent event) throws IOException, InterruptedExcept\n \t\t\tfor (InputChannel inputChannel : inputChannels.values()) {\n \t\t\t\tinputChannel.sendTaskEvent(event);\n \t\t\t}\n+\n+\t\t\tif (numberOfUninitializedChannels > 0) {\n+\t\t\t\tpendingEvents.add(event);\n+\t\t\t}\n \t\t}\n \t}\n \n",
+    "project": "flink",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

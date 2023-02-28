@@ -1,0 +1,24 @@
+{
+    "bug_id": 79,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "8cadc344",
+    "failing_tests": [
+        "org.apache.camel.management.DefaultManagementAgentMockTest"
+    ],
+    "files": 1,
+    "jira_id": "5187",
+    "linesAdd": 12,
+    "linesRem": 10,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 4160,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/management/DefaultManagementAgent.java b/camel-core/src/main/java/org/apache/camel/management/DefaultManagementAgent.java\nindex d59c492f2d..c9aa47df98 100644\n--- a/camel-core/src/main/java/org/apache/camel/management/DefaultManagementAgent.java\n+++ b/camel-core/src/main/java/org/apache/camel/management/DefaultManagementAgent.java\n@@ -22,9 +22,9 @@\n import java.net.UnknownHostException;\n import java.rmi.RemoteException;\n import java.rmi.registry.LocateRegistry;\n-import java.util.HashSet;\n+import java.util.HashMap;\n import java.util.List;\n-import java.util.Set;\n+import java.util.Map;\n import java.util.concurrent.ExecutorService;\n import javax.management.JMException;\n import javax.management.MBeanServer;\n@@ -60,7 +60,8 @@\n     private CamelContext camelContext;\n     private ExecutorService executorService;\n     private MBeanServer server;\n-    private final Set<ObjectName> mbeansRegistered = new HashSet<ObjectName>();\n+    // need a name -> actual name mapping as some servers changes the names (suc as WebSphere)\n+    private final Map<ObjectName, ObjectName> mbeansRegistered = new HashMap<ObjectName, ObjectName>();\n     private JMXConnectorServer cs;\n \n     private Integer registryPort;\n@@ -240,15 +241,17 @@ public void register(Object obj, ObjectName name, boolean forceRegistration) thr\n     }\n \n     public void unregister(ObjectName name) throws JMException {\n-        if (server.isRegistered(name)) {\n-            server.unregisterMBean(name);\n+        if (isRegistered(name)) {\n+            server.unregisterMBean(mbeansRegistered.get(name));\n             LOG.debug(\"Unregistered MBean with ObjectName: {}\", name);\n         }\n         mbeansRegistered.remove(name);\n     }\n \n     public boolean isRegistered(ObjectName name) {\n-        return server.isRegistered(name);\n+        return (mbeansRegistered.containsKey(name) \n+                && server.isRegistered(mbeansRegistered.get(name))) \n+                || server.isRegistered(name);\n     }\n \n     protected void doStart() throws Exception {\n@@ -280,11 +283,10 @@ protected void doStop() throws Exception {\n         }\n \n         // Using the array to hold the busMBeans to avoid the CurrentModificationException\n-        ObjectName[] mBeans = mbeansRegistered.toArray(new ObjectName[mbeansRegistered.size()]);\n+        ObjectName[] mBeans = mbeansRegistered.keySet().toArray(new ObjectName[mbeansRegistered.size()]);\n         int caught = 0;\n         for (ObjectName name : mBeans) {\n             try {\n-                mbeansRegistered.remove(name);\n                 unregister(name);\n             } catch (Exception e) {\n                 LOG.info(\"Exception unregistering MBean with name \" + name, e);\n@@ -302,7 +304,7 @@ private void registerMBeanWithServer(Object obj, ObjectName name, boolean forceR\n         throws JMException {\n \n         // have we already registered the bean, there can be shared instances in the camel routes\n-        boolean exists = server.isRegistered(name);\n+        boolean exists = isRegistered(name);\n         if (exists) {\n             if (forceRegistration) {\n                 LOG.info(\"ForceRegistration enabled, unregistering existing MBean with ObjectName: {}\", name);\n@@ -324,7 +326,7 @@ private void registerMBeanWithServer(Object obj, ObjectName name, boolean forceR\n         if (instance != null) {\n             ObjectName registeredName = instance.getObjectName();\n             LOG.debug(\"Registered MBean with ObjectName: {}\", registeredName);\n-            mbeansRegistered.add(registeredName);\n+            mbeansRegistered.put(name, registeredName);\n         }\n     }\n \n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

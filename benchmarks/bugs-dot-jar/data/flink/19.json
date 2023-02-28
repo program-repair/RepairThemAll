@@ -1,0 +1,24 @@
+{
+    "bug_id": 19,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "76bebd42",
+    "failing_tests": [
+        "org.apache.flink.runtime.operators.hash.HashTableTest"
+    ],
+    "files": 1,
+    "jira_id": "2964",
+    "linesAdd": 7,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 1,
+    "nb_test": 892,
+    "patch": "diff --git a/flink-runtime/src/main/java/org/apache/flink/runtime/operators/hash/HashPartition.java b/flink-runtime/src/main/java/org/apache/flink/runtime/operators/hash/HashPartition.java\nindex 32fd74a51e..97bef4a602 100644\n--- a/flink-runtime/src/main/java/org/apache/flink/runtime/operators/hash/HashPartition.java\n+++ b/flink-runtime/src/main/java/org/apache/flink/runtime/operators/hash/HashPartition.java\n@@ -207,7 +207,8 @@ public final boolean isInMemory() {\n \t */\n \tpublic int getNumOccupiedMemorySegments() {\n \t\t// either the number of memory segments, or one for spilling\n-\t\tfinal int numPartitionBuffers = this.partitionBuffers != null ? this.partitionBuffers.length : 1;\n+\t\tfinal int numPartitionBuffers = this.partitionBuffers != null ?\n+\t\t\tthis.partitionBuffers.length : this.buildSideWriteBuffer.getNumOccupiedMemorySegments();\n \t\treturn numPartitionBuffers + numOverflowSegments;\n \t}\n \t\n@@ -542,6 +543,11 @@ int getBlockCount() {\n \t\t\treturn this.currentBlockNumber + 1;\n \t\t}\n \n+\t\tint getNumOccupiedMemorySegments() {\n+\t\t\t// return the current segment + all filled segments\n+\t\t\treturn this.targetList.size() + 1;\n+\t\t}\n+\t\t\n \t\tint spill(BlockChannelWriter<MemorySegment> writer) throws IOException {\n \t\t\tthis.writer = writer;\n \t\t\tfinal int numSegments = this.targetList.size();\n",
+    "project": "flink",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

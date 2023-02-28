@@ -1,0 +1,24 @@
+{
+    "bug_id": 140,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "f3ec1503",
+    "failing_tests": [
+        "org.apache.wicket.util.parse.metapattern.parsers.VariableAssignmentParserTest"
+    ],
+    "files": 1,
+    "jira_id": "4679",
+    "linesAdd": 3,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 162,
+    "patch": "diff --git a/wicket-util/src/main/java/org/apache/wicket/util/parse/metapattern/parsers/VariableAssignmentParser.java b/wicket-util/src/main/java/org/apache/wicket/util/parse/metapattern/parsers/VariableAssignmentParser.java\nindex dc49c1745e..ee4f443117 100644\n--- a/wicket-util/src/main/java/org/apache/wicket/util/parse/metapattern/parsers/VariableAssignmentParser.java\n+++ b/wicket-util/src/main/java/org/apache/wicket/util/parse/metapattern/parsers/VariableAssignmentParser.java\n@@ -29,11 +29,11 @@\n  */\n public final class VariableAssignmentParser extends MetaPatternParser\n {\n-\t/** The optional namespace like \"namespace:*\" */\n+\t/** The optional namespace like \"namespace:*[:*]\" */\n \tprivate static final MetaPattern namespace = new OptionalMetaPattern(new MetaPattern[] {\n-\t\t\tMetaPattern.VARIABLE_NAME, MetaPattern.COLON });\n+\t\t\tMetaPattern.VARIABLE_NAME, MetaPattern.COLON, new OptionalMetaPattern(new MetaPattern[] {MetaPattern.VARIABLE_NAME, MetaPattern.COLON })});\n \n-\t/** The key (lvalue) like \"name\" or \"namespace:name\" */\n+\t/** The key (lvalue) like \"name\" or \"namespace:name\" or \"namespace:name:subname\" */\n \tprivate final Group key = new Group(new MetaPattern(namespace, MetaPattern.XML_ATTRIBUTE_NAME));\n \n \t/** The rvalue of the assignment */\n",
+    "project": "wicket",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

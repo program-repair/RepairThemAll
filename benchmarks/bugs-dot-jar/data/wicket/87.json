@@ -1,0 +1,25 @@
+{
+    "bug_id": 87,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "825da305",
+    "failing_tests": [
+        "org.apache.wicket.core.request.mapper.PackageMapperTest",
+        "org.apache.wicket.core.request.mapper.BookmarkableMapperTest"
+    ],
+    "files": 2,
+    "jira_id": "5500",
+    "linesAdd": 23,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 2,
+    "nb_test": 1577,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/AbstractComponentMapper.java b/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/AbstractComponentMapper.java\nindex b1480eeaad..efd77c6006 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/AbstractComponentMapper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/AbstractComponentMapper.java\n@@ -130,9 +130,28 @@ protected void encodePageComponentInfo(Url url, PageComponentInfo info)\n \t */\n \tprotected Class<? extends IRequestablePage> getPageClass(String name)\n \t{\n-\t\tArgs.notEmpty(name, \"name\");\n+\t\tString cleanedClassName = cleanClassName(name);\n+\t\treturn WicketObjects.resolveClass(cleanedClassName);\n+\t}\n+\n+\t/**\n+\t * Cleans the class name from any extra information that may be there.\n+\t *\n+\t * @param className\n+\t *              The raw class name parsed from the url\n+\t * @return The cleaned class name\n+\t */\n+\tprotected String cleanClassName(String className)\n+\t{\n+\t\tArgs.notEmpty(className, \"className\");\n+\n+\t\tif (Strings.indexOf(className, ';') > -1)\n+\t\t{\n+\t\t\t// remove any path parameters set manually by the user. WICKET-5500\n+\t\t\tclassName = Strings.beforeFirst(className, ';');\n+\t\t}\n \n-\t\treturn WicketObjects.resolveClass(name);\n+\t\treturn className;\n \t}\n \n \t/**\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/PackageMapper.java b/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/PackageMapper.java\nindex 41c6696f88..ad15d6d2e1 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/PackageMapper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/PackageMapper.java\n@@ -139,7 +139,8 @@ protected UrlInfo parseRequest(Request request)\n \t\t\tPageComponentInfo info = getPageComponentInfo(url);\n \n \t\t\t// load the page class\n-\t\t\tString className = url.getSegments().get(mountSegments.length);\n+\t\t\tString name = url.getSegments().get(mountSegments.length);\n+\t\t\tString className = cleanClassName(name);\n \n \t\t\tif (isValidClassName(className) == false)\n \t\t\t{\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

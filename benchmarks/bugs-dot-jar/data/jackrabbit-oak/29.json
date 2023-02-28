@@ -1,0 +1,24 @@
+{
+    "bug_id": 29,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "01a8b283",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.blob.datastore.DataStoreBlobStoreTest"
+    ],
+    "files": 1,
+    "jira_id": "1655",
+    "linesAdd": 19,
+    "linesRem": 5,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 8,
+    "nb_test": 1752,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/blob/datastore/DataStoreBlobStore.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/blob/datastore/DataStoreBlobStore.java\nindex b0552783dc..3ad49ad2fa 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/blob/datastore/DataStoreBlobStore.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/blob/datastore/DataStoreBlobStore.java\n@@ -32,6 +32,7 @@\n import javax.jcr.RepositoryException;\n \n import com.google.common.base.Function;\n+import com.google.common.base.Predicate;\n import com.google.common.collect.Iterators;\n import com.google.common.io.ByteStreams;\n import com.google.common.io.Closeables;\n@@ -47,6 +48,8 @@\n import org.slf4j.LoggerFactory;\n \n import static com.google.common.base.Preconditions.checkNotNull;\n+import static com.google.common.collect.Iterators.filter;\n+import static com.google.common.collect.Iterators.transform;\n \n /**\n  * BlobStore wrapper for DataStore. Wraps Jackrabbit 2 DataStore and expose them as BlobStores\n@@ -258,12 +261,23 @@ public long getBlockSizeMin() {\n     }\n \n     @Override\n-    public Iterator<String> getAllChunkIds(long maxLastModifiedTime) throws Exception {\n-        //TODO Ignores the maxLastModifiedTime currently.\n-        return Iterators.transform(delegate.getAllIdentifiers(), new Function<DataIdentifier, String>() {\n-            @Nullable\n+    public Iterator<String> getAllChunkIds(final long maxLastModifiedTime) throws Exception {\n+        return transform(filter(delegate.getAllIdentifiers(), new Predicate<DataIdentifier>() {\n             @Override\n-            public String apply(@Nullable DataIdentifier input) {\n+            public boolean apply(DataIdentifier input) {\n+                try {\n+                    DataRecord dr = delegate.getRecord(input);\n+                    if(dr != null && dr.getLastModified() < maxLastModifiedTime){\n+                        return true;\n+                    }\n+                } catch (DataStoreException e) {\n+                    log.warn(\"Error occurred while fetching DataRecord for identifier {}\",input, e);\n+                }\n+                return false;\n+            }\n+        }),new Function<DataIdentifier, String>() {\n+            @Override\n+            public String apply(DataIdentifier input) {\n                 return input.toString();\n             }\n         });\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

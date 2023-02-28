@@ -1,0 +1,24 @@
+{
+    "bug_id": 29,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "8e794fc4",
+    "failing_tests": [
+        "org.apache.wicket.spring.injection.annot.JavaxInjectAnnotProxyFieldValueFactoryTest"
+    ],
+    "files": 1,
+    "jira_id": "5686",
+    "linesAdd": 2,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 25,
+    "patch": "diff --git a/wicket-spring/src/main/java/org/apache/wicket/spring/injection/annot/AnnotProxyFieldValueFactory.java b/wicket-spring/src/main/java/org/apache/wicket/spring/injection/annot/AnnotProxyFieldValueFactory.java\nindex 6b7d071164..54d11de842 100644\n--- a/wicket-spring/src/main/java/org/apache/wicket/spring/injection/annot/AnnotProxyFieldValueFactory.java\n+++ b/wicket-spring/src/main/java/org/apache/wicket/spring/injection/annot/AnnotProxyFieldValueFactory.java\n@@ -68,6 +68,7 @@\n  * @see LazyInitProxyFactory\n  * @see SpringBean\n  * @see SpringBeanLocator\n+ * @see javax.inject.Inject\n  * \n  * @author Igor Vaynberg (ivaynberg)\n  * @author Istvan Devai\n@@ -123,7 +124,7 @@ public Object getFieldValue(final Field field, final Object fieldOwner)\n \t\t\t{\n \t\t\t\tNamed named = field.getAnnotation(Named.class);\n \t\t\t\tname = named != null ? named.value() : \"\";\n-\t\t\t\trequired = false;\n+\t\t\t\trequired = true;\n \t\t\t}\n \n \t\t\tString beanName = getBeanName(field, name, required);\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

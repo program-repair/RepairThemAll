@@ -1,0 +1,24 @@
+{
+    "bug_id": 218,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "073b814c",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.core.MutableTreeTest"
+    ],
+    "files": 1,
+    "jira_id": "1674",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 4,
+    "nb_skipped": 8,
+    "nb_test": 1830,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/tree/AbstractTree.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/tree/AbstractTree.java\nindex 51afd2e05a..30f70adfc7 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/tree/AbstractTree.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/tree/AbstractTree.java\n@@ -204,7 +204,7 @@ protected void buildPath(StringBuilder sb) {\n \n     @Override\n     public Status getStatus() {\n-        if (nodeBuilder.isNew()) {\n+        if (nodeBuilder.isNew() || nodeBuilder.isReplaced()) {\n             return NEW;\n         } else if (nodeBuilder.isModified()) {\n             return MODIFIED;\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

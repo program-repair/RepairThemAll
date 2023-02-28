@@ -1,0 +1,24 @@
+{
+    "bug_id": 42,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "11d11e0d",
+    "failing_tests": [
+        "org.apache.accumulo.server.master.balancer.DefaultLoadBalancerTest"
+    ],
+    "files": 1,
+    "jira_id": "2952",
+    "linesAdd": 4,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 2,
+    "nb_test": 179,
+    "patch": "diff --git a/server/base/src/main/java/org/apache/accumulo/server/master/balancer/DefaultLoadBalancer.java b/server/base/src/main/java/org/apache/accumulo/server/master/balancer/DefaultLoadBalancer.java\nindex 46b9b5f5d..349040562 100644\n--- a/server/base/src/main/java/org/apache/accumulo/server/master/balancer/DefaultLoadBalancer.java\n+++ b/server/base/src/main/java/org/apache/accumulo/server/master/balancer/DefaultLoadBalancer.java\n@@ -86,7 +86,7 @@ public TServerInstance getAssignment(SortedMap<TServerInstance,TabletServerStatu\n   \n   static class ServerCounts implements Comparable<ServerCounts> {\n     public final TServerInstance server;\n-    public final int count;\n+    public int count;\n     public final TabletServerStatus status;\n     \n     ServerCounts(int count, TServerInstance server, TabletServerStatus status) {\n@@ -145,7 +145,7 @@ public boolean getMigrations(Map<TServerInstance,TabletServerStatus> current, Li\n       int end = totals.size() - 1;\n       int movedAlready = 0;\n       int tooManyIndex = 0;\n-      while (tooManyIndex < totals.size() && end > tooManyIndex) {\n+      while (tooManyIndex < end) {\n         ServerCounts tooMany = totals.get(tooManyIndex);\n         int goal = even;\n         if (tooManyIndex < numServersOverEven) {\n@@ -255,7 +255,8 @@ public TableDiff(int diff, String table) {\n         tooLittleCount = 0;\n       }\n       tooLittleMap.put(table, tooLittleCount + 1);\n-      \n+      tooMuch.count--;\n+      tooLittle.count++;\n       result.add(new TabletMigration(extent, tooMuch.server, tooLittle.server));\n     }\n     return result;\n",
+    "project": "accumulo",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 12,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "94c2a31f",
+    "failing_tests": [
+        "org.apache.accumulo.minicluster.MiniAccumuloClusterStartStopTest"
+    ],
+    "files": 1,
+    "jira_id": "3055",
+    "linesAdd": 11,
+    "linesRem": 3,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 5,
+    "patch": "diff --git a/minicluster/src/main/java/org/apache/accumulo/minicluster/MiniAccumuloCluster.java b/minicluster/src/main/java/org/apache/accumulo/minicluster/MiniAccumuloCluster.java\nindex 7a9bc0d36..8246c51a4 100644\n--- a/minicluster/src/main/java/org/apache/accumulo/minicluster/MiniAccumuloCluster.java\n+++ b/minicluster/src/main/java/org/apache/accumulo/minicluster/MiniAccumuloCluster.java\n@@ -53,6 +53,8 @@\n import org.apache.log4j.Logger;\n import org.apache.zookeeper.server.ZooKeeperServerMain;\n \n+import com.google.common.base.Preconditions;\n+\n /**\n  * A utility class that will create Zookeeper and Accumulo processes that write all of their data to a single local directory. This class makes it easy to test\n  * code against a real Accumulo instance. Its much more accurate for testing than MockAccumulo, but much slower than MockAccumulo.\n@@ -306,7 +308,7 @@ public MiniAccumuloCluster(MiniAccumuloConfig config) throws IOException {\n    * @throws IllegalStateException\n    *           if already started\n    */\n-  public void start() throws IOException, InterruptedException {\n+  public synchronized void start() throws IOException, InterruptedException {\n     if (zooKeeperProcess != null)\n       throw new IllegalStateException(\"Already started\");\n     \n@@ -365,10 +367,15 @@ public String getZooKeepers() {\n   }\n   \n   /**\n-   * Stops Accumulo and Zookeeper processes. If stop is not called, there is a shutdown hook that is setup to kill the processes. Howerver its probably best to\n+   * Stops Accumulo and Zookeeper processes. If stop is not called, there is a shutdown hook that is setup to kill the processes. However its probably best to\n    * call stop in a finally block as soon as possible.\n    */\n-  public void stop() throws IOException, InterruptedException {\n+  public synchronized void stop() throws IOException, InterruptedException {\n+    if (null == executor) {\n+      // keep repeated calls to stop() from failing\n+      return;\n+    }\n+\n     if (zooKeeperProcess != null) {\n       try {\n         stopProcessWithTimeout(zooKeeperProcess, 30, TimeUnit.SECONDS);\n@@ -436,6 +443,7 @@ protected ExecutorService getShutdownExecutor() {\n   }\n   \n   private int stopProcessWithTimeout(final Process proc, long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {\n+    Preconditions.checkNotNull(executor, \"Executor was already null\");\n     FutureTask<Integer> future = new FutureTask<Integer>(new Callable<Integer>() {\n       @Override\n       public Integer call() throws InterruptedException {\n",
+    "project": "accumulo",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

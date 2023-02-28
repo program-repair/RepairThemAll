@@ -1,0 +1,24 @@
+{
+    "bug_id": 82,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "00df38d2",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.memory.MemoryNodeBuilderTest"
+    ],
+    "files": 1,
+    "jira_id": "447",
+    "linesAdd": 3,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 399,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\nindex 6600cc78a0..68cc5f2c8a 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\n@@ -422,7 +422,9 @@ public NodeBuilder child(String name) {\n         read(); // shortcut when dealing with a read-only child node\n         if (baseState != null\n                 && baseState.hasChildNode(name)\n-                && (writeState == null || !writeState.nodes.containsKey(name))) {\n+                && (writeState == null\n+                    || (writeState.base == baseState\n+                        && !writeState.nodes.containsKey(name)))) {\n             return createChildBuilder(name);\n         }\n \n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

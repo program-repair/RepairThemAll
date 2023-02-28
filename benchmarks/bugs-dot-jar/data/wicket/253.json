@@ -1,0 +1,24 @@
+{
+    "bug_id": 253,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "6cceff44",
+    "failing_tests": [
+        "org.apache.wicket.bean.validation.DefaultPropertyResolverTest"
+    ],
+    "files": 1,
+    "jira_id": "5505",
+    "linesAdd": 18,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 5,
+    "patch": "diff --git a/wicket-bean-validation/src/main/java/org/apache/wicket/bean/validation/DefaultPropertyResolver.java b/wicket-bean-validation/src/main/java/org/apache/wicket/bean/validation/DefaultPropertyResolver.java\nindex 91eb1a3882..442bca2627 100644\n--- a/wicket-bean-validation/src/main/java/org/apache/wicket/bean/validation/DefaultPropertyResolver.java\n+++ b/wicket-bean-validation/src/main/java/org/apache/wicket/bean/validation/DefaultPropertyResolver.java\n@@ -3,6 +3,7 @@\n import java.lang.reflect.Field;\n import java.lang.reflect.Method;\n \n+import org.apache.wicket.WicketRuntimeException;\n import org.apache.wicket.markup.html.form.FormComponent;\n import org.apache.wicket.model.IModel;\n import org.apache.wicket.model.IPropertyReflectionAwareModel;\n@@ -50,11 +51,26 @@ public Property resolveProperty(FormComponent<?> component)\n \t\t\treturn new Property(field.getDeclaringClass(), field.getName());\n \t\t}\n \n+\t\tString name;\n \t\tMethod getter = delegate.getPropertyGetter();\n \t\tif (getter != null)\n \t\t{\n-\t\t\tString name = getter.getName().substring(3, 4).toLowerCase() +\n-\t\t\t\tgetter.getName().substring(4);\n+\t\t\tString methodName = getter.getName();\n+\t\t\tif (methodName.startsWith(\"get\"))\n+\t\t\t{\n+\t\t\t\tname = methodName.substring(3, 4).toLowerCase() +\n+\t\t\t\t\tmethodName.substring(4);\n+\t\t\t}\n+\t\t\telse if (methodName.startsWith(\"is\"))\n+\t\t\t{\n+\t\t\t\tname = methodName.substring(2, 3).toLowerCase() +\n+\t\t\t\t\t\tmethodName.substring(3);\n+\t\t\t}\n+\t\t\telse\n+\t\t\t{\n+\t\t\t\tthrow new WicketRuntimeException(\"Invalid name for a getter method: '\"\n+\t\t\t\t\t\t+ methodName + \"'. It must start either with 'get' or 'is'.\");\n+\t\t\t}\n \t\t\treturn new Property(getter.getDeclaringClass(), name);\n \t\t}\n \n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

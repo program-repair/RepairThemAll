@@ -1,0 +1,24 @@
+{
+    "bug_id": 33,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "4e245a76",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.jcr.RepositoryTest"
+    ],
+    "files": 1,
+    "jira_id": "369",
+    "linesAdd": 17,
+    "linesRem": 4,
+    "nb_error": 2,
+    "nb_failure": 2,
+    "nb_skipped": 4,
+    "nb_test": 347,
+    "patch": "diff --git a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeDelegate.java b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeDelegate.java\nindex 644096bcd5..6fd4a9ce64 100644\n--- a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeDelegate.java\n+++ b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/NodeDelegate.java\n@@ -33,6 +33,7 @@\n import org.apache.jackrabbit.oak.api.PropertyState;\n import org.apache.jackrabbit.oak.api.Tree;\n import org.apache.jackrabbit.oak.api.TreeLocation;\n+import org.apache.jackrabbit.oak.commons.PathUtils;\n import org.apache.jackrabbit.oak.plugins.memory.PropertyStates;\n \n /**\n@@ -93,7 +94,7 @@ public long getPropertyCount() throws InvalidItemStateException {\n      * no such property exists\n      */\n     @CheckForNull\n-    public PropertyDelegate getProperty(String relPath) throws InvalidItemStateException {\n+    public PropertyDelegate getProperty(String relPath) throws RepositoryException {\n         TreeLocation propertyLocation = getChildLocation(relPath);\n         PropertyState propertyState = propertyLocation.getProperty();\n         return propertyState == null\n@@ -126,7 +127,7 @@ public long getChildCount() throws InvalidItemStateException {\n      * no such node exists\n      */\n     @CheckForNull\n-    public NodeDelegate getChild(String relPath) throws InvalidItemStateException {\n+    public NodeDelegate getChild(String relPath) throws RepositoryException {\n         return create(sessionDelegate, getChildLocation(relPath));\n     }\n \n@@ -241,8 +242,20 @@ Tree getTree() throws InvalidItemStateException {\n \n     // -----------------------------------------------------------< private >---\n \n-    private TreeLocation getChildLocation(String relPath) throws InvalidItemStateException {\n-        return getLocation().getChild(relPath);\n+    private TreeLocation getChildLocation(String relPath) throws RepositoryException {\n+        if (PathUtils.isAbsolute(relPath)) {\n+            throw new RepositoryException(\"Not a relative path: \" + relPath);\n+        }\n+\n+        TreeLocation loc = getLocation();\n+        for (String element : PathUtils.elements(relPath)) {\n+            if (PathUtils.denotesParent(element)) {\n+                loc = loc.getParent();\n+            } else if (!PathUtils.denotesCurrent(element)) {\n+                loc = loc.getChild(element);\n+            }  // else . -> skip to next element\n+        }\n+        return loc;\n     }\n \n     private Iterator<NodeDelegate> nodeDelegateIterator(\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

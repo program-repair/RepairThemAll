@@ -1,0 +1,24 @@
+{
+    "bug_id": 38,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ffa818f3",
+    "failing_tests": [
+        "org.apache.jackrabbit.mk.model.IdTest"
+    ],
+    "files": 1,
+    "jira_id": "539",
+    "linesAdd": 3,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 2,
+    "nb_test": 77,
+    "patch": "diff --git a/oak-mk/src/main/java/org/apache/jackrabbit/mk/model/Id.java b/oak-mk/src/main/java/org/apache/jackrabbit/mk/model/Id.java\nindex a263ddb345..021b5ef6f3 100644\n--- a/oak-mk/src/main/java/org/apache/jackrabbit/mk/model/Id.java\n+++ b/oak-mk/src/main/java/org/apache/jackrabbit/mk/model/Id.java\n@@ -113,7 +113,9 @@ public int compareTo(Id o) {\n         \n         for (int i = 0; i < len; i++) {\n             if (raw[i] != other[i]) {\n-                return raw[i] - other[i];\n+                final int rawValue = raw[i] & 0xFF; // unsigned value\n+                final int otherValue = other[i] & 0xFF; // unsigned value\n+                return rawValue - otherValue;\n             }\n         }\n         return raw.length - other.length;\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

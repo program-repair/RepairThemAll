@@ -1,0 +1,20 @@
+{
+    "bug_id": 10,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "1c3abfba",
+    "failing_tests": [
+        "org.apache.maven.model.validation.DefaultModelValidatorTest"
+    ],
+    "files": 1,
+    "jira_id": "4915",
+    "linesAdd": 19,
+    "linesRem": 11,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 0,
+    "nb_test": 91,
+    "patch": "diff --git a/maven-model-builder/src/main/java/org/apache/maven/model/validation/DefaultModelValidator.java b/maven-model-builder/src/main/java/org/apache/maven/model/validation/DefaultModelValidator.java\nindex 33b2f2613..8a2f63409 100644\n--- a/maven-model-builder/src/main/java/org/apache/maven/model/validation/DefaultModelValidator.java\n+++ b/maven-model-builder/src/main/java/org/apache/maven/model/validation/DefaultModelValidator.java\n@@ -764,41 +764,49 @@ private boolean validateVersion( String fieldName, ModelProblemCollector problem\n             return true;\n         }\n \n-        if ( !hasExpression( string ) )\n+        if ( hasExpression( string ) )\n         {\n-            return true;\n+            addViolation( problems, severity, fieldName, sourceHint,\n+                          \"must be a valid version but is '\" + string + \"'.\", tracker );\n+            return false;\n         }\n \n-        addViolation( problems, severity, fieldName, sourceHint, \"must be a valid version but is '\" + string + \"'.\",\n-                      tracker );\n-\n+        if ( !validateBannedCharacters( fieldName, problems, severity, string, sourceHint, tracker,\n+                                        ILLEGAL_VERSION_CHARS ) )\n+        {\n             return false;\n         }\n \n+        return true;\n+    }\n+\n     private boolean validatePluginVersion( String fieldName, ModelProblemCollector problems, String string,\n                                            String sourceHint, InputLocationTracker tracker,\n                                            ModelBuildingRequest request )\n     {\n-        Severity errOn30 = getSeverity( request, ModelBuildingRequest.VALIDATION_LEVEL_MAVEN_3_0 );\n-\n         if ( string == null )\n         {\n             // NOTE: The check for missing plugin versions is handled directly by the model builder\n             return true;\n         }\n \n-        if ( string.length() > 0 && !hasExpression( string ) && !\"RELEASE\".equals( string )\n-            && !\"LATEST\".equals( string ) )\n+        Severity errOn30 = getSeverity( request, ModelBuildingRequest.VALIDATION_LEVEL_MAVEN_3_0 );\n+\n+        if ( !validateVersion( fieldName, problems, errOn30, string, sourceHint, tracker ) )\n         {\n-            return true;\n+            return false;\n         }\n \n+        if ( string.length() <= 0 || \"RELEASE\".equals( string ) || \"LATEST\".equals( string ) )\n+        {\n             addViolation( problems, errOn30, fieldName, sourceHint, \"must be a valid version but is '\" + string + \"'.\",\n                           tracker );\n-\n             return false;\n         }\n \n+        return true;\n+    }\n+\n     private static void addViolation( ModelProblemCollector problems, Severity severity, String fieldName,\n                                       String sourceHint, String message, InputLocationTracker tracker )\n     {\n",
+    "project": "maven"
+}

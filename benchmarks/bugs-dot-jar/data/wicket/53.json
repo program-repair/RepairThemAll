@@ -1,0 +1,24 @@
+{
+    "bug_id": 53,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "74e77676",
+    "failing_tests": [
+        "org.apache.wicket.settings.ISecuritySettingsTest"
+    ],
+    "files": 1,
+    "jira_id": "5094",
+    "linesAdd": 21,
+    "linesRem": 8,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 3,
+    "nb_test": 1463,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/BookmarkableMapper.java b/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/BookmarkableMapper.java\nindex f8c7ffeaf2..b1418bf730 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/BookmarkableMapper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/BookmarkableMapper.java\n@@ -17,6 +17,8 @@\n package org.apache.wicket.core.request.mapper;\n \n import org.apache.wicket.Application;\n+import org.apache.wicket.core.request.handler.PageProvider;\n+import org.apache.wicket.core.request.handler.RenderPageRequestHandler;\n import org.apache.wicket.request.Request;\n import org.apache.wicket.request.Url;\n import org.apache.wicket.request.component.IRequestablePage;\n@@ -91,14 +93,6 @@ protected Url buildUrl(UrlInfo info)\n \t@Override\n \tprotected UrlInfo parseRequest(Request request)\n \t{\n-\t\tif (Application.exists())\n-\t\t{\n-\t\t\tif (Application.get().getSecuritySettings().getEnforceMounts())\n-\t\t\t{\n-\t\t\t\treturn null;\n-\t\t\t}\n-\t\t}\n-\n \t\tUrl url = request.getUrl();\n \t\tif (matches(url))\n \t\t{\n@@ -111,6 +105,25 @@ protected UrlInfo parseRequest(Request request)\n \n \t\t\tif (pageClass != null && IRequestablePage.class.isAssignableFrom(pageClass))\n \t\t\t{\n+\t\t\t\tif (Application.exists())\n+\t\t\t\t{\n+\t\t\t\t\tApplication application = Application.get();\n+\n+\t\t\t\t\tif (application.getSecuritySettings().getEnforceMounts())\n+\t\t\t\t\t{\n+\t\t\t\t\t\t// we make an excepion if the homepage itself was mounted, see WICKET-1898\n+\t\t\t\t\t\tif (!pageClass.equals(application.getHomePage()))\n+\t\t\t\t\t\t{\n+\t\t\t\t\t\t\t// WICKET-5094 only enforce mount if page is mounted\n+\t\t\t\t\t\t\tUrl reverseUrl = application.getRootRequestMapper().mapHandler(\n+\t\t\t\t\t\t\t\tnew RenderPageRequestHandler(new PageProvider(pageClass)));\n+\t\t\t\t\t\t\tif (!matches(reverseUrl))\n+\t\t\t\t\t\t\t{\n+\t\t\t\t\t\t\t\treturn null;\n+\t\t\t\t\t\t\t}\n+\t\t\t\t\t\t}\n+\t\t\t\t\t}\n+\t\t\t\t}\n \n \t\t\t\t// extract the PageParameters from URL if there are any\n \t\t\t\tPageParameters pageParameters = extractPageParameters(request, 3,\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 56,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "d738430c",
+    "failing_tests": [
+        "org.apache.flink.streaming.runtime.io.BarrierBufferTest"
+    ],
+    "files": 1,
+    "jira_id": "2484",
+    "linesAdd": 2,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 10,
+    "nb_skipped": 1,
+    "nb_test": 213,
+    "patch": "diff --git a/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/runtime/io/BarrierBuffer.java b/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/runtime/io/BarrierBuffer.java\nindex b7766eea99..fd896c9d83 100644\n--- a/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/runtime/io/BarrierBuffer.java\n+++ b/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/runtime/io/BarrierBuffer.java\n@@ -76,7 +76,7 @@\n \n \t/**\n \t * \n-\t * @param inputGate Teh input gate to draw the buffers and events from.\n+\t * @param inputGate The input gate to draw the buffers and events from.\n \t * @param ioManager The I/O manager that gives access to the temp directories.\n \t * \n \t * @throws IOException Thrown, when the spilling to temp files cannot be initialized.\n@@ -102,6 +102,7 @@ public BufferOrEvent getNextNonBlocked() throws IOException, InterruptedExceptio\n \t\t\tif (currentBuffered != null) {\n \t\t\t\tnext = currentBuffered.getNext();\n \t\t\t\tif (next == null) {\n+\t\t\t\t\tcurrentBuffered.cleanup();\n \t\t\t\t\tcurrentBuffered = queuedBuffered.pollFirst();\n \t\t\t\t\tif (currentBuffered != null) {\n \t\t\t\t\t\tcurrentBuffered.open();\n",
+    "project": "flink",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

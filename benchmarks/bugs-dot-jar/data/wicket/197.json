@@ -1,0 +1,25 @@
+{
+    "bug_id": 197,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "6cefb9f8",
+    "failing_tests": [
+        "org.apache.wicket.behavior.ImmutableBehaviorIdsTest",
+        "org.apache.wicket.markup.html.basic.SimplePageTest"
+    ],
+    "files": 1,
+    "jira_id": "5400",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 2,
+    "nb_test": 1529,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/Behaviors.java b/wicket-core/src/main/java/org/apache/wicket/Behaviors.java\nindex a743e8b03c..3d406f2c7a 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/Behaviors.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/Behaviors.java\n@@ -63,7 +63,7 @@ public void add(Behavior... behaviors)\n \tprivate void internalAdd(final Behavior behavior)\r\n \t{\r\n \t\tcomponent.data_add(behavior);\r\n-\t\tif (behavior.getStatelessHint(component))\r\n+\t\tif (behavior.getStatelessHint(component) == false)\r\n \t\t{\r\n \t\t\tgetBehaviorId(behavior);\r\n \t\t}\r\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

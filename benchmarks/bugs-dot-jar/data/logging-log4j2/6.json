@@ -1,0 +1,24 @@
+{
+    "bug_id": 6,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "4cf831b6",
+    "failing_tests": [
+        "org.apache.logging.log4j.MarkerTest"
+    ],
+    "files": 1,
+    "jira_id": "1062",
+    "linesAdd": 3,
+    "linesRem": 0,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 20,
+    "patch": "diff --git a/log4j-slf4j-impl/src/main/java/org/apache/logging/slf4j/Log4jMarker.java b/log4j-slf4j-impl/src/main/java/org/apache/logging/slf4j/Log4jMarker.java\nindex d57cf1907..aee8dcfcd 100644\n--- a/log4j-slf4j-impl/src/main/java/org/apache/logging/slf4j/Log4jMarker.java\n+++ b/log4j-slf4j-impl/src/main/java/org/apache/logging/slf4j/Log4jMarker.java\n@@ -50,6 +50,9 @@ public Log4jMarker(final org.apache.logging.log4j.Marker marker) {\n \r\n     @Override\r\n     public void add(final Marker marker) {\r\n+\t\tif (marker == null) {\r\n+\t\t\tthrow new IllegalArgumentException();\r\n+\t\t}\r\n         final Marker m = factory.getMarker(marker.getName());\r\n         this.marker.addParents(((Log4jMarker)m).getLog4jMarker());\r\n     }\r\n",
+    "project": "logging-log4j2",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

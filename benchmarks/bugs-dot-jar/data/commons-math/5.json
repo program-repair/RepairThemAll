@@ -1,0 +1,24 @@
+{
+    "bug_id": 5,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "cedf0d27",
+    "failing_tests": [
+        "org.apache.commons.math3.distribution.MultivariateNormalDistributionTest"
+    ],
+    "files": 1,
+    "jira_id": "929",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 4,
+    "nb_test": 4528,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math3/distribution/MultivariateNormalDistribution.java b/src/main/java/org/apache/commons/math3/distribution/MultivariateNormalDistribution.java\nindex 15706811b..fd18c281b 100644\n--- a/src/main/java/org/apache/commons/math3/distribution/MultivariateNormalDistribution.java\n+++ b/src/main/java/org/apache/commons/math3/distribution/MultivariateNormalDistribution.java\n@@ -180,7 +180,7 @@ public double density(final double[] vals) throws DimensionMismatchException {\n             throw new DimensionMismatchException(vals.length, dim);\n         }\n \n-        return FastMath.pow(2 * FastMath.PI, -dim / 2) *\n+        return FastMath.pow(2 * FastMath.PI, -0.5 * dim) *\n             FastMath.pow(covarianceMatrixDeterminant, -0.5) *\n             getExponentTerm(vals);\n     }\n",
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

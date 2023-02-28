@@ -1,0 +1,24 @@
+{
+    "bug_id": 20,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "4b7367ef",
+    "failing_tests": [
+        "org.apache.wicket.request.http.handler.RedirectRequestHandlerTest"
+    ],
+    "files": 1,
+    "jira_id": "5131",
+    "linesAdd": 9,
+    "linesRem": 6,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 93,
+    "patch": "diff --git a/wicket-request/src/main/java/org/apache/wicket/request/http/handler/RedirectRequestHandler.java b/wicket-request/src/main/java/org/apache/wicket/request/http/handler/RedirectRequestHandler.java\nindex e21856f076..13c99fa029 100644\n--- a/wicket-request/src/main/java/org/apache/wicket/request/http/handler/RedirectRequestHandler.java\n+++ b/wicket-request/src/main/java/org/apache/wicket/request/http/handler/RedirectRequestHandler.java\n@@ -59,9 +59,10 @@ public RedirectRequestHandler(final String redirectUrl)\n \tpublic RedirectRequestHandler(final String redirectUrl, final int status)\n \t{\n \t\tif ((status != HttpServletResponse.SC_MOVED_PERMANENTLY) &&\n-\t\t\t(status != HttpServletResponse.SC_MOVED_TEMPORARILY))\n+\t\t\t(status != HttpServletResponse.SC_MOVED_TEMPORARILY) &&\n+\t\t\t(status != HttpServletResponse.SC_SEE_OTHER))\n \t\t{\n-\t\t\tthrow new IllegalStateException(\"Status must be either 301 or 302, but was: \" + status);\n+\t\t\tthrow new IllegalStateException(\"Status must be either 301, 302 or 303, but was: \" + status);\n \t\t}\n \t\tthis.redirectUrl = redirectUrl;\n \t\tthis.status = status;\n@@ -93,17 +94,19 @@ public void respond(final IRequestCycle requestCycle)\n \t{\n \t\tfinal String location;\n \n-\t\tif (redirectUrl.startsWith(\"/\"))\n+\t\tfinal String url = getRedirectUrl();\n+\n+\t\tif (url.charAt(0) == '/')\n \t\t{\n \t\t\t// context-absolute url\n-\t\t\tlocation = requestCycle.getUrlRenderer().renderContextRelativeUrl(redirectUrl);\n+\t\t\tlocation = requestCycle.getUrlRenderer().renderContextRelativeUrl(url);\n \t\t}\n \t\telse\n \t\t{\n \t\t\t// if relative url, servlet container will translate to absolute as\n \t\t\t// per the servlet spec\n \t\t\t// if absolute url still do the same\n-\t\t\tlocation = redirectUrl;\n+\t\t\tlocation = url;\n \t\t}\n \n \t\tWebResponse response = (WebResponse)requestCycle.getResponse();\n@@ -114,7 +117,7 @@ public void respond(final IRequestCycle requestCycle)\n \t\t}\n \t\telse\n \t\t{\n-\t\t\tresponse.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);\n+\t\t\tresponse.setStatus(status);\n \t\t\tresponse.setHeader(\"Location\", location);\n \t\t}\n \t}\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

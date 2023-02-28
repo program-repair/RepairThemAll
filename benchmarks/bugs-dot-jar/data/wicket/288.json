@@ -1,0 +1,31 @@
+{
+    "bug_id": 288,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "9a6a06be",
+    "failing_tests": [
+        "org.apache.wicket.markup.html.form.LocalizedErrorMessageTest",
+        "org.apache.wicket.validation.ValidatorBehaviorTest",
+        "org.apache.wicket.util.tester.FormTesterTest",
+        "org.apache.wicket.markup.html.form.ValidatorPropertiesTest",
+        "org.apache.wicket.markup.html.form.validation.innerfeedback.InnerFeedbackTest",
+        "org.apache.wicket.resource.loader.ValidatorStringResourceLoaderTest",
+        "org.apache.wicket.util.tester.WicketTesterTest",
+        "org.apache.wicket.util.tester.apps_4.FormTesterTest"
+    ],
+    "files": 1,
+    "jira_id": "4548",
+    "linesAdd": 1,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 10,
+    "nb_skipped": 8,
+    "nb_test": 1343,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/ValidationErrorFeedback.java b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/ValidationErrorFeedback.java\nindex f6e1ce7ce6..48b8d0b698 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/ValidationErrorFeedback.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/ValidationErrorFeedback.java\n@@ -78,8 +78,6 @@ public Serializable getMessage()\n \t@Override\n \tpublic String toString()\n \t{\n-\t\treturn \"ValidationErrorFeedback{\" +\n-\t\t\t\t\"message=\" + message +\n-\t\t\t\t'}';\n+\t\treturn message != null ? message.toString() : \"\";\n \t}\n }\n",
+    "project": "wicket",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

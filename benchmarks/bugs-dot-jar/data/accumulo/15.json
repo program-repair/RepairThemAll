@@ -1,0 +1,24 @@
+{
+    "bug_id": 15,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "28294266",
+    "failing_tests": [
+        "org.apache.accumulo.cloudtrace.instrument.TracerTest"
+    ],
+    "files": 1,
+    "jira_id": "2390",
+    "linesAdd": 20,
+    "linesRem": 7,
+    "nb_error": 2,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 6,
+    "patch": "diff --git a/src/trace/src/main/java/org/apache/accumulo/cloudtrace/instrument/TraceProxy.java b/src/trace/src/main/java/org/apache/accumulo/cloudtrace/instrument/TraceProxy.java\nindex 67c446342..6b71361f9 100644\n--- a/src/trace/src/main/java/org/apache/accumulo/cloudtrace/instrument/TraceProxy.java\n+++ b/src/trace/src/main/java/org/apache/accumulo/cloudtrace/instrument/TraceProxy.java\n@@ -17,11 +17,14 @@\n package org.apache.accumulo.cloudtrace.instrument;\n \n import java.lang.reflect.InvocationHandler;\n+import java.lang.reflect.InvocationTargetException;\n import java.lang.reflect.Method;\n import java.lang.reflect.Proxy;\n \n+import org.apache.log4j.Logger;\n+\n public class TraceProxy {\n-  // private static final Logger log = Logger.getLogger(TraceProxy.class);\n+  private static final Logger log = Logger.getLogger(TraceProxy.class);\n \n   static final Sampler ALWAYS = new Sampler() {\n     @Override\n@@ -39,19 +42,29 @@ public boolean next() {\n     InvocationHandler handler = new InvocationHandler() {\n       @Override\n       public Object invoke(Object obj, Method method, Object[] args) throws Throwable {\n-        if (!sampler.next()) {\n-          return method.invoke(instance, args);\n+        Span span = null;\n+        if (sampler.next()) {\n+          span = Trace.on(method.getName());\n         }\n-        Span span = Trace.on(method.getName());\n         try {\n           return method.invoke(instance, args);\n-        } catch (Throwable ex) {\n-          ex.printStackTrace();\n-          throw ex;\n+          // Can throw RuntimeException, Error, or any checked exceptions of the method.\n+        } catch (InvocationTargetException ite) {\n+          Throwable cause = ite.getCause();\n+          if (cause == null) {\n+            // This should never happen, but account for it anyway\n+            log.error(\"Invocation exception during trace with null cause: \", ite);\n+            throw new RuntimeException(ite);\n+          }\n+          throw cause;\n+        } catch (IllegalAccessException e) {\n+          throw new RuntimeException(e);\n         } finally {\n+          if (span != null) {\n             span.stop();\n           }\n         }\n+      }\n     };\n     return (T) Proxy.newProxyInstance(instance.getClass().getClassLoader(), instance.getClass().getInterfaces(), handler);\n   }\n",
+    "project": "accumulo",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

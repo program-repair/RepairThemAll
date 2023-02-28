@@ -1,0 +1,24 @@
+{
+    "bug_id": 115,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "d581c4a4",
+    "failing_tests": [
+        "org.apache.camel.processor.IdempotentConsumerNoMessageIdTest"
+    ],
+    "files": 1,
+    "jira_id": "7990",
+    "linesAdd": 3,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 3,
+    "nb_test": 5103,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/idempotent/IdempotentConsumer.java b/camel-core/src/main/java/org/apache/camel/processor/idempotent/IdempotentConsumer.java\nindex 100a660ead..d3afe7a732 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/idempotent/IdempotentConsumer.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/idempotent/IdempotentConsumer.java\n@@ -80,7 +80,9 @@ public void process(Exchange exchange) throws Exception {\n     public boolean process(Exchange exchange, AsyncCallback callback) {\n         final String messageId = messageIdExpression.evaluate(exchange, String.class);\n         if (messageId == null) {\n-            throw new NoMessageIdException(exchange, messageIdExpression);\n+            exchange.setException(new NoMessageIdException(exchange, messageIdExpression));\n+            callback.done(true);\n+            return true;\n         }\n \n         boolean newKey;\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

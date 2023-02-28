@@ -1,0 +1,25 @@
+{
+    "bug_id": 107,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "bb7a6995",
+    "failing_tests": [
+        "org.apache.wicket.request.resource.ByteArrayResourceTest",
+        "org.apache.wicket.markup.html.PackageResourceTest"
+    ],
+    "files": 4,
+    "jira_id": "4119",
+    "linesAdd": 31,
+    "linesRem": 5,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 2,
+    "nb_test": 1206,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/protocol/http/mock/MockServletContext.java b/wicket-core/src/main/java/org/apache/wicket/protocol/http/mock/MockServletContext.java\nindex 42a8996a18..392e921cd2 100755\n--- a/wicket-core/src/main/java/org/apache/wicket/protocol/http/mock/MockServletContext.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/protocol/http/mock/MockServletContext.java\n@@ -107,7 +107,7 @@ public MockServletContext(final Application application, final String path)\n \t\tmimeTypes.put(\"htm\", \"text/html\");\n \t\tmimeTypes.put(\"css\", \"text/css\");\n \t\tmimeTypes.put(\"xml\", \"text/xml\");\n-\t\tmimeTypes.put(\"js\", \"text/plain\");\n+\t\tmimeTypes.put(\"js\", \"text/javascript\");\n \t\tmimeTypes.put(\"gif\", \"image/gif\");\n \t\tmimeTypes.put(\"jpg\", \"image/jpeg\");\n \t\tmimeTypes.put(\"png\", \"image/png\");\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/request/resource/ByteArrayResource.java b/wicket-core/src/main/java/org/apache/wicket/request/resource/ByteArrayResource.java\nindex d156c11563..d11cab8809 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/resource/ByteArrayResource.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/resource/ByteArrayResource.java\n@@ -16,6 +16,8 @@\n  */\n package org.apache.wicket.request.resource;\n \n+import java.net.URLConnection;\n+\n import org.apache.wicket.WicketRuntimeException;\n import org.apache.wicket.util.time.Time;\n \n@@ -95,6 +97,22 @@ protected ResourceResponse newResourceResponse(final Attributes attributes)\n \t{\n \t\tfinal ResourceResponse response = new ResourceResponse();\n \n+\t\tString contentType = this.contentType;\n+\n+\t\tif (contentType == null)\n+\t\t{\n+\t\t\tif (filename != null)\n+\t\t\t{\n+\t\t\t\tcontentType = URLConnection.getFileNameMap().getContentTypeFor(filename);\n+\t\t\t}\n+\n+\t\t\tif (contentType == null)\n+\t\t\t{\n+\t\t\t\tcontentType = \"application/octet-stream\";\n+\t\t\t}\n+\t\t}\n+\n+\n \t\tresponse.setContentType(contentType);\n \t\tresponse.setLastModified(lastModified);\n \ndiff --git a/wicket-core/src/main/java/org/apache/wicket/request/resource/PackageResource.java b/wicket-core/src/main/java/org/apache/wicket/request/resource/PackageResource.java\nindex 449c344663..a4ce0fe962 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/resource/PackageResource.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/resource/PackageResource.java\n@@ -252,11 +252,15 @@ protected ResourceResponse newResourceResponse(Attributes attributes)\n \t\t\t\treturn sendResourceError(resourceResponse, HttpServletResponse.SC_NOT_FOUND,\n \t\t\t\t\t\"Unable to find resource\");\n \n-\t\t\tString contentType = resourceStream.getContentType();\n-\t\t\tif (contentType == null && Application.exists())\n+\t\t\tfinal String contentType;\n+\t\t\tif (Application.exists())\n \t\t\t{\n \t\t\t\tcontentType = Application.get().getMimeType(path);\n \t\t\t}\n+\t\t\telse\n+\t\t\t{\n+\t\t\t\tcontentType = resourceStream.getContentType();\n+\t\t\t}\n \t\t\t// set Content-Type (may be null)\n \t\t\tresourceResponse.setContentType(contentType);\n \ndiff --git a/wicket-core/src/main/java/org/apache/wicket/request/resource/ResourceStreamResource.java b/wicket-core/src/main/java/org/apache/wicket/request/resource/ResourceStreamResource.java\nindex e9d25f0563..e83257aecc 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/resource/ResourceStreamResource.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/resource/ResourceStreamResource.java\n@@ -123,11 +123,15 @@ protected ResourceResponse newResourceResponse(Attributes attributes)\n \t\t\t}\n \t\t\tdata.setFileName(fileName);\n \n-\t\t\tString contentType = stream.getContentType();\n-\t\t\tif (contentType == null && fileName != null && Application.exists())\n+\t\t\tfinal String contentType;\n+\t\t\tif (fileName != null && Application.exists())\n \t\t\t{\n \t\t\t\tcontentType = Application.get().getMimeType(fileName);\n \t\t\t}\n+\t\t\telse\n+\t\t\t{\n+\t\t\t\tcontentType = stream.getContentType();\n+\t\t\t}\n \t\t\tdata.setContentType(contentType);\n \t\t\tdata.setTextEncoding(textEncoding);\n \n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 96,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "9476b877",
+    "failing_tests": [
+        "org.apache.accumulo.core.util.shell.ShellTest"
+    ],
+    "files": 1,
+    "jira_id": "1192",
+    "linesAdd": 13,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 0,
+    "nb_test": 366,
+    "patch": "diff --git a/core/src/main/java/org/apache/accumulo/core/util/TableDiskUsage.java b/core/src/main/java/org/apache/accumulo/core/util/TableDiskUsage.java\nindex 64d5970e7..6a61c50f4 100644\n--- a/core/src/main/java/org/apache/accumulo/core/util/TableDiskUsage.java\n+++ b/core/src/main/java/org/apache/accumulo/core/util/TableDiskUsage.java\n@@ -144,12 +144,17 @@ public static void printDiskUsage(AccumuloConfiguration acuConf, Collection<Stri\n       tdu.addTable(tableId);\n     \n     HashSet<String> tablesReferenced = new HashSet<String>(tableIds);\n+    HashSet<String> emptyTableIds = new HashSet<String>();\n     \n     for (String tableId : tableIds) {\n       Scanner mdScanner = conn.createScanner(Constants.METADATA_TABLE_NAME, Constants.NO_AUTHS);\n       mdScanner.fetchColumnFamily(Constants.METADATA_DATAFILE_COLUMN_FAMILY);\n       mdScanner.setRange(new KeyExtent(new Text(tableId), null, null).toMetadataRange());\n       \n+      if(!mdScanner.iterator().hasNext()) {\n+        emptyTableIds.add(tableId);\n+      }\n+      \n       for (Entry<Key,Value> entry : mdScanner) {\n         String file = entry.getKey().getColumnQualifier().toString();\n         if (file.startsWith(\"../\")) {\n@@ -216,6 +221,14 @@ public int compare(TreeSet<String> o1, TreeSet<String> o2) {\n       usage.put(tableNames, entry.getValue());\n     }\n \n+    if(!emptyTableIds.isEmpty()) {\n+      TreeSet<String> emptyTables = new TreeSet<String>();\n+      for (String tableId : emptyTableIds) {\n+        emptyTables.add(reverseTableIdMap.get(tableId));\n+      }\n+      usage.put(emptyTables, 0L);\n+    }\n+    \n     for (Entry<TreeSet<String>,Long> entry : usage.entrySet())\n       printer.print(String.format(\"%,24d %s\", entry.getValue(), entry.getKey()));\n     \n",
+    "project": "accumulo",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

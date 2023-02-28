@@ -1,0 +1,25 @@
+{
+    "bug_id": 31,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "da05f5aa",
+    "failing_tests": [
+        "org.apache.camel.processor.enricher.PollEnricherTest",
+        "org.apache.camel.processor.aggregator.AggregateCompletedByBatchConsumerSendEmptyMessageWhenIdleTest"
+    ],
+    "files": 1,
+    "jira_id": "5437",
+    "linesAdd": 12,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 1,
+    "nb_test": 4243,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/impl/ScheduledBatchPollingConsumer.java b/camel-core/src/main/java/org/apache/camel/impl/ScheduledBatchPollingConsumer.java\nindex 5ff6208656..c54240c1a3 100644\n--- a/camel-core/src/main/java/org/apache/camel/impl/ScheduledBatchPollingConsumer.java\n+++ b/camel-core/src/main/java/org/apache/camel/impl/ScheduledBatchPollingConsumer.java\n@@ -20,6 +20,7 @@\n \n import org.apache.camel.BatchConsumer;\n import org.apache.camel.Endpoint;\n+import org.apache.camel.Exchange;\n import org.apache.camel.Processor;\n import org.apache.camel.ShutdownRunningTask;\n import org.apache.camel.spi.ShutdownAware;\n@@ -112,4 +113,15 @@ public boolean isBatchAllowed() {\n         // we are shutting down so only continue if we are configured to complete all tasks\n         return ShutdownRunningTask.CompleteAllTasks == shutdownRunningTask;\n     }\n+\n+    @Override\n+    protected void processEmptyMessage() throws Exception {\n+        Exchange exchange = getEndpoint().createExchange();\n+        // enrich exchange, so we send an empty message with the batch details\n+        exchange.setProperty(Exchange.BATCH_INDEX, 0);\n+        exchange.setProperty(Exchange.BATCH_SIZE, 1);\n+        exchange.setProperty(Exchange.BATCH_COMPLETE, true);\n+        log.debug(\"Sending empty message as there were no messages from polling: {}\", this.getEndpoint());\n+        getProcessor().process(exchange);\n+    }\n }\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

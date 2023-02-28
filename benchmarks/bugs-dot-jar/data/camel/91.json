@@ -1,0 +1,24 @@
+{
+    "bug_id": 91,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "41e4b5b9",
+    "failing_tests": [
+        "org.apache.camel.converter.ObjectHelperTest"
+    ],
+    "files": 1,
+    "jira_id": "3531",
+    "linesAdd": 9,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 3323,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/util/ObjectHelper.java b/camel-core/src/main/java/org/apache/camel/util/ObjectHelper.java\nindex 6bb393d322..636c4a8b90 100644\n--- a/camel-core/src/main/java/org/apache/camel/util/ObjectHelper.java\n+++ b/camel-core/src/main/java/org/apache/camel/util/ObjectHelper.java\n@@ -38,6 +38,7 @@\n import java.util.Properties;\n import java.util.Scanner;\n \n+import org.w3c.dom.Document;\n import org.w3c.dom.Node;\n import org.w3c.dom.NodeList;\n \n@@ -1118,6 +1119,14 @@ public static boolean evaluateValuePredicate(Object value) {\n             } else if (\"false\".equalsIgnoreCase((String)value)) {\n                 return false;\n             }\n+        } else if (value instanceof NodeList) {\n+            // is it an empty dom\n+            NodeList list = (NodeList) value;\n+            return list.getLength() > 0;\n+        } else if (value instanceof Collection) {\n+            // is it an empty collection\n+            Collection col = (Collection) value;\n+            return col.size() > 0;\n         }\n         return value != null;\n     }\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

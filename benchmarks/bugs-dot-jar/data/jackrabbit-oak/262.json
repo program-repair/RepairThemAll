@@ -1,0 +1,24 @@
+{
+    "bug_id": 262,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ecc5bdfd",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.query.index.TraversingIndexQueryTest"
+    ],
+    "files": 1,
+    "jira_id": "1024",
+    "linesAdd": 4,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 8,
+    "nb_test": 1275,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/FullTextSearchImpl.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/FullTextSearchImpl.java\nindex d22c83bc6c..2cf9cef7db 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/FullTextSearchImpl.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/FullTextSearchImpl.java\n@@ -184,6 +184,10 @@ public boolean evaluate() {\n             appendString(buff, p);\n         } else {\n             String path = selector.currentPath();\n+            if (!PathUtils.denotesRoot(path)) {\n+                appendString(buff,\n+                        PropertyValues.newString(PathUtils.getName(path)));\n+            }\n             if (relativePath != null) {\n                 path = PathUtils.concat(path, relativePath);\n             }\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

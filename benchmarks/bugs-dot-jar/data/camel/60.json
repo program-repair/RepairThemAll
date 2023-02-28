@@ -1,0 +1,25 @@
+{
+    "bug_id": 60,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "b56d2962",
+    "failing_tests": [
+        "org.apache.camel.processor.aggregator.BeanBeforeAggregateIssueTest",
+        "org.apache.camel.issues.MulticastParallelStopOnExceptionWithOnExceptionIssueTest"
+    ],
+    "files": 1,
+    "jira_id": "3535",
+    "linesAdd": 5,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 3083,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/aggregate/AggregateProcessor.java b/camel-core/src/main/java/org/apache/camel/processor/aggregate/AggregateProcessor.java\nindex f2f09c00af..78ab290e0d 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/aggregate/AggregateProcessor.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/aggregate/AggregateProcessor.java\n@@ -177,12 +177,16 @@ public void process(Exchange exchange) throws Exception {\n             throw new ClosedCorrelationKeyException(key, exchange);\n         }\n \n+        // copy exchange, and do not share the unit of work\n+        // the aggregated output runs in another unit of work\n+        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);\n+\n         // when memory based then its fast using synchronized, but if the aggregation repository is IO\n         // bound such as JPA etc then concurrent aggregation per correlation key could\n         // improve performance as we can run aggregation repository get/add in parallel\n         lock.lock();\n         try {\n-            doAggregation(key, exchange);\n+            doAggregation(key, copy);\n         } finally {\n             lock.unlock();\n         }\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 264,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "292a2582",
+    "failing_tests": [
+        "org.apache.wicket.extensions.yui.calendar.DatePickerTest"
+    ],
+    "files": 2,
+    "jira_id": "3510",
+    "linesAdd": 5,
+    "linesRem": 4,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 9,
+    "patch": "diff --git a/wicket-datetime/src/main/java/org/apache/wicket/datetime/markup/html/form/DateTextField.java b/wicket-datetime/src/main/java/org/apache/wicket/datetime/markup/html/form/DateTextField.java\nindex 718e7a3bb2..ba144cfe88 100644\n--- a/wicket-datetime/src/main/java/org/apache/wicket/datetime/markup/html/form/DateTextField.java\n+++ b/wicket-datetime/src/main/java/org/apache/wicket/datetime/markup/html/form/DateTextField.java\n@@ -132,7 +132,7 @@ public static DateTextField forDateStyle(String id, String dateStyle)\n \t */\n \tpublic static DateTextField forShortStyle(String id)\n \t{\n-\t\treturn forShortStyle(id, null);\n+\t\treturn forShortStyle(id, null, true);\n \t}\n \n \t/**\n@@ -144,9 +144,10 @@ public static DateTextField forShortStyle(String id)\n \t *            The model\n \t * @return DateTextField\n \t */\n-\tpublic static DateTextField forShortStyle(String id, IModel<Date> model)\n+\tpublic static DateTextField forShortStyle(String id, IModel<Date> model,\n+\t\tboolean applyTimeZoneDifference)\n \t{\n-\t\treturn new DateTextField(id, model, new StyleDateConverter(true));\n+\t\treturn new DateTextField(id, model, new StyleDateConverter(applyTimeZoneDifference));\n \t}\n \n \t/**\ndiff --git a/wicket-datetime/src/main/java/org/apache/wicket/extensions/yui/calendar/DateTimeField.java b/wicket-datetime/src/main/java/org/apache/wicket/extensions/yui/calendar/DateTimeField.java\nindex ebb04e458f..25f0d5c33d 100644\n--- a/wicket-datetime/src/main/java/org/apache/wicket/extensions/yui/calendar/DateTimeField.java\n+++ b/wicket-datetime/src/main/java/org/apache/wicket/extensions/yui/calendar/DateTimeField.java\n@@ -377,7 +377,7 @@ protected void convertInput()\n \t */\n \tprotected DateTextField newDateTextField(String id, PropertyModel<Date> dateFieldModel)\n \t{\n-\t\treturn DateTextField.forShortStyle(id, dateFieldModel);\n+\t\treturn DateTextField.forShortStyle(id, dateFieldModel, false);\n \t}\n \n \t/**\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

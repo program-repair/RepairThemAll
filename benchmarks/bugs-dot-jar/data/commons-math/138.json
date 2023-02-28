@@ -1,0 +1,24 @@
+{
+    "bug_id": 138,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "5b9302d5",
+    "failing_tests": [
+        "org.apache.commons.math3.dfp.DfpTest"
+    ],
+    "files": 1,
+    "jira_id": "778",
+    "linesAdd": 14,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 4,
+    "nb_test": 4164,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math3/dfp/Dfp.java b/src/main/java/org/apache/commons/math3/dfp/Dfp.java\nindex d278a3128..3a9198271 100644\n--- a/src/main/java/org/apache/commons/math3/dfp/Dfp.java\n+++ b/src/main/java/org/apache/commons/math3/dfp/Dfp.java\n@@ -1595,12 +1595,24 @@ public Dfp multiply(final Dfp x) {\n \n     }\n \n-    /** Multiply this by a single digit 0&lt;=x&lt;radix.\n-     * There are speed advantages in this special case\n+    /** Multiply this by a single digit x.\n      * @param x multiplicand\n      * @return product of this and x\n      */\n     public Dfp multiply(final int x) {\n+        if (x >= 0 && x < RADIX) {\n+            return multiplyFast(x);\n+        } else {\n+            return multiply(newInstance(x));\n+        }\n+    }\n+\n+    /** Multiply this by a single digit 0&lt;=x&lt;radix.\n+     * There are speed advantages in this special case.\n+     * @param x multiplicand\n+     * @return product of this and x\n+     */\n+    private Dfp multiplyFast(final int x) {\n         Dfp result = newInstance(this);\n \n         /* handle special cases */\n",
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

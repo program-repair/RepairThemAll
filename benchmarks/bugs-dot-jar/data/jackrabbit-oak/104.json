@@ -1,0 +1,24 @@
+{
+    "bug_id": 104,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "29d3d8f1",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.index.lucene.LucenePropertyIndexTest"
+    ],
+    "files": 2,
+    "jira_id": "2235",
+    "linesAdd": 18,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 301,
+    "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditor.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditor.java\nindex 5277652558..e13e7efa41 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditor.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditor.java\n@@ -38,6 +38,7 @@\n import org.apache.jackrabbit.oak.api.Type;\n import org.apache.jackrabbit.oak.plugins.index.IndexEditor;\n import org.apache.jackrabbit.oak.plugins.index.IndexUpdateCallback;\n+import org.apache.jackrabbit.oak.plugins.memory.EmptyNodeState;\n import org.apache.jackrabbit.oak.plugins.nodetype.TypePredicate;\n import org.apache.jackrabbit.oak.spi.commit.Editor;\n import org.apache.jackrabbit.oak.spi.state.NodeBuilder;\n@@ -122,6 +123,9 @@ public String getPath() {\n     @Override\n     public void enter(NodeState before, NodeState after)\n             throws CommitFailedException {\n+        if (EmptyNodeState.MISSING_NODE == before && parent == null){\n+            context.enableReindexMode();\n+        }\n     }\n \n     @Override\ndiff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditorContext.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditorContext.java\nindex 686db73afc..a25bc41d14 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditorContext.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditorContext.java\n@@ -101,6 +101,8 @@ private static Directory newIndexDirectory(NodeBuilder definition)\n \n     private final IndexUpdateCallback updateCallback;\n \n+    private boolean reindex;\n+\n     LuceneIndexEditorContext(NodeBuilder definition, Analyzer analyzer, IndexUpdateCallback updateCallback) {\n         this.definitionBuilder = definition;\n         this.definition = new IndexDefinition(definitionBuilder);\n@@ -132,6 +134,14 @@ IndexWriter getWriter() throws IOException {\n      * close writer if it's not null\n      */\n     void closeWriter() throws IOException {\n+        //If reindex or fresh index and write is null on close\n+        //it indicates that the index is empty. In such a case trigger\n+        //creation of write such that an empty Lucene index state is persisted\n+        //in directory\n+        if (reindex && writer == null){\n+            getWriter();\n+        }\n+\n         if (writer != null) {\n             writer.close();\n \n@@ -144,6 +154,10 @@ void closeWriter() throws IOException {\n         }\n     }\n \n+    public void enableReindexMode(){\n+        reindex = true;\n+    }\n+\n     public long incIndexedNodes() {\n         indexedNodes++;\n         return indexedNodes;\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

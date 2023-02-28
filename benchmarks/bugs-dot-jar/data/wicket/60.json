@@ -1,0 +1,24 @@
+{
+    "bug_id": 60,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "56169634",
+    "failing_tests": [
+        "org.apache.wicket.core.request.mapper.MountedMapperTest"
+    ],
+    "files": 1,
+    "jira_id": "5056",
+    "linesAdd": 9,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 3,
+    "nb_skipped": 4,
+    "nb_test": 1494,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/MountedMapper.java b/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/MountedMapper.java\nindex ae742d63f1..12f8985e43 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/MountedMapper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/MountedMapper.java\n@@ -495,7 +495,15 @@ public int getCompatibilityScore(Request request)\n \t{\n \t\tif (urlStartsWith(request.getUrl(), mountSegments))\n \t\t{\n-\t\t\treturn mountSegments.length;\n+\t\t\t/* see WICKET-5056 - alter score with pathSegment type */\n+\t\t\tint countOptional = 0;\n+\t\t\tint fixedSegments = 0;\n+\t\t\tfor (MountPathSegment pathSegment : pathSegments)\n+\t\t\t{\n+\t\t\t\tfixedSegments += pathSegment.getFixedPartSize();\n+\t\t\t\tcountOptional += pathSegment.getOptionalParameters();\n+\t\t\t}\n+\t\t\treturn mountSegments.length - countOptional + fixedSegments;\n \t\t}\n \t\telse\n \t\t{\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

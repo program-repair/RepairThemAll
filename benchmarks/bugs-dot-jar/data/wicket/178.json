@@ -1,0 +1,25 @@
+{
+    "bug_id": 178,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "8ccb1f6d",
+    "failing_tests": [
+        "org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategyTest",
+        "org.apache.wicket.request.resource.caching.QueryStringWithVersionResourceCachingStrategyTest"
+    ],
+    "files": 2,
+    "jira_id": "5441",
+    "linesAdd": 10,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 2,
+    "nb_test": 1544,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/request/resource/caching/FilenameWithVersionResourceCachingStrategy.java b/wicket-core/src/main/java/org/apache/wicket/request/resource/caching/FilenameWithVersionResourceCachingStrategy.java\nindex 2125f35b0e..087ea13a33 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/resource/caching/FilenameWithVersionResourceCachingStrategy.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/resource/caching/FilenameWithVersionResourceCachingStrategy.java\n@@ -195,8 +195,13 @@ public void undecorateUrl(ResourceUrl url)\n \t */\n \t@Override\n \tpublic void decorateResponse(AbstractResource.ResourceResponse response, IStaticCacheableResource resource)\n+\t{\n+\t\tString requestedVersion = RequestCycle.get().getMetaData(URL_VERSION);\n+\t\tString calculatedVersion = this.resourceVersion.getVersion(resource);\n+\t\tif (calculatedVersion != null && calculatedVersion.equals(requestedVersion))\n \t\t{\n \t\t\tresponse.setCacheDurationToMaximum();\n \t\t\tresponse.setCacheScope(WebResponse.CacheScope.PUBLIC);\n \t\t}\n \t}\n+}\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/request/resource/caching/QueryStringWithVersionResourceCachingStrategy.java b/wicket-core/src/main/java/org/apache/wicket/request/resource/caching/QueryStringWithVersionResourceCachingStrategy.java\nindex 292f159050..e40e0829b9 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/resource/caching/QueryStringWithVersionResourceCachingStrategy.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/resource/caching/QueryStringWithVersionResourceCachingStrategy.java\n@@ -126,8 +126,13 @@ public void undecorateUrl(ResourceUrl url)\n \n \t@Override\n \tpublic void decorateResponse(AbstractResource.ResourceResponse response, IStaticCacheableResource resource)\n+\t{\n+\t\tString requestedVersion = RequestCycle.get().getMetaData(URL_VERSION);\n+\t\tString calculatedVersion = this.resourceVersion.getVersion(resource);\n+\t\tif (calculatedVersion != null && calculatedVersion.equals(requestedVersion))\n \t\t{\n \t\t\tresponse.setCacheDurationToMaximum();\n \t\t\tresponse.setCacheScope(WebResponse.CacheScope.PUBLIC);\n \t\t}\n \t}\n+}\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

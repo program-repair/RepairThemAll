@@ -1,0 +1,24 @@
+{
+    "bug_id": 81,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "3244c1e5",
+    "failing_tests": [
+        "org.apache.camel.management.ManagedResourceTest"
+    ],
+    "files": 3,
+    "jira_id": "7018",
+    "linesAdd": 10,
+    "linesRem": 2,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 1,
+    "nb_test": 4762,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/component/seda/SedaEndpoint.java b/camel-core/src/main/java/org/apache/camel/component/seda/SedaEndpoint.java\nindex 9d4ade2d90..ffe2f6dbba 100644\n--- a/camel-core/src/main/java/org/apache/camel/component/seda/SedaEndpoint.java\n+++ b/camel-core/src/main/java/org/apache/camel/component/seda/SedaEndpoint.java\n@@ -308,6 +308,7 @@ public void setPurgeWhenStopping(boolean purgeWhenStopping) {\n         this.purgeWhenStopping = purgeWhenStopping;\n     }\n \n+    @ManagedAttribute(description = \"Singleton\")\n     public boolean isSingleton() {\n         return true;\n     }\n@@ -425,6 +426,11 @@ public String getCamelManagementName() {\n         return getCamelContext().getManagementName();\n     }\n \n+    @ManagedAttribute(description = \"Endpoint URI\", mask = true)\n+    public String getEndpointUri() {\n+        return super.getEndpointUri();\n+    }\n+\n     @ManagedAttribute(description = \"Endpoint service state\")\n     public String getState() {\n         return getStatus().name();\ndiff --git a/camel-core/src/main/java/org/apache/camel/management/DefaultManagementMBeanAssembler.java b/camel-core/src/main/java/org/apache/camel/management/DefaultManagementMBeanAssembler.java\nindex 262b520567..fde3592137 100644\n--- a/camel-core/src/main/java/org/apache/camel/management/DefaultManagementMBeanAssembler.java\n+++ b/camel-core/src/main/java/org/apache/camel/management/DefaultManagementMBeanAssembler.java\n@@ -60,7 +60,7 @@ public ModelMBean assemble(MBeanServer mBeanServer, Object obj, ObjectName name)\n             if (custom != null && ObjectHelper.hasAnnotation(custom.getClass().getAnnotations(), ManagedResource.class)) {\n                 LOG.trace(\"Assembling MBeanInfo for: {} from custom @ManagedResource object: {}\", name, custom);\n                 // get the mbean info from the custom managed object\n-                mbi = assembler.getMBeanInfo(obj, custom, name.toString());\n+                mbi = assembler.getMBeanInfo(null, custom, name.toString());\n                 // and let the custom object be registered in JMX\n                 obj = custom;\n             }\ndiff --git a/camel-core/src/main/java/org/apache/camel/management/MBeanInfoAssembler.java b/camel-core/src/main/java/org/apache/camel/management/MBeanInfoAssembler.java\nindex 56b5a14427..84f0470eb9 100644\n--- a/camel-core/src/main/java/org/apache/camel/management/MBeanInfoAssembler.java\n+++ b/camel-core/src/main/java/org/apache/camel/management/MBeanInfoAssembler.java\n@@ -97,7 +97,7 @@ public void stop() throws Exception {\n      */\n     public ModelMBeanInfo getMBeanInfo(Object defaultManagedBean, Object customManagedBean, String objectName) throws JMException {\n         // skip proxy classes\n-        if (Proxy.isProxyClass(defaultManagedBean.getClass())) {\n+        if (defaultManagedBean != null && Proxy.isProxyClass(defaultManagedBean.getClass())) {\n             LOG.trace(\"Skip creating ModelMBeanInfo due proxy class {}\", defaultManagedBean.getClass());\n             return null;\n         }\n@@ -110,10 +110,12 @@ public ModelMBeanInfo getMBeanInfo(Object defaultManagedBean, Object customManag\n         Set<ModelMBeanNotificationInfo> mBeanNotifications = new LinkedHashSet<ModelMBeanNotificationInfo>();\n \n         // extract details from default managed bean\n+        if (defaultManagedBean != null) {\n             extractAttributesAndOperations(defaultManagedBean.getClass(), attributes, operations);\n             extractMbeanAttributes(defaultManagedBean, attributes, mBeanAttributes, mBeanOperations);\n             extractMbeanOperations(defaultManagedBean, operations, mBeanOperations);\n             extractMbeanNotifications(defaultManagedBean, mBeanNotifications);\n+        }\n \n         // extract details from custom managed bean\n         if (customManagedBean != null) {\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 14,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "2afe3dff",
+    "failing_tests": [
+        "org.apache.logging.log4j.core.appender.rolling.RollingAppenderTimeAndSizeTest"
+    ],
+    "files": 1,
+    "jira_id": "71",
+    "linesAdd": 25,
+    "linesRem": 5,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 72,
+    "patch": "diff --git a/core/src/main/java/org/apache/logging/log4j/core/appender/rolling/helper/FileRenameAction.java b/core/src/main/java/org/apache/logging/log4j/core/appender/rolling/helper/FileRenameAction.java\nindex 0f6c367ff..5d1cff9bd 100644\n--- a/core/src/main/java/org/apache/logging/log4j/core/appender/rolling/helper/FileRenameAction.java\n+++ b/core/src/main/java/org/apache/logging/log4j/core/appender/rolling/helper/FileRenameAction.java\n@@ -16,6 +16,9 @@\n  */\n package org.apache.logging.log4j.core.appender.rolling.helper;\n \n+import org.apache.logging.log4j.Logger;\n+import org.apache.logging.log4j.status.StatusLogger;\n+\n import java.io.File;\n import java.io.FileInputStream;\n import java.io.FileOutputStream;\n@@ -27,6 +30,9 @@\n  * File rename action.\n  */\n public final class FileRenameAction extends ActionBase {\n+\n+    private static final Logger LOGGER = StatusLogger.getLogger();\n+\n     /**\n      * Source.\n      */\n@@ -74,17 +80,31 @@ public boolean execute() {\n      */\n     public static boolean execute(final File source, final File destination, boolean renameEmptyFiles) {\n         if (renameEmptyFiles || (source.length() > 0)) {\n+            File parent = destination.getParentFile();\n+            if (!parent.exists()) {\n+                if (!parent.mkdirs()) {\n+                    LOGGER.error(\"Unable to create directory {}\", parent.getAbsolutePath());\n+                    return false;\n+                }\n+            }\n             try {\n-\n-                boolean result = source.renameTo(destination);\n-                //System.out.println(\"Rename of \" + source.getName() + \" to \" + destination.getName() + \": \" + result);\n-                return result;\n+                if (!source.renameTo(destination)) {\n+                    try {\n+                        copyFile(source, destination);\n+                        return source.delete();\n+                    } catch (IOException iex) {\n+                        LOGGER.error(\"Unable to rename file {} to {} - {}\", source.getAbsolutePath(),\n+                            destination.getAbsolutePath(), iex.getMessage());\n+                    }\n+                }\n+                return true;\n             } catch (Exception ex) {\n                 try {\n                     copyFile(source, destination);\n                     return source.delete();\n                 } catch (IOException iex) {\n-                    iex.printStackTrace();\n+                    LOGGER.error(\"Unable to rename file {} to {} - {}\", source.getAbsolutePath(),\n+                        destination.getAbsolutePath(), iex.getMessage());\n                 }\n             }\n         }\n",
+    "project": "logging-log4j2",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

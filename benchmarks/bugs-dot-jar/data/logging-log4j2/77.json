@@ -1,0 +1,24 @@
+{
+    "bug_id": 77,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "3f41ff48",
+    "failing_tests": [
+        "org.apache.logging.log4j.core.layout.SerializableLayoutTest"
+    ],
+    "files": 1,
+    "jira_id": "1099",
+    "linesAdd": 16,
+    "linesRem": 2,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 3,
+    "nb_test": 920,
+    "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/layout/AbstractStringLayout.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/layout/AbstractStringLayout.java\nindex c928d621a..255c73b11 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/layout/AbstractStringLayout.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/layout/AbstractStringLayout.java\n@@ -16,6 +16,9 @@\n  */\n package org.apache.logging.log4j.core.layout;\n \n+import java.io.IOException;\n+import java.io.ObjectInputStream;\n+import java.io.ObjectOutputStream;\n import java.io.UnsupportedEncodingException;\n import java.nio.charset.Charset;\n import java.nio.charset.StandardCharsets;\n@@ -46,8 +49,8 @@\n     /**\n      * The charset for the formatted message.\n      */\n-    // TODO: Charset is not serializable. Implement read/writeObject() ?\n-    private final Charset charset;\n+    // LOG4J2-1099: charset cannot be final due to serialization needs, so we serialize as charset name instead\n+    private transient Charset charset;\n     private final String charsetName;\n     private final boolean useCustomEncoding;\n \n@@ -97,6 +100,17 @@ private static boolean isPreJava8() {\n         return null;\n     }\n \n+    private void writeObject(final ObjectOutputStream out) throws IOException {\n+        out.defaultWriteObject();\n+        out.writeUTF(charset.name());\n+    }\n+\n+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {\n+        in.defaultReadObject();\n+        final String charsetName = in.readUTF();\n+        charset = Charset.forName(charsetName);\n+    }\n+\n     /**\n      * Returns a {@code StringBuilder} that this Layout implementation can use to write the formatted log event to.\n      * \n",
+    "project": "logging-log4j2",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

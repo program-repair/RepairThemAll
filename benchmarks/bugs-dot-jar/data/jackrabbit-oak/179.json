@@ -1,0 +1,24 @@
+{
+    "bug_id": 179,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ca85ecce",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.kernel.CheckpointTest"
+    ],
+    "files": 1,
+    "jira_id": "2311",
+    "linesAdd": 6,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 2008,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java\nindex a46af36d9f..c93221c1cb 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java\n@@ -1383,7 +1383,12 @@ public String checkpoint(long lifetime) {\n     @CheckForNull\n     @Override\n     public NodeState retrieve(@Nonnull String checkpoint) {\n-        return getRoot(Revision.fromString(checkpoint));\n+        Revision r = Revision.fromString(checkpoint);\n+        if (checkpoints.getCheckpoints().containsKey(r)) {\n+            return getRoot(r);\n+        } else {\n+            return null;\n+        }\n     }\n \n     @Override\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

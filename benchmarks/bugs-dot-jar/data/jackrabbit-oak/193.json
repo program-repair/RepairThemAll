@@ -1,0 +1,24 @@
+{
+    "bug_id": 193,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "dfa87520",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.index.lucene.IndexDefinitionTest"
+    ],
+    "files": 1,
+    "jira_id": "2559",
+    "linesAdd": 6,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 2,
+    "nb_test": 408,
+    "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexDefinition.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexDefinition.java\nindex fcd547cd82..69d3431c8c 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexDefinition.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/IndexDefinition.java\n@@ -23,6 +23,7 @@\n import java.util.ArrayList;\n import java.util.Collections;\n import java.util.List;\n+import java.util.Locale;\n import java.util.Map;\n import java.util.Set;\n import java.util.regex.Pattern;\n@@ -559,6 +560,9 @@ private boolean areAllTypesIndexed() {\n     public class IndexingRule {\n         private final String baseNodeType;\n         private final String nodeTypeName;\n+        /**\n+         * Case insensitive map of lower cased propertyName to propertyConfigs\n+         */\n         private final Map<String, PropertyDefinition> propConfigs;\n         private final List<NamePattern> namePatterns;\n         private final List<PropertyDefinition> nullCheckEnabledProperties;\n@@ -697,7 +701,7 @@ public boolean isFulltextEnabled() {\n          */\n         @CheckForNull\n         public PropertyDefinition getConfig(String propertyName) {\n-            PropertyDefinition config = propConfigs.get(propertyName);\n+            PropertyDefinition config = propConfigs.get(propertyName.toLowerCase(Locale.ENGLISH));\n             if (config != null) {\n                 return config;\n             } else if (namePatterns.size() > 0) {\n@@ -761,7 +765,7 @@ public boolean isBasedOnNtBase(){\n                     if(pd.isRegexp){\n                         patterns.add(new NamePattern(pd.name, pd));\n                     } else {\n-                        propDefns.put(pd.name, pd);\n+                        propDefns.put(pd.name.toLowerCase(Locale.ENGLISH), pd);\n                     }\n \n                     if (pd.relative){\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

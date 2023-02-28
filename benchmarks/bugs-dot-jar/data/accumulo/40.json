@@ -1,0 +1,24 @@
+{
+    "bug_id": 40,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "36225565",
+    "failing_tests": [
+        "org.apache.accumulo.shell.ShellOptionsJCTest"
+    ],
+    "files": 1,
+    "jira_id": "3945",
+    "linesAdd": 5,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 49,
+    "patch": "diff --git a/shell/src/main/java/org/apache/accumulo/shell/ShellOptionsJC.java b/shell/src/main/java/org/apache/accumulo/shell/ShellOptionsJC.java\nindex 92ea1a5e0..01b7ce385 100644\n--- a/shell/src/main/java/org/apache/accumulo/shell/ShellOptionsJC.java\n+++ b/shell/src/main/java/org/apache/accumulo/shell/ShellOptionsJC.java\n@@ -315,6 +315,11 @@ public ClientConfiguration getClientConfiguration() throws ConfigurationExceptio\n       clientConfig.withZkHosts(siteConf.get(Property.INSTANCE_ZK_HOST));\n     }\n \n+    // If the user provided the hosts, set the ZK for tracing too\n+    if (null != zooKeeperHosts) {\n+      clientConfig.setProperty(ClientProperty.INSTANCE_ZK_HOST, zooKeeperHosts);\n+    }\n+\n     return clientConfig;\n   }\n \n",
+    "project": "accumulo",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

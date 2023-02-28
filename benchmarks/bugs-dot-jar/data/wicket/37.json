@@ -1,0 +1,24 @@
+{
+    "bug_id": 37,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "fae1601b",
+    "failing_tests": [
+        "org.apache.wicket.markup.html.border.BoxBorderTest"
+    ],
+    "files": 1,
+    "jira_id": "2368",
+    "linesAdd": 3,
+    "linesRem": 4,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 799,
+    "patch": "diff --git a/wicket/src/main/java/org/apache/wicket/Page.java b/wicket/src/main/java/org/apache/wicket/Page.java\nindex 756036f98e..7ec9bc2a16 100644\n--- a/wicket/src/main/java/org/apache/wicket/Page.java\n+++ b/wicket/src/main/java/org/apache/wicket/Page.java\n@@ -1067,7 +1067,7 @@ public Object component(final Component component)\n \t\t\t\t\t// If component never rendered\n \t\t\t\t\tif (renderedComponents == null || !renderedComponents.contains(component))\n \t\t\t\t\t{\n-\t\t\t\t\t\t// If auto component ...\n+\t\t\t\t\t\t// If not an auto component ...\n \t\t\t\t\t\tif (!component.isAuto() && component.isVisibleInHierarchy())\n \t\t\t\t\t\t{\n \t\t\t\t\t\t\t// Increase number of unrendered components\n@@ -1106,8 +1106,7 @@ public Object component(final Component component)\n \t\t\t\trenderedComponents = null;\n \n \t\t\t\tIterator<Component> iterator = unrenderedComponents.iterator();\n-\n-\t\t\t\twhile (iterator.hasNext())\n+\t\t\t\touterWhile : while (iterator.hasNext())\n \t\t\t\t{\n \t\t\t\t\tComponent component = iterator.next();\n \t\t\t\t\t// Now first test if the component has a sibling that is a transparent resolver.\n@@ -1129,7 +1128,7 @@ public Object component(final Component component)\n \t\t\t\t\t\t\t\t\t\"Component {} wasn't rendered but most likely it has a transparent parent: {}\",\n \t\t\t\t\t\t\t\t\tcomponent, sibling);\n \t\t\t\t\t\t\t\titerator.remove();\n-\t\t\t\t\t\t\t\tbreak;\n+\t\t\t\t\t\t\t\tcontinue outerWhile;\n \t\t\t\t\t\t\t}\n \t\t\t\t\t\t}\n \t\t\t\t\t}\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 29,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "8ec4cb84",
+    "failing_tests": [
+        "org.apache.accumulo.proxy.SimpleTest"
+    ],
+    "files": 1,
+    "jira_id": "1800",
+    "linesAdd": 5,
+    "linesRem": 5,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 34,
+    "patch": "diff --git a/proxy/src/main/java/org/apache/accumulo/proxy/ProxyServer.java b/proxy/src/main/java/org/apache/accumulo/proxy/ProxyServer.java\nindex cec8cfccc..ee993b984 100644\n--- a/proxy/src/main/java/org/apache/accumulo/proxy/ProxyServer.java\n+++ b/proxy/src/main/java/org/apache/accumulo/proxy/ProxyServer.java\n@@ -1171,17 +1171,17 @@ private void addUpdatesToMutation(HashMap<Text,ColumnVisibility> vizMap, Mutatio\n       if (update.isSetValue())\n         value = update.getValue();\n       if (update.isSetTimestamp()) {\n-        if (update.isSetDeleteCell()) {\n-          m.putDelete(update.getColFamily(), update.getColQualifier(), viz, update.getTimestamp());\n-        } else {\n         if (update.isSetDeleteCell()) {\n           m.putDelete(update.getColFamily(), update.getColQualifier(), viz, update.getTimestamp());\n         } else {\n           m.put(update.getColFamily(), update.getColQualifier(), viz, update.getTimestamp(), value);\n         }\n-        }\n       } else {\n-        m.put(update.getColFamily(), update.getColQualifier(), viz, value);\n+        if (update.isSetDeleteCell()) {\n+          m.putDelete(new Text(update.getColFamily()), new Text(update.getColQualifier()), viz);\n+        } else {\n+          m.put(new Text(update.getColFamily()), new Text(update.getColQualifier()), viz, new Value(value));\n+        }\n       }\n     }\n   }\n",
+    "project": "accumulo",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 67,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "5135cf4b",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.document.VisibleChangesTest"
+    ],
+    "files": 1,
+    "jira_id": "3019",
+    "linesAdd": 7,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 9,
+    "nb_test": 2166,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/version/VersionablePathHook.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/version/VersionablePathHook.java\nindex 9369ddeb54..132296a8c2 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/version/VersionablePathHook.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/version/VersionablePathHook.java\n@@ -37,6 +37,7 @@\n import org.apache.jackrabbit.oak.spi.state.DefaultNodeStateDiff;\n import org.apache.jackrabbit.oak.spi.state.NodeBuilder;\n import org.apache.jackrabbit.oak.spi.state.NodeState;\n+import org.apache.jackrabbit.oak.spi.state.NodeStateUtils;\n \n import static org.apache.jackrabbit.oak.plugins.memory.EmptyNodeState.EMPTY_NODE;\n \n@@ -108,6 +109,10 @@ public boolean childNodeAdded(String name, NodeState after) {\n         @Override\n         public boolean childNodeChanged(\n                 String name, NodeState before, NodeState after) {\n+            if (NodeStateUtils.isHidden(name)) {\n+                // stop comparison\n+                return false;\n+            }\n             Node node = new Node(nodeAfter, name);\n             return after.compareAgainstBaseState(\n                     before, new Diff(versionManager, node, exceptions));\n@@ -117,7 +122,8 @@ private boolean setVersionablePath(PropertyState after) {\n             if (JcrConstants.JCR_VERSIONHISTORY.equals(after.getName()) && nodeAfter.isVersionable(versionManager)) {\n                 NodeBuilder vhBuilder;\n                 try {\n-                    vhBuilder = versionManager.getOrCreateVersionHistory(nodeAfter.builder, Collections.EMPTY_MAP);\n+                    vhBuilder = versionManager.getOrCreateVersionHistory(\n+                            nodeAfter.builder, Collections.<String, Object>emptyMap());\n                 } catch (CommitFailedException e) {\n                     exceptions.add(e);\n                     // stop further comparison\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

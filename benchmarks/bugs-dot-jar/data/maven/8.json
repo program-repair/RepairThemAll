@@ -1,0 +1,20 @@
+{
+    "bug_id": 8,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "691a03a7",
+    "failing_tests": [
+        "org.apache.maven.project.MavenProjectTest"
+    ],
+    "files": 1,
+    "jira_id": "4918",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 232,
+    "patch": "diff --git a/maven-core/src/main/java/org/apache/maven/project/MavenProject.java b/maven-core/src/main/java/org/apache/maven/project/MavenProject.java\nindex 8a7d64b6f..de3c278e8 100644\n--- a/maven-core/src/main/java/org/apache/maven/project/MavenProject.java\n+++ b/maven-core/src/main/java/org/apache/maven/project/MavenProject.java\n@@ -1407,7 +1407,7 @@ public ArtifactRepository getDistributionManagementArtifactRepository()\n \n     public void setActiveProfiles( List<Profile> activeProfiles )\n     {\n-        this.activeProfiles.addAll( activeProfiles );\n+        this.activeProfiles = activeProfiles;\n     }\n \n     public List<Profile> getActiveProfiles()\n",
+    "project": "maven"
+}

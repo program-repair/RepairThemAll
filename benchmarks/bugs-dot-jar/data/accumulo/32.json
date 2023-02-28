@@ -1,0 +1,24 @@
+{
+    "bug_id": 32,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "cfb832a1",
+    "failing_tests": [
+        "org.apache.accumulo.proxy.SimpleTest"
+    ],
+    "files": 1,
+    "jira_id": "3474",
+    "linesAdd": 2,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 34,
+    "patch": "diff --git a/proxy/src/main/java/org/apache/accumulo/proxy/ProxyServer.java b/proxy/src/main/java/org/apache/accumulo/proxy/ProxyServer.java\nindex 0fedb1d57..f873010fa 100644\n--- a/proxy/src/main/java/org/apache/accumulo/proxy/ProxyServer.java\n+++ b/proxy/src/main/java/org/apache/accumulo/proxy/ProxyServer.java\n@@ -1124,13 +1124,13 @@ private void addCellsToWriter(Map<ByteBuffer,List<ColumnUpdate>> cells, BatchWri\n         if (update.isSetValue())\n           value = update.getValue();\n         if (update.isSetTimestamp()) {\n-          if (update.isSetDeleteCell()) {\n+          if (update.isSetDeleteCell() && update.isDeleteCell()) {\n             m.putDelete(update.getColFamily(), update.getColQualifier(), viz, update.getTimestamp());\n           } else {\n             m.put(new Text(update.getColFamily()), new Text(update.getColQualifier()), viz, update.getTimestamp(), new Value(value));\n           }\n         } else {\n-          if (update.isSetDeleteCell()) {\n+          if (update.isSetDeleteCell() && update.isDeleteCell()) {\n             m.putDelete(new Text(update.getColFamily()), new Text(update.getColQualifier()), viz);\n           } else {\n             m.put(new Text(update.getColFamily()), new Text(update.getColQualifier()), viz, new Value(value));\n",
+    "project": "accumulo",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

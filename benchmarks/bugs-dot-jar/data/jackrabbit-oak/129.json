@@ -1,0 +1,24 @@
+{
+    "bug_id": 129,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "f303c916",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.segment.RecordTest"
+    ],
+    "files": 1,
+    "jira_id": "4307",
+    "linesAdd": 13,
+    "linesRem": 9,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 2,
+    "nb_test": 136,
+    "patch": "diff --git a/oak-segment-next/src/main/java/org/apache/jackrabbit/oak/segment/SegmentWriter.java b/oak-segment-next/src/main/java/org/apache/jackrabbit/oak/segment/SegmentWriter.java\nindex b2f44f2d59..ee320ed6b2 100644\n--- a/oak-segment-next/src/main/java/org/apache/jackrabbit/oak/segment/SegmentWriter.java\n+++ b/oak-segment-next/src/main/java/org/apache/jackrabbit/oak/segment/SegmentWriter.java\n@@ -608,8 +608,20 @@ private RecordId writeStream(InputStream stream) throws IOException {\n             boolean threw = true;\n             try {\n                 RecordId id = SegmentStream.getRecordIdIfAvailable(stream, store);\n-                if (id == null || isOldGen(id)) {\n+                if (id == null) {\n+                    // This is either not a segment stream or a one from another store:\n+                    // fully serialise the stream.\n                     id = internalWriteStream(stream);\n+                } else if (isOldGen(id)) {\n+                    // This is a segment stream from this store but from an old generation:\n+                    // try to link to the blocks if there are any.\n+                    SegmentStream segmentStream = (SegmentStream) stream;\n+                    List<RecordId> blockIds = segmentStream.getBlockIds();\n+                    if (blockIds == null) {\n+                        return internalWriteStream(stream);\n+                    } else {\n+                        return writeValueRecord(segmentStream.getLength(), writeList(blockIds));\n+                    }\n                 }\n                 threw = false;\n                 return id;\n@@ -619,14 +631,6 @@ private RecordId writeStream(InputStream stream) throws IOException {\n         }\n \n         private RecordId internalWriteStream(InputStream stream) throws IOException {\n-            if (stream instanceof SegmentStream) {\n-                SegmentStream segmentStream = (SegmentStream) stream;\n-                List<RecordId> blockIds = segmentStream.getBlockIds();\n-                if (blockIds != null) {\n-                    return writeValueRecord(segmentStream.getLength(), writeList(blockIds));\n-                }\n-            }\n-\n             // Special case for short binaries (up to about 16kB):\n             // store them directly as small- or medium-sized value records\n             byte[] data = new byte[Segment.MEDIUM_LIMIT];\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

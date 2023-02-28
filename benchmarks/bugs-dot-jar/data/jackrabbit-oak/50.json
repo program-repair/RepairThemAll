@@ -1,0 +1,24 @@
+{
+    "bug_id": 50,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "e30023ba",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexTest"
+    ],
+    "files": 1,
+    "jira_id": "2029",
+    "linesAdd": 9,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 260,
+    "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditorContext.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditorContext.java\nindex 6c2bfcc252..3107e21daf 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditorContext.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LuceneIndexEditorContext.java\n@@ -26,6 +26,7 @@\n \n import java.io.File;\n import java.io.IOException;\n+import java.util.Calendar;\n import java.util.Set;\n \n import javax.jcr.PropertyType;\n@@ -35,6 +36,7 @@\n import org.apache.jackrabbit.oak.api.Type;\n import org.apache.jackrabbit.oak.plugins.index.IndexUpdateCallback;\n import org.apache.jackrabbit.oak.spi.state.NodeBuilder;\n+import org.apache.jackrabbit.util.ISO8601;\n import org.apache.lucene.analysis.Analyzer;\n import org.apache.lucene.index.IndexWriter;\n import org.apache.lucene.index.IndexWriterConfig;\n@@ -165,6 +167,13 @@ IndexWriter getWriter() throws IOException {\n     void closeWriter() throws IOException {\n         if (writer != null) {\n             writer.close();\n+\n+            //OAK-2029 Record the last updated status so\n+            //as to make IndexTracker detect changes when index\n+            //is stored in file system\n+            NodeBuilder status = definition.child(\":status\");\n+            status.setProperty(\"lastUpdated\", ISO8601.format(Calendar.getInstance()), Type.DATE);\n+            status.setProperty(\"indexedNodes\",indexedNodes);\n         }\n     }\n \n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

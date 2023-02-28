@@ -1,0 +1,25 @@
+{
+    "bug_id": 24,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "adee0f12",
+    "failing_tests": [
+        "org.apache.accumulo.core.data.MutationTest",
+        "org.apache.accumulo.core.data.KeyTest"
+    ],
+    "files": 2,
+    "jira_id": "1986",
+    "linesAdd": 20,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 0,
+    "nb_test": 341,
+    "patch": "diff --git a/src/core/src/main/java/org/apache/accumulo/core/data/Key.java b/src/core/src/main/java/org/apache/accumulo/core/data/Key.java\nindex cfb0b5cbe..b6cfad75a 100644\n--- a/src/core/src/main/java/org/apache/accumulo/core/data/Key.java\n+++ b/src/core/src/main/java/org/apache/accumulo/core/data/Key.java\n@@ -291,6 +291,19 @@ public Key(TKey tkey) {\n     this.colVisibility = toBytes(tkey.colVisibility);\n     this.timestamp = tkey.timestamp;\n     this.deleted = false;\n+\n+    if (row == null) {\n+      throw new IllegalArgumentException(\"null row\");\n+    }\n+    if (colFamily == null) {\n+      throw new IllegalArgumentException(\"null column family\");\n+    }\n+    if (colQualifier == null) {\n+      throw new IllegalArgumentException(\"null column qualifier\");\n+    }\n+    if (colVisibility == null) {\n+      throw new IllegalArgumentException(\"null column visibility\");\n+    }\n   }\n   \n   /**\ndiff --git a/src/core/src/main/java/org/apache/accumulo/core/data/Mutation.java b/src/core/src/main/java/org/apache/accumulo/core/data/Mutation.java\nindex 3979da90b..6b2c09f18 100644\n--- a/src/core/src/main/java/org/apache/accumulo/core/data/Mutation.java\n+++ b/src/core/src/main/java/org/apache/accumulo/core/data/Mutation.java\n@@ -187,6 +187,13 @@ public Mutation(TMutation tmutation) {\n     this.data = ByteBufferUtil.toBytes(tmutation.data);\n     this.entries = tmutation.entries;\n     this.values = ByteBufferUtil.toBytesList(tmutation.values);\n+\n+    if (this.row == null) {\n+      throw new IllegalArgumentException(\"null row\");\n+    }\n+    if (this.data == null) {\n+      throw new IllegalArgumentException(\"null serialized data\");\n+    }\n   }\n   \n   public Mutation(Mutation m) {\n",
+    "project": "accumulo",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

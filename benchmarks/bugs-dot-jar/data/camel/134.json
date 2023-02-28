@@ -1,0 +1,24 @@
+{
+    "bug_id": 134,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "39ccf5d6",
+    "failing_tests": [
+        "org.apache.camel.support.XMLTokenExpressionIteratorInvalidXMLTest"
+    ],
+    "files": 1,
+    "jira_id": "8106",
+    "linesAdd": 2,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 3,
+    "nb_test": 5145,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/support/XMLTokenExpressionIterator.java b/camel-core/src/main/java/org/apache/camel/support/XMLTokenExpressionIterator.java\nindex f233281f78..19cc2a62b7 100644\n--- a/camel-core/src/main/java/org/apache/camel/support/XMLTokenExpressionIterator.java\n+++ b/camel-core/src/main/java/org/apache/camel/support/XMLTokenExpressionIterator.java\n@@ -575,7 +575,8 @@ public Object next() {\n             try {\n                 nextToken = getNextToken();\n             } catch (XMLStreamException e) {\n-                //\n+                nextToken = null;\n+                throw new RuntimeException(e);\n             }\n             return o;\n         }\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

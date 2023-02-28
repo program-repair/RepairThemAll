@@ -1,0 +1,24 @@
+{
+    "bug_id": 64,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "a5b05566",
+    "failing_tests": [
+        "org.apache.flink.client.CliFrontendInfoTest"
+    ],
+    "files": 1,
+    "jira_id": "3189",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 45,
+    "patch": "diff --git a/flink-clients/src/main/java/org/apache/flink/client/cli/CliFrontendParser.java b/flink-clients/src/main/java/org/apache/flink/client/cli/CliFrontendParser.java\nindex 4e081fdb9b..07d409e3ed 100644\n--- a/flink-clients/src/main/java/org/apache/flink/client/cli/CliFrontendParser.java\n+++ b/flink-clients/src/main/java/org/apache/flink/client/cli/CliFrontendParser.java\n@@ -339,7 +339,7 @@ public static SavepointOptions parseSavepointCommand(String[] args) throws CliAr\n \tpublic static InfoOptions parseInfoCommand(String[] args) throws CliArgsException {\n \t\ttry {\n \t\t\tPosixParser parser = new PosixParser();\n-\t\t\tCommandLine line = parser.parse(INFO_OPTIONS, args, false);\n+\t\t\tCommandLine line = parser.parse(INFO_OPTIONS, args, true);\n \t\t\treturn new InfoOptions(line);\n \t\t}\n \t\tcatch (ParseException e) {\n",
+    "project": "flink",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

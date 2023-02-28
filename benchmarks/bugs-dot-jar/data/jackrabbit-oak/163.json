@@ -1,0 +1,24 @@
+{
+    "bug_id": 163,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "0fa892b3",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.commons.json.JsopTest"
+    ],
+    "files": 1,
+    "jira_id": "2389",
+    "linesAdd": 4,
+    "linesRem": 5,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 53,
+    "patch": "diff --git a/oak-commons/src/main/java/org/apache/jackrabbit/oak/commons/json/JsopBuilder.java b/oak-commons/src/main/java/org/apache/jackrabbit/oak/commons/json/JsopBuilder.java\nindex 8489197562..bffa237eea 100644\n--- a/oak-commons/src/main/java/org/apache/jackrabbit/oak/commons/json/JsopBuilder.java\n+++ b/oak-commons/src/main/java/org/apache/jackrabbit/oak/commons/json/JsopBuilder.java\n@@ -254,7 +254,7 @@ public static String encode(String s) {\n         }\n         for (int i = 0; i < length; i++) {\n             char c = s.charAt(i);\n-            if (c == '\\\"' || c == '\\\\' || c < ' ') {\n+            if (c == '\\\"' || c == '\\\\' || c < ' ' || (c >= 0xd800 && c <= 0xdbff)) {\n                 StringBuilder buff = new StringBuilder(length + 2 + length / 8);\n                 buff.append('\\\"');\n                 escape(s, length, buff);\n@@ -285,7 +285,6 @@ public static void escape(String s, StringBuilder buff) {\n     private static void escape(String s, int length, StringBuilder buff) {\n         for (int i = 0; i < length; i++) {\n             char c = s.charAt(i);\n-            int ic = (int)c;\n             switch (c) {\n             case '\"':\n                 // quotation mark\n@@ -317,8 +316,8 @@ private static void escape(String s, int length, StringBuilder buff) {\n                 break;\n             default:\n                 if (c < ' ') {\n-                    buff.append(String.format(\"\\\\u%04x\", ic));\n-                } else if (ic >= 0xD800 && ic <= 0xDBFF) {\n+                    buff.append(String.format(\"\\\\u%04x\", (int) c));\n+                } else if (c >= 0xd800 && c <= 0xdbff) {\n                     // isSurrogate(), only available in Java 7\n                     if (i < length - 1 && Character.isSurrogatePair(c, s.charAt(i + 1))) {\n                         // ok surrogate\n@@ -327,7 +326,7 @@ private static void escape(String s, int length, StringBuilder buff) {\n                         i += 1;\n                     } else {\n                         // broken surrogate -> escape\n-                        buff.append(String.format(\"\\\\u%04x\", ic));\n+                        buff.append(String.format(\"\\\\u%04x\", (int) c));\n                     }\n                 } else {\n                     buff.append(c);\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

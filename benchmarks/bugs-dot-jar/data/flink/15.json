@@ -1,0 +1,25 @@
+{
+    "bug_id": 15,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "734ba01d",
+    "failing_tests": [
+        "org.apache.flink.runtime.executiongraph.ExecutionGraphRestartTest",
+        "org.apache.flink.runtime.executiongraph.ExecutionVertexCancelTest"
+    ],
+    "files": 2,
+    "jira_id": "3534",
+    "linesAdd": 6,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 3,
+    "nb_skipped": 1,
+    "nb_test": 977,
+    "patch": "diff --git a/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/Execution.java b/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/Execution.java\nindex bc7566458c..6d5832b83f 100644\n--- a/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/Execution.java\n+++ b/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/Execution.java\n@@ -797,6 +797,11 @@ private boolean processFail(Throwable t, boolean isCallback) {\n \t\t\t\treturn false;\n \t\t\t}\n \n+\t\t\tif (current == CANCELING) {\n+\t\t\t\tcancelingComplete();\n+\t\t\t\treturn false;\n+\t\t\t}\n+\n \t\t\tif (transitionState(current, FAILED, t)) {\n \t\t\t\t// success (in a manner of speaking)\n \t\t\t\tthis.failureCause = t;\ndiff --git a/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionGraph.java b/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionGraph.java\nindex 0d6de98a5b..ed50bea8f0 100755\n--- a/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionGraph.java\n+++ b/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionGraph.java\n@@ -809,7 +809,7 @@ public void stop() throws StoppingException {\n \tpublic void fail(Throwable t) {\n \t\twhile (true) {\n \t\t\tJobStatus current = state;\n-\t\t\tif (current == JobStatus.FAILED || current == JobStatus.FAILING) {\n+\t\t\tif (current == JobStatus.FAILING || current.isTerminalState()) {\n \t\t\t\treturn;\n \t\t\t}\n \t\t\telse if (transitionState(current, JobStatus.FAILING, t)) {\n",
+    "project": "flink",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

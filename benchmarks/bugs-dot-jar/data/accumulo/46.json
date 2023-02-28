@@ -1,0 +1,24 @@
+{
+    "bug_id": 46,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "f99b5654",
+    "failing_tests": [
+        "org.apache.accumulo.core.client.BatchWriterConfigTest"
+    ],
+    "files": 1,
+    "jira_id": "2928",
+    "linesAdd": 67,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 0,
+    "nb_test": 415,
+    "patch": "diff --git a/core/src/main/java/org/apache/accumulo/core/client/BatchWriterConfig.java b/core/src/main/java/org/apache/accumulo/core/client/BatchWriterConfig.java\nindex d3ad3fe43..28955f580 100644\n--- a/core/src/main/java/org/apache/accumulo/core/client/BatchWriterConfig.java\n+++ b/core/src/main/java/org/apache/accumulo/core/client/BatchWriterConfig.java\n@@ -24,6 +24,7 @@\n import java.util.List;\n import java.util.concurrent.TimeUnit;\n \n+import org.apache.commons.lang.builder.HashCodeBuilder;\n import org.apache.hadoop.io.Writable;\n import org.apache.hadoop.util.StringUtils;\n \n@@ -223,4 +224,70 @@ public void readFields(DataInput in) throws IOException {\n       }\n     }\n   }\n+\n+  @Override\n+  public boolean equals(Object o) {\n+    if (o instanceof BatchWriterConfig) {\n+      BatchWriterConfig other = (BatchWriterConfig) o;\n+\n+      if (null != maxMemory) {\n+        if (!maxMemory.equals(other.maxMemory)) {\n+          return false;\n+        }\n+      } else {\n+        if (null != other.maxMemory) {\n+          return false;\n+        }\n+      }\n+\n+      if (null != maxLatency) {\n+        if (!maxLatency.equals(other.maxLatency)) {\n+          return false;\n+        }\n+      } else {\n+        if (null != other.maxLatency) {\n+          return false;\n+        }\n+      }\n+\n+      if (null != maxWriteThreads) {\n+        if (!maxWriteThreads.equals(other.maxWriteThreads)) {\n+          return false;\n+        }\n+      } else {\n+        if (null != other.maxWriteThreads) {\n+          return false;\n+        }\n+      }\n+\n+      if (null != timeout) {\n+        if (!timeout.equals(other.timeout)) {\n+          return false;\n+        }\n+      } else {\n+        if (null != other.timeout) {\n+          return false;\n+        }\n+      }\n+\n+      return true;\n+    }\n+\n+    return false;\n+  }\n+\n+  @Override\n+  public int hashCode() {\n+    HashCodeBuilder hcb = new HashCodeBuilder();\n+    hcb.append(maxMemory).append(maxLatency).append(maxWriteThreads).append(timeout);\n+    return hcb.toHashCode();\n+  }\n+\n+  @Override\n+  public String toString() {\n+    StringBuilder sb = new StringBuilder(32);\n+    sb.append(\"[maxMemory=\").append(getMaxMemory()).append(\", maxLatency=\").append(getMaxLatency(TimeUnit.MILLISECONDS)).append(\", maxWriteThreads=\")\n+        .append(getMaxWriteThreads()).append(\", timeout=\").append(getTimeout(TimeUnit.MILLISECONDS)).append(\"]\");\n+    return sb.toString();\n+  }\n }\n",
+    "project": "accumulo",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

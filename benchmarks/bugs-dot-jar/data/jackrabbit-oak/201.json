@@ -1,0 +1,24 @@
+{
+    "bug_id": 201,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "d7f0f180",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.jcr.query.QueryTest"
+    ],
+    "files": 1,
+    "jira_id": "1093",
+    "linesAdd": 15,
+    "linesRem": 0,
+    "nb_error": 3,
+    "nb_failure": 0,
+    "nb_skipped": 3,
+    "nb_test": 1156,
+    "patch": "diff --git a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/query/RowImpl.java b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/query/RowImpl.java\nindex fd09cacd0d..e337f39e79 100644\n--- a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/query/RowImpl.java\n+++ b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/query/RowImpl.java\n@@ -25,6 +25,10 @@\n \n import org.apache.jackrabbit.oak.api.PropertyValue;\n import org.apache.jackrabbit.oak.api.ResultRow;\n+import org.apache.jackrabbit.oak.api.Type;\n+import org.apache.jackrabbit.oak.spi.query.PropertyValues;\n+\n+import com.google.common.base.Joiner;\n \n /**\n  * The implementation of the corresponding JCR interface.\n@@ -96,9 +100,20 @@ public Value getValue(String columnName) throws RepositoryException {\n         int len = values.length;\n         Value[] v2 = new Value[values.length];\n         for (int i = 0; i < len; i++) {\n+            if(values[i].isArray()){\n+                v2[i] = result.createValue(mvpToString(values[i]));\n+            }else{\n                 v2[i] = result.createValue(values[i]);\n             }\n+        }\n         return v2;\n     }\n \n+    private static PropertyValue mvpToString(PropertyValue pv) {\n+        String v = Joiner.on(' ')\n+                .appendTo(new StringBuilder(), pv.getValue(Type.STRINGS))\n+                .toString();\n+        return PropertyValues.newString(v);\n+    }\n+\n }\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

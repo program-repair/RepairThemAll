@@ -1,0 +1,24 @@
+{
+    "bug_id": 34,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "db4a291f",
+    "failing_tests": [
+        "org.apache.accumulo.examples.wikisearch.ingest.WikipediaInputSplitTest"
+    ],
+    "files": 0,
+    "jira_id": "366",
+    "linesAdd": 0,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 18,
+    "patch": "",
+    "project": "accumulo",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

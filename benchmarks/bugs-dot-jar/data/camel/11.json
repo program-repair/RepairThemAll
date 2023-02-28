@@ -1,0 +1,24 @@
+{
+    "bug_id": 11,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "00a9b02b",
+    "failing_tests": [
+        "org.apache.camel.processor.SplitterWithScannerIoExceptionTest"
+    ],
+    "files": 3,
+    "jira_id": "7100",
+    "linesAdd": 37,
+    "linesRem": 11,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 4774,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/Splitter.java b/camel-core/src/main/java/org/apache/camel/processor/Splitter.java\nindex a9dd334fd3..d1a0f646c0 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/Splitter.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/Splitter.java\n@@ -192,19 +192,20 @@ public void remove() {\n \n         @Override\n         public void close() throws IOException {\n-            if (value instanceof Closeable) {\n-                IOHelper.close((Closeable) value, value.getClass().getName(), LOG);\n-            } else if (value instanceof Scanner) {\n-                // special for Scanner as it does not implement Closeable\n+            if (value instanceof Scanner) {\n+                // special for Scanner which implement the Closeable since JDK7 \n                 Scanner scanner = (Scanner) value;\n                 scanner.close();\n-\n                 IOException ioException = scanner.ioException();\n                 if (ioException != null) {\n                     throw ioException;\n                 }\n+            } else if (value instanceof Closeable) {\n+                // we should throw out the exception here   \n+                IOHelper.closeWithException((Closeable) value);\n             }\n         }\n+       \n     }\n \n     private Iterable<ProcessorExchangePair> createProcessorExchangePairsList(Exchange exchange, Object value) {\ndiff --git a/camel-core/src/main/java/org/apache/camel/util/GroupIterator.java b/camel-core/src/main/java/org/apache/camel/util/GroupIterator.java\nindex 95a5a1e2a2..158dbed4e2 100644\n--- a/camel-core/src/main/java/org/apache/camel/util/GroupIterator.java\n+++ b/camel-core/src/main/java/org/apache/camel/util/GroupIterator.java\n@@ -65,17 +65,25 @@ public GroupIterator(CamelContext camelContext, Iterator<?> it, String token, in\n \n     @Override\n     public void close() throws IOException {\n-        if (it instanceof Closeable) {\n-            IOHelper.close((Closeable) it);\n-        } else if (it instanceof Scanner) {\n-            // special for Scanner as it does not implement Closeable\n-            ((Scanner) it).close();\n-        }\n+        try {\n+            if (it instanceof Scanner) {\n+                // special for Scanner which implement the Closeable since JDK7 \n+                Scanner scanner = (Scanner) it;\n+                scanner.close();\n+                IOException ioException = scanner.ioException();\n+                if (ioException != null) {\n+                    throw ioException;\n+                }\n+            } else if (it instanceof Closeable) {\n+                IOHelper.closeWithException((Closeable) it);\n+            }\n+        } finally {\n             // close the buffer as well\n             bos.close();\n             // we are now closed\n             closed = true;\n         }\n+    }\n \n     @Override\n     public boolean hasNext() {\ndiff --git a/camel-core/src/main/java/org/apache/camel/util/IOHelper.java b/camel-core/src/main/java/org/apache/camel/util/IOHelper.java\nindex efd8b56d71..ed2f7932a6 100644\n--- a/camel-core/src/main/java/org/apache/camel/util/IOHelper.java\n+++ b/camel-core/src/main/java/org/apache/camel/util/IOHelper.java\n@@ -338,6 +338,23 @@ public static void close(Closeable closeable, String name, Logger log) {\n         }\n     }\n     \n+    /**\n+     * Closes the given resource if it is available and don't catch the exception\n+     *\n+     * @param closeable the object to close\n+     * @throws IOException\n+      */\n+    public static void closeWithException(Closeable closeable) throws IOException {\n+        if (closeable != null) {\n+            try {\n+                closeable.close();\n+            } catch (IOException e) {\n+                // don't catch the exception here\n+                throw e;\n+            }\n+        }\n+    }\n+\n     /**\n      * Closes the given channel if it is available, logging any closing exceptions to the given log.\n      * The file's channel can optionally be forced to disk.\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

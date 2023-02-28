@@ -1,0 +1,24 @@
+{
+    "bug_id": 40,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "1d08cbd3",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.document.RevisionTest"
+    ],
+    "files": 1,
+    "jira_id": "2318",
+    "linesAdd": 8,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 9,
+    "nb_test": 2016,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Revision.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Revision.java\nindex a9cff7eaf8..3079d886c5 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Revision.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Revision.java\n@@ -554,7 +554,14 @@ public long getMinimumTimestamp(@Nonnull Revision revision,\n                 return timestamp;\n             }\n             // go through all known cluster nodes\n-            for (List<RevisionRange> list : map.values()) {\n+            for (Map.Entry<Integer, List<RevisionRange>> e : map.entrySet()) {\n+                if (revision.getClusterId() == currentClusterNodeId\n+                        && e.getKey() == currentClusterNodeId) {\n+                    // range and revision is for current cluster node\n+                    // no need to adjust timestamp\n+                    continue;\n+                }\n+                List<RevisionRange> list = e.getValue();\n                 RevisionRange range;\n                 for (int i = list.size() - 1; i >= 0; i--) {\n                     range = list.get(i);\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 73,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "d2777388",
+    "failing_tests": [
+        "org.apache.commons.math.ode.nonstiff.DormandPrince853IntegratorTest"
+    ],
+    "files": 1,
+    "jira_id": "727",
+    "linesAdd": 9,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 3209,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math/ode/nonstiff/EmbeddedRungeKuttaIntegrator.java b/src/main/java/org/apache/commons/math/ode/nonstiff/EmbeddedRungeKuttaIntegrator.java\nindex 13ced27d7..d2bbf6725 100644\n--- a/src/main/java/org/apache/commons/math/ode/nonstiff/EmbeddedRungeKuttaIntegrator.java\n+++ b/src/main/java/org/apache/commons/math/ode/nonstiff/EmbeddedRungeKuttaIntegrator.java\n@@ -247,6 +247,15 @@ public void integrate(final ExpandableStatefulODE equations, final double t)\n         }\n \n         stepSize = hNew;\n+        if (forward) {\n+            if (stepStart + stepSize >= t) {\n+                stepSize = t - stepStart;\n+            }\n+        } else {\n+            if (stepStart + stepSize <= t) {\n+                stepSize = t - stepStart;\n+            }\n+        }\n \n         // next stages\n         for (int k = 1; k < stages; ++k) {\n",
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

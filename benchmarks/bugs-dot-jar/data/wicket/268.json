@@ -1,0 +1,24 @@
+{
+    "bug_id": 268,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "2737d7c7",
+    "failing_tests": [
+        "org.apache.wicket.extensions.markup.html.repeater.data.table.DataTableTest"
+    ],
+    "files": 1,
+    "jira_id": "4153",
+    "linesAdd": 9,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 18,
+    "patch": "diff --git a/wicket-extensions/src/main/java/org/apache/wicket/extensions/markup/html/repeater/data/table/DataTable.java b/wicket-extensions/src/main/java/org/apache/wicket/extensions/markup/html/repeater/data/table/DataTable.java\nindex caa2f9ea69..f2e4618b5c 100644\n--- a/wicket-extensions/src/main/java/org/apache/wicket/extensions/markup/html/repeater/data/table/DataTable.java\n+++ b/wicket-extensions/src/main/java/org/apache/wicket/extensions/markup/html/repeater/data/table/DataTable.java\n@@ -204,7 +204,15 @@ protected String getCssClass()\n \t */\n \tprotected WebMarkupContainer newBodyContainer(final String id)\n \t{\n-\t\treturn new WebMarkupContainer(id);\n+\t\treturn new WebMarkupContainer(id)\n+\t\t{\n+\t\t\t@Override\n+\t\t\tprotected void onConfigure()\n+\t\t\t{\n+\t\t\t\tsuper.onConfigure();\n+\t\t\t\tsetVisible(getRowCount() > 0);\n+\t\t\t}\n+\t\t};\n \t}\n \n \t/**\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

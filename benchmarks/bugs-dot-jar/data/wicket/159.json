@@ -1,0 +1,24 @@
+{
+    "bug_id": 159,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "e2d88568",
+    "failing_tests": [
+        "org.apache.wicket.ajax.AjaxPreprocessingCallDecoratorTest"
+    ],
+    "files": 1,
+    "jira_id": "2057",
+    "linesAdd": 8,
+    "linesRem": 6,
+    "nb_error": 0,
+    "nb_failure": 3,
+    "nb_skipped": 0,
+    "nb_test": 757,
+    "patch": "diff --git a/wicket/src/main/java/org/apache/wicket/ajax/calldecorator/AjaxPreprocessingCallDecorator.java b/wicket/src/main/java/org/apache/wicket/ajax/calldecorator/AjaxPreprocessingCallDecorator.java\nindex f57a2d482a..a37d6edc9a 100644\n--- a/wicket/src/main/java/org/apache/wicket/ajax/calldecorator/AjaxPreprocessingCallDecorator.java\n+++ b/wicket/src/main/java/org/apache/wicket/ajax/calldecorator/AjaxPreprocessingCallDecorator.java\n@@ -49,8 +49,9 @@ public AjaxPreprocessingCallDecorator(IAjaxCallDecorator delegate)\n \t */\n \tpublic CharSequence decorateScript(CharSequence script)\n \t{\n-\t\tCharSequence s = (delegate == null) ? script : delegate.decorateScript(script);\n-\t\treturn preDecorateScript(s);\n+\t\tCharSequence s = preDecorateScript(script);\n+\t\treturn (delegate == null) ? s : delegate.decorateScript(s);\n+\n \t}\n \n \t/**\n@@ -58,8 +59,8 @@ public CharSequence decorateScript(CharSequence script)\n \t */\n \tpublic CharSequence decorateOnSuccessScript(CharSequence script)\n \t{\n-\t\tCharSequence s = (delegate == null) ? script : delegate.decorateOnSuccessScript(script);\n-\t\treturn preDecorateOnSuccessScript(s);\n+\t\tCharSequence s = preDecorateOnSuccessScript(script);\n+\t\treturn (delegate == null) ? s : delegate.decorateOnSuccessScript(s);\n \t}\n \n \t/**\n@@ -67,8 +68,9 @@ public CharSequence decorateOnSuccessScript(CharSequence script)\n \t */\n \tpublic CharSequence decorateOnFailureScript(CharSequence script)\n \t{\n-\t\tCharSequence s = (delegate == null) ? script : delegate.decorateOnFailureScript(script);\n-\t\treturn preDecorateOnFailureScript(s);\n+\t\tCharSequence s = preDecorateOnFailureScript(script);\n+\n+\t\treturn (delegate == null) ? s : delegate.decorateOnFailureScript(s);\n \t}\n \n \n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

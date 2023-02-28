@@ -1,0 +1,24 @@
+{
+    "bug_id": 7,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "1485a856",
+    "failing_tests": [
+        "org.apache.wicket.stateless.StatelessFormUrlTest"
+    ],
+    "files": 2,
+    "jira_id": "4365",
+    "linesAdd": 32,
+    "linesRem": 4,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 4,
+    "nb_test": 1292,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java\nindex a0f3654823..46dbefc37b 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java\n@@ -796,10 +796,6 @@ else if (hasError())\n \t */\n \tpublic void process(IFormSubmitter submittingComponent)\n \t{\n-\t\t// save the page in case the component is removed during submit\n-\t\tfinal Page page = getPage();\n-\t\tString hiddenFieldId = getHiddenFieldId();\n-\n \t\tif (!isEnabledInHierarchy() || !isVisibleInHierarchy())\n \t\t{\n \t\t\t// since process() can be called outside of the default form workflow, an additional\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/StatelessForm.java b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/StatelessForm.java\nindex 034519c3bc..2442556ae2 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/StatelessForm.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/StatelessForm.java\n@@ -17,6 +17,9 @@\n package org.apache.wicket.markup.html.form;\n \n import org.apache.wicket.model.IModel;\n+import org.apache.wicket.request.mapper.parameter.PageParameters;\n+import org.apache.wicket.util.visit.IVisit;\n+import org.apache.wicket.util.visit.IVisitor;\n \n /**\n  * This StatelessForm is the same as a normal form but with the statelesshint default to true. The\n@@ -72,4 +75,33 @@ protected CharSequence getActionUrl()\n \t{\n \t\treturn urlFor(IFormSubmitListener.INTERFACE, getPage().getPageParameters());\n \t}\n+\n+\t/**\n+\t * Remove the page parameters for all form component otherwise they get appended to action URL\n+\t *\n+\t * {@inheritDoc}\n+\t */\n+\t@Override\n+\tpublic void process(IFormSubmitter submittingComponent)\n+\t{\n+\t\tsuper.process(submittingComponent);\n+\n+\t\tfinal PageParameters parameters = getPage().getPageParameters();\n+\t\tif (parameters != null)\n+\t\t{\n+\t\t\tvisitFormComponents(new IVisitor<FormComponent<?>, Void>()\n+\t\t\t{\n+\t\t\t\tpublic void component(final FormComponent<?> formComponent, final IVisit<Void> visit)\n+\t\t\t\t{\n+\t\t\t\t\tparameters.remove(formComponent.getInputName());\n+\t\t\t\t}\n+\t\t\t});\n+\t\t\tparameters.remove(getHiddenFieldId());\n+\t\t\tif (submittingComponent instanceof AbstractSubmitLink)\n+\t\t\t{\n+\t\t\t\tAbstractSubmitLink submitLink = (AbstractSubmitLink)submittingComponent;\n+\t\t\t\tparameters.remove(submitLink.getInputName());\n+\t\t\t}\n+\t\t}\n+\t}\n }\n",
+    "project": "wicket",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

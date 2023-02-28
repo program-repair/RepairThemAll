@@ -1,0 +1,24 @@
+{
+    "bug_id": 195,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "2d9ebf9a",
+    "failing_tests": [
+        "org.apache.wicket.validation.validator.CreditCardValidatorTest"
+    ],
+    "files": 1,
+    "jira_id": "5891",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 1746,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/validation/validator/CreditCardValidator.java b/wicket-core/src/main/java/org/apache/wicket/validation/validator/CreditCardValidator.java\nindex 28225c2394..eeff47bda0 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/validation/validator/CreditCardValidator.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/validation/validator/CreditCardValidator.java\n@@ -322,7 +322,7 @@ private CreditCard isChinaUnionPay(String creditCardNumber)\n \t\tif ((creditCardNumber.length() >= 16 && creditCardNumber.length() <= 19) &&\n \t\t\t(creditCardNumber.startsWith(\"622\")))\n \t\t{\n-\t\t\tint firstDigits = Integer.parseInt(creditCardNumber.substring(0, 5));\n+\t\t\tint firstDigits = Integer.parseInt(creditCardNumber.substring(0, 6));\n \t\t\tif (firstDigits >= 622126 && firstDigits <= 622925)\n \t\t\t{\n \t\t\t\treturn CreditCard.CHINA_UNIONPAY;\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

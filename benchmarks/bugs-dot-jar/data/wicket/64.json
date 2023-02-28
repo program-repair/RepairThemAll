@@ -1,0 +1,24 @@
+{
+    "bug_id": 64,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "0b4f78cc",
+    "failing_tests": [
+        "org.apache.wicket.request.mapper.BookmarkableMapperTest"
+    ],
+    "files": 1,
+    "jira_id": "2993",
+    "linesAdd": 1,
+    "linesRem": 2,
+    "nb_error": 1,
+    "nb_failure": 8,
+    "nb_skipped": 1,
+    "nb_test": 902,
+    "patch": "diff --git a/wicket/src/main/java/org/apache/wicket/request/mapper/BookmarkableMapper.java b/wicket/src/main/java/org/apache/wicket/request/mapper/BookmarkableMapper.java\nindex 1b82594480..1b0edf9036 100644\n--- a/wicket/src/main/java/org/apache/wicket/request/mapper/BookmarkableMapper.java\n+++ b/wicket/src/main/java/org/apache/wicket/request/mapper/BookmarkableMapper.java\n@@ -16,7 +16,6 @@\n  */\n package org.apache.wicket.request.mapper;\n \n-import org.apache.wicket.Page;\n import org.apache.wicket.request.Request;\n import org.apache.wicket.request.Url;\n import org.apache.wicket.request.component.IRequestablePage;\n@@ -103,7 +102,7 @@ protected UrlInfo parseRequest(Request request)\n \t\t\tString className = url.getSegments().get(2);\n \t\t\tClass<? extends IRequestablePage> pageClass = getPageClass(className);\n \n-\t\t\tif (Page.class.isAssignableFrom(pageClass))\n+\t\t\tif (pageClass != null && IRequestablePage.class.isAssignableFrom(pageClass))\n \t\t\t{\n \n \t\t\t\t// extract the PageParameters from URL if there are any\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

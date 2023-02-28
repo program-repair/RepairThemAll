@@ -1,0 +1,24 @@
+{
+    "bug_id": 69,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "9a6e6d8a",
+    "failing_tests": [
+        "org.apache.camel.language.simple.SimpleTest"
+    ],
+    "files": 1,
+    "jira_id": "9641",
+    "linesAdd": 6,
+    "linesRem": 3,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 4,
+    "nb_test": 5540,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/language/simple/ast/SimpleFunctionExpression.java b/camel-core/src/main/java/org/apache/camel/language/simple/ast/SimpleFunctionExpression.java\nindex be5e4acad4..5110ae95cb 100644\n--- a/camel-core/src/main/java/org/apache/camel/language/simple/ast/SimpleFunctionExpression.java\n+++ b/camel-core/src/main/java/org/apache/camel/language/simple/ast/SimpleFunctionExpression.java\n@@ -141,8 +141,8 @@ private Expression createSimpleExpression(String function, boolean strict) {\n         // file: prefix\n         remainder = ifStartsWithReturnRemainder(\"file:\", function);\n         if (remainder != null) {\n-            Expression fileExpression = createSimpleFileExpression(remainder);\n-            if (function != null) {\n+            Expression fileExpression = createSimpleFileExpression(remainder, strict);\n+            if (fileExpression != null) {\n                 return fileExpression;\n             }\n         }\n@@ -388,7 +388,7 @@ private Expression createSimpleExpressionDirectly(String expression) {\n         return null;\n     }\n \n-    private Expression createSimpleFileExpression(String remainder) {\n+    private Expression createSimpleFileExpression(String remainder, boolean strict) {\n         if (ObjectHelper.equal(remainder, \"name\")) {\n             return ExpressionBuilder.fileNameExpression();\n         } else if (ObjectHelper.equal(remainder, \"name.noext\")) {\n@@ -418,8 +418,11 @@ private Expression createSimpleFileExpression(String remainder) {\n         } else if (ObjectHelper.equal(remainder, \"modified\")) {\n             return ExpressionBuilder.fileLastModifiedExpression();\n         }\n+        if (strict) {\n             throw new SimpleParserException(\"Unknown file language syntax: \" + remainder, token.getIndex());\n         }\n+        return null;\n+    }\n \n     private String ifStartsWithReturnRemainder(String prefix, String text) {\n         if (text.startsWith(prefix)) {\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 81,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "c640932d",
+    "failing_tests": [
+        "org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizerTest"
+    ],
+    "files": 3,
+    "jira_id": "377",
+    "linesAdd": 7,
+    "linesRem": 10,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 2263,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math/linear/EigenDecompositionImpl.java b/src/main/java/org/apache/commons/math/linear/EigenDecompositionImpl.java\nindex d1531a812..468dca712 100644\n--- a/src/main/java/org/apache/commons/math/linear/EigenDecompositionImpl.java\n+++ b/src/main/java/org/apache/commons/math/linear/EigenDecompositionImpl.java\n@@ -561,7 +561,7 @@ private void findEigenVectors(double[][] householderMatrix) {\n                             z[ia][i] = c * z[ia][i] - s * p;\n                         }\n                     }\n-                    if (e[i + 1] == 0.0 && i >= j)\n+                    if (t == 0.0 && i >= j)\n                         continue;\n                     realEigenvalues[j] -= u;\n                     e[j] = q;\ndiff --git a/src/main/java/org/apache/commons/math/linear/SingularValueDecompositionImpl.java b/src/main/java/org/apache/commons/math/linear/SingularValueDecompositionImpl.java\nindex 3abf3f0d8..597f6c42f 100644\n--- a/src/main/java/org/apache/commons/math/linear/SingularValueDecompositionImpl.java\n+++ b/src/main/java/org/apache/commons/math/linear/SingularValueDecompositionImpl.java\n@@ -141,7 +140,7 @@ public SingularValueDecompositionImpl(final RealMatrix matrix)\n             singularValues[i] = Math.sqrt(Math.abs(singularValues[i]));\n         }\n         // Up to this point, U and V are computed independently of each other.\n-        // There still an sign indetermination of each column of, say, U.\n+        // There still a sign indetermination of each column of, say, U.\n         // The sign is set such that A.V_i=sigma_i.U_i (i<=p)\n         // The right sign corresponds to a positive dot product of A.V_i and U_i\n         for (int i = 0; i < p; i++) {\ndiff --git a/src/main/java/org/apache/commons/math/optimization/general/AbstractLeastSquaresOptimizer.java b/src/main/java/org/apache/commons/math/optimization/general/AbstractLeastSquaresOptimizer.java\nindex 10f776263..5a60da853 100644\n--- a/src/main/java/org/apache/commons/math/optimization/general/AbstractLeastSquaresOptimizer.java\n+++ b/src/main/java/org/apache/commons/math/optimization/general/AbstractLeastSquaresOptimizer.java\n@@ -237,23 +237,20 @@ protected void updateResidualsAndCost()\n      * @return RMS value\n      */\n     public double getRMS() {\n-        double criterion = 0;\n-        for (int i = 0; i < rows; ++i) {\n-            final double residual = residuals[i];\n-            criterion += residualsWeights[i] * residual * residual;\n-        }\n-        return Math.sqrt(criterion / rows);\n+        return Math.sqrt(getChiSquare() / rows);\n     }\n \n     /**\n-     * Get the Chi-Square value.\n+     * Get a Chi-Square-like value assuming the N residuals follow N\n+     * distinct normal distributions centered on 0 and whose variances are\n+     * the reciprocal of the weights.\n      * @return chi-square value\n      */\n     public double getChiSquare() {\n         double chiSquare = 0;\n         for (int i = 0; i < rows; ++i) {\n             final double residual = residuals[i];\n-            chiSquare += residual * residual / residualsWeights[i];\n+            chiSquare += residual * residual * residualsWeights[i];\n         }\n         return chiSquare;\n     }\n",
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

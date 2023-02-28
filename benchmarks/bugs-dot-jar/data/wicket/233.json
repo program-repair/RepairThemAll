@@ -1,0 +1,24 @@
+{
+    "bug_id": 233,
+    "classification": {
+        "singleLine": true
+    },
+    "commit": "2f1ece4b",
+    "failing_tests": [
+        "org.apache.wicket.util.string.JavaScriptStripperTest"
+    ],
+    "files": 1,
+    "jira_id": "4760",
+    "linesAdd": 1,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 6,
+    "nb_skipped": 5,
+    "nb_test": 1410,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/core/util/string/JavaScriptStripper.java b/wicket-core/src/main/java/org/apache/wicket/core/util/string/JavaScriptStripper.java\nindex 79c6542086..46988d676d 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/core/util/string/JavaScriptStripper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/core/util/string/JavaScriptStripper.java\n@@ -173,6 +173,7 @@ else if (c == '\"')\n \t\t\t\tif (c == '\\n' || c == '\\r')\n \t\t\t\t{\n \t\t\t\t\tstate = REGULAR_TEXT;\n+\t\t\t\t\tresult.append(c);\n \t\t\t\t\tcontinue;\n \t\t\t\t}\n \t\t\t}\n",
+    "project": "wicket",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 196,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "8b294488",
+    "failing_tests": [
+        "org.apache.wicket.ConverterLocatorTest"
+    ],
+    "files": 1,
+    "jira_id": "4839",
+    "linesAdd": 3,
+    "linesRem": 4,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 5,
+    "nb_test": 1425,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/ConverterLocator.java b/wicket-core/src/main/java/org/apache/wicket/ConverterLocator.java\nindex 5e48a832d3..6c85808cd6 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/ConverterLocator.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/ConverterLocator.java\n@@ -189,8 +189,10 @@ public ConverterLocator()\n \tpublic final <C> IConverter<C> get(Class<C> c)\n \t{\n \t\t@SuppressWarnings(\"unchecked\")\n-\t\tfinal IConverter<C> converter;\n+\t\tIConverter<C> converter = (IConverter<C>)classToConverter.get(c.getName());\n \n+\t\tif (converter == null)\n+\t\t{\n \t\t\t// Date based converters work with thread unsafe DateFormats and\n \t\t\t// a new instance should be created for each usage\n \t\t\tif (Date.class.equals(c))\n@@ -213,9 +215,6 @@ else if (Calendar.class.equals(c))\n \t\t\t{\n \t\t\t\tconverter = (IConverter<C>) new CalendarConverter();\n \t\t\t}\n-\t\telse\n-\t\t{\n-\t\t\tconverter = (IConverter<C>)classToConverter.get(c.getName());\n \t\t}\n \t\treturn converter;\n \t}\n",
+    "project": "wicket",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

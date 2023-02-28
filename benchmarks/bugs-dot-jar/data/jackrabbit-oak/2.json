@@ -1,0 +1,24 @@
+{
+    "bug_id": 2,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ea7a6199",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.document.OrphanedBranchTest"
+    ],
+    "files": 1,
+    "jira_id": "2442",
+    "linesAdd": 6,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 9,
+    "nb_test": 1809,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\nindex aa67c4a6fe..c5d5094d58 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\n@@ -802,8 +802,13 @@ public DocumentNodeState getNodeAtRevision(@Nonnull DocumentNodeStore nodeStore,\n             if (!Utils.isPropertyName(key)) {\n                 continue;\n             }\n+            // ignore when local map is empty (OAK-2442)\n+            SortedMap<Revision, String> local = getLocalMap(key);\n+            if (local.isEmpty()) {\n+                continue;\n+            }\n             // first check local map, which contains most recent values\n-            Value value = getLatestValue(nodeStore, getLocalMap(key),\n+            Value value = getLatestValue(nodeStore, local,\n                     min, readRevision, validRevisions, lastRevs);\n \n             // check if there may be more recent values in a previous document\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

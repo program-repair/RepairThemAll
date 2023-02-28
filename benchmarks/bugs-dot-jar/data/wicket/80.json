@@ -1,0 +1,24 @@
+{
+    "bug_id": 80,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "a4459ef4",
+    "failing_tests": [
+        "org.apache.wicket.ComponentEventsTest"
+    ],
+    "files": 2,
+    "jira_id": "3539",
+    "linesAdd": 16,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 1080,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/ComponentEventSender.java b/wicket-core/src/main/java/org/apache/wicket/ComponentEventSender.java\nindex efbd0ff0da..a01f8d4072 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/ComponentEventSender.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/ComponentEventSender.java\n@@ -164,6 +164,10 @@ private void depth(final ComponentEvent<?> event)\n \t\t{\n \t\t\tVisits.visitPostOrder(cursor, new ComponentEventVisitor(event, dispatcher));\n \t\t}\n+\t\telse\n+\t\t{\n+\t\t\tdispatcher.dispatchEvent(cursor, event);\n+\t\t}\n \t\tif (event.isStop())\n \t\t{\n \t\t\treturn;\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/event/Broadcast.java b/wicket-core/src/main/java/org/apache/wicket/event/Broadcast.java\nindex 401a4f2f96..532863743f 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/event/Broadcast.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/event/Broadcast.java\n@@ -39,6 +39,12 @@\n \t * <li>{@link Component}s</li>\n \t * </ol>\n \t * \n+\t * Components receive the event with a preorder breadth-first traversal, eg: Apply recursively:\n+\t * <ol>\n+\t * <li>The component receives the event</li>\n+\t * <li>The component's children receive the event</li>\n+\t * </ol>\n+\t * \n \t * Any sink along the path can be specified and traversal will start with the specified sink as\n \t * root, eg:\n \t * \n@@ -61,6 +67,12 @@\n \t * <li>{@link Application}</li>\n \t * </ol>\n \t * \n+\t * Components receive the event with a postorder depth-first traversal, eg: Apply recursively:\n+\t * <ol>\n+\t * <li>The component's children receive the event</li>\n+\t * <li>The component receives the event</li>\n+\t * </ol>\n+\t * \n \t * Any sink along the path can be specified and traversal will start with the specified sink as\n \t * root, eg:\n \t * \n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

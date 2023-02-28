@@ -1,0 +1,25 @@
+{
+    "bug_id": 51,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "118f0cc0",
+    "failing_tests": [
+        "org.apache.commons.math.stat.descriptive.SynchronizedSummaryStatisticsTest",
+        "org.apache.commons.math.stat.descriptive.SummaryStatisticsTest"
+    ],
+    "files": 1,
+    "jira_id": "691",
+    "linesAdd": 3,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 6,
+    "nb_skipped": 1,
+    "nb_test": 3104,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math/stat/descriptive/SummaryStatistics.java b/src/main/java/org/apache/commons/math/stat/descriptive/SummaryStatistics.java\nindex 1203d516c..da987cd3c 100644\n--- a/src/main/java/org/apache/commons/math/stat/descriptive/SummaryStatistics.java\n+++ b/src/main/java/org/apache/commons/math/stat/descriptive/SummaryStatistics.java\n@@ -155,13 +155,13 @@ public void addValue(double value) {\n         secondMoment.increment(value);\n         // If mean, variance or geomean have been overridden,\n         // need to increment these\n-        if (!(meanImpl instanceof Mean)) {\n+        if (meanImpl != mean) {\n             meanImpl.increment(value);\n         }\n-        if (!(varianceImpl instanceof Variance)) {\n+        if (varianceImpl != variance) {\n             varianceImpl.increment(value);\n         }\n-        if (!(geoMeanImpl instanceof GeometricMean)) {\n+        if (geoMeanImpl != geoMean) {\n             geoMeanImpl.increment(value);\n         }\n         n++;\n",
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 68,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "6641f182",
+    "failing_tests": [
+        "org.apache.camel.processor.SplitTokenizerTest"
+    ],
+    "files": 1,
+    "jira_id": "7125",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 3,
+    "nb_test": 4795,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/support/TokenXMLExpressionIterator.java b/camel-core/src/main/java/org/apache/camel/support/TokenXMLExpressionIterator.java\nindex 3048c64e65..ba21a717fc 100644\n--- a/camel-core/src/main/java/org/apache/camel/support/TokenXMLExpressionIterator.java\n+++ b/camel-core/src/main/java/org/apache/camel/support/TokenXMLExpressionIterator.java\n@@ -47,7 +47,7 @@\n public class TokenXMLExpressionIterator extends ExpressionAdapter {\n     private static final Pattern NAMESPACE_PATTERN = Pattern.compile(\"xmlns(:\\\\w+|)\\\\s*=\\\\s*('[^']+'|\\\"[^\\\"]+\\\")\");\n     private static final String SCAN_TOKEN_NS_PREFIX_REGEX = \"([^:<>]{1,15}?:|)\";\n-    private static final String SCAN_BLOCK_TOKEN_REGEX_TEMPLATE = \"<{0}(\\\\s+[^/^>]*)?/>|<{0}(\\\\s+[^>]*)?>(?:(?!(</{0}\\\\s*>)).)*</{0}\\\\s*>\";\n+    private static final String SCAN_BLOCK_TOKEN_REGEX_TEMPLATE = \"<{0}(\\\\s+[^>]*)?/>|<{0}(\\\\s+[^>]*)?>(?:(?!(</{0}\\\\s*>)).)*</{0}\\\\s*>\";\n     private static final String SCAN_PARENT_TOKEN_REGEX_TEMPLATE = \"<{0}(\\\\s+[^>]*\\\\s*)?>\";\n     \n     protected final String tagToken;\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

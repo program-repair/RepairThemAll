@@ -1,0 +1,25 @@
+{
+    "bug_id": 59,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "37e0e6bb",
+    "failing_tests": [
+        "org.apache.camel.processor.aggregator.AggregateTimeoutTest",
+        "org.apache.camel.management.ManagedBrowsableEndpointAsXmlFileTest"
+    ],
+    "files": 1,
+    "jira_id": "6987",
+    "linesAdd": 2,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 1,
+    "nb_test": 4755,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/util/MessageHelper.java b/camel-core/src/main/java/org/apache/camel/util/MessageHelper.java\nindex 3e38d23588..c81b53b815 100644\n--- a/camel-core/src/main/java/org/apache/camel/util/MessageHelper.java\n+++ b/camel-core/src/main/java/org/apache/camel/util/MessageHelper.java\n@@ -223,9 +223,11 @@ public static String extractBodyForLogging(Message message, String prepend, bool\n             } else if (obj instanceof Writer) {\n                 return prepend + \"[Body is instance of java.io.Writer]\";\n             } else if (obj instanceof WrappedFile || obj instanceof File) {\n+                if (!allowFiles) {\n                     return prepend + \"[Body is file based: \" + obj + \"]\";\n                 }\n             }\n+        }\n \n         if (!allowFiles) {\n             if (obj instanceof WrappedFile || obj instanceof File) {\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 76,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "5ad32df9",
+    "failing_tests": [
+        "org.apache.wicket.markup.html.TransparentWebMarkupContainerTest"
+    ],
+    "files": 3,
+    "jira_id": "3719",
+    "linesAdd": 23,
+    "linesRem": 13,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 1,
+    "nb_test": 1197,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java b/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java\nindex bd62e4726d..77dd7e1240 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/MarkupContainer.java\n@@ -40,6 +40,7 @@\n import org.apache.wicket.model.IModel;\n import org.apache.wicket.model.IWrapModel;\n import org.apache.wicket.settings.IDebugSettings;\n+import org.apache.wicket.util.lang.Args;\n import org.apache.wicket.util.lang.Generics;\n import org.apache.wicket.util.string.ComponentStrings;\n import org.apache.wicket.util.string.Strings;\n@@ -129,10 +130,7 @@ public final MarkupContainer add(final Component... childs)\n \t{\n \t\tfor (Component child : childs)\n \t\t{\n-\t\t\tif (child == null)\n-\t\t\t{\n-\t\t\t\tthrow new IllegalArgumentException(\"argument child may not be null\");\n-\t\t\t}\n+\t\t\tArgs.notNull(child, \"child\");\n \n \t\t\tMarkupContainer parent = getParent();\n \t\t\twhile (parent != null)\n@@ -899,10 +900,7 @@ public String toString(final boolean detailed)\n \tprivate final void addedComponent(final Component child)\n \t{\n \t\t// Check for degenerate case\n-\t\tif (child == this)\n-\t\t{\n-\t\t\tthrow new IllegalArgumentException(\"Component can't be added to itself\");\n-\t\t}\n+\t\tArgs.notNull(child, \"child\");\n \n \t\tMarkupContainer parent = child.getParent();\n \t\tif (parent != null)\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/markup/Markup.java b/wicket-core/src/main/java/org/apache/wicket/markup/Markup.java\nindex 6bc5bd8398..2d27638392 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/Markup.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/Markup.java\n@@ -25,7 +25,6 @@\n import org.apache.wicket.util.lang.Args;\n import org.apache.wicket.util.resource.ResourceStreamNotFoundException;\n import org.apache.wicket.util.string.AppendingStringBuffer;\n-import org.apache.wicket.util.string.Strings;\n import org.slf4j.Logger;\n import org.slf4j.LoggerFactory;\n \n@@ -187,10 +186,7 @@ final public void makeImmutable()\n \n \tpublic final IMarkupFragment find(final String id)\n \t{\n-\t\tif (Strings.isEmpty(id))\n-\t\t{\n-\t\t\tthrow new IllegalArgumentException(\"Parameter 'id' must not be null or empty\");\n-\t\t}\n+\t\tArgs.notEmpty(id, \"id\");\n \n \t\tMarkupStream stream = new MarkupStream(this);\n \t\tstream.setCurrentIndex(0);\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/markup/html/panel/DefaultMarkupSourcingStrategy.java b/wicket-core/src/main/java/org/apache/wicket/markup/html/panel/DefaultMarkupSourcingStrategy.java\nindex e183553f84..9a4a1d3585 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/html/panel/DefaultMarkupSourcingStrategy.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/html/panel/DefaultMarkupSourcingStrategy.java\n@@ -23,6 +23,7 @@\n import org.apache.wicket.markup.MarkupStream;\n import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;\n import org.apache.wicket.markup.html.list.AbstractItem;\n+import org.apache.wicket.markup.resolver.IComponentResolver;\n import org.slf4j.Logger;\n import org.slf4j.LoggerFactory;\n \n@@ -95,6 +96,24 @@ public IMarkupFragment getMarkup(final MarkupContainer container, final Componen\n \t\t\treturn markup;\n \t\t}\n \n+\t\t// If the child has not been directly added to the container, but via a\n+\t\t// TransparentWebMarkupContainer, than we are in trouble. In general Wicket iterates over\n+\t\t// the markup elements and searches for associated components, not the other way around.\n+\t\t// Because of TransparentWebMarkupContainer (or more generally resolvers), there is no\n+\t\t// \"synchronous\" search possible.\n+\t\tfor (Component ch : container)\n+\t\t{\n+\t\t\tif ((ch != child) && (ch instanceof MarkupContainer) &&\n+\t\t\t\t(ch instanceof IComponentResolver))\n+\t\t\t{\n+\t\t\t\tmarkup = ((MarkupContainer)ch).getMarkup(child);\n+\t\t\t\tif (markup != null)\n+\t\t\t\t{\n+\t\t\t\t\treturn markup;\n+\t\t\t\t}\n+\t\t\t}\n+\t\t}\n+\n \t\t// This is to make migration for Items from 1.4 to 1.5 more easy\n \t\tif (Character.isDigit(child.getId().charAt(0)))\n \t\t{\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

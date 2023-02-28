@@ -1,0 +1,24 @@
+{
+    "bug_id": 21,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "d594d024",
+    "failing_tests": [
+        "org.apache.flink.runtime.taskmanager.TaskTest"
+    ],
+    "files": 1,
+    "jira_id": "2109",
+    "linesAdd": 27,
+    "linesRem": 12,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 680,
+    "patch": "diff --git a/flink-runtime/src/main/java/org/apache/flink/runtime/taskmanager/Task.java b/flink-runtime/src/main/java/org/apache/flink/runtime/taskmanager/Task.java\nindex 40198dc94f..625083786d 100644\n--- a/flink-runtime/src/main/java/org/apache/flink/runtime/taskmanager/Task.java\n+++ b/flink-runtime/src/main/java/org/apache/flink/runtime/taskmanager/Task.java\n@@ -537,7 +537,7 @@ else if (current == ExecutionState.CANCELING) {\n \t\t\t//  actual task core work\n \t\t\t// ----------------------------------------------------------------\n \n-\t\t\t// we must make strictly sure that the invokable is accessible to teh cancel() call\n+\t\t\t// we must make strictly sure that the invokable is accessible to the cancel() call\n \t\t\t// by the time we switched to running.\n \t\t\tthis.invokable = invokable;\n \n@@ -597,24 +597,27 @@ else if (current == ExecutionState.CANCELING) {\n \t\t\t\t// to failExternally()\n \t\t\t\twhile (true) {\n \t\t\t\t\tExecutionState current = this.executionState;\n+\n \t\t\t\t\tif (current == ExecutionState.RUNNING || current == ExecutionState.DEPLOYING) {\n+\t\t\t\t\t\tif (t instanceof CancelTaskException) {\n+\t\t\t\t\t\t\tif (STATE_UPDATER.compareAndSet(this, current, ExecutionState.CANCELED)) {\n+\t\t\t\t\t\t\t\tcancelInvokable();\n+\n+\t\t\t\t\t\t\t\tnotifyObservers(ExecutionState.CANCELED, null);\n+\t\t\t\t\t\t\t\tbreak;\n+\t\t\t\t\t\t\t}\n+\t\t\t\t\t\t}\n+\t\t\t\t\t\telse {\n \t\t\t\t\t\t\tif (STATE_UPDATER.compareAndSet(this, current, ExecutionState.FAILED)) {\n \t\t\t\t\t\t\t\t// proper failure of the task. record the exception as the root cause\n \t\t\t\t\t\t\t\tfailureCause = t;\n-\t\t\t\t\t\t\tnotifyObservers(ExecutionState.FAILED, t);\n+\t\t\t\t\t\t\t\tcancelInvokable();\n \n-\t\t\t\t\t\t\t// in case of an exception during execution, we still call \"cancel()\" on the task\n-\t\t\t\t\t\t\tif (invokable != null && this.invokable != null && invokableHasBeenCanceled.compareAndSet(false, true)) {\n-\t\t\t\t\t\t\t\ttry {\n-\t\t\t\t\t\t\t\t\tinvokable.cancel();\n-\t\t\t\t\t\t\t\t}\n-\t\t\t\t\t\t\t\tcatch (Throwable t2) {\n-\t\t\t\t\t\t\t\t\tLOG.error(\"Error while canceling task \" + taskNameWithSubtask, t2);\n-\t\t\t\t\t\t\t\t}\n-\t\t\t\t\t\t\t}\n+\t\t\t\t\t\t\t\tnotifyObservers(ExecutionState.FAILED, t);\n \t\t\t\t\t\t\t\tbreak;\n \t\t\t\t\t\t\t}\n \t\t\t\t\t\t}\n+\t\t\t\t\t}\n \t\t\t\t\telse if (current == ExecutionState.CANCELING) {\n \t\t\t\t\t\tif (STATE_UPDATER.compareAndSet(this, current, ExecutionState.CANCELED)) {\n \t\t\t\t\t\t\tnotifyObservers(ExecutionState.CANCELED, null);\n@@ -746,7 +749,7 @@ public void cancelExecution() {\n \t}\n \n \t/**\n-\t * Marks task execution failed for an external reason (a reason other than th task code itself\n+\t * Marks task execution failed for an external reason (a reason other than the task code itself\n \t * throwing an exception). If the task is already in a terminal state\n \t * (such as FINISHED, CANCELED, FAILED), or if the task is already canceling this does nothing.\n \t * Otherwise it sets the state to FAILED, and, if the invokable code is running,\n@@ -962,6 +965,18 @@ private void executeAsyncCallRunnable(Runnable runnable, String callName) {\n \t//  Utilities\n \t// ------------------------------------------------------------------------\n \n+\tprivate void cancelInvokable() {\n+\t\t// in case of an exception during execution, we still call \"cancel()\" on the task\n+\t\tif (invokable != null && this.invokable != null && invokableHasBeenCanceled.compareAndSet(false, true)) {\n+\t\t\ttry {\n+\t\t\t\tinvokable.cancel();\n+\t\t\t}\n+\t\t\tcatch (Throwable t) {\n+\t\t\t\tLOG.error(\"Error while canceling task \" + taskNameWithSubtask, t);\n+\t\t\t}\n+\t\t}\n+\t}\n+\n \t@Override\n \tpublic String toString() {\n \t\treturn getTaskNameWithSubtasks() + \" [\" + executionState + ']';\n",
+    "project": "flink",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

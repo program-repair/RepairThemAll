@@ -1,0 +1,24 @@
+{
+    "bug_id": 164,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "3ce758b7",
+    "failing_tests": [
+        "org.apache.jackrabbit.mk.store.DefaultRevisionStoreTest"
+    ],
+    "files": 1,
+    "jira_id": "543",
+    "linesAdd": 2,
+    "linesRem": 2,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 2,
+    "nb_test": 78,
+    "patch": "diff --git a/oak-mk/src/main/java/org/apache/jackrabbit/mk/store/DefaultRevisionStore.java b/oak-mk/src/main/java/org/apache/jackrabbit/mk/store/DefaultRevisionStore.java\nindex 4e299c3f81..533ccc80f8 100644\n--- a/oak-mk/src/main/java/org/apache/jackrabbit/mk/store/DefaultRevisionStore.java\n+++ b/oak-mk/src/main/java/org/apache/jackrabbit/mk/store/DefaultRevisionStore.java\n@@ -223,12 +223,12 @@ protected static int determineInitialCacheSize() {\n      */\n     static class PutTokenImpl extends PutToken {\n \n-        private static int idCounter;\n+        private static final AtomicInteger ID_COUNTER = new AtomicInteger();\n         private int id;\n         private StoredNode lastModifiedNode;\n \n         public PutTokenImpl() {\n-            this.id = ++idCounter;\n+            this.id = ID_COUNTER.incrementAndGet();\n         }\n \n         @Override\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

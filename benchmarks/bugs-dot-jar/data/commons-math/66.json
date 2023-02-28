@@ -1,0 +1,24 @@
+{
+    "bug_id": 66,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ce2badf0",
+    "failing_tests": [
+        "org.apache.commons.math4.random.EmpiricalDistributionTest"
+    ],
+    "files": 1,
+    "jira_id": "1208",
+    "linesAdd": 4,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 3,
+    "nb_test": 5851,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math4/random/EmpiricalDistribution.java b/src/main/java/org/apache/commons/math4/random/EmpiricalDistribution.java\nindex 61bb65b77..685c08b9c 100644\n--- a/src/main/java/org/apache/commons/math4/random/EmpiricalDistribution.java\n+++ b/src/main/java/org/apache/commons/math4/random/EmpiricalDistribution.java\n@@ -610,8 +610,12 @@ public double cumulativeProbability(double x) {\n         final double pB = pB(binIndex);\n         final RealDistribution kernel = k(x);\n         if (kernel instanceof ConstantRealDistribution) {\n+            if (x < kernel.getNumericalMean()) {\n+                return pBminus;\n+            } else {\n                 return pBminus + pB;\n             }\n+        }\n         final double[] binBounds = getUpperBounds();\n         final double kB = kB(binIndex);\n         final double lower = binIndex == 0 ? min : binBounds[binIndex - 1];\n",
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

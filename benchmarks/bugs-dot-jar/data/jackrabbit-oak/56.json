@@ -1,0 +1,24 @@
+{
+    "bug_id": 56,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "6d8146f8",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.name.NameValidatorTest"
+    ],
+    "files": 1,
+    "jira_id": "1624",
+    "linesAdd": 6,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 3,
+    "nb_skipped": 8,
+    "nb_test": 1752,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/name/Namespaces.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/name/Namespaces.java\nindex 0ad6022935..3b4219c430 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/name/Namespaces.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/name/Namespaces.java\n@@ -244,8 +244,12 @@ public static boolean isValidLocalName(String local) {\n \n         for (int i = 0; i < local.length(); i++) {\n             char ch = local.charAt(i);\n-            if (\"/:[]|*\".indexOf(ch) != -1) { // TODO: XMLChar check\n-                return false;\n+            if (i == 0 && Character.isWhitespace(ch)) {\n+                return false; // leading whitespace\n+            } else if (i == local.length() - 1 && Character.isWhitespace(ch)) {\n+                return false; // trailing whitespace\n+            } else if (\"/:[]|*\".indexOf(ch) != -1) { // TODO: XMLChar check\n+                return false; // invalid name character\n             }\n         }\n \n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

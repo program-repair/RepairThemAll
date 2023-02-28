@@ -1,0 +1,24 @@
+{
+    "bug_id": 106,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "33c18762",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.document.LastRevRecoveryTest"
+    ],
+    "files": 1,
+    "jira_id": "3079",
+    "linesAdd": 19,
+    "linesRem": 20,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 2412,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/LastRevRecoveryAgent.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/LastRevRecoveryAgent.java\nindex fee60dcf37..dc3074f888 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/LastRevRecoveryAgent.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/LastRevRecoveryAgent.java\n@@ -19,12 +19,10 @@\n \n package org.apache.jackrabbit.oak.plugins.document;\n \n-import static com.google.common.collect.ImmutableList.of;\n-import static com.google.common.collect.Iterables.filter;\n-import static com.google.common.collect.Iterables.mergeSorted;\n+import static com.google.common.collect.Maps.filterKeys;\n import static java.util.Collections.singletonList;\n import static org.apache.jackrabbit.oak.plugins.document.Collection.JOURNAL;\n-import static org.apache.jackrabbit.oak.plugins.document.UnsavedModifications.Snapshot.IGNORE;\n+import static org.apache.jackrabbit.oak.plugins.document.util.Utils.PROPERTY_OR_DELETED;\n \n import java.util.Iterator;\n import java.util.List;\n@@ -35,6 +33,7 @@\n \n import com.google.common.base.Predicate;\n import com.google.common.collect.Lists;\n+import com.google.common.collect.Sets;\n \n import org.apache.jackrabbit.oak.commons.PathUtils;\n import org.apache.jackrabbit.oak.plugins.document.mongo.MongoDocumentStore;\n@@ -152,13 +151,17 @@ public int recover(Iterator<NodeDocument> suspects,\n             }\n \n             Revision currentLastRev = doc.getLastRev().get(clusterId);\n-            if (currentLastRev != null) {\n-                knownLastRevs.put(doc.getPath(), currentLastRev);\n-            }\n+\n             // 1. determine last committed modification on document\n             Revision lastModifiedRev = determineLastModification(doc, clusterId);\n \n             Revision lastRevForParents = Utils.max(lastModifiedRev, currentLastRev);\n+            // remember the higher of the two revisions. this is the\n+            // most recent revision currently obtained from either a\n+            // _lastRev entry or an explicit modification on the document\n+            if (lastRevForParents != null) {\n+                knownLastRevs.put(doc.getPath(), lastRevForParents);\n+            }\n \n             //If both currentLastRev and lostLastRev are null it means\n             //that no change is done by suspect cluster on this document\n@@ -306,21 +309,17 @@ private int recoverCandidates(final int clusterId, final long startTime) {\n     private Revision determineLastModification(NodeDocument doc, int clusterId) {\n         ClusterPredicate cp = new ClusterPredicate(clusterId);\n \n-        // Merge sort the revs for which changes have been made\n-        // to this doc\n-\n-        // localMap always keeps the most recent valid commit entry\n-        // per cluster node so looking into that should be sufficient\n-        Iterable<Revision> revs = mergeSorted(of(\n-                filter(doc.getLocalCommitRoot().keySet(), cp),\n-                filter(doc.getLocalRevisions().keySet(), cp)),\n-                StableRevisionComparator.REVERSE\n-                );\n-\n         Revision lastModified = null;\n-        // Look for latest valid revision\n-        for (Revision rev : revs) {\n+        for (String property : Sets.filter(doc.keySet(), PROPERTY_OR_DELETED)) {\n+            Map<Revision, String> valueMap = doc.getLocalMap(property);\n+            // collect committed changes of this cluster node\n+            for (Map.Entry<Revision, String> entry : filterKeys(valueMap, cp).entrySet()) {\n+                Revision rev = entry.getKey();\n+                if (doc.isCommitted(rev)) {\n                     lastModified = Utils.max(lastModified, doc.getCommitRevision(rev));\n+                    break;\n+                }\n+            }\n         }\n         return lastModified;\n     }\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

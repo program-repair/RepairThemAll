@@ -1,0 +1,24 @@
+{
+    "bug_id": 15,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "b4a93c81",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.jcr.RepositoryTest"
+    ],
+    "files": 1,
+    "jira_id": "1244",
+    "linesAdd": 6,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 4,
+    "nb_skipped": 5,
+    "nb_test": 1795,
+    "patch": "diff --git a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/xml/ImporterImpl.java b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/xml/ImporterImpl.java\nindex bc2eb6b10b..f6d2c44ec4 100644\n--- a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/xml/ImporterImpl.java\n+++ b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/xml/ImporterImpl.java\n@@ -404,7 +404,12 @@ public void startNode(NodeInfo nodeInfo, List<PropInfo> propInfos)\n                     conflicting = currentStateIdManager.getTree(id);\n                 }\n \n-                if (conflicting != null && conflicting.exists()) {\n+                // resolve conflict if there is one or force\n+                // conflict resolution when behavior is IMPORT_UUID_CREATE_NEW.\n+                // the latter will always create a new UUID even if no\n+                // conflicting node exists. see OAK-1244\n+                if ((conflicting != null && conflicting.exists())\n+                        || uuidBehavior == ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW) {\n                     // resolve uuid conflict\n                     tree = resolveUUIDConflict(parent, conflicting, id, nodeInfo);\n                     if (tree == null) {\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 124,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "44f4782a",
+    "failing_tests": [
+        "org.apache.wicket.core.request.mapper.PackageMapperTest"
+    ],
+    "files": 1,
+    "jira_id": "5565",
+    "linesAdd": 7,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 2,
+    "nb_test": 1637,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/PackageMapper.java b/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/PackageMapper.java\nindex ad15d6d2e1..2037356c10 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/PackageMapper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/core/request/mapper/PackageMapper.java\n@@ -225,7 +225,13 @@ protected boolean pageMustHaveBeenCreatedBookmarkable()\n \t@Override\n \tpublic int getCompatibilityScore(Request request)\n \t{\n-\t\t// always return 0 here so that the mounts have higher priority\n+\t\tif (urlStartsWith(request.getUrl(), mountSegments))\n+\t\t{\n+\t\t    return mountSegments.length;\n+\t\t}\n+\t\telse\n+\t\t{\n \t\t    return 0;\n \t\t}\n \t}\n+}\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

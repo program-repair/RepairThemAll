@@ -1,0 +1,24 @@
+{
+    "bug_id": 55,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "faa77857",
+    "failing_tests": [
+        "org.apache.commons.math.analysis.solvers.BracketingNthOrderBrentSolverTest"
+    ],
+    "files": 1,
+    "jira_id": "716",
+    "linesAdd": 8,
+    "linesRem": 2,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 1,
+    "nb_test": 3150,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math/analysis/solvers/BracketingNthOrderBrentSolver.java b/src/main/java/org/apache/commons/math/analysis/solvers/BracketingNthOrderBrentSolver.java\nindex 93dd3bbdd..59dc4617b 100644\n--- a/src/main/java/org/apache/commons/math/analysis/solvers/BracketingNthOrderBrentSolver.java\n+++ b/src/main/java/org/apache/commons/math/analysis/solvers/BracketingNthOrderBrentSolver.java\n@@ -232,10 +232,16 @@ protected double doSolve() {\n             double targetY;\n             if (agingA >= MAXIMAL_AGING) {\n                 // we keep updating the high bracket, try to compensate this\n-                targetY = -REDUCTION_FACTOR * yB;\n+                final int p = agingA - MAXIMAL_AGING;\n+                final double weightA = (1 << p) - 1;\n+                final double weightB = p + 1;\n+                targetY = (weightA * yA - weightB * REDUCTION_FACTOR * yB) / (weightA + weightB);\n             } else if (agingB >= MAXIMAL_AGING) {\n                 // we keep updating the low bracket, try to compensate this\n-                targetY = -REDUCTION_FACTOR * yA;\n+                final int p = agingB - MAXIMAL_AGING;\n+                final double weightA = p + 1;\n+                final double weightB = (1 << p) - 1;\n+                targetY = (weightB * yB - weightA * REDUCTION_FACTOR * yA) / (weightA + weightB);\n             } else {\n                 // bracketing is balanced, try to find the root itself\n                 targetY = 0;\n",
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

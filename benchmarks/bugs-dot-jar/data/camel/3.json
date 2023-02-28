@@ -1,0 +1,30 @@
+{
+    "bug_id": 3,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "b6981cfd",
+    "failing_tests": [
+        "org.apache.camel.component.vm.VmMultipleConsumersMultipleContextTest",
+        "org.apache.camel.component.vm.VmMultipleContextsStartStopTest",
+        "org.apache.camel.management.ManagedThrottlerTest",
+        "org.apache.camel.processor.aggregator.AggregateCompletionOnlyOneTest",
+        "org.apache.camel.component.file.FileProducerFileExistIgnoreTest",
+        "org.apache.camel.component.vm.VmShouldNotUseSameThreadTest",
+        "org.apache.camel.component.vm.VmQueueTest"
+    ],
+    "files": 2,
+    "jira_id": "7146",
+    "linesAdd": 14,
+    "linesRem": 0,
+    "nb_error": 3,
+    "nb_failure": 4,
+    "nb_skipped": 3,
+    "nb_test": 4794,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/aggregate/AggregateProcessor.java b/camel-core/src/main/java/org/apache/camel/processor/aggregate/AggregateProcessor.java\nindex 8fe24c5855..e7a094f4a3 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/aggregate/AggregateProcessor.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/aggregate/AggregateProcessor.java\n@@ -481,8 +481,12 @@ protected Exchange onCompletion(final String key, final Exchange original, final\n         }\n         aggregated.setProperty(Exchange.AGGREGATED_CORRELATION_KEY, key);\n \n+        // only remove if we have previous added (as we could potentially complete with only 1 exchange)\n+        // (if we have previous added then we have that as the original exchange)\n+        if (original != null) {\n             // remove from repository as its completed, we do this first as to trigger any OptimisticLockingException's\n             aggregationRepository.remove(aggregated.getContext(), key, original);\n+        }\n \n         if (!fromTimeout && timeoutMap != null) {\n             // cleanup timeout map if it was a incoming exchange which triggered the timeout (and not the timeout checker)\ndiff --git a/camel-core/src/main/java/org/apache/camel/spi/AggregationRepository.java b/camel-core/src/main/java/org/apache/camel/spi/AggregationRepository.java\nindex 669a956550..ba1de6a334 100644\n--- a/camel-core/src/main/java/org/apache/camel/spi/AggregationRepository.java\n+++ b/camel-core/src/main/java/org/apache/camel/spi/AggregationRepository.java\n@@ -32,6 +32,9 @@\n      * Add the given {@link Exchange} under the correlation key.\n      * <p/>\n      * Will replace any existing exchange.\n+     * <p/>\n+     * <b>Important:</b> This method is <b>not</b> invoked if only one exchange was completed, and therefore\n+     * the exchange does not need to be added to a repository, as its completed immediately.\n      *\n      * @param camelContext   the current CamelContext\n      * @param key            the correlation key\n@@ -42,6 +45,8 @@\n \n     /**\n      * Gets the given exchange with the correlation key\n+     * <p/>\n+     * This method is always invoked for any incoming exchange in the aggregator.\n      *\n      * @param camelContext   the current CamelContext\n      * @param key            the correlation key\n@@ -52,6 +57,9 @@\n     /**\n      * Removes the exchange with the given correlation key, which should happen\n      * when an {@link Exchange} is completed\n+     * <p/>\n+     * <b>Important:</b> This method is <b>not</b> invoked if only one exchange was completed, and therefore\n+     * the exchange does not need to be added to a repository, as its completed immediately.\n      *\n      * @param camelContext   the current CamelContext\n      * @param key            the correlation key\n@@ -61,6 +69,8 @@\n \n     /**\n      * Confirms the completion of the {@link Exchange}.\n+     * <p/>\n+     * This method is always invoked.\n      *\n      * @param camelContext  the current CamelContext\n      * @param exchangeId    exchange id to confirm\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

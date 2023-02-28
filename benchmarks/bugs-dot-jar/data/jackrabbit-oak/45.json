@@ -1,0 +1,24 @@
+{
+    "bug_id": 45,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "52372042",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.mongomk.MongoMKResetTest"
+    ],
+    "files": 0,
+    "jira_id": "1186",
+    "linesAdd": 0,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 6,
+    "nb_test": 1443,
+    "patch": "",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 84,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "dd0f74c0",
+    "failing_tests": [
+        "org.apache.camel.processor.CircuitBreakerLoadBalancerTest"
+    ],
+    "files": 1,
+    "jira_id": "8584",
+    "linesAdd": 0,
+    "linesRem": 5,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 4,
+    "nb_test": 5293,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/loadbalancer/CircuitBreakerLoadBalancer.java b/camel-core/src/main/java/org/apache/camel/processor/loadbalancer/CircuitBreakerLoadBalancer.java\nindex f76031173d..645b477bfe 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/loadbalancer/CircuitBreakerLoadBalancer.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/loadbalancer/CircuitBreakerLoadBalancer.java\n@@ -200,11 +200,6 @@ private boolean executeProcessor(final Exchange exchange, final AsyncCallback ca\n \n     private boolean rejectExchange(final Exchange exchange, final AsyncCallback callback) {\n         exchange.setException(new RejectedExecutionException(\"CircuitBreaker Open: failures: \" + failures + \", lastFailure: \" + lastFailure));\n-        /*\n-         * If the circuit opens, we have to prevent the execution of any\n-         * processor. The failures count can be set to 0.\n-         */\n-        failures.set(0);\n         callback.done(true);\n         return true;\n     }\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

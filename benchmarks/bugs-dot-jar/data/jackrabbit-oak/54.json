@@ -1,0 +1,25 @@
+{
+    "bug_id": 54,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "6dde8e9d",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.index.property.PropertyIndexQueryTest",
+        "org.apache.jackrabbit.oak.plugins.index.property.OrderedIndexQueryTest"
+    ],
+    "files": 3,
+    "jira_id": "2249",
+    "linesAdd": 12,
+    "linesRem": 5,
+    "nb_error": 2,
+    "nb_failure": 0,
+    "nb_skipped": 9,
+    "nb_test": 1963,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/FullTextSearchImpl.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/FullTextSearchImpl.java\nindex f9220078de..f93ed0ee2f 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/FullTextSearchImpl.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/ast/FullTextSearchImpl.java\n@@ -251,8 +251,12 @@ public void bindSelector(SourceImpl source) {\n     public void restrict(FilterImpl f) {\n         if (propertyName != null) {\n             if (f.getSelector().equals(selector)) {\n-                String pn = normalizePropertyName(propertyName);\n-                f.restrictProperty(pn, Operator.NOT_EQUAL, null);\n+                String p = propertyName;\n+                if (relativePath != null) {\n+                    p = PathUtils.concat(p, relativePath);\n+                }                \n+                p = normalizePropertyName(p);\n+                f.restrictProperty(p, Operator.NOT_EQUAL, null);\n             }\n         }\n         f.restrictFulltextCondition(fullTextSearchExpression.currentValue().getValue(Type.STRING));\ndiff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/Statement.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/Statement.java\nindex 6113c0cc09..9763c13173 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/Statement.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/query/xpath/Statement.java\n@@ -83,9 +83,7 @@ public Statement optimize() {\n     }\n     \n     private static void addToUnionList(Expression condition,  ArrayList<Expression> unionList) {\n-        if (condition.containsFullTextCondition()) {\n-            // do not use union\n-        } else if (condition instanceof OrCondition) {\n+        if (condition instanceof OrCondition) {\n             OrCondition or = (OrCondition) condition;\n             // conditions of type                \n             // @x = 1 or @y = 2\ndiff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/spi/query/Cursors.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/spi/query/Cursors.java\nindex 74060a1f40..10a459e389 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/spi/query/Cursors.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/spi/query/Cursors.java\n@@ -439,8 +439,13 @@ private void markSeen(String path) {\n         ConcatCursor(List<Cursor> cursors, QueryEngineSettings settings) {\n             this.cursors = cursors;\n             this.settings = settings;\n+            if (cursors.size() == 0) {\n+                init = true;\n+                closed = true;\n+            } else {\n                 this.currentCursor = cursors.remove(0);\n             }\n+        }\n \n         @Override\n         public IndexRow next() {\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

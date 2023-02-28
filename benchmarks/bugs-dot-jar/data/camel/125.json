@@ -1,0 +1,24 @@
+{
+    "bug_id": 125,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "85ced066",
+    "failing_tests": [
+        "org.apache.camel.processor.aggregator.AggregationStrategyBeanAdapterAllowNullTest"
+    ],
+    "files": 1,
+    "jira_id": "7513",
+    "linesAdd": 6,
+    "linesRem": 4,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 3,
+    "nb_test": 4979,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/aggregate/AggregationStrategyBeanInfo.java b/camel-core/src/main/java/org/apache/camel/processor/aggregate/AggregationStrategyBeanInfo.java\nindex f898be7db0..ed93a96ef4 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/aggregate/AggregationStrategyBeanInfo.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/aggregate/AggregationStrategyBeanInfo.java\n@@ -16,6 +16,7 @@\n  */\n package org.apache.camel.processor.aggregate;\n \n+import java.lang.annotation.Annotation;\n import java.lang.reflect.Method;\n import java.util.ArrayList;\n import java.util.List;\n@@ -62,10 +63,11 @@ protected AggregationStrategyMethodInfo createMethodInfo() {\n         }\n \n         // must not have annotations as they are not supported (yet)\n-        for (int i = 0; i < size; i++) {\n-            Class<?> type = parameterTypes[i];\n-            if (type.getAnnotations().length > 0) {\n-                throw new IllegalArgumentException(\"Parameter annotations at index \" + i + \" is not supported on method: \" + method);\n+        Annotation[][] parameterAnnotations = method.getParameterAnnotations();\n+        for (int i = 0; i < parameterAnnotations.length; i++) {\n+            Annotation[] annotations = parameterAnnotations[i];\n+            if (annotations.length > 0) {\n+                throw new IllegalArgumentException(\"Method parameter annotation: \" + annotations[0] + \" at index: \" + i + \" is not supported on method: \" + method);\n             }\n         }\n \n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

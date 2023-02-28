@@ -1,0 +1,24 @@
+{
+    "bug_id": 100,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "0374c040",
+    "failing_tests": [
+        "org.apache.wicket.ajax.AjaxCallbackFunctionTest"
+    ],
+    "files": 1,
+    "jira_id": "5759",
+    "linesAdd": 14,
+    "linesRem": 16,
+    "nb_error": 0,
+    "nb_failure": 7,
+    "nb_skipped": 1,
+    "nb_test": 1706,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/ajax/AbstractDefaultAjaxBehavior.java b/wicket-core/src/main/java/org/apache/wicket/ajax/AbstractDefaultAjaxBehavior.java\nindex a309635233..bc0989d9d1 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/ajax/AbstractDefaultAjaxBehavior.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/ajax/AbstractDefaultAjaxBehavior.java\n@@ -504,30 +504,28 @@ public CharSequence getCallbackFunctionBody(CallbackParameter... extraParameters\n \t\tsb.append(\"var attrs = \");\n \t\tsb.append(attrsJson);\n \t\tsb.append(\";\\n\");\n-\t\tsb.append(\"var params = {\");\n-\t\tboolean first = true;\n+\t\tJSONArray jsonArray = new JSONArray();\n \t\tfor (CallbackParameter curExtraParameter : extraParameters)\n \t\t{\n \t\t\tif (curExtraParameter.getAjaxParameterName() != null)\n \t\t\t{\n-\t\t\t\tif (!first)\n-\t\t\t\t\tsb.append(',');\n-\t\t\t\telse\n-\t\t\t\t\tfirst = false;\n-\t\t\t\tsb.append('\\'').append(curExtraParameter.getAjaxParameterName()).append(\"': \")\n-\t\t\t\t\t.append(curExtraParameter.getAjaxParameterCode());\n-\t\t\t}\n-\t\t}\n-\t\tsb.append(\"};\\n\");\n-\t\tif (attributes.getExtraParameters().isEmpty())\n+\t\t\t\ttry\n \t\t\t\t{\n-\t\t\tsb.append(\"attrs.\").append(AjaxAttributeName.EXTRA_PARAMETERS).append(\" = params;\\n\");\n+\t\t\t\t\tJSONObject object = new JSONObject();\n+\t\t\t\t\tobject.put(\"name\", curExtraParameter.getAjaxParameterName());\n+\t\t\t\t\tobject.put(\"value\", new JsonFunction(curExtraParameter.getAjaxParameterCode()));\n+\t\t\t\t\tjsonArray.put(object);\n \t\t\t\t}\n-\t\telse\n+\t\t\t\tcatch (JSONException e)\n \t\t\t\t{\n-\t\t\tsb.append(\"attrs.\").append(AjaxAttributeName.EXTRA_PARAMETERS).append(\" = Wicket.merge(attrs.\")\n-\t\t\t\t\t.append(AjaxAttributeName.EXTRA_PARAMETERS).append(\", params);\\n\");\n+\t\t\t\t\tthrow new WicketRuntimeException(e);\n+\t\t\t\t}\n+\t\t\t}\n \t\t}\n+\t\tsb.append(\"var params = \").append(jsonArray).append(\";\\n\");\n+\t\tsb.append(\"attrs.\").append(AjaxAttributeName.EXTRA_PARAMETERS)\n+\t\t\t\t.append(\" = params.concat(attrs.\")\n+\t\t\t\t.append(AjaxAttributeName.EXTRA_PARAMETERS).append(\");\\n\");\n \t\tsb.append(\"Wicket.Ajax.ajax(attrs);\\n\");\n \t\treturn sb;\n \t}\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

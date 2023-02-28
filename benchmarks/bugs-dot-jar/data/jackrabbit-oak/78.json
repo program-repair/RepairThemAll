@@ -1,0 +1,24 @@
+{
+    "bug_id": 78,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "459bd065",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.upgrade.RepositoryUpgradeTest"
+    ],
+    "files": 1,
+    "jira_id": "1111",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 1,
+    "patch": "diff --git a/oak-upgrade/src/main/java/org/apache/jackrabbit/oak/upgrade/PersistenceCopier.java b/oak-upgrade/src/main/java/org/apache/jackrabbit/oak/upgrade/PersistenceCopier.java\nindex 23c905e0a7..88030fe2c5 100644\n--- a/oak-upgrade/src/main/java/org/apache/jackrabbit/oak/upgrade/PersistenceCopier.java\n+++ b/oak-upgrade/src/main/java/org/apache/jackrabbit/oak/upgrade/PersistenceCopier.java\n@@ -292,7 +292,7 @@ private void copy(NodeState sourceNode, NodeBuilder builder)\n                     name, value.getBoolean(), Type.BOOLEAN);\n         case PropertyType.DATE:\n             return PropertyStates.createProperty(\n-                    name, value.getCalendar().getTimeInMillis(), Type.DATE);\n+                    name, value.getString(), Type.DATE);\n         case PropertyType.DECIMAL:\n             return PropertyStates.createProperty(\n                     name, value.getDecimal(), Type.DECIMAL);\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

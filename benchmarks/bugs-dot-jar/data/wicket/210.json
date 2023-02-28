@@ -1,0 +1,24 @@
+{
+    "bug_id": 210,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "97514205",
+    "failing_tests": [
+        "org.apache.wicket.request.mapper.PackageMapperTest"
+    ],
+    "files": 1,
+    "jira_id": "3838",
+    "linesAdd": 18,
+    "linesRem": 5,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 2,
+    "nb_test": 1203,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/request/mapper/PackageMapper.java b/wicket-core/src/main/java/org/apache/wicket/request/mapper/PackageMapper.java\nindex 563afd042f..f6082e375c 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/mapper/PackageMapper.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/mapper/PackageMapper.java\n@@ -16,11 +16,11 @@\n  */\n package org.apache.wicket.request.mapper;\n \n+import org.apache.wicket.protocol.http.WebApplication;\n import org.apache.wicket.request.Request;\n import org.apache.wicket.request.Url;\n import org.apache.wicket.request.component.IRequestablePage;\n import org.apache.wicket.request.mapper.info.PageComponentInfo;\n-import org.apache.wicket.request.mapper.mount.MountMapper;\n import org.apache.wicket.request.mapper.parameter.IPageParametersEncoder;\n import org.apache.wicket.request.mapper.parameter.PageParameters;\n import org.apache.wicket.request.mapper.parameter.PageParametersEncoder;\n@@ -30,10 +30,14 @@\n /**\n  * A request mapper that mounts all bookmarkable pages in a given package.\n  * <p>\n- * To mount this mapper onto a path use the {@link MountMapper}, ex:\n+ * To mount this mapper onto a path use the {@link WebApplication#mountPackage(String, Class)}, ex:\n  * \n  * <pre>\n- * new MountMapper(&quot;/my/path&quot;, new packageMapper(PackageName.forClass(MyPage.class)));\n+ * MyApp#init() {\n+ * \n+ *   super.init();\n+ *   mountPackage(&quot;/my/path&quot;, MyPage.class);\n+ * }\n  * </pre>\n  * \n  * will result in urls like {@code /my/path/MyPage}\n@@ -96,10 +100,19 @@ public PackageMapper(final PackageName packageName,\n \tprotected Url buildUrl(UrlInfo info)\n \t{\n \t\tClass<? extends IRequestablePage> pageClass = info.getPageClass();\n-\t\tif (PackageName.forClass(pageClass).equals(packageName))\n+\t\tPackageName pageClassPackageName = PackageName.forClass(pageClass);\n+\t\tif (pageClassPackageName.equals(packageName))\n \t\t{\n \t\t\tUrl url = new Url();\n-\t\t\turl.getSegments().add(pageClass.getSimpleName());\n+\n+\t\t\tString fullyQualifiedClassName = pageClass.getName();\n+\t\t\tString packageRelativeClassName = fullyQualifiedClassName;\n+\t\t\tint packageNameLength = packageName.getName().length();\n+\t\t\tif (packageNameLength > 0)\n+\t\t\t{\n+\t\t\t\tpackageRelativeClassName = fullyQualifiedClassName.substring(packageNameLength + 1);\n+\t\t\t}\n+\t\t\turl.getSegments().add(packageRelativeClassName);\n \t\t\tencodePageComponentInfo(url, info.getPageComponentInfo());\n \t\t\treturn encodePageParameters(url, info.getPageParameters(), pageParametersEncoder);\n \t\t}\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

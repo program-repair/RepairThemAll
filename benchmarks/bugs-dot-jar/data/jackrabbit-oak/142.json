@@ -1,0 +1,24 @@
+{
+    "bug_id": 142,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "14849e22",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.segment.RecordTest"
+    ],
+    "files": 2,
+    "jira_id": "1287",
+    "linesAdd": 10,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 6,
+    "nb_test": 1497,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/ListRecord.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/ListRecord.java\nindex df2735efe4..27b5cba543 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/ListRecord.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/ListRecord.java\n@@ -57,8 +57,10 @@ public RecordId getEntry(int index) {\n             int bucketIndex = index / bucketSize;\r\n             int bucketOffset = index % bucketSize;\r\n             Segment segment = getSegment();\r\n-            RecordId bucketId = segment.readRecordId(getOffset(0, bucketIndex));\r\n-            ListRecord bucket = new ListRecord(segment, bucketId, bucketSize);\r\n+            RecordId id = segment.readRecordId(getOffset(0, bucketIndex));\r\n+            ListRecord bucket = new ListRecord(\r\n+                    segment, id,\r\n+                    Math.min(bucketSize, size - bucketIndex * bucketSize));\r\n             return bucket.getEntry(bucketOffset);\r\n         }\r\n     }\r\n@@ -78,7 +80,7 @@ public RecordId getEntry(int index) {\n                     list.add(id);\r\n                 } else {\r\n                     ListRecord bucket = new ListRecord(\r\n-                            segment, id, Math.min(bucketSize, size - offset));\r\n+                            segment, id, Math.min(bucketSize, size - i));\r\n                     list.addAll(bucket.getEntries());\r\n                 }\r\n                 offset += Segment.RECORD_ID_BYTES;\r\ndiff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentWriter.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentWriter.java\nindex a961cbf432..aeb7e98717 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentWriter.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/segment/SegmentWriter.java\n@@ -340,6 +340,7 @@ private MapRecord writeMapBranch(int level, int size, MapRecord[] buckets) {\n \n \n     private synchronized RecordId writeListBucket(List<RecordId> bucket) {\n+        checkArgument(bucket.size() > 1);\n         RecordId bucketId = prepare(RecordType.BUCKET, 0, bucket);\n         for (RecordId id : bucket) {\n             writeRecordId(id);\n@@ -516,7 +517,11 @@ public RecordId writeList(List<RecordId> list) {\n             List<RecordId> nextLevel = Lists.newArrayList();\n             for (List<RecordId> bucket :\n                     Lists.partition(thisLevel, ListRecord.LEVEL_SIZE)) {\n+                if (bucket.size() > 1) {\n                     nextLevel.add(writeListBucket(bucket));\n+                } else {\n+                    nextLevel.add(bucket.get(0));\n+                }\n             }\n             thisLevel = nextLevel;\n         }\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

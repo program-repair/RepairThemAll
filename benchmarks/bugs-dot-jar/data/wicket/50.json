@@ -1,0 +1,24 @@
+{
+    "bug_id": 50,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "2293764f",
+    "failing_tests": [
+        "org.apache.wicket.protocol.http.servlet.ServletWebRequestTest"
+    ],
+    "files": 1,
+    "jira_id": "5203",
+    "linesAdd": 0,
+    "linesRem": 13,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 4,
+    "nb_test": 1474,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/protocol/http/servlet/ServletWebRequest.java b/wicket-core/src/main/java/org/apache/wicket/protocol/http/servlet/ServletWebRequest.java\nindex 83df540047..24947bbf4e 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/protocol/http/servlet/ServletWebRequest.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/protocol/http/servlet/ServletWebRequest.java\n@@ -102,20 +102,7 @@ public ServletWebRequest(HttpServletRequest httpServletRequest, String filterPre\n \n \t\tforwardAttributes = ForwardAttributes.of(httpServletRequest, filterPrefix);\n \n-\t\tif (forwardAttributes != null || errorAttributes != null)\n-\t\t{\n-\t\t\tif (LOG.isDebugEnabled())\n-\t\t\t{\n-\t\t\t\tLOG.debug(\"Setting filterPrefix('{}') to '' because there is either an error or a forward. {}, {}\",\n-\t\t\t\t\t\tnew Object[] {filterPrefix, forwardAttributes, errorAttributes});\n-\t\t\t}\n-\t\t\t// the filter prefix is not needed when the current request is internal\n-\t\t\t// see WICKET-4387\n-\t\t\tthis.filterPrefix = \"\";\n-\t\t} else\n-\t\t{\n \t\tthis.filterPrefix = filterPrefix;\n-\t\t}\n \n \t\tif (url != null)\n \t\t{\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

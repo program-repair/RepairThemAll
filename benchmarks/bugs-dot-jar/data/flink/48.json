@@ -1,0 +1,24 @@
+{
+    "bug_id": 48,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "e494c279",
+    "failing_tests": [
+        "org.apache.flink.streaming.api.AggregationFunctionTest"
+    ],
+    "files": 1,
+    "jira_id": "2812",
+    "linesAdd": 14,
+    "linesRem": 4,
+    "nb_error": 4,
+    "nb_failure": 0,
+    "nb_skipped": 5,
+    "nb_test": 299,
+    "patch": "diff --git a/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/util/keys/KeySelectorUtil.java b/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/util/keys/KeySelectorUtil.java\nindex d8839a0022..9c76d95ba8 100644\n--- a/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/util/keys/KeySelectorUtil.java\n+++ b/flink-staging/flink-streaming/flink-streaming-core/src/main/java/org/apache/flink/streaming/util/keys/KeySelectorUtil.java\n@@ -28,6 +28,8 @@\n import org.apache.flink.api.java.functions.KeySelector;\n import org.apache.flink.api.java.operators.Keys;\n import org.apache.flink.api.java.tuple.Tuple;\n+import org.apache.flink.api.java.typeutils.ResultTypeQueryable;\n+import org.apache.flink.api.java.typeutils.TupleTypeInfo;\n \n /**\n  * Utility class that contains helper methods to manipulating {@link KeySelector} for streaming.\n@@ -47,12 +49,14 @@\n \t\t\n \t\t// use ascending order here, the code paths for that are usually a slight bit faster\n \t\tboolean[] orders = new boolean[numKeyFields];\n+\t\tTypeInformation[] typeInfos = new TypeInformation[numKeyFields];\n \t\tfor (int i = 0; i < numKeyFields; i++) {\n \t\t\torders[i] = true;\n+\t\t\ttypeInfos[i] = compositeType.getTypeAt(logicalKeyPositions[i]);\n \t\t}\n \n \t\tTypeComparator<X> comparator = compositeType.createComparator(logicalKeyPositions, orders, 0, executionConfig);\n-\t\treturn new ComparableKeySelector<X>(comparator, numKeyFields);\n+\t\treturn new ComparableKeySelector<>(comparator, numKeyFields, new TupleTypeInfo<>(typeInfos));\n \t}\n \n \t\n@@ -70,7 +74,7 @@\n \n \t\tTypeComparator<X> comparator = ((CompositeType<X>) typeInfo).createComparator(\n \t\t\t\tlogicalKeyPositions, new boolean[1], 0, executionConfig);\n-\t\treturn new OneKeySelector<X, K>(comparator);\n+\t\treturn new OneKeySelector<>(comparator);\n \t}\n \n \t/**\n@@ -111,21 +115,23 @@ public K getKey(IN value) throws Exception {\n \t *\n \t * @param <IN> The type from which the key is extracted.\n \t */\n-\tpublic static final class ComparableKeySelector<IN> implements KeySelector<IN, Tuple> {\n+\tpublic static final class ComparableKeySelector<IN> implements KeySelector<IN, Tuple>, ResultTypeQueryable<Tuple> {\n \n \t\tprivate static final long serialVersionUID = 1L;\n \n \t\tprivate final TypeComparator<IN> comparator;\n \t\tprivate final int keyLength;\n+\t\tprivate final TupleTypeInfo tupleTypeInfo;\n \n \t\t/** Reusable array to hold the key objects. Since this is initially empty (all positions\n \t\t * are null), it does not have any serialization problems */\n \t\t@SuppressWarnings(\"NonSerializableFieldInSerializableClass\")\n \t\tprivate final Object[] keyArray;\n \n-\t\tpublic ComparableKeySelector(TypeComparator<IN> comparator, int keyLength) {\n+\t\tpublic ComparableKeySelector(TypeComparator<IN> comparator, int keyLength, TupleTypeInfo tupleTypeInfo) {\n \t\t\tthis.comparator = comparator;\n \t\t\tthis.keyLength = keyLength;\n+\t\t\tthis.tupleTypeInfo = tupleTypeInfo;\n \t\t\tkeyArray = new Object[keyLength];\n \t\t}\n \n@@ -139,6 +145,10 @@ public Tuple getKey(IN value) throws Exception {\n \t\t\treturn key;\n \t\t}\n \n+\t\t@Override\n+\t\tpublic TypeInformation<Tuple> getProducedType() {\n+\t\t\treturn tupleTypeInfo;\n+\t\t}\n \t}\n \n \t// ------------------------------------------------------------------------\n",
+    "project": "flink",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

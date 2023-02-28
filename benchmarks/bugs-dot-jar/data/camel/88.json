@@ -1,0 +1,24 @@
+{
+    "bug_id": 88,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "cac72b14",
+    "failing_tests": [
+        "org.apache.camel.builder.ErrorHandlerBuilderRefTest"
+    ],
+    "files": 3,
+    "jira_id": "8053",
+    "linesAdd": 43,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 3,
+    "nb_test": 5131,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/builder/ErrorHandlerBuilderRef.java b/camel-core/src/main/java/org/apache/camel/builder/ErrorHandlerBuilderRef.java\nindex 0cf9d5790b..4d06b7f978 100644\n--- a/camel-core/src/main/java/org/apache/camel/builder/ErrorHandlerBuilderRef.java\n+++ b/camel-core/src/main/java/org/apache/camel/builder/ErrorHandlerBuilderRef.java\n@@ -51,6 +51,18 @@ public void addErrorHandlers(RouteContext routeContext, OnExceptionDefinition ex\n         super.addErrorHandlers(routeContext, exception);\n     }\n     \n+    @Override\n+    public boolean removeOnExceptionList(String id) {\n+        for (RouteContext routeContext : handlers.keySet()) {\n+            if (getRouteId(routeContext).equals(id)) {\n+                handlers.remove(routeContext);\n+                break;\n+            }\n+        }\n+        return super.removeOnExceptionList(id);\n+    }\n+    \n+\n     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {\n         ErrorHandlerBuilder handler = handlers.get(routeContext);\n         if (handler == null) {\ndiff --git a/camel-core/src/main/java/org/apache/camel/builder/ErrorHandlerBuilderSupport.java b/camel-core/src/main/java/org/apache/camel/builder/ErrorHandlerBuilderSupport.java\nindex 747a6ddd38..365ebc0ea3 100644\n--- a/camel-core/src/main/java/org/apache/camel/builder/ErrorHandlerBuilderSupport.java\n+++ b/camel-core/src/main/java/org/apache/camel/builder/ErrorHandlerBuilderSupport.java\n@@ -21,6 +21,7 @@\n import java.util.List;\n import java.util.Map;\n \n+import org.apache.camel.CamelContext;\n import org.apache.camel.model.OnExceptionDefinition;\n import org.apache.camel.processor.ErrorHandler;\n import org.apache.camel.processor.ErrorHandlerSupport;\n@@ -94,4 +95,28 @@ public void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicySt\n         ObjectHelper.notNull(exceptionPolicyStrategy, \"ExceptionPolicyStrategy\");\n         this.exceptionPolicyStrategy = exceptionPolicyStrategy;\n     }\n+    \n+    /**\n+     * Remove the OnExceptionList by look up the route id from the ErrorHandlerBuilder internal map\n+     * @param id the route id\n+     * @return true if the route context is found and removed\n+     */\n+    public boolean removeOnExceptionList(String id) {\n+        for (RouteContext routeContext : onExceptions.keySet()) {\n+            if (getRouteId(routeContext).equals(id)) {\n+                onExceptions.remove(routeContext);\n+                return true;\n+            }\n+        }\n+        return false;\n+    }\n+    \n+    protected String getRouteId(RouteContext routeContext) {\n+        CamelContext context = routeContext.getCamelContext();\n+        if (context != null) {\n+            return routeContext.getRoute().idOrCreate(context.getNodeIdFactory());\n+        } else {\n+            return routeContext.getRoute().getId();\n+        }\n+    }\n }\ndiff --git a/camel-core/src/main/java/org/apache/camel/impl/DefaultCamelContext.java b/camel-core/src/main/java/org/apache/camel/impl/DefaultCamelContext.java\nindex deba649ad4..bd4488cbaf 100644\n--- a/camel-core/src/main/java/org/apache/camel/impl/DefaultCamelContext.java\n+++ b/camel-core/src/main/java/org/apache/camel/impl/DefaultCamelContext.java\n@@ -71,6 +71,7 @@\n import org.apache.camel.TypeConverter;\n import org.apache.camel.VetoCamelContextStartException;\n import org.apache.camel.builder.ErrorHandlerBuilder;\n+import org.apache.camel.builder.ErrorHandlerBuilderSupport;\n import org.apache.camel.component.properties.PropertiesComponent;\n import org.apache.camel.impl.converter.BaseTypeConverterRegistry;\n import org.apache.camel.impl.converter.DefaultTypeConverter;\n@@ -928,6 +928,11 @@ public synchronized void shutdownRoute(String routeId, long timeout, TimeUnit ti\n     }\n \n     public synchronized boolean removeRoute(String routeId) throws Exception {\n+        // remove the route from ErrorHandlerBuilder if possible\n+        if (getErrorHandlerBuilder() instanceof ErrorHandlerBuilderSupport) {\n+            ErrorHandlerBuilderSupport builder = (ErrorHandlerBuilderSupport)getErrorHandlerBuilder();\n+            builder.removeOnExceptionList(routeId);\n+        }\n         RouteService routeService = routeServices.get(routeId);\n         if (routeService != null) {\n             if (getRouteStatus(routeId).isStopped()) {\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

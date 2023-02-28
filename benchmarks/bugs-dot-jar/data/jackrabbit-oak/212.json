@@ -1,0 +1,24 @@
+{
+    "bug_id": 212,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "e115fd90",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.namepath.NamePathMapperImplTest"
+    ],
+    "files": 1,
+    "jira_id": "313",
+    "linesAdd": 9,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 229,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/namepath/NamePathMapperImpl.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/namepath/NamePathMapperImpl.java\nindex 7bce77d992..65639f1dcb 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/namepath/NamePathMapperImpl.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/namepath/NamePathMapperImpl.java\n@@ -151,9 +151,6 @@ public boolean name(String name, int index) {\n     }\n \n     private String getOakPath(String jcrPath, final boolean keepIndex) {\n-        final List<String> elements = new ArrayList<String>();\n-        final StringBuilder parseErrors = new StringBuilder();\n-\n         if (\"/\".equals(jcrPath)) {\n             // avoid the need to special case the root path later on\n             return \"/\";\n@@ -180,6 +177,7 @@ private String getOakPath(String jcrPath, final boolean keepIndex) {\n         boolean hasIndexBrackets = false;\n         boolean hasColon = false;\n         boolean hasNameStartingWithDot = false;\n+        boolean hasTrailingSlash = false;\n \n         char prev = 0;\n         for (int i = 0; i < length; i++) {\n@@ -193,6 +191,8 @@ private String getOakPath(String jcrPath, final boolean keepIndex) {\n                 hasColon = true;\n             } else if (c == '.' && (prev == 0 || prev == '/')) {\n                 hasNameStartingWithDot = true;\n+            } else if(c == '/' && i == (length - 1)){\n+                hasTrailingSlash = true;\n             }\n \n             prev = c;\n@@ -202,6 +202,9 @@ private String getOakPath(String jcrPath, final boolean keepIndex) {\n         if (!hasNameStartingWithDot && !hasClarkBrackets && !hasIndexBrackets) {\n             if (!hasColon || !hasSessionLocalMappings()) {\n                 if (JcrPathParser.validate(jcrPath)) {\n+                    if(hasTrailingSlash){\n+                        return jcrPath.substring(0, length - 1);\n+                    }\n                     return jcrPath;\n                 }\n                 else {\n@@ -211,6 +214,9 @@ private String getOakPath(String jcrPath, final boolean keepIndex) {\n             }\n         }\n \n+        final List<String> elements = new ArrayList<String>();\n+        final StringBuilder parseErrors = new StringBuilder();\n+\n         JcrPathParser.Listener listener = new JcrPathParser.Listener() {\n \n             @Override\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

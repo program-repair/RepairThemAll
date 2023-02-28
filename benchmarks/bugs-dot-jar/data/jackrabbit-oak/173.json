@@ -1,0 +1,24 @@
+{
+    "bug_id": 173,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "b2ca8baa",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.index.property.PropertyIndexTest"
+    ],
+    "files": 1,
+    "jira_id": "1035",
+    "linesAdd": 3,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 8,
+    "nb_test": 1269,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/property/strategy/ContentMirrorStoreStrategy.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/property/strategy/ContentMirrorStoreStrategy.java\nindex 433bac391a..97a34086d5 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/property/strategy/ContentMirrorStoreStrategy.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/property/strategy/ContentMirrorStoreStrategy.java\n@@ -164,7 +164,9 @@ public long count(NodeState indexMeta, Set<String> values, int max) {\n             int i = 0;\n             for (String p : values) {\n                 if (count > max && i > 3) {\n-                    count = count / size / i;\n+                    // the total count is extrapolated from the the number \n+                    // of values counted so far to the total number of values\n+                    count = count * size / i;\n                     break;\n                 }\n                 NodeState s = index.getChildNode(p);\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

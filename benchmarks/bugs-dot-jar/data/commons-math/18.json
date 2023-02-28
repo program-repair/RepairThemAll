@@ -1,0 +1,25 @@
+{
+    "bug_id": 18,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "a7363a2a",
+    "failing_tests": [
+        "org.apache.commons.math3.geometry.euclidean.twod.hull.AklToussaintHeuristicTest",
+        "org.apache.commons.math3.geometry.euclidean.twod.hull.MonotoneChainTest"
+    ],
+    "files": 1,
+    "jira_id": "1135",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 2,
+    "nb_failure": 0,
+    "nb_skipped": 3,
+    "nb_test": 6075,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math3/geometry/euclidean/twod/hull/MonotoneChain.java b/src/main/java/org/apache/commons/math3/geometry/euclidean/twod/hull/MonotoneChain.java\nindex 2ade7a69e..50fd6b752 100644\n--- a/src/main/java/org/apache/commons/math3/geometry/euclidean/twod/hull/MonotoneChain.java\n+++ b/src/main/java/org/apache/commons/math3/geometry/euclidean/twod/hull/MonotoneChain.java\n@@ -160,9 +160,9 @@ private void updateHull(final Vector2D point, final List<Vector2D> hull) {\n                 } else {\n                     if (distanceToCurrent > distanceToLast) {\n                         hull.remove(size - 1);\n-                    }\n                         hull.add(point);\n                     }\n+                }\n                 return;\n             } else if (offset > 0) {\n                 hull.remove(size - 1);\n",
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

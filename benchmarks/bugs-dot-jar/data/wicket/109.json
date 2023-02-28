@@ -1,0 +1,24 @@
+{
+    "bug_id": 109,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "87ae870f",
+    "failing_tests": [
+        "org.apache.wicket.ConverterLocatorTest"
+    ],
+    "files": 1,
+    "jira_id": "4755",
+    "linesAdd": 6,
+    "linesRem": 3,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 5,
+    "nb_test": 1411,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/ConverterLocator.java b/wicket-core/src/main/java/org/apache/wicket/ConverterLocator.java\nindex 437ed8c1a3..e2d9cc6a12 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/ConverterLocator.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/ConverterLocator.java\n@@ -105,16 +105,19 @@ public C convertToObject(String value, Locale locale)\n \t\t\t\t{\n \t\t\t\t\treturn converted;\n \t\t\t\t}\n-\t\t\t\telse\n+\n+\t\t\t\tif (theType.isInstance(value))\n \t\t\t\t{\n-\t\t\t\t\tthrow new ConversionException(\"Could not convert value: \" + value +\n-\t\t\t\t\t\t\" to type: \" + theType.getName() + \". Could not find compatible converter.\").setSourceValue(value);\n+\t\t\t\t\treturn theType.cast(value);\n \t\t\t\t}\n \t\t\t}\n \t\t\tcatch (Exception e)\n \t\t\t{\n \t\t\t\tthrow new ConversionException(e.getMessage(), e).setSourceValue(value);\n \t\t\t}\n+\n+\t\t\tthrow new ConversionException(\"Could not convert value: \" + value + \" to type: \" +\n+\t\t\t\ttheType.getName() + \". Could not find compatible converter.\").setSourceValue(value);\n \t\t}\n \n \t\t/**\n",
+    "project": "wicket",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

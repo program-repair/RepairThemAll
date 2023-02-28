@@ -1,0 +1,24 @@
+{
+    "bug_id": 1,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ce126bdb",
+    "failing_tests": [
+        "org.apache.commons.math3.random.SynchronizedRandomGeneratorTest"
+    ],
+    "files": 1,
+    "jira_id": "899",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 4,
+    "nb_test": 4224,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math3/random/SynchronizedRandomGenerator.java b/src/main/java/org/apache/commons/math3/random/SynchronizedRandomGenerator.java\nindex 54c006dee..d28f74bf6 100644\n--- a/src/main/java/org/apache/commons/math3/random/SynchronizedRandomGenerator.java\n+++ b/src/main/java/org/apache/commons/math3/random/SynchronizedRandomGenerator.java\n@@ -82,7 +82,7 @@ public synchronized int nextInt() {\n      * {@inheritDoc}\n      */\n     public synchronized int nextInt(int n) {\n-        return wrapped.nextInt();\n+        return wrapped.nextInt(n);\n     }\n \n     /**\n",
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

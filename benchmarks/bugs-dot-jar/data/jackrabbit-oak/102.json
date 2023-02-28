@@ -1,0 +1,24 @@
+{
+    "bug_id": 102,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "8079f7b5",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.commons.json.JsopTest"
+    ],
+    "files": 1,
+    "jira_id": "2389",
+    "linesAdd": 13,
+    "linesRem": 4,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 53,
+    "patch": "diff --git a/oak-commons/src/main/java/org/apache/jackrabbit/oak/commons/json/JsopBuilder.java b/oak-commons/src/main/java/org/apache/jackrabbit/oak/commons/json/JsopBuilder.java\nindex a9a8b9a777..8489197562 100644\n--- a/oak-commons/src/main/java/org/apache/jackrabbit/oak/commons/json/JsopBuilder.java\n+++ b/oak-commons/src/main/java/org/apache/jackrabbit/oak/commons/json/JsopBuilder.java\n@@ -285,6 +285,7 @@ public static void escape(String s, StringBuilder buff) {\n     private static void escape(String s, int length, StringBuilder buff) {\n         for (int i = 0; i < length; i++) {\n             char c = s.charAt(i);\n+            int ic = (int)c;\n             switch (c) {\n             case '\"':\n                 // quotation mark\n@@ -316,10 +317,18 @@ private static void escape(String s, int length, StringBuilder buff) {\n                 break;\n             default:\n                 if (c < ' ') {\n-                    buff.append(\"\\\\u00\");\n-                    // guaranteed to be 1 or 2 hex digits only\n-                    buff.append(Character.forDigit(c >>> 4, 16));\n-                    buff.append(Character.forDigit(c & 15, 16));\n+                    buff.append(String.format(\"\\\\u%04x\", ic));\n+                } else if (ic >= 0xD800 && ic <= 0xDBFF) {\n+                    // isSurrogate(), only available in Java 7\n+                    if (i < length - 1 && Character.isSurrogatePair(c, s.charAt(i + 1))) {\n+                        // ok surrogate\n+                        buff.append(c);\n+                        buff.append(s.charAt(i + 1));\n+                        i += 1;\n+                    } else {\n+                        // broken surrogate -> escape\n+                        buff.append(String.format(\"\\\\u%04x\", ic));\n+                    }\n                 } else {\n                     buff.append(c);\n                 }\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

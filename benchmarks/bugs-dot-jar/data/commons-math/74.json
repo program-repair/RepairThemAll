@@ -1,0 +1,24 @@
+{
+    "bug_id": 74,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "328513f3",
+    "failing_tests": [
+        "org.apache.commons.math.util.MathUtilsTest"
+    ],
+    "files": 1,
+    "jira_id": "555",
+    "linesAdd": 9,
+    "linesRem": 5,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 1,
+    "nb_test": 2372,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math/util/MathUtils.java b/src/main/java/org/apache/commons/math/util/MathUtils.java\nindex 85d9a048f..52ebeb6ea 100644\n--- a/src/main/java/org/apache/commons/math/util/MathUtils.java\n+++ b/src/main/java/org/apache/commons/math/util/MathUtils.java\n@@ -33,7 +33,6 @@\n import org.apache.commons.math.exception.NotPositiveException;\n import org.apache.commons.math.exception.MathArithmeticException;\n import org.apache.commons.math.exception.MathIllegalArgumentException;\n-import org.apache.commons.math.exception.MathRuntimeException;\n import org.apache.commons.math.exception.NumberIsTooLargeException;\n import org.apache.commons.math.exception.NotFiniteNumberException;\n \n@@ -1333,15 +1332,22 @@ public static double round(double x, int scale) {\n     }\n \n     /**\n-     * Round the given value to the specified number of decimal places. The\n+     * <p>Round the given value to the specified number of decimal places. The\n      * value is rounded using the given method which is any method defined in\n-     * {@link BigDecimal}.\n+     * {@link BigDecimal}.</p>\n+     *\n+     * <p>If {@code x} is infinite or NaN, then the value of {@code x} is\n+     * returned unchanged, regardless of the other parameters.</p>\n      *\n      * @param x the value to round.\n      * @param scale the number of digits to the right of the decimal point.\n      * @param roundingMethod the rounding method as defined in\n      *        {@link BigDecimal}.\n      * @return the rounded value.\n+     * @throws ArithmeticException if roundingMethod==ROUND_UNNECESSARY and the\n+     * specified scaling operation would require rounding.\n+     * @throws IllegalArgumentException if roundingMethod does not represent a\n+     * valid rounding mode.\n      * @since 1.1\n      */\n     public static double round(double x, int scale, int roundingMethod) {\n@@ -1356,8 +1362,6 @@ public static double round(double x, int scale, int roundingMethod) {\n             } else {\n                 return Double.NaN;\n             }\n-        } catch (RuntimeException ex) {\n-            throw new MathRuntimeException(ex);\n         }\n     }\n \n",
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

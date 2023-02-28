@@ -1,0 +1,22 @@
+{
+    "bug_id": 76,
+    "classification": {
+        "singleLine": true
+    },
+    "commit": "699b8bf0",
+    "failing_tests": [],
+    "files": 1,
+    "jira_id": "3897",
+    "linesAdd": 1,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 0,
+    "patch": "diff --git a/server/master/src/main/java/org/apache/accumulo/master/tserverOps/ShutdownTServer.java b/server/master/src/main/java/org/apache/accumulo/master/tserverOps/ShutdownTServer.java\nindex 11cd91bee..171e31206 100644\n--- a/server/master/src/main/java/org/apache/accumulo/master/tserverOps/ShutdownTServer.java\n+++ b/server/master/src/main/java/org/apache/accumulo/master/tserverOps/ShutdownTServer.java\n@@ -58,6 +58,7 @@ public long isReady(long tid, Master master) throws Exception {\n     // only send this request once\n     if (!requestedShutdown) {\n       master.shutdownTServer(server);\n+      requestedShutdown = true;\n     }\n \n     if (master.onlineTabletServers().contains(server)) {\n",
+    "project": "accumulo",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

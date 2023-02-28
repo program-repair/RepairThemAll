@@ -1,0 +1,24 @@
+{
+    "bug_id": 43,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "17344890",
+    "failing_tests": [
+        "org.apache.accumulo.core.security.crypto.BlockedIOStreamTest"
+    ],
+    "files": 1,
+    "jira_id": "2671",
+    "linesAdd": 10,
+    "linesRem": 7,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 1,
+    "nb_test": 634,
+    "patch": "diff --git a/core/src/main/java/org/apache/accumulo/core/security/crypto/BlockedOutputStream.java b/core/src/main/java/org/apache/accumulo/core/security/crypto/BlockedOutputStream.java\nindex ca72055cc..3ce648e86 100644\n--- a/core/src/main/java/org/apache/accumulo/core/security/crypto/BlockedOutputStream.java\n+++ b/core/src/main/java/org/apache/accumulo/core/security/crypto/BlockedOutputStream.java\n@@ -72,15 +72,18 @@ public void write(int b) throws IOException {\n \n   @Override\n   public void write(byte b[], int off, int len) throws IOException {\n-    if (bb.remaining() >= len) {\n-      bb.put(b, off, len);\n-      if (bb.remaining() == 0)\n-        flush();\n-    } else {\n+    // Can't recurse here in case the len is large and the blocksize is small (and the stack is small)\n+    // So we'll just fill up the buffer over and over\n+    while (len >= bb.remaining()) {\n       int remaining = bb.remaining();\n-      write(b, off, remaining);\n-      write(b, off + remaining, len - remaining);\n+      bb.put(b, off, remaining);\n+      // This is guaranteed to have the buffer filled, so we'll just flush it. No check needed\n+      flush();\n+      off += remaining;\n+      len -= remaining;\n     }\n+    // And then write the remainder (and this is guaranteed to not fill the buffer, so we won't flush afteward\n+    bb.put(b, off, len);\n   }\n \n   @Override\n",
+    "project": "accumulo",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

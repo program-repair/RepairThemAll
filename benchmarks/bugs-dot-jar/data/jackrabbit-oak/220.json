@@ -1,0 +1,24 @@
+{
+    "bug_id": 220,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "487de751",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.index.lucene.OakDirectoryTest"
+    ],
+    "files": 1,
+    "jira_id": "2388",
+    "linesAdd": 4,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 374,
+    "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/OakDirectory.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/OakDirectory.java\nindex 8e573399f1..8256394ddf 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/OakDirectory.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/OakDirectory.java\n@@ -187,7 +187,7 @@ public OakIndexFile(String name, NodeBuilder file) {\n                 this.data = newArrayList();\n             }\n \n-            this.length = data.size() * blobSize;\n+            this.length = (long)data.size() * blobSize;\n             if (!data.isEmpty()) {\n                 Blob last = data.get(data.size() - 1);\n                 this.length -= blobSize - last.length();\n@@ -253,7 +253,9 @@ public void readBytes(byte[] b, int offset, int len)\n             checkPositionIndexes(offset, offset + len, checkNotNull(b).length);\n \n             if (len < 0 || position + len > length) {\n-                throw new IOException(\"Invalid byte range request\");\n+                String msg = String.format(\"Invalid byte range request [%s] : position : %d, length : \" +\n+                                \"%d, len : %d\", name, position, length, len);\n+                throw new IOException(msg);\n             }\n \n             int i = (int) (position / blobSize);\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

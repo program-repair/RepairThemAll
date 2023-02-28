@@ -1,0 +1,24 @@
+{
+    "bug_id": 189,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "b6f89048",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.index.property.strategy.OrderedContentMirrorStorageStrategyTest"
+    ],
+    "files": 1,
+    "jira_id": "1899",
+    "linesAdd": 5,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 9,
+    "nb_test": 1809,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/property/strategy/OrderedContentMirrorStoreStrategy.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/property/strategy/OrderedContentMirrorStoreStrategy.java\nindex 0fd121cf43..3f78b784b5 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/property/strategy/OrderedContentMirrorStoreStrategy.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/index/property/strategy/OrderedContentMirrorStoreStrategy.java\n@@ -1021,8 +1021,11 @@ static String getPropertyNext(@Nonnull final NodeState state, final int lane) {\n         String next = \"\";\n         PropertyState ps = state.getProperty(NEXT);\n         if (ps != null) {\n-            next = (lane < OrderedIndex.LANES) ? ps.getValue(Type.STRING, lane)\n-                                               : \"\";\n+            if (ps.isArray()) {\n+                next = ps.getValue(Type.STRING, Math.min(ps.count() - 1, lane));\n+            } else {\n+                next = ps.getValue(Type.STRING);\n+            }\n         }\n         return next;\n     }\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 20,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "484c865f",
+    "failing_tests": [
+        "org.apache.logging.log4j.core.AppenderRefLevelJsonTest"
+    ],
+    "files": 1,
+    "jira_id": "464",
+    "linesAdd": 11,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 8,
+    "nb_test": 479,
+    "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/config/JSONConfiguration.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/config/JSONConfiguration.java\nindex be6250929..892c45bc3 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/config/JSONConfiguration.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/config/JSONConfiguration.java\n@@ -232,14 +232,25 @@ private Node constructNode(final String name, final Node parent, final JsonNode\n                             if (itemEntry.getValue().isObject()) {\n                                 LOGGER.debug(\"Processing node for object \" + itemEntry.getKey());\n                                 itemChildren.add(constructNode(itemEntry.getKey(), item, itemEntry.getValue()));\n+                            } else if (itemEntry.getValue().isArray()) {\n+                                JsonNode array = itemEntry.getValue();\n+                                String entryName = itemEntry.getKey();\n+                                LOGGER.debug(\"Processing array for object \" + entryName);\n+                                final PluginType<?> itemEntryType = pluginManager.getPluginType(entryName);\n+                                for (int j = 0; j < array.size(); ++j) {\n+                                    itemChildren.add(constructNode(entryName, item, array.get(j)));\n                                 }\n                             }\n+\n+                        }\n                         children.add(item);\n                     }\n                 } else {\n                     LOGGER.debug(\"Processing node for object \" + entry.getKey());\n                     children.add(constructNode(entry.getKey(), node, n));\n                 }\n+            } else {\n+                LOGGER.debug(\"Node {} is of type {}\", entry.getKey(), n.getNodeType());\n             }\n         }\n \n",
+    "project": "logging-log4j2",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 238,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "d0f6715d",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.document.DocumentNodeStoreTest"
+    ],
+    "files": 1,
+    "jira_id": "2336",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 9,
+    "nb_test": 2023,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\nindex e617e173f1..1134673e93 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\n@@ -775,7 +775,7 @@ public DocumentNodeState getNodeAtRevision(@Nonnull DocumentNodeStore nodeStore,\n             // check if there may be more recent values in a previous document\n             if (value != null && !getPreviousRanges().isEmpty()) {\n                 Revision newest = getLocalMap(key).firstKey();\n-                if (!value.revision.equals(newest)) {\n+                if (isRevisionNewer(nodeStore, newest, value.revision)) {\n                     // not reading the most recent value, we may need to\n                     // consider previous documents as well\n                     Revision newestPrev = getPreviousRanges().firstKey();\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

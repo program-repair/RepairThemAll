@@ -1,0 +1,24 @@
+{
+    "bug_id": 268,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "25850476",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.document.VersionGarbageCollectorTest"
+    ],
+    "files": 1,
+    "jira_id": "3099",
+    "linesAdd": 7,
+    "linesRem": 5,
+    "nb_error": 2,
+    "nb_failure": 0,
+    "nb_skipped": 1,
+    "nb_test": 2215,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/SplitDocumentCleanUp.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/SplitDocumentCleanUp.java\nindex 081a422bea..7cdaebc660 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/SplitDocumentCleanUp.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/SplitDocumentCleanUp.java\n@@ -79,14 +79,16 @@ private void disconnect(NodeDocument splitDoc) {\n                     mainId, splitId);\n             return;\n         }\n-        int slashIdx = splitId.lastIndexOf('/');\n-        int height = Integer.parseInt(splitId.substring(slashIdx + 1));\n+        \n+        String splitDocPath = splitDoc.getPath();\n+        int slashIdx = splitDocPath.lastIndexOf('/');\n+        int height = Integer.parseInt(splitDocPath.substring(slashIdx + 1));\n         Revision rev = Revision.fromString(\n-                splitId.substring(splitId.lastIndexOf('/', slashIdx - 1) + 1, slashIdx));\n+                splitDocPath.substring(splitDocPath.lastIndexOf('/', slashIdx - 1) + 1, slashIdx));\n         doc = doc.findPrevReferencingDoc(rev, height);\n         if (doc == null) {\n-            LOG.warn(\"Split document {} not referenced anymore. Main document is {}\",\n-                    splitId, mainId);\n+            LOG.warn(\"Split document {} for path {} not referenced anymore. Main document is {}\",\n+                    splitId, splitDocPath, mainId);\n             return;\n         }\n         // remove reference\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

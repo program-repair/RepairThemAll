@@ -1,0 +1,24 @@
+{
+    "bug_id": 250,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "6c54045d",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.memory.MemoryNodeBuilderTest"
+    ],
+    "files": 1,
+    "jira_id": "678",
+    "linesAdd": 15,
+    "linesRem": 9,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 687,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\nindex d5712bae39..411c5fc88c 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\n@@ -193,10 +193,15 @@ private MutableNodeState getWriteState(String name) {\n      * @return {@code true} iff this child exists at its direct parent.\n      */\n     private boolean exists() {\n-        // No need to check the base state if write state is null. The fact that we have this\n-        // builder instance proofs that this child existed at some point as it must have been\n-        // retrieved from the base state.\n-        return isRoot() || parent.writeState == null || parent.writeState.hasChildNode(name);\n+        if (isRoot()) {\n+            return true;\n+        }\n+        else if (parent.writeState == null) {\n+            return parent.baseState != null && parent.baseState.hasChildNode(name);\n+        }\n+        else {\n+            return parent.writeState.hasChildNode(name);\n+        }\n     }\n \n     /**\n@@ -206,11 +211,8 @@ private boolean exists() {\n     private boolean updateReadState() {\n         if (revision != root.revision) {\n             assert(!isRoot()); // root never gets here since revision == root.revision\n-            if (!exists()) {\n-                return false;\n-            }\n-            parent.updateReadState();\n \n+            if (parent.updateReadState() && exists()) {\n                 // The builder could have been reset, need to re-get base state\n                 baseState = parent.getBaseState(name);\n \n@@ -218,6 +220,10 @@ private boolean updateReadState() {\n                 writeState = parent.getWriteState(name);\n \n                 revision = root.revision;\n+                return true;\n+            }\n+\n+            return false;\n         }\n         return writeState != null || baseState != null;\n     }\n@@ -238,8 +244,8 @@ private MutableNodeState write() {\n     private MutableNodeState write(long newRevision, boolean reconnect) {\n         // make sure that all revision numbers up to the root gets updated\n         if (!isRoot()) {\n-            checkState(reconnect || exists(), \"This node has been removed\");\n             parent.write(newRevision, reconnect);\n+            checkState(reconnect || exists(), \"This node has been removed\");\n         }\n \n         if (writeState == null || revision != root.revision) {\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

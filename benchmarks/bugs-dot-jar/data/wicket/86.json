@@ -1,0 +1,24 @@
+{
+    "bug_id": 86,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "f539c18c",
+    "failing_tests": [
+        "org.apache.wicket.bean.validation.PropertyValidatorRequiredTest"
+    ],
+    "files": 1,
+    "jira_id": "5656",
+    "linesAdd": 19,
+    "linesRem": 10,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 8,
+    "patch": "diff --git a/wicket-bean-validation/src/main/java/org/apache/wicket/bean/validation/PropertyValidator.java b/wicket-bean-validation/src/main/java/org/apache/wicket/bean/validation/PropertyValidator.java\nindex e8e6376d4d..a2486c7590 100644\n--- a/wicket-bean-validation/src/main/java/org/apache/wicket/bean/validation/PropertyValidator.java\n+++ b/wicket-bean-validation/src/main/java/org/apache/wicket/bean/validation/PropertyValidator.java\n@@ -10,6 +10,7 @@\n import javax.validation.ConstraintViolation;\n import javax.validation.Validator;\n import javax.validation.constraints.NotNull;\n+import javax.validation.groups.Default;\n import javax.validation.metadata.ConstraintDescriptor;\n \n import org.apache.wicket.Component;\n@@ -100,11 +101,10 @@ private Property getProperty()\n \t\t\tif (property_ == null)\n \t\t\t{\n \t\t\t\tthrow new IllegalStateException(\n-\t\t\t\t\t\"Could not resolve Property from component: \" +\n-\t\t\t\t\t\tcomponent +\n-\t\t\t\t\t\t\". Either specify the Property in the constructor or use a model that works in combination with a \" +\n-\t\t\t\t\t\tIPropertyResolver.class.getSimpleName() +\n-\t\t\t\t\t\t\" to resolve the Property automatically\");\n+\t\t\t\t\t\"Could not resolve Property from component: \" + component\n+\t\t\t\t\t\t+ \". Either specify the Property in the constructor or use a model that works in combination with a \"\n+\t\t\t\t\t\t+ IPropertyResolver.class.getSimpleName()\n+\t\t\t\t\t\t+ \" to resolve the Property automatically\");\n \t\t\t}\n \t\t}\n \t\treturn property_;\n@@ -126,14 +126,15 @@ public void bind(Component component)\n \t\tif (this.component != null)\n \t\t{\n \t\t\tthrow new IllegalStateException( //\n-\t\t\t\t\"This validator has already been added to component: \" + this.component +\n-\t\t\t\t\t\". This validator does not support reusing instances, please create a new one\");\n+\t\t\t\t\"This validator has already been added to component: \"\n+\t\t\t\t\t+ this.component\n+\t\t\t\t\t+ \". This validator does not support reusing instances, please create a new one\");\n \t\t}\n \n \t\tif (!(component instanceof FormComponent))\n \t\t{\n-\t\t\tthrow new IllegalStateException(getClass().getSimpleName() +\n-\t\t\t\t\" can only be added to FormComponents\");\n+\t\t\tthrow new IllegalStateException(getClass().getSimpleName()\n+\t\t\t\t+ \" can only be added to FormComponents\");\n \t\t}\n \n \t\t// TODO add a validation key that appends the type so we can have\n@@ -208,7 +209,7 @@ boolean isRequired()\n \n \t\tfor (NotNull constraint : constraints)\n \t\t{\n-\t\t\tif (constraint.groups().length == 0 && validatorGroups.isEmpty())\n+\t\t\tif (canApplyToDefaultGroup(constraint) && validatorGroups.isEmpty())\n \t\t\t{\n \t\t\t\treturn true;\n \t\t\t}\n@@ -225,6 +226,14 @@ boolean isRequired()\n \t\treturn false;\n \t}\n \n+\tprivate boolean canApplyToDefaultGroup(NotNull constraint)\n+\t{\n+\t\tList<Class<?>> groups = Arrays.asList(constraint.groups());\n+\t\t//the constraint can be applied to default group either if its group array is empty\n+\t\t//or if it contains javax.validation.groups.Default\n+\t\treturn groups.size() == 0 || groups.contains(Default.class);\n+\t}\n+\n \t@Override\n \t@SuppressWarnings({ \"rawtypes\", \"unchecked\" })\n \tpublic void onComponentTag(Component component, ComponentTag tag)\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

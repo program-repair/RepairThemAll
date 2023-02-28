@@ -1,0 +1,24 @@
+{
+    "bug_id": 117,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "1cab39f6",
+    "failing_tests": [
+        "org.apache.camel.processor.FileIdempotentConsumerCreateRepoTest"
+    ],
+    "files": 1,
+    "jira_id": "9340",
+    "linesAdd": 2,
+    "linesRem": 0,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 4,
+    "nb_test": 5485,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/idempotent/FileIdempotentRepository.java b/camel-core/src/main/java/org/apache/camel/processor/idempotent/FileIdempotentRepository.java\nindex 301fb0d8c6..2451daf8eb 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/idempotent/FileIdempotentRepository.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/idempotent/FileIdempotentRepository.java\n@@ -290,7 +290,9 @@ protected void loadStore() throws IOException {\n         if (!fileStore.exists()) {\n             LOG.debug(\"Creating filestore: {}\", fileStore);\n             File parent = fileStore.getParentFile();\n+            if (parent != null) {\n                 parent.mkdirs();\n+            }\n             boolean created = FileUtil.createNewFile(fileStore);\n             if (!created) {\n                 throw new IOException(\"Cannot create filestore: \" + fileStore);\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 258,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "61c877d8",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.security.authorization.evaluation.VersionStorageTest"
+    ],
+    "files": 1,
+    "jira_id": "1173",
+    "linesAdd": 4,
+    "linesRem": 1,
+    "nb_error": 2,
+    "nb_failure": 0,
+    "nb_skipped": 6,
+    "nb_test": 1422,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/security/authorization/permission/CompiledPermissionImpl.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/security/authorization/permission/CompiledPermissionImpl.java\nindex dc1b9c2c9e..c9d0fa0f2b 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/security/authorization/permission/CompiledPermissionImpl.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/security/authorization/permission/CompiledPermissionImpl.java\n@@ -157,7 +157,10 @@ public TreePermission getTreePermission(@Nonnull ImmutableTree tree, @Nonnull Tr\n                 // TODO: OAK-753 decide on where to filter out hidden items.\n                 return TreePermission.ALL;\n             case TreeTypeProvider.TYPE_VERSION:\n-                String ntName = checkNotNull(TreeUtil.getPrimaryTypeName(tree));\n+                String ntName = TreeUtil.getPrimaryTypeName(tree);\n+                if (ntName == null) {\n+                    return TreePermission.EMPTY;\n+                }\n                 if (VersionConstants.VERSION_STORE_NT_NAMES.contains(ntName) || VersionConstants.NT_ACTIVITY.equals(ntName)) {\n                     return new TreePermissionImpl(tree, TreeTypeProvider.TYPE_VERSION, parentPermission);\n                 } else {\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

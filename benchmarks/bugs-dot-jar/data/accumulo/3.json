@@ -1,0 +1,24 @@
+{
+    "bug_id": 3,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "d6472040",
+    "failing_tests": [
+        "org.apache.accumulo.server.fs.VolumeManagerImplTest"
+    ],
+    "files": 1,
+    "jira_id": "3006",
+    "linesAdd": 3,
+    "linesRem": 20,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 2,
+    "nb_test": 188,
+    "patch": "diff --git a/server/base/src/main/java/org/apache/accumulo/server/fs/VolumeManagerImpl.java b/server/base/src/main/java/org/apache/accumulo/server/fs/VolumeManagerImpl.java\nindex 0cfb457ef..877b9a664 100644\n--- a/server/base/src/main/java/org/apache/accumulo/server/fs/VolumeManagerImpl.java\n+++ b/server/base/src/main/java/org/apache/accumulo/server/fs/VolumeManagerImpl.java\n@@ -219,16 +219,6 @@ protected void ensureSyncIsEnabled() {\n       final String volumeName = entry.getKey();\n       FileSystem fs = entry.getValue().getFileSystem();\n \n-      if (ViewFSUtils.isViewFS(fs)) {\n-        try {\n-          FileSystem resolvedFs = ViewFSUtils.resolvePath(fs, new Path(\"/\")).getFileSystem(fs.getConf());\n-          log.debug(\"resolved \" + fs.getUri() + \" to \" + resolvedFs.getUri() + \" for sync check\");\n-          fs = resolvedFs;\n-        } catch (IOException e) {\n-          log.warn(\"Failed to resolve \" + fs.getUri(), e);\n-        }\n-      }\n-\n       if (fs instanceof DistributedFileSystem) {\n         final String DFS_DURABLE_SYNC = \"dfs.durable.sync\", DFS_SUPPORT_APPEND = \"dfs.support.append\";\n         final String ticketMessage = \"See ACCUMULO-623 and ACCUMULO-1637 for more details.\";\n@@ -410,6 +400,9 @@ public static VolumeManager get(AccumuloConfiguration conf) throws IOException {\n         // Cannot re-define the default volume\n         throw new IllegalArgumentException();\n \n+      if (volumeUriOrDir.startsWith(\"viewfs\"))\n+        throw new IllegalArgumentException();\n+\n       // We require a URI here, fail if it doesn't look like one\n       if (volumeUriOrDir.contains(\":\")) {\n         volumes.put(volumeUriOrDir, VolumeConfiguration.create(new Path(volumeUriOrDir), hadoopConf));\n@@ -426,16 +419,6 @@ public boolean isReady() throws IOException {\n     for (Volume volume : getFileSystems().values()) {\n       FileSystem fs = volume.getFileSystem();\n \n-      if (ViewFSUtils.isViewFS(fs)) {\n-        try {\n-          FileSystem resolvedFs = ViewFSUtils.resolvePath(fs, new Path(\"/\")).getFileSystem(fs.getConf());\n-          log.debug(\"resolved \" + fs.getUri() + \" to \" + resolvedFs.getUri() + \" for ready check\");\n-          fs = resolvedFs;\n-        } catch (IOException e) {\n-          log.warn(\"Failed to resolve \" + fs.getUri(), e);\n-        }\n-      }\n-\n       if (!(fs instanceof DistributedFileSystem))\n         continue;\n       DistributedFileSystem dfs = (DistributedFileSystem) fs;\n",
+    "project": "accumulo",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 85,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "217fbb3b",
+    "failing_tests": [
+        "org.apache.wicket.ajax.DomReadyOrderTest"
+    ],
+    "files": 2,
+    "jira_id": "5082",
+    "linesAdd": 4,
+    "linesRem": 32,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 3,
+    "nb_test": 1460,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/ajax/AbstractAjaxResponse.java b/wicket-core/src/main/java/org/apache/wicket/ajax/AbstractAjaxResponse.java\nindex 80624bfbdb..1e3cd1a21e 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/ajax/AbstractAjaxResponse.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/ajax/AbstractAjaxResponse.java\n@@ -25,7 +25,6 @@\n import java.util.Map;\n \n import org.apache.wicket.Component;\n-import org.apache.wicket.MarkupContainer;\n import org.apache.wicket.Page;\n import org.apache.wicket.markup.head.HeaderItem;\n import org.apache.wicket.markup.head.IHeaderResponse;\n@@ -34,6 +33,8 @@\n import org.apache.wicket.markup.head.internal.HeaderResponse;\n import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;\n import org.apache.wicket.markup.parser.filter.HtmlHeaderSectionHandler;\n+import org.apache.wicket.markup.renderStrategy.AbstractHeaderRenderStrategy;\n+import org.apache.wicket.markup.renderStrategy.IHeaderRenderStrategy;\n import org.apache.wicket.markup.repeater.AbstractRepeater;\n import org.apache.wicket.request.IRequestCycle;\n import org.apache.wicket.request.Response;\n@@ -44,8 +45,6 @@\n import org.apache.wicket.util.lang.Generics;\n import org.apache.wicket.util.string.AppendingStringBuffer;\n import org.apache.wicket.util.string.Strings;\n-import org.apache.wicket.util.visit.IVisit;\n-import org.apache.wicket.util.visit.IVisitor;\n import org.slf4j.Logger;\n import org.slf4j.LoggerFactory;\n \n@@ -460,28 +459,9 @@ protected void writeHeaderContribution(final Response response, final Component\n \t\ttry {\n \t\t\tencodingHeaderResponse.reset();\n \n-\t\t\t// render the head of component and all it's children\n+\t\t\tIHeaderRenderStrategy strategy = AbstractHeaderRenderStrategy.get();\n \n-\t\t\tcomponent.renderHead(header);\n-\n-\t\t\tif (component instanceof MarkupContainer)\n-\t\t\t{\n-\t\t\t\t((MarkupContainer)component).visitChildren(new IVisitor<Component, Void>()\n-\t\t\t\t{\n-\t\t\t\t\t@Override\n-\t\t\t\t\tpublic void component(final Component component, final IVisit<Void> visit)\n-\t\t\t\t\t{\n-\t\t\t\t\t\tif (component.isVisibleInHierarchy())\n-\t\t\t\t\t\t{\n-\t\t\t\t\t\t\tcomponent.renderHead(header);\n-\t\t\t\t\t\t}\n-\t\t\t\t\t\telse\n-\t\t\t\t\t\t{\n-\t\t\t\t\t\t\tvisit.dontGoDeeper();\n-\t\t\t\t\t\t}\n-\t\t\t\t\t}\n-\t\t\t\t});\n-\t\t\t}\n+\t\t\tstrategy.renderHeader(header, null, component);\n \t\t} finally {\n \t\t\t// revert to old response\n \t\t\trequestCycle.setResponse(oldResponse);\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/ajax/AjaxEventBehavior.java b/wicket-core/src/main/java/org/apache/wicket/ajax/AjaxEventBehavior.java\nindex 8998cb5c74..0cee432bfe 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/ajax/AjaxEventBehavior.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/ajax/AjaxEventBehavior.java\n@@ -82,16 +82,8 @@ public void renderHead(final Component component, final IHeaderResponse response\n \t\t{\n \t\t\tCharSequence js = getCallbackScript(component);\n \n-\t\t\tAjaxRequestTarget target = component.getRequestCycle().find(AjaxRequestTarget.class);\n-\t\t\tif (target == null)\n-\t\t\t{\n \t\t\tresponse.render(OnDomReadyHeaderItem.forScript(js.toString()));\n \t\t}\n-\t\t\telse\n-\t\t\t{\n-\t\t\t\ttarget.appendJavaScript(js);\n-\t\t\t}\n-\t\t}\n \t}\n \n \t@Override\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

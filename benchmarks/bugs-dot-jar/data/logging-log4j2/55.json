@@ -1,0 +1,24 @@
+{
+    "bug_id": 55,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "0bea17d7",
+    "failing_tests": [
+        "org.apache.logging.log4j.MarkerTest"
+    ],
+    "files": 1,
+    "jira_id": "813",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 3,
+    "nb_test": 217,
+    "patch": "diff --git a/log4j-api/src/main/java/org/apache/logging/log4j/MarkerManager.java b/log4j-api/src/main/java/org/apache/logging/log4j/MarkerManager.java\nindex 2dea94e8d..5bf38e15d 100644\n--- a/log4j-api/src/main/java/org/apache/logging/log4j/MarkerManager.java\n+++ b/log4j-api/src/main/java/org/apache/logging/log4j/MarkerManager.java\n@@ -228,7 +228,7 @@ public String getName() {\n \n         @Override\n         public boolean hasParents() {\n-            return this.parents == null;\n+            return this.parents != null;\n         }\n \n         @Override\n",
+    "project": "logging-log4j2",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

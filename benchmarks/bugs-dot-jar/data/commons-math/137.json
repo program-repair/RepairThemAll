@@ -1,0 +1,24 @@
+{
+    "bug_id": 137,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "b6bf8f41",
+    "failing_tests": [
+        "org.apache.commons.math.stat.clustering.KMeansPlusPlusClustererTest"
+    ],
+    "files": 1,
+    "jira_id": "546",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 2354,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math/stat/clustering/KMeansPlusPlusClusterer.java b/src/main/java/org/apache/commons/math/stat/clustering/KMeansPlusPlusClusterer.java\nindex b73ac9d3e..e09bbc357 100644\n--- a/src/main/java/org/apache/commons/math/stat/clustering/KMeansPlusPlusClusterer.java\n+++ b/src/main/java/org/apache/commons/math/stat/clustering/KMeansPlusPlusClusterer.java\n@@ -172,7 +172,7 @@ public KMeansPlusPlusClusterer(final Random random, final EmptyClusterStrategy e\n         while (resultSet.size() < k) {\n             // For each data point x, compute D(x), the distance between x and\n             // the nearest center that has already been chosen.\n-            int sum = 0;\n+            double sum = 0;\n             for (int i = 0; i < pointSet.size(); i++) {\n                 final T p = pointSet.get(i);\n                 final Cluster<T> nearest = getNearestCluster(resultSet, p);\n",
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

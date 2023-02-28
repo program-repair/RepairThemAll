@@ -1,0 +1,24 @@
+{
+    "bug_id": 250,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "b76f9c44",
+    "failing_tests": [
+        "org.apache.wicket.validation.validator.CreditCardValidatorTest"
+    ],
+    "files": 1,
+    "jira_id": "3998",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 2,
+    "nb_test": 1131,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/validation/validator/CreditCardValidator.java b/wicket-core/src/main/java/org/apache/wicket/validation/validator/CreditCardValidator.java\nindex df071d4cad..33c268e5c7 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/validation/validator/CreditCardValidator.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/validation/validator/CreditCardValidator.java\n@@ -539,7 +539,7 @@ private CreditCard isVisa(String creditCardNumber)\n \t\t{\n \t\t\tif (creditCardNumber.startsWith(\"4\"))\n \t\t\t{\n-\t\t\t\treturn CreditCard.SWITCH;\n+\t\t\t\treturn CreditCard.VISA;\n \t\t\t}\n \t\t}\n \n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

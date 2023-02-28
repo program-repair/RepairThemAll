@@ -1,0 +1,24 @@
+{
+    "bug_id": 79,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "3cee912e",
+    "failing_tests": [
+        "org.apache.logging.log4j.core.async.AsyncLoggerConfigTest"
+    ],
+    "files": 1,
+    "jira_id": "991",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 2,
+    "nb_test": 755,
+    "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/async/AsyncLoggerConfig.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/async/AsyncLoggerConfig.java\nindex 9e1cd9a29..f87d4e357 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/async/AsyncLoggerConfig.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/async/AsyncLoggerConfig.java\n@@ -236,7 +236,7 @@ public static LoggerConfig createLogger(\n \n             return new AsyncLoggerConfig(LogManager.ROOT_LOGGER_NAME,\n                     appenderRefs, filter, level, additive, properties, config,\n-                    includeLocation(includeLocation));\n+                    AsyncLoggerConfig.includeLocation(includeLocation));\n         }\n     }\n }\n",
+    "project": "logging-log4j2",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

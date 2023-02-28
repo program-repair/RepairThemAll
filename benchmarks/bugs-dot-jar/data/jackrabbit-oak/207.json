@@ -1,0 +1,24 @@
+{
+    "bug_id": 207,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "38f5ef13",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.document.DocumentNodeStoreTest"
+    ],
+    "files": 2,
+    "jira_id": "3104",
+    "linesAdd": 10,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 2232,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Commit.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Commit.java\nindex eec060989c..5bd72a3256 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Commit.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/Commit.java\n@@ -448,10 +448,14 @@ private void rollback(List<UpdateOp> newDocuments,\n         DocumentStore store = nodeStore.getDocumentStore();\n         for (UpdateOp op : changed) {\n             UpdateOp reverse = op.getReverseOperation();\n+            if (op.isNew()) {\n+                NodeDocument.setDeletedOnce(reverse);\n+            }\n             store.findAndUpdate(NODES, reverse);\n         }\n         for (UpdateOp op : newDocuments) {\n             UpdateOp reverse = op.getReverseOperation();\n+            NodeDocument.setDeletedOnce(reverse);\n             store.findAndUpdate(NODES, reverse);\n         }\n         UpdateOp removeCollision = new UpdateOp(commitRoot.getId(), false);\ndiff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\nindex 84246631cd..c5dd0d39da 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/NodeDocument.java\n@@ -1372,10 +1372,13 @@ public static void setDeleted(@Nonnull UpdateOp op,\n         if(deleted) {\n             //DELETED_ONCE would be set upon every delete.\n             //possibly we can avoid that\n-            checkNotNull(op).set(DELETED_ONCE, Boolean.TRUE);\n+            setDeletedOnce(op);\n+        }\n+        checkNotNull(op).setMapEntry(DELETED, checkNotNull(revision), String.valueOf(deleted));\n     }\n-        checkNotNull(op).setMapEntry(DELETED, checkNotNull(revision),\n-                String.valueOf(deleted));\n+\n+    public static void setDeletedOnce(@Nonnull UpdateOp op) {\n+        checkNotNull(op).set(DELETED_ONCE, Boolean.TRUE);\n     }\n \n     public static void removeDeleted(@Nonnull UpdateOp op,\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

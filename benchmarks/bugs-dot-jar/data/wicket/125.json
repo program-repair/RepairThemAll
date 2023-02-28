@@ -1,0 +1,25 @@
+{
+    "bug_id": 125,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "6051019b",
+    "failing_tests": [
+        "org.apache.wicket.stateless.StatelessComponentTest",
+        "org.apache.wicket.markup.html.internal.EnclosureTest"
+    ],
+    "files": 3,
+    "jira_id": "3965",
+    "linesAdd": 18,
+    "linesRem": 4,
+    "nb_error": 0,
+    "nb_failure": 6,
+    "nb_skipped": 2,
+    "nb_test": 1163,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/Component.java b/wicket-core/src/main/java/org/apache/wicket/Component.java\nindex 13ab5e16e0..a76203555c 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/Component.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/Component.java\n@@ -3284,15 +3284,18 @@ public String toString(final boolean detailed)\n \tpublic final CharSequence urlFor(final Behavior behaviour,\n \t\tfinal RequestListenerInterface listener)\n \t{\n-\t\tPageAndComponentProvider provider = new PageAndComponentProvider(getPage(), this);\n \t\tint id = getBehaviorId(behaviour);\n+\t\tPage page = getPage();\n \t\tIRequestHandler handler;\n-\t\tif (getPage().isPageStateless())\n+\t\tif (page.isPageStateless())\n \t\t{\n+\t\t\tPageAndComponentProvider provider = new PageAndComponentProvider(page.getPageClass(),\n+\t\t\t\tpage.getPageParameters(), getPageRelativePath());\n \t\t\thandler = new BookmarkableListenerInterfaceRequestHandler(provider, listener, id);\n \t\t}\n \t\telse\n \t\t{\n+\t\t\tPageAndComponentProvider provider = new PageAndComponentProvider(page, this);\n \t\t\thandler = new ListenerInterfaceRequestHandler(provider, listener, id);\n \t\t}\n \t\treturn getRequestCycle().urlFor(handler);\n@@ -3324,14 +3327,17 @@ public final CharSequence urlFor(final IRequestHandler requestHandler)\n \t */\n \tpublic final CharSequence urlFor(final RequestListenerInterface listener)\n \t{\n-\t\tPageAndComponentProvider provider = new PageAndComponentProvider(getPage(), this);\n+\t\tPage page = getPage();\n \t\tIRequestHandler handler;\n-\t\tif (getPage().isPageStateless())\n+\t\tif (page.isPageStateless())\n \t\t{\n+\t\t\tPageAndComponentProvider provider = new PageAndComponentProvider(page.getPageClass(),\n+\t\t\t\tpage.getPageParameters(), getPageRelativePath());\n \t\t\thandler = new BookmarkableListenerInterfaceRequestHandler(provider, listener);\n \t\t}\n \t\telse\n \t\t{\n+\t\t\tPageAndComponentProvider provider = new PageAndComponentProvider(page, this);\n \t\t\thandler = new ListenerInterfaceRequestHandler(provider, listener);\n \t\t}\n \t\treturn getRequestCycle().urlFor(handler);\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/mock/MockPageManager.java b/wicket-core/src/main/java/org/apache/wicket/mock/MockPageManager.java\nindex 3cf92139ee..cf18216620 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/mock/MockPageManager.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/mock/MockPageManager.java\n@@ -77,9 +77,12 @@ public boolean supportsVersioning()\n \t}\n \n \tpublic void touchPage(IManageablePage page)\n+\t{\n+\t\tif (page.isPageStateless() == false)\n \t\t{\n \t\t\tpages.put(page.getPageId(), page);\n \t\t}\n+\t}\n \n \t/**\n \t * @see org.apache.wicket.page.IPageManager#getContext()\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/request/handler/PageProvider.java b/wicket-core/src/main/java/org/apache/wicket/request/handler/PageProvider.java\nindex 379b473430..c9569a889c 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/request/handler/PageProvider.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/request/handler/PageProvider.java\n@@ -17,6 +17,7 @@\n package org.apache.wicket.request.handler;\n \n import org.apache.wicket.Application;\n+import org.apache.wicket.Page;\n import org.apache.wicket.Session;\n import org.apache.wicket.page.IPageManager;\n import org.apache.wicket.protocol.http.PageExpiredException;\n@@ -148,6 +149,10 @@ public PageProvider(IRequestablePage page)\n \t\tArgs.notNull(page, \"page\");\n \n \t\tpageInstance = page;\n+\t\tif (pageInstance instanceof Page)\n+\t\t{\n+\t\t\t((Page)pageInstance).setStatelessHint(false);\n+\t\t}\n \t}\n \n \t/**\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

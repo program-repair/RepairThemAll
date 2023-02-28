@@ -1,0 +1,24 @@
+{
+    "bug_id": 253,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "36e70bd7",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.memory.MemoryNodeBuilderTest"
+    ],
+    "files": 1,
+    "jira_id": "421",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 3,
+    "nb_test": 377,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\nindex e96c9f3483..1facf64de9 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\n@@ -265,7 +265,7 @@ public void reset(NodeState newBase) {\n         if (this == root) {\n             baseState = checkNotNull(newBase);\n             writeState = new MutableNodeState(baseState);\n-            revision++;\n+            revision = 0;\n         } else {\n             throw new IllegalStateException(\"Cannot reset a non-root builder\");\n         }\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

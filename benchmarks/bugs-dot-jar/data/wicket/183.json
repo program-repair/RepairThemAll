@@ -1,0 +1,24 @@
+{
+    "bug_id": 183,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "30255f11",
+    "failing_tests": [
+        "org.apache.wicket.request.UrlTest"
+    ],
+    "files": 1,
+    "jira_id": "3834",
+    "linesAdd": 59,
+    "linesRem": 15,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 10,
+    "patch": "diff --git a/wicket-request/src/main/java/org/apache/wicket/request/Url.java b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\nindex 6d77f1d3b9..247197e9c3 100755\n--- a/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n+++ b/wicket-request/src/main/java/org/apache/wicket/request/Url.java\n@@ -116,10 +116,11 @@ public static Url parse(final String url)\n \t * Parses the given URL string.\n \t * \n \t * @param url\n+\t *           full absolute or relative url with query string\n \t * @param charset\n \t * @return Url object\n \t */\n-\tpublic static Url parse(final String url, Charset charset)\n+\tpublic static Url parse(String url, Charset charset)\n \t{\n \t\tArgs.notNull(url, \"url\");\n \n@@ -128,36 +129,79 @@ public static Url parse(final String url, Charset charset)\n \t\t// the url object resolved the charset, use that\n \t\tcharset = result.getCharset();\n \n-\t\tString segments;\n-\t\tString query;\n+\t\t// extract query string part\n+\t\tfinal String queryString;\n+\t\tfinal String absoluteUrl;\n \n-\t\tint qIndex = url.indexOf('?');\n+\t\tint queryAt = url.indexOf('?');\n \n-\t\tif (qIndex == -1)\n+\t\tif (queryAt == -1)\n \t\t{\n-\t\t\tsegments = url;\n-\t\t\tquery = \"\";\n+\t\t\tqueryString = \"\";\n+\t\t\tabsoluteUrl = url;\n \t\t}\n \t\telse\n \t\t{\n-\t\t\tsegments = url.substring(0, qIndex);\n-\t\t\tquery = url.substring(qIndex + 1);\n+\t\t\tabsoluteUrl = url.substring(0, queryAt);\n+\t\t\tqueryString = url.substring(queryAt + 1);\n \t\t}\n \t\t\n-\t\tif (segments.length() > 0)\n+\t\t// get absolute / relative part of url\n+\t\tString relativeUrl;\n+\n+\t\t// absolute urls contain a scheme://\n+\t\tfinal int protocolAt = absoluteUrl.indexOf(\"://\");\n+\n+\t\tif (protocolAt != -1)\n \t\t{\n+\t\t\tresult.protocol = absoluteUrl.substring(0, protocolAt);\n+\t\t\tfinal String afterProto = absoluteUrl.substring(protocolAt + 3);\n+\t\t\tfinal String hostAndPort;\n+\n+\t\t\tint relativeAt = afterProto.indexOf('/');\n \n+\t\t\tif (relativeAt == -1)\n+\t\t\t{\n+\t\t\t\trelativeUrl = \"\";\n+\t\t\t\thostAndPort = afterProto;\n+\t\t\t}\n+\t\t\telse\n+\t\t\t{\n+\t\t\t\trelativeUrl = afterProto.substring(relativeAt);\n+\t\t\t\thostAndPort = afterProto.substring(0, relativeAt);\n+\t\t\t}\n+\n+\t\t\tint portAt = hostAndPort.indexOf(':');\n+\n+\t\t\tif (portAt == -1)\n+\t\t\t{\n+\t\t\t\tresult.host = hostAndPort;\n+\t\t\t\tresult.port = null;\n+\t\t\t}\n+\t\t\telse\n+\t\t\t{\n+\t\t\t\tresult.host = hostAndPort.substring(0, portAt);\n+\t\t\t\tresult.port = Integer.parseInt(hostAndPort.substring(portAt + 1));\n+\t\t\t}\n+\t\t}\n+\t\telse\n+\t\t{\n+\t\t\trelativeUrl = absoluteUrl;\n+\t\t}\n+\n+\t\tif (relativeUrl.length() > 0)\n+\t\t{\n \t\t\tboolean removeLast = false;\n-\t\t\tif (segments.endsWith(\"/\"))\n+\t\t\tif (relativeUrl.endsWith(\"/\"))\n \t\t\t{\n \t\t\t\t// we need to append something and remove it after splitting\n \t\t\t\t// because otherwise the\n \t\t\t\t// trailing slashes will be lost\n-\t\t\t\tsegments += \"/x\";\n+\t\t\t\trelativeUrl += \"/x\";\n \t\t\t\tremoveLast = true;\n \t\t\t}\n \n-\t\t\tString segmentArray[] = Strings.split(segments, '/');\n+\t\t\tString segmentArray[] = Strings.split(relativeUrl, '/');\n \n \t\t\tif (removeLast)\n \t\t\t{\n@@ -173,9 +217,9 @@ public static Url parse(final String url, Charset charset)\n \t\t\t}\n \t\t}\n \n-\t\tif (query.length() > 0)\n+\t\tif (queryString.length() > 0)\n \t\t{\n-\t\t\tString queryArray[] = Strings.split(query, '&');\n+\t\t\tString queryArray[] = Strings.split(queryString, '&');\n \t\t\tfor (String s : queryArray)\n \t\t\t{\n \t\t\t\tresult.parameters.add(parseQueryParameter(s, charset));\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

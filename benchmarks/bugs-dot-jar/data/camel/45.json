@@ -1,0 +1,24 @@
+{
+    "bug_id": 45,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "7ad36e3d",
+    "failing_tests": [
+        "org.apache.camel.processor.routingslip.RoutingSlipCreateProducerFailedTest"
+    ],
+    "files": 1,
+    "jira_id": "7736",
+    "linesAdd": 19,
+    "linesRem": 8,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 3,
+    "nb_test": 5040,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/impl/ProducerCache.java b/camel-core/src/main/java/org/apache/camel/impl/ProducerCache.java\nindex 94a352fabd..4ece29fa6e 100644\n--- a/camel-core/src/main/java/org/apache/camel/impl/ProducerCache.java\n+++ b/camel-core/src/main/java/org/apache/camel/impl/ProducerCache.java\n@@ -267,20 +267,31 @@ public Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor proce\n      */\n     public boolean doInAsyncProducer(final Endpoint endpoint, final Exchange exchange, final ExchangePattern pattern,\n                                      final AsyncCallback callback, final AsyncProducerCallback producerCallback) {\n-        boolean sync = true;\n \n+        Producer target;\n+        try {\n             // get the producer and we do not mind if its pooled as we can handle returning it back to the pool\n-        final Producer producer = doGetProducer(endpoint, true);\n+            target = doGetProducer(endpoint, true);\n \n-        if (producer == null) {\n+            if (target == null) {\n                 if (isStopped()) {\n                     LOG.warn(\"Ignoring exchange sent after processor is stopped: \" + exchange);\n-                return false;\n+                    callback.done(true);\n+                    return true;\n                 } else {\n-                throw new IllegalStateException(\"No producer, this processor has not been started: \" + this);\n+                    exchange.setException(new IllegalStateException(\"No producer, this processor has not been started: \" + this));\n+                    callback.done(true);\n+                    return true;\n+                }\n             }\n+        } catch (Throwable e) {\n+            exchange.setException(e);\n+            callback.done(true);\n+            return true;\n         }\n \n+        final Producer producer = target;\n+\n         // record timing for sending the exchange using the producer\n         final StopWatch watch = eventNotifierEnabled && exchange != null ? new StopWatch() : null;\n \n@@ -290,7 +301,7 @@ public boolean doInAsyncProducer(final Endpoint endpoint, final Exchange exchang\n             }\n             // invoke the callback\n             AsyncProcessor asyncProcessor = AsyncProcessorConverterHelper.convert(producer);\n-            sync = producerCallback.doInAsyncProducer(producer, asyncProcessor, exchange, pattern, new AsyncCallback() {\n+            return producerCallback.doInAsyncProducer(producer, asyncProcessor, exchange, pattern, new AsyncCallback() {\n                 @Override\n                 public void done(boolean doneSync) {\n                     try {\n@@ -322,9 +333,9 @@ public void done(boolean doneSync) {\n             if (exchange != null) {\n                 exchange.setException(e);\n             }\n+            callback.done(true);\n+            return true;\n         }\n-\n-        return sync;\n     }\n \n     protected Exchange sendExchange(final Endpoint endpoint, ExchangePattern pattern,\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

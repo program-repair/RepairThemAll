@@ -1,0 +1,24 @@
+{
+    "bug_id": 21,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "169b981e",
+    "failing_tests": [
+        "org.apache.camel.component.file.FileMoveAndMoveFailedIssueTest"
+    ],
+    "files": 1,
+    "jira_id": "9238",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 4,
+    "nb_test": 5476,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/component/file/GenericFile.java b/camel-core/src/main/java/org/apache/camel/component/file/GenericFile.java\nindex 907de21817..e517550225 100644\n--- a/camel-core/src/main/java/org/apache/camel/component/file/GenericFile.java\n+++ b/camel-core/src/main/java/org/apache/camel/component/file/GenericFile.java\n@@ -185,7 +185,7 @@ public void changeFileName(String newName) {\n \n         // Make sure the names is normalized.\n         String newFileName = FileUtil.normalizePath(newName);\n-        String newEndpointPath = FileUtil.normalizePath(endpointPath);\n+        String newEndpointPath = FileUtil.normalizePath(endpointPath.endsWith(\"\" + File.separatorChar) ? endpointPath : endpointPath + File.separatorChar);\n \n         LOG.trace(\"Normalized endpointPath: {}\", newEndpointPath);\n         LOG.trace(\"Normalized newFileName: ()\", newFileName);\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

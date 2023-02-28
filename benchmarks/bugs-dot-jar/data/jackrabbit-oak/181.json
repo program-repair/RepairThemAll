@@ -1,0 +1,24 @@
+{
+    "bug_id": 181,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "59a83d23",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.index.lucene.LucenePropertyIndexTest"
+    ],
+    "files": 1,
+    "jira_id": "4351",
+    "linesAdd": 2,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 6,
+    "nb_test": 360,
+    "patch": "diff --git a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LucenePropertyIndex.java b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LucenePropertyIndex.java\nindex 42a78041ec..5079088cc4 100644\n--- a/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LucenePropertyIndex.java\n+++ b/oak-lucene/src/main/java/org/apache/jackrabbit/oak/plugins/index/lucene/LucenePropertyIndex.java\n@@ -1528,6 +1528,8 @@ public String getPath() {\n                     String sub = pathRow.getPath();\n                     if (isVirtualRow()) {\n                         return sub;\n+                    } else if (!\"\".equals(pathPrefix) && PathUtils.denotesRoot(sub)) {\n+                        return pathPrefix;\n                     } else if (PathUtils.isAbsolute(sub)) {\n                         return pathPrefix + sub;\n                     } else {\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

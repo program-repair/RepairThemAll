@@ -1,0 +1,24 @@
+{
+    "bug_id": 124,
+    "classification": {
+        "singleLine": true
+    },
+    "commit": "5f78c646",
+    "failing_tests": [
+        "org.apache.camel.converter.jaxp.XmlConverterTest"
+    ],
+    "files": 1,
+    "jira_id": "7209",
+    "linesAdd": 1,
+    "linesRem": 0,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 3,
+    "nb_test": 4801,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/converter/NIOConverter.java b/camel-core/src/main/java/org/apache/camel/converter/NIOConverter.java\nindex 9a2b60a846..0bf08ac554 100644\n--- a/camel-core/src/main/java/org/apache/camel/converter/NIOConverter.java\n+++ b/camel-core/src/main/java/org/apache/camel/converter/NIOConverter.java\n@@ -99,6 +99,7 @@ public static ByteBuffer toByteBuffer(String value, Exchange exchange) {\n             bytes = value.getBytes();\n         }\n         buf.put(bytes);\n+        buf.flip();\n         return buf;\n     }\n \n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

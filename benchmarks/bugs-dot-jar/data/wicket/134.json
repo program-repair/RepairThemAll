@@ -1,0 +1,24 @@
+{
+    "bug_id": 134,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "53bcb78d",
+    "failing_tests": [
+        "org.apache.wicket.RestartResponseAtInterceptPageExceptionInAjaxTest"
+    ],
+    "files": 1,
+    "jira_id": "4251",
+    "linesAdd": 21,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 4,
+    "nb_test": 1274,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/RestartResponseAtInterceptPageException.java b/wicket-core/src/main/java/org/apache/wicket/RestartResponseAtInterceptPageException.java\nindex 69fe186959..6c425c0661 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/RestartResponseAtInterceptPageException.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/RestartResponseAtInterceptPageException.java\n@@ -19,6 +19,7 @@\n import java.io.Serializable;\n import java.util.ArrayList;\n import java.util.HashMap;\n+import java.util.Iterator;\n import java.util.List;\n import java.util.Map;\n \n@@ -27,11 +28,13 @@\n import org.apache.wicket.request.IWritableRequestParameters;\n import org.apache.wicket.request.Request;\n import org.apache.wicket.request.Url;\n+import org.apache.wicket.request.Url.QueryParameter;\n import org.apache.wicket.request.cycle.RequestCycle;\n import org.apache.wicket.request.flow.ResetResponseException;\n import org.apache.wicket.request.handler.PageProvider;\n import org.apache.wicket.request.handler.RenderPageRequestHandler;\n import org.apache.wicket.request.handler.RenderPageRequestHandler.RedirectPolicy;\n+import org.apache.wicket.request.http.WebRequest;\n import org.apache.wicket.request.http.handler.RedirectRequestHandler;\n import org.apache.wicket.request.mapper.parameter.PageParameters;\n import org.apache.wicket.util.string.StringValue;\n@@ -110,9 +113,27 @@ public static void set()\n \t\t\tInterceptData data = new InterceptData();\n \t\t\tRequest request = RequestCycle.get().getRequest();\n \t\t\tdata.originalUrl = request.getOriginalUrl();\n+\t\t\tIterator<QueryParameter> itor = data.originalUrl.getQueryParameters().iterator();\n+\t\t\twhile (itor.hasNext())\n+\t\t\t{\n+\t\t\t\tQueryParameter parameter = itor.next();\n+\t\t\t\tString parameterName = parameter.getName();\n+\t\t\t\tif (WebRequest.PARAM_AJAX.equals(parameterName) ||\n+\t\t\t\t\tWebRequest.PARAM_AJAX_BASE_URL.equals(parameterName) ||\n+\t\t\t\t\tWebRequest.PARAM_AJAX_REQUEST_ANTI_CACHE.equals(parameterName))\n+\t\t\t\t{\n+\t\t\t\t\titor.remove();\n+\t\t\t\t}\n+\t\t\t}\n+\n \t\t\tdata.postParameters = new HashMap<String, List<StringValue>>();\n \t\t\tfor (String s : request.getPostParameters().getParameterNames())\n \t\t\t{\n+\t\t\t\tif (WebRequest.PARAM_AJAX.equals(s) || WebRequest.PARAM_AJAX_BASE_URL.equals(s) ||\n+\t\t\t\t\tWebRequest.PARAM_AJAX_REQUEST_ANTI_CACHE.equals(s))\n+\t\t\t\t{\n+\t\t\t\t\tcontinue;\n+\t\t\t\t}\n \t\t\t\tdata.postParameters.put(s, new ArrayList<StringValue>(request.getPostParameters()\n \t\t\t\t\t.getParameterValues(s)));\n \t\t\t}\n",
+    "project": "wicket",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

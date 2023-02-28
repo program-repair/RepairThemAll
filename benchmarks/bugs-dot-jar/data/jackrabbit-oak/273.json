@@ -1,0 +1,24 @@
+{
+    "bug_id": 273,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "d2da7499",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.blob.ClusterRepositoryInfoTest"
+    ],
+    "files": 1,
+    "jira_id": "2691",
+    "linesAdd": 9,
+    "linesRem": 1,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 9,
+    "nb_test": 2012,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/identifier/ClusterRepositoryInfo.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/identifier/ClusterRepositoryInfo.java\nindex 7b5f4da5fd..d2755eb335 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/identifier/ClusterRepositoryInfo.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/identifier/ClusterRepositoryInfo.java\n@@ -23,8 +23,11 @@\n import org.apache.jackrabbit.oak.spi.commit.CommitInfo;\n import org.apache.jackrabbit.oak.spi.commit.EmptyHook;\n import org.apache.jackrabbit.oak.spi.state.NodeBuilder;\n+import org.apache.jackrabbit.oak.spi.state.NodeState;\n import org.apache.jackrabbit.oak.spi.state.NodeStore;\n \n+import javax.annotation.CheckForNull;\n+\n /**\n  * Utility class to manage a unique cluster/repository id for the cluster.\n  */\n@@ -57,8 +60,13 @@ public static String createId(NodeStore store) throws CommitFailedException {\n      * @param store the NodeStore instance\n      * @return the repository id\n      */\n+    @CheckForNull\n     public static String getId(NodeStore store) {\n-        return store.getRoot().getChildNode(CLUSTER_CONFIG_NODE).getProperty(CLUSTER_ID_PROP).getValue(Type.STRING);\n+        NodeState state = store.getRoot().getChildNode(CLUSTER_CONFIG_NODE);\n+        if (state.hasProperty(CLUSTER_ID_PROP)) {\n+            return state.getProperty(CLUSTER_ID_PROP).getValue(Type.STRING);\n+        }\n+        return null;\n     }\n }\n \n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

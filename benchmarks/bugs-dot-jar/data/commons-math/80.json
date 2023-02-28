@@ -1,0 +1,24 @@
+{
+    "bug_id": 80,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "98556fed",
+    "failing_tests": [
+        "org.apache.commons.math.random.AbstractRandomGeneratorTest"
+    ],
+    "files": 1,
+    "jira_id": "640",
+    "linesAdd": 2,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 1,
+    "nb_test": 2883,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math/random/AbstractRandomGenerator.java b/src/main/java/org/apache/commons/math/random/AbstractRandomGenerator.java\nindex 85768473d..10c8f3881 100644\n--- a/src/main/java/org/apache/commons/math/random/AbstractRandomGenerator.java\n+++ b/src/main/java/org/apache/commons/math/random/AbstractRandomGenerator.java\n@@ -134,7 +134,7 @@ public void nextBytes(byte[] bytes) {\n      *  value from this random number generator's sequence\n      */\n     public int nextInt() {\n-        return (int) (nextDouble() * Integer.MAX_VALUE);\n+        return (int) ((2d * nextDouble() - 1d) * Integer.MAX_VALUE);\n     }\n \n     /**\n@@ -176,7 +176,7 @@ public int nextInt(int n) {\n      *value from this random number generator's sequence\n      */\n     public long nextLong() {\n-        return (long) (nextDouble() * Long.MAX_VALUE);\n+        return (long) ((2d * nextDouble() - 1d) * Long.MAX_VALUE);\n     }\n \n     /**\n",
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

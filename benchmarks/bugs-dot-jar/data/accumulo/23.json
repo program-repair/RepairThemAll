@@ -1,0 +1,24 @@
+{
+    "bug_id": 23,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ebf22df0",
+    "failing_tests": [
+        "org.apache.accumulo.core.iterators.user.FilterTest"
+    ],
+    "files": 2,
+    "jira_id": "414",
+    "linesAdd": 7,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 291,
+    "patch": "diff --git a/src/core/src/main/java/org/apache/accumulo/core/iterators/Filter.java b/src/core/src/main/java/org/apache/accumulo/core/iterators/Filter.java\nindex 94daf03bf..a9ed76c19 100644\n--- a/src/core/src/main/java/org/apache/accumulo/core/iterators/Filter.java\n+++ b/src/core/src/main/java/org/apache/accumulo/core/iterators/Filter.java\n@@ -69,7 +69,7 @@ public void seek(Range range, Collection<ByteSequence> columnFamilies, boolean i\n    * Iterates over the source until an acceptable key/value pair is found.\n    */\n   protected void findTop() {\n-    while (getSource().hasTop() && (negate == accept(getSource().getTopKey(), getSource().getTopValue()))) {\n+    while (getSource().hasTop() && !getSource().getTopKey().isDeleted() && (negate == accept(getSource().getTopKey(), getSource().getTopValue()))) {\n       try {\n         getSource().next();\n       } catch (IOException e) {\ndiff --git a/src/core/src/main/java/org/apache/accumulo/core/iterators/SortedKeyValueIterator.java b/src/core/src/main/java/org/apache/accumulo/core/iterators/SortedKeyValueIterator.java\nindex 8bbf18af7..edeaa1d2a 100644\n--- a/src/core/src/main/java/org/apache/accumulo/core/iterators/SortedKeyValueIterator.java\n+++ b/src/core/src/main/java/org/apache/accumulo/core/iterators/SortedKeyValueIterator.java\n@@ -59,7 +59,9 @@\n   boolean hasTop();\n   \n   /**\n-   * Advances to the next K,V pair.\n+   * Advances to the next K,V pair. Note that in minor compaction scope and in non-full major compaction scopes the iterator may see deletion entries. These\n+   * entries should be preserved by all iterators except ones that are strictly scan-time iterators that will never be configured for the minc or majc scopes.\n+   * Deletion entries are only removed during full major compactions.\n    * \n    * @throws IOException\n    *           if an I/O error occurs.\n@@ -88,7 +90,9 @@\n   void seek(Range range, Collection<ByteSequence> columnFamilies, boolean inclusive) throws IOException;\n   \n   /**\n-   * Returns top key. Can be called 0 or more times without affecting behavior of next() or hasTop().\n+   * Returns top key. Can be called 0 or more times without affecting behavior of next() or hasTop(). Note that in minor compaction scope and in non-full major\n+   * compaction scopes the iterator may see deletion entries. These entries should be preserved by all iterators except ones that are strictly scan-time\n+   * iterators that will never be configured for the minc or majc scopes. Deletion entries are only removed during full major compactions.\n    * \n    * @return <tt>K</tt>\n    * @exception IllegalStateException\n",
+    "project": "accumulo",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 18,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "7ec60f1b",
+    "failing_tests": [
+        "org.apache.accumulo.core.client.mock.MockTableOperationsTest"
+    ],
+    "files": 1,
+    "jira_id": "2544",
+    "linesAdd": 8,
+    "linesRem": 4,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 411,
+    "patch": "diff --git a/core/src/main/java/org/apache/accumulo/core/client/mock/MockTableOperations.java b/core/src/main/java/org/apache/accumulo/core/client/mock/MockTableOperations.java\nindex f088b1f3d..dc4a619d7 100644\n--- a/core/src/main/java/org/apache/accumulo/core/client/mock/MockTableOperations.java\n+++ b/core/src/main/java/org/apache/accumulo/core/client/mock/MockTableOperations.java\n@@ -55,9 +55,9 @@\n import org.apache.hadoop.io.Text;\n \n public class MockTableOperations extends TableOperationsHelper {\n-\n-  final private MockAccumulo acu;\n-  final private String username;\n+  private static final byte[] ZERO = {0};\n+  private final MockAccumulo acu;\n+  private final String username;\n \n   MockTableOperations(MockAccumulo acu, String username) {\n     this.acu = acu;\n@@ -314,7 +314,11 @@ public void deleteRows(String tableName, Text start, Text end) throws AccumuloEx\n     if (!exists(tableName))\n       throw new TableNotFoundException(tableName, tableName, \"\");\n     MockTable t = acu.tables.get(tableName);\n-    Set<Key> keep = new TreeSet<Key>(t.table.tailMap(new Key(start)).headMap(new Key(end)).keySet());\n+    Text startText = new Text(start);\n+    Text endText = new Text(end);\n+    startText.append(ZERO, 0, 1);\n+    endText.append(ZERO, 0, 1);\n+    Set<Key> keep = new TreeSet<Key>(t.table.subMap(new Key(startText), new Key(endText)).keySet());\n     t.table.keySet().removeAll(keep);\n   }\n \n",
+    "project": "accumulo",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

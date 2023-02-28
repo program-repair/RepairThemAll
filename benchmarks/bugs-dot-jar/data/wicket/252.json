@@ -1,0 +1,24 @@
+{
+    "bug_id": 252,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "b772ff87",
+    "failing_tests": [
+        "org.apache.wicket.AttributeModifierTest"
+    ],
+    "files": 1,
+    "jira_id": "3884",
+    "linesAdd": 2,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 5,
+    "nb_skipped": 2,
+    "nb_test": 1140,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/behavior/AttributeAppender.java b/wicket-core/src/main/java/org/apache/wicket/behavior/AttributeAppender.java\nindex 13b7fe9871..5db452618e 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/behavior/AttributeAppender.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/behavior/AttributeAppender.java\n@@ -152,9 +152,9 @@ protected String newValue(String currentValue, String appendValue)\n \t{\n \t\t// Short circuit when one of the values is empty: return the other value.\n \t\tif (Strings.isEmpty(currentValue))\n-\t\t\treturn appendValue != null ? appendValue : \"\";\n+\t\t\treturn appendValue != null ? appendValue : null;\n \t\telse if (Strings.isEmpty(appendValue))\n-\t\t\treturn currentValue != null ? currentValue : \"\";\n+\t\t\treturn currentValue != null ? currentValue : null;\n \n \t\tStringBuilder sb = new StringBuilder(currentValue);\n \t\tsb.append((getSeparator() == null ? \"\" : getSeparator()));\n",
+    "project": "wicket",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

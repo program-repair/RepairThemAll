@@ -1,0 +1,24 @@
+{
+    "bug_id": 121,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "73cc2442",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.spi.state.MoveDetectorTest"
+    ],
+    "files": 1,
+    "jira_id": "1297",
+    "linesAdd": 0,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 6,
+    "nb_test": 1506,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\nindex 75d6c457d3..31f62366e0 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/memory/MemoryNodeBuilder.java\n@@ -374,11 +374,9 @@ protected static void annotateSourcePath(NodeBuilder builder, String path) {\n         PropertyState base = builder.getBaseState().getProperty(MoveDetector.SOURCE_PATH);\n         PropertyState head = builder.getNodeState().getProperty(MoveDetector.SOURCE_PATH);\n         if (Objects.equal(base, head)) {\n-            if (!builder.hasProperty(MoveDetector.SOURCE_PATH)) {\n             builder.setProperty(MoveDetector.SOURCE_PATH, path);\n         }\n     }\n-    }\n \n     @Override\n     public boolean copyTo(NodeBuilder newParent, String newName) {\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

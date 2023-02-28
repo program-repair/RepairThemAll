@@ -1,0 +1,24 @@
+{
+    "bug_id": 51,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "a8a24357",
+    "failing_tests": [
+        "org.apache.log4j.VelocityTest"
+    ],
+    "files": 1,
+    "jira_id": "368",
+    "linesAdd": 4,
+    "linesRem": 0,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 64,
+    "patch": "diff --git a/log4j-1.2-api/src/main/java/org/apache/log4j/PatternLayout.java b/log4j-1.2-api/src/main/java/org/apache/log4j/PatternLayout.java\nindex 7595f75d5..a1d77c7c4 100644\n--- a/log4j-1.2-api/src/main/java/org/apache/log4j/PatternLayout.java\n+++ b/log4j-1.2-api/src/main/java/org/apache/log4j/PatternLayout.java\n@@ -23,6 +23,10 @@\n  */\n public class PatternLayout extends Layout {\n \n+    public PatternLayout(String pattern) {\n+\n+    }\n+\n     @Override\n     public String format(final LoggingEvent event) {\n         return \"\";\n",
+    "project": "logging-log4j2",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

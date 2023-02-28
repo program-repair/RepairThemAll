@@ -1,0 +1,24 @@
+{
+    "bug_id": 173,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "4fc82e35",
+    "failing_tests": [
+        "org.apache.wicket.protocol.http.servlet.ServletWebRequestTest"
+    ],
+    "files": 2,
+    "jira_id": "4715",
+    "linesAdd": 26,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 5,
+    "nb_test": 1394,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java\nindex 9d0245d0eb..9d46baf7cc 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/html/form/Form.java\n@@ -146,6 +146,11 @@\n {\n \tprivate static final String HIDDEN_DIV_START = \"<div style=\\\"width:0px;height:0px;position:absolute;left:-100px;top:-100px;overflow:hidden\\\">\";\n \n+\t/**\n+\t * The value of HTMLFormElement's <code>enctype</code> attribute needed for file uploading.\n+\t */\n+\tpublic static final String ENCTYPE_MULTIPART_FORM_DATA = \"multipart/form-data\";\n+\n \t/**\n \t * Visitor used for validation\n \t * \n@@ -1540,7 +1545,7 @@ protected void onComponentTag(final ComponentTag tag)\n \t\t\t\t\ttag.put(\"method\", METHOD_POST.toLowerCase(Locale.ENGLISH));\n \t\t\t\t}\n \n-\t\t\t\ttag.put(\"enctype\", \"multipart/form-data\");\n+\t\t\t\ttag.put(\"enctype\", ENCTYPE_MULTIPART_FORM_DATA);\n \t\t\t\t//\n \t\t\t\t// require the application-encoding for multipart/form-data to be sure to\n \t\t\t\t// get multipart-uploaded characters with the proper encoding on the following\n@@ -1555,7 +1560,7 @@ protected void onComponentTag(final ComponentTag tag)\n \t\t\t{\n \t\t\t\t// sanity check\n \t\t\t\tString enctype = (String)tag.getAttributes().get(\"enctype\");\n-\t\t\t\tif (\"multipart/form-data\".equalsIgnoreCase(enctype))\n+\t\t\t\tif (ENCTYPE_MULTIPART_FORM_DATA.equalsIgnoreCase(enctype))\n \t\t\t\t{\n \t\t\t\t\t// though not set explicitly in Java, this is a multipart\n \t\t\t\t\t// form\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/protocol/http/WebApplication.java b/wicket-core/src/main/java/org/apache/wicket/protocol/http/WebApplication.java\nindex 42ab5d1f27..117947d156 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/protocol/http/WebApplication.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/protocol/http/WebApplication.java\n@@ -44,6 +44,7 @@\n import org.apache.wicket.markup.html.WebPage;\n import org.apache.wicket.markup.html.form.AutoLabelResolver;\n import org.apache.wicket.markup.html.form.AutoLabelTextResolver;\n+import org.apache.wicket.markup.html.form.Form;\n import org.apache.wicket.markup.html.pages.AccessDeniedPage;\n import org.apache.wicket.markup.html.pages.InternalErrorPage;\n import org.apache.wicket.markup.html.pages.PageExpiredErrorPage;\n@@ -79,6 +80,7 @@\n import org.apache.wicket.util.lang.PackageName;\n import org.apache.wicket.util.string.Strings;\n import org.apache.wicket.util.time.Duration;\n+import org.apache.wicket.util.upload.FileUploadException;\n import org.apache.wicket.util.watch.IModificationWatcher;\n import org.slf4j.Logger;\n import org.slf4j.LoggerFactory;\n@@ -486,6 +488,23 @@ WebRequest createWebRequest(HttpServletRequest servletRequest, final String filt\n \n \t\tWebRequest webRequest = newWebRequest(servletRequest, filterPath);\n \n+\t\tString contentType = servletRequest.getContentType();\n+\t\tString method = servletRequest.getMethod();\n+\n+\t\tif (webRequest instanceof ServletWebRequest && Form.METHOD_POST.equalsIgnoreCase(method) &&\n+\t\t\t\tStrings.isEmpty(contentType) == false && contentType.toLowerCase().startsWith(Form.ENCTYPE_MULTIPART_FORM_DATA))\n+\t\t{\n+\t\t\ttry\n+\t\t\t{\n+\t\t\t\treturn ((ServletWebRequest)webRequest).newMultipartWebRequest(\n+\t\t\t\t\tgetApplicationSettings().getDefaultMaximumUploadSize(), \"externalForm\");\n+\t\t\t}\n+\t\t\tcatch (FileUploadException e)\n+\t\t\t{\n+\t\t\t\tthrow new RuntimeException(e);\n+\t\t\t}\n+\t\t}\n+\n \t\treturn webRequest;\n \t}\n \n",
+    "project": "wicket",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

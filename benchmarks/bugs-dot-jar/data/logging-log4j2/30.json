@@ -1,0 +1,24 @@
+{
+    "bug_id": 30,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ca59ece6",
+    "failing_tests": [
+        "org.apache.logging.log4j.core.LateConfigTest"
+    ],
+    "files": 1,
+    "jira_id": "293",
+    "linesAdd": 8,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 5,
+    "nb_test": 418,
+    "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/selector/ClassLoaderContextSelector.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/selector/ClassLoaderContextSelector.java\nindex 058b630f3..13ba4ba8f 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/selector/ClassLoaderContextSelector.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/selector/ClassLoaderContextSelector.java\n@@ -28,6 +28,7 @@\n import java.util.concurrent.atomic.AtomicReference;\n \n import org.apache.logging.log4j.core.LoggerContext;\n+import org.apache.logging.log4j.core.config.Configuration;\n import org.apache.logging.log4j.core.helpers.Loader;\n import org.apache.logging.log4j.core.impl.ContextAnchor;\n import org.apache.logging.log4j.core.impl.ReflectiveCallerClassUtility;\n@@ -224,6 +225,13 @@ private LoggerContext locateContext(final ClassLoader loader, final URI configLo\n         final WeakReference<LoggerContext> r = ref.get();\n         LoggerContext ctx = r.get();\n         if (ctx != null) {\n+            if (ctx.getConfigLocation() == null && configLocation != null) {\n+                LOGGER.debug(\"Setting configuration to {}\", configLocation);\n+                ctx.setConfigLocation(configLocation);\n+            } else if (ctx.getConfigLocation() != null && !ctx.getConfigLocation().equals(configLocation)) {\n+                LOGGER.warn(\"locateContext called with URI {}. Existing LoggerContext has URI {}\", configLocation,\n+                    ctx.getConfigLocation());\n+            }\n             return ctx;\n         }\n         ctx = new LoggerContext(name, null, configLocation);\n",
+    "project": "logging-log4j2",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

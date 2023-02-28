@@ -1,0 +1,24 @@
+{
+    "bug_id": 103,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "3535afe2",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.jcr.RepositoryTest"
+    ],
+    "files": 1,
+    "jira_id": "1225",
+    "linesAdd": 10,
+    "linesRem": 1,
+    "nb_error": 4,
+    "nb_failure": 0,
+    "nb_skipped": 5,
+    "nb_test": 1963,
+    "patch": "diff --git a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/session/SessionImpl.java b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/session/SessionImpl.java\nindex 13ade55166..7d6e5d289a 100644\n--- a/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/session/SessionImpl.java\n+++ b/oak-jcr/src/main/java/org/apache/jackrabbit/oak/jcr/session/SessionImpl.java\n@@ -161,7 +161,11 @@ public Node getNodeOrNull(final String absPath) throws RepositoryException {\n         return perform(new ReadOperation<Node>() {\n             @Override\n             public Node perform() throws RepositoryException {\n+                try {\n                     return NodeImpl.createNodeOrNull(sd.getNode(getOakPathOrThrow(absPath)), sessionContext);\n+                } catch (PathNotFoundException e) {\n+                    return null;\n+                }\n             }\n         });\n     }\n@@ -179,7 +183,12 @@ public Property getPropertyOrNull(final String absPath) throws RepositoryExcepti\n         if (absPath.equals(\"/\")) {\n             return null;\n         } else {\n-            final String oakPath = getOakPathOrThrow(absPath);\n+            final String oakPath;\n+            try {\n+                oakPath = getOakPathOrThrow(absPath);\n+            } catch (PathNotFoundException e) {\n+                return null;\n+            }\n             return perform(new ReadOperation<Property>() {\n                 @Override\n                 public Property perform() throws RepositoryException {\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

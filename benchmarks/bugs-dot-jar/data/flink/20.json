@@ -1,0 +1,24 @@
+{
+    "bug_id": 20,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "44061882",
+    "failing_tests": [
+        "org.apache.flink.runtime.executiongraph.ExecutionGraphRestartTest"
+    ],
+    "files": 2,
+    "jira_id": "3256",
+    "linesAdd": 12,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 943,
+    "patch": "diff --git a/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionGraph.java b/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionGraph.java\nindex 90854836b9..a03f0bf7a1 100755\n--- a/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionGraph.java\n+++ b/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionGraph.java\n@@ -51,6 +51,7 @@\n import org.apache.flink.runtime.jobgraph.JobVertexID;\n import org.apache.flink.runtime.jobgraph.ScheduleMode;\n import org.apache.flink.runtime.jobmanager.RecoveryMode;\n+import org.apache.flink.runtime.jobmanager.scheduler.CoLocationGroup;\n import org.apache.flink.runtime.jobmanager.scheduler.Scheduler;\n import org.apache.flink.runtime.messages.ExecutionGraphMessages;\n import org.apache.flink.runtime.taskmanager.TaskExecutionState;\n@@ -76,6 +77,8 @@\n import java.util.Iterator;\n import java.util.List;\n import java.util.Map;\n+import java.util.Collection;\n+import java.util.HashSet;\n import java.util.NoSuchElementException;\n import java.util.UUID;\n import java.util.concurrent.Callable;\n@@ -849,7 +852,16 @@ else if (current != JobStatus.RESTARTING) {\n \n \t\t\t\tthis.currentExecutions.clear();\n \n+\t\t\t\tCollection<CoLocationGroup> colGroups = new HashSet<>();\n+\t\t\t\t\n \t\t\t\tfor (ExecutionJobVertex jv : this.verticesInCreationOrder) {\n+\t\t\t\t\t\n+\t\t\t\t\tCoLocationGroup cgroup = jv.getCoLocationGroup();\n+\t\t\t\t\tif(cgroup != null && !colGroups.contains(cgroup)){\n+\t\t\t\t\t\tcgroup.resetConstraints();\n+\t\t\t\t\t\tcolGroups.add(cgroup);\n+\t\t\t\t\t}\n+\t\t\t\t\t\n \t\t\t\t\tjv.resetForNewExecution();\n \t\t\t\t}\n \ndiff --git a/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionJobVertex.java b/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionJobVertex.java\nindex 93ae7c1ded..bc368abdaa 100644\n--- a/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionJobVertex.java\n+++ b/flink-runtime/src/main/java/org/apache/flink/runtime/executiongraph/ExecutionJobVertex.java\n@@ -362,9 +362,6 @@ public void resetForNewExecution() {\n \t\t\tif (slotSharingGroup != null) {\n \t\t\t\tslotSharingGroup.clearTaskAssignment();\n \t\t\t}\n-\t\t\tif (coLocationGroup != null) {\n-\t\t\t\tcoLocationGroup.resetConstraints();\n-\t\t\t}\n \t\t\t\n \t\t\t// reset vertices one by one. if one reset fails, the \"vertices in final state\"\n \t\t\t// fields will be consistent to handle triggered cancel calls\n",
+    "project": "flink",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

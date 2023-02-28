@@ -1,0 +1,20 @@
+{
+    "bug_id": 40,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "2169c4a3",
+    "failing_tests": [
+        "org.apache.maven.model.validation.DefaultModelValidatorTest"
+    ],
+    "files": 1,
+    "jira_id": "3991",
+    "linesAdd": 5,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 34,
+    "patch": "diff --git a/maven-model-builder/src/main/java/org/apache/maven/model/validation/DefaultModelValidator.java b/maven-model-builder/src/main/java/org/apache/maven/model/validation/DefaultModelValidator.java\nindex 586141e84..c60c446f4 100644\n--- a/maven-model-builder/src/main/java/org/apache/maven/model/validation/DefaultModelValidator.java\n+++ b/maven-model-builder/src/main/java/org/apache/maven/model/validation/DefaultModelValidator.java\n@@ -181,7 +181,11 @@ else if ( StringUtils.isNotEmpty( d.getSystemPath() ) )\n                 validateBoolean( \"dependencies.dependency.optional\", problems, warnOnBadBoolean, d.getOptional(),\n                                  d.getManagementKey() );\n \n-                validateEnum( \"dependencies.dependency.scope\", problems, warnOnBadDependencyScope, d.getScope(),\n+                /*\n+                 * TODO: Extensions like Flex Mojos use custom scopes like \"merged\", \"internal\", \"external\", etc. In\n+                 * order to don't break backward-compat with those, only warn but don't error our.\n+                 */\n+                validateEnum( \"dependencies.dependency.scope\", problems, true, d.getScope(),\n                               d.getManagementKey(), \"provided\", \"compile\", \"runtime\", \"test\", \"system\" );\n             }\n         }\n",
+    "project": "maven"
+}

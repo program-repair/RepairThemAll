@@ -1,0 +1,27 @@
+{
+    "bug_id": 139,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "185e3033",
+    "failing_tests": [
+        "org.apache.commons.math3.distribution.NormalDistributionTest",
+        "org.apache.commons.math3.distribution.LogNormalDistributionTest",
+        "org.apache.commons.math3.random.EmpiricalDistributionTest",
+        "org.apache.commons.math3.distribution.GammaDistributionTest"
+    ],
+    "files": 1,
+    "jira_id": "927",
+    "linesAdd": 10,
+    "linesRem": 5,
+    "nb_error": 0,
+    "nb_failure": 4,
+    "nb_skipped": 4,
+    "nb_test": 4514,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math3/random/BitsStreamGenerator.java b/src/main/java/org/apache/commons/math3/random/BitsStreamGenerator.java\nindex a621d7b8a..fab295bfb 100644\n--- a/src/main/java/org/apache/commons/math3/random/BitsStreamGenerator.java\n+++ b/src/main/java/org/apache/commons/math3/random/BitsStreamGenerator.java\n@@ -16,21 +16,26 @@\n  */\n package org.apache.commons.math3.random;\n \n+import java.io.Serializable;\n+\n import org.apache.commons.math3.exception.NotStrictlyPositiveException;\n import org.apache.commons.math3.util.FastMath;\n \n /** Base class for random number generators that generates bits streams.\n-\n+ *\n  * @version $Id$\n  * @since 2.0\n-\n  */\n-public abstract class BitsStreamGenerator implements RandomGenerator {\n-\n+public abstract class BitsStreamGenerator\n+    implements RandomGenerator,\n+               Serializable {\n+    /** Serializable version identifier */\n+    private static final long serialVersionUID = 20130104L;\n     /** Next gaussian. */\n     private double nextGaussian;\n \n-    /** Creates a new random number generator.\n+    /**\n+     * Creates a new random number generator.\n      */\n     public BitsStreamGenerator() {\n         nextGaussian = Double.NaN;\n",
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

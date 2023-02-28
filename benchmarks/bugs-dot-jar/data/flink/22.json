@@ -1,0 +1,24 @@
+{
+    "bug_id": 22,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "94c8e3fa",
+    "failing_tests": [
+        "org.apache.flink.compiler.java.IterationCompilerTest"
+    ],
+    "files": 1,
+    "jira_id": "1311",
+    "linesAdd": 2,
+    "linesRem": 6,
+    "nb_error": 0,
+    "nb_failure": 2,
+    "nb_skipped": 0,
+    "nb_test": 173,
+    "patch": "diff --git a/flink-compiler/src/main/java/org/apache/flink/compiler/PactCompiler.java b/flink-compiler/src/main/java/org/apache/flink/compiler/PactCompiler.java\nindex bec264d489..a63cfd107f 100644\n--- a/flink-compiler/src/main/java/org/apache/flink/compiler/PactCompiler.java\n+++ b/flink-compiler/src/main/java/org/apache/flink/compiler/PactCompiler.java\n@@ -837,10 +837,7 @@ public void postVisit(Operator<?> c) {\n \t\t\t\t\n \t\t\t\t// go over the contained data flow and mark the dynamic path nodes\n \t\t\t\tStaticDynamicPathIdentifier identifier = new StaticDynamicPathIdentifier(iterNode.getCostWeight());\n-\t\t\t\trootOfStepFunction.accept(identifier);\n-\t\t\t\tif(terminationCriterion != null){\n-\t\t\t\t\tterminationCriterion.accept(identifier);\n-\t\t\t\t}\n+\t\t\t\titerNode.acceptForStepFunction(identifier);\n \t\t\t}\n \t\t\telse if (n instanceof WorksetIterationNode) {\n \t\t\t\tfinal WorksetIterationNode iterNode = (WorksetIterationNode) n;\n@@ -919,8 +916,7 @@ else if (successor.getClass() == CoGroupNode.class) {\n \t\t\t\t\n \t\t\t\t// go over the contained data flow and mark the dynamic path nodes\n \t\t\t\tStaticDynamicPathIdentifier pathIdentifier = new StaticDynamicPathIdentifier(iterNode.getCostWeight());\n-\t\t\t\tnextWorksetNode.accept(pathIdentifier);\n-\t\t\t\titerNode.getSolutionSetDelta().accept(pathIdentifier);\n+\t\t\t\titerNode.acceptForStepFunction(pathIdentifier);\n \t\t\t}\n \t\t}\n \t};\n",
+    "project": "flink",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

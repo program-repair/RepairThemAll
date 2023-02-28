@@ -1,0 +1,24 @@
+{
+    "bug_id": 269,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "ca63fdf3",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.upgrade.RepositoryUpgradeTest"
+    ],
+    "files": 1,
+    "jira_id": "2047",
+    "linesAdd": 3,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 17,
+    "patch": "diff --git a/oak-upgrade/src/main/java/org/apache/jackrabbit/oak/upgrade/RepositoryUpgrade.java b/oak-upgrade/src/main/java/org/apache/jackrabbit/oak/upgrade/RepositoryUpgrade.java\nindex 6db5152eba..27e82ab09b 100644\n--- a/oak-upgrade/src/main/java/org/apache/jackrabbit/oak/upgrade/RepositoryUpgrade.java\n+++ b/oak-upgrade/src/main/java/org/apache/jackrabbit/oak/upgrade/RepositoryUpgrade.java\n@@ -256,6 +256,9 @@ public void copy(RepositoryInitializer initializer) throws RepositoryException {\n             if (initializer != null) {\n                 initializer.initialize(builder);\n             }\n+            for (SecurityConfiguration sc : security.getConfigurations()) {\n+                sc.getRepositoryInitializer().initialize(builder);\n+            }\n             for (SecurityConfiguration sc : security.getConfigurations()) {\n                 sc.getWorkspaceInitializer().initialize(builder, workspaceName);\n             }\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

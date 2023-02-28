@@ -1,0 +1,26 @@
+{
+    "bug_id": 86,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "4cf7e80e",
+    "failing_tests": [
+        "org.apache.camel.component.file.FromFilePollThirdTimeOkTest",
+        "org.apache.camel.processor.aggregator.AggregateTimeoutWithExecutorServiceTest",
+        "org.apache.camel.util.UnsafeCharactersEncoderTest"
+    ],
+    "files": 1,
+    "jira_id": "5357",
+    "linesAdd": 30,
+    "linesRem": 2,
+    "nb_error": 1,
+    "nb_failure": 2,
+    "nb_skipped": 1,
+    "nb_test": 4218,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/util/UnsafeUriCharactersEncoder.java b/camel-core/src/main/java/org/apache/camel/util/UnsafeUriCharactersEncoder.java\nindex 39659e49dc..4bc707f550 100644\n--- a/camel-core/src/main/java/org/apache/camel/util/UnsafeUriCharactersEncoder.java\n+++ b/camel-core/src/main/java/org/apache/camel/util/UnsafeUriCharactersEncoder.java\n@@ -20,6 +20,8 @@\n \n /**\n  * Encoder for unsafe URI characters.\n+ * <p/>\n+ * A good source for details is <a href=\"http://en.wikipedia.org/wiki/Url_encode\">wikipedia url encode</a> article.\n  */\n public final class UnsafeUriCharactersEncoder {\n     private static BitSet unsafeCharacters;   \n@@ -33,7 +35,7 @@\n         unsafeCharacters.set('<');\n         unsafeCharacters.set('>');\n         unsafeCharacters.set('#');\n-        // unsafeCharacters.set('%');\n+        unsafeCharacters.set('%');\n         unsafeCharacters.set('{');\n         unsafeCharacters.set('}');\n         unsafeCharacters.set('|');\n@@ -70,10 +72,27 @@ public static String encode(String s) {\n         }\n \n         // okay there are some unsafe characters so we do need to encode\n+        // see details at: http://en.wikipedia.org/wiki/Url_encode\n         StringBuilder sb = new StringBuilder();\n-        for (char ch : chars) {\n+        for (int i = 0; i < chars.length; i++) {\n+            char ch = chars[i];\n             if (ch > 0 && ch < 128 && unsafeCharacters.get(ch)) {\n+                // special for % sign as it may be a decimal encoded value\n+                if (ch == '%') {\n+                    char next = i + 1 < chars.length ? chars[i + 1] : ' ';\n+                    char next2 = i + 2 < chars.length ? chars[i + 2] : ' ';\n+\n+                    if (isHexDigit(next) && isHexDigit(next2)) {\n+                        // its already encoded (decimal encoded) so just append as is\n+                        sb.append(ch);\n+                    } else {\n+                        // must escape then, as its an unsafe character\n+                        appendEscape(sb, (byte)ch);\n+                    }\n+                } else {\n+                    // must escape then, as its an unsafe character\n                     appendEscape(sb, (byte)ch);\n+                }\n             } else {\n                 sb.append(ch);\n             }\n@@ -88,4 +106,13 @@ private static void appendEscape(StringBuilder sb, byte b) {\n         sb.append(HEX_DIGITS[(b >> 0) & 0x0f]);\n     }\n \n+    private static boolean isHexDigit(char ch) {\n+        for (char hex : HEX_DIGITS) {\n+            if (hex == ch) {\n+                return true;\n+            }\n+        }\n+        return false;\n+    }\n+\n }\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

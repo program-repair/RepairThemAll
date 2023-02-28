@@ -1,0 +1,24 @@
+{
+    "bug_id": 82,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "2123f780",
+    "failing_tests": [
+        "org.apache.commons.math.complex.ComplexTest"
+    ],
+    "files": 1,
+    "jira_id": "618",
+    "linesAdd": 3,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 2495,
+    "patch": "diff --git a/src/main/java/org/apache/commons/math/complex/Complex.java b/src/main/java/org/apache/commons/math/complex/Complex.java\nindex e0a8e97e9..ab58c78d4 100644\n--- a/src/main/java/org/apache/commons/math/complex/Complex.java\n+++ b/src/main/java/org/apache/commons/math/complex/Complex.java\n@@ -150,6 +150,9 @@ public double abs() {\n     public Complex add(Complex rhs)\n         throws NullArgumentException {\n         MathUtils.checkNotNull(rhs);\n+        if (isNaN || rhs.isNaN) {\n+            return NaN;\n+        }\n         return createComplex(real + rhs.getReal(),\n             imaginary + rhs.getImaginary());\n     }\n",
+    "project": "commons-math",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

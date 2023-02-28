@@ -1,0 +1,24 @@
+{
+    "bug_id": 33,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "a4caaa57",
+    "failing_tests": [
+        "org.apache.wicket.markup.ComponentTagAttributeEscapingTest"
+    ],
+    "files": 2,
+    "jira_id": "4505",
+    "linesAdd": 5,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 8,
+    "nb_test": 1328,
+    "patch": "diff --git a/wicket-core/src/main/java/org/apache/wicket/markup/parser/TagAttributes.java b/wicket-core/src/main/java/org/apache/wicket/markup/parser/TagAttributes.java\nindex 6f9719d185..041b0cdb95 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/parser/TagAttributes.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/parser/TagAttributes.java\n@@ -54,7 +54,7 @@ public TagAttributes(final IValueMap map)\n \tpublic final Object put(String key, Object value)\r\n \t{\r\n \r\n-\t\treturn super.put(key, unescapeHtml(value));\r\n+\t\treturn super.put(key, value);\r\n \t}\r\n \r\n \t@Override\r\ndiff --git a/wicket-core/src/main/java/org/apache/wicket/markup/parser/XmlPullParser.java b/wicket-core/src/main/java/org/apache/wicket/markup/parser/XmlPullParser.java\nindex 0ec91c9776..93c57d00f1 100644\n--- a/wicket-core/src/main/java/org/apache/wicket/markup/parser/XmlPullParser.java\n+++ b/wicket-core/src/main/java/org/apache/wicket/markup/parser/XmlPullParser.java\n@@ -31,6 +31,7 @@\n import org.apache.wicket.util.parse.metapattern.parsers.TagNameParser;\n import org.apache.wicket.util.parse.metapattern.parsers.VariableAssignmentParser;\n import org.apache.wicket.util.resource.ResourceStreamNotFoundException;\n+import org.apache.wicket.util.string.Strings;\n \n /**\n  * A fairly shallow markup pull parser which parses a markup string of a given type of markup (for\n@@ -665,6 +666,9 @@ private boolean parseTagText(final XmlTag tag, final String tagText) throws Pars\n \t\t\t\t// Trim trailing whitespace\n \t\t\t\tvalue = value.trim();\n \n+\t\t\t\t// Unescape\n+\t\t\t\tvalue = Strings.unescapeMarkup(value).toString();\n+\n \t\t\t\t// Get key\n \t\t\t\tfinal String key = attributeParser.getKey();\n \n",
+    "project": "wicket",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

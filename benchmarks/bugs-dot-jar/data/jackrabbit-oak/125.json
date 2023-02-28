@@ -1,0 +1,30 @@
+{
+    "bug_id": 125,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "d645112f",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.upgrade.cli.blob.CopyReferencesTest",
+        "org.apache.jackrabbit.oak.upgrade.cli.SegmentToSegmentTest",
+        "org.apache.jackrabbit.oak.upgrade.cli.blob.FdsToFbsTest",
+        "org.apache.jackrabbit.oak.upgrade.cli.blob.FbsToFdsTest",
+        "org.apache.jackrabbit.oak.upgrade.cli.SegmentToSegmentTarTest",
+        "org.apache.jackrabbit.oak.upgrade.cli.blob.FbsToFbsTest",
+        "org.apache.jackrabbit.oak.upgrade.cli.SegmentTarToSegmentTest"
+    ],
+    "files": 0,
+    "jira_id": "4420",
+    "linesAdd": 0,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 7,
+    "nb_skipped": 7,
+    "nb_test": 128,
+    "patch": "",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

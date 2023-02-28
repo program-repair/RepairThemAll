@@ -1,0 +1,24 @@
+{
+    "bug_id": 73,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "e33516d5",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.spi.security.authentication.external.basic.DefaultSyncContextTest"
+    ],
+    "files": 1,
+    "jira_id": "4397",
+    "linesAdd": 2,
+    "linesRem": 2,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 2,
+    "nb_test": 271,
+    "patch": "diff --git a/oak-auth-external/src/main/java/org/apache/jackrabbit/oak/spi/security/authentication/external/basic/DefaultSyncContext.java b/oak-auth-external/src/main/java/org/apache/jackrabbit/oak/spi/security/authentication/external/basic/DefaultSyncContext.java\nindex 7d781591e5..1218fb7230 100644\n--- a/oak-auth-external/src/main/java/org/apache/jackrabbit/oak/spi/security/authentication/external/basic/DefaultSyncContext.java\n+++ b/oak-auth-external/src/main/java/org/apache/jackrabbit/oak/spi/security/authentication/external/basic/DefaultSyncContext.java\n@@ -531,10 +531,10 @@ protected void syncMembership(@Nonnull ExternalIdentity external, @Nonnull Autho\n             if (a == null) {\n                 grp = createGroup(extGroup);\n                 log.debug(\"- created new group\");\n-            } else if (a.isGroup()) {\n+            } else if (a.isGroup() && isSameIDP(a)) {\n                 grp = (Group) a;\n             } else {\n-                log.warn(\"Authorizable '{}' is not a group, but should be one.\", extGroup.getId());\n+                log.warn(\"Existing authorizable '{}' is not a group from this IDP '{}'.\", extGroup.getId(), idp.getName());\n                 continue;\n             }\n             log.debug(\"- user manager returned '{}'\", grp);\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

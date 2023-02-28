@@ -1,0 +1,24 @@
+{
+    "bug_id": 20,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "bc7b7e8c",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.security.authorization.accesscontrol.ACLTest"
+    ],
+    "files": 1,
+    "jira_id": "1348",
+    "linesAdd": 1,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 6,
+    "nb_test": 1559,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/security/authorization/accesscontrol/ACL.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/security/authorization/accesscontrol/ACL.java\nindex a868b62890..9b0afaad4a 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/security/authorization/accesscontrol/ACL.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/security/authorization/accesscontrol/ACL.java\n@@ -190,7 +190,7 @@ private boolean internalAddEntry(@Nonnull ACE entry) throws RepositoryException\n         List<ACE> subList = Lists.newArrayList(Iterables.filter(entries, new Predicate<ACE>() {\n             @Override\n             public boolean apply(@Nullable ACE ace) {\n-                return (ace != null) && ace.getPrincipal().equals(principal);\n+                return (ace != null) && ace.getPrincipal().getName().equals(principal.getName());\n             }\n         }));\n \n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 237,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "a0dc4c89",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.document.DocumentNodeStoreTest"
+    ],
+    "files": 1,
+    "jira_id": "2345",
+    "linesAdd": 18,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 9,
+    "nb_test": 2029,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java\nindex 95a82d5a8d..29a363e47c 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/document/DocumentNodeStore.java\n@@ -1532,6 +1532,13 @@ void backgroundRead(boolean dispatchChange) {\n             Revision last = lastKnownRevision.get(machineId);\n             if (last == null || r.compareRevisionTime(last) > 0) {\n                 lastKnownRevision.put(machineId, r);\n+                // OAK-2345\n+                // only consider as external change if\n+                // - the revision changed for the machineId\n+                // or\n+                // - the revision is within the time frame we remember revisions\n+                if (last != null\n+                        || r.getTimestamp() > revisionPurgeMillis())\n                 externalChanges.put(r, otherSeen);\n             }\n         }\n@@ -1562,7 +1569,17 @@ void backgroundRead(boolean dispatchChange) {\n                 backgroundOperationLock.writeLock().unlock();\n             }\n         }\n-        revisionComparator.purge(Revision.getCurrentTimestamp() - REMEMBER_REVISION_ORDER_MILLIS);\n+        revisionComparator.purge(revisionPurgeMillis());\n+    }\n+\n+    /**\n+     * Returns the time in milliseconds when revisions can be purged from the\n+     * revision comparator.\n+     *\n+     * @return time in milliseconds.\n+     */\n+    private static long revisionPurgeMillis() {\n+        return Revision.getCurrentTimestamp() - REMEMBER_REVISION_ORDER_MILLIS;\n     }\n \n     private void backgroundSplit() {\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

@@ -1,0 +1,24 @@
+{
+    "bug_id": 137,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "2f85bd78",
+    "failing_tests": [
+        "org.apache.jackrabbit.oak.plugins.name.NameValidatorTest"
+    ],
+    "files": 1,
+    "jira_id": "3412",
+    "linesAdd": 9,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 1,
+    "nb_test": 2439,
+    "patch": "diff --git a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/name/Namespaces.java b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/name/Namespaces.java\nindex d0d1e26e8a..a0a2367450 100644\n--- a/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/name/Namespaces.java\n+++ b/oak-core/src/main/java/org/apache/jackrabbit/oak/plugins/name/Namespaces.java\n@@ -58,6 +58,13 @@\n      */\n     private static final Map<String, String> ENCODED_URIS = newConcurrentMap();\n \n+    /**\n+     * By default node names with non space whitespace chars are not allowed.\n+     * However initial Oak release did allowed that and this flag is provided\n+     * to revert back to old behaviour if required for some case temporarily\n+     */\n+    private static final boolean allowOtherWhitespaceChars = Boolean.getBoolean(\"oak.allowOtherWhitespaceChars\");\n+\n     private Namespaces() {\n     }\n \n@@ -244,7 +251,8 @@ public static boolean isValidLocalName(String local) {\n \n         for (int i = 0; i < local.length(); i++) {\n             char ch = local.charAt(i);\n-            if (Character.isSpaceChar(ch)) {\n+            boolean spaceChar = allowOtherWhitespaceChars ? Character.isSpaceChar(ch) : Character.isWhitespace(ch);\n+            if (spaceChar) {\n                 if (i == 0) {\n                     return false; // leading whitespace\n                 } else if (i == local.length() - 1) {\n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": true
+}

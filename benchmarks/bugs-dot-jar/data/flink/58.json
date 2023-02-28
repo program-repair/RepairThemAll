@@ -1,0 +1,24 @@
+{
+    "bug_id": 58,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "d033fa8f",
+    "failing_tests": [
+        "type.extractor.TypeExtractorTest"
+    ],
+    "files": 1,
+    "jira_id": "1471",
+    "linesAdd": 12,
+    "linesRem": 2,
+    "nb_error": 1,
+    "nb_failure": 0,
+    "nb_skipped": 0,
+    "nb_test": 745,
+    "patch": "diff --git a/flink-java/src/main/java/org/apache/flink/api/java/typeutils/TypeExtractor.java b/flink-java/src/main/java/org/apache/flink/api/java/typeutils/TypeExtractor.java\nindex 124055cc37..c99a80f248 100644\n--- a/flink-java/src/main/java/org/apache/flink/api/java/typeutils/TypeExtractor.java\n+++ b/flink-java/src/main/java/org/apache/flink/api/java/typeutils/TypeExtractor.java\n@@ -680,10 +680,20 @@ private static void validateInputType(Type t, TypeInformation<?> inType) {\n \t\t}\n \t}\n \t\n-\tprivate static void validateInputType(Class<?> baseClass, Class<?> clazz, int inputParamPos, TypeInformation<?> inType) {\n+\tprivate static void validateInputType(Class<?> baseClass, Class<?> clazz, int inputParamPos, TypeInformation<?> inTypeInfo) {\n \t\tArrayList<Type> typeHierarchy = new ArrayList<Type>();\n+\n+\t\t// try to get generic parameter\n+\t\tType inType;\n+\t\ttry {\n+\t\t\tinType = getParameterType(baseClass, typeHierarchy, clazz, inputParamPos);\n+\t\t}\n+\t\tcatch (IllegalArgumentException e) {\n+\t\t\treturn; // skip input validation e.g. for raw types\n+\t\t}\n+\n \t\ttry {\n-\t\t\tvalidateInfo(typeHierarchy, getParameterType(baseClass, typeHierarchy, clazz, inputParamPos), inType);\n+\t\t\tvalidateInfo(typeHierarchy, inType, inTypeInfo);\n \t\t}\n \t\tcatch(InvalidTypesException e) {\n \t\t\tthrow new InvalidTypesException(\"Input mismatch: \" + e.getMessage());\n",
+    "project": "flink",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

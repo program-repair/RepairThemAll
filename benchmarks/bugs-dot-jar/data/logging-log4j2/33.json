@@ -1,0 +1,24 @@
+{
+    "bug_id": 33,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "7b9e48e8",
+    "failing_tests": [
+        "org.apache.logging.log4j.core.helpers.FileUtilsTest"
+    ],
+    "files": 1,
+    "jira_id": "466",
+    "linesAdd": 5,
+    "linesRem": 1,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 8,
+    "nb_test": 491,
+    "patch": "diff --git a/log4j-core/src/main/java/org/apache/logging/log4j/core/helpers/FileUtils.java b/log4j-core/src/main/java/org/apache/logging/log4j/core/helpers/FileUtils.java\nindex 5752f777e..2e38b5275 100644\n--- a/log4j-core/src/main/java/org/apache/logging/log4j/core/helpers/FileUtils.java\n+++ b/log4j-core/src/main/java/org/apache/logging/log4j/core/helpers/FileUtils.java\n@@ -63,7 +63,11 @@ public static File fileFromURI(URI uri) {\n             }\n         }\n         try {\n-            return new File(URLDecoder.decode(uri.toURL().getFile(), \"UTF8\"));\n+            String fileName = uri.toURL().getFile();\n+            if (new File(fileName).exists()) {\n+                return new File(fileName);\n+            }\n+            return new File(URLDecoder.decode(fileName, \"UTF8\"));\n         } catch (final MalformedURLException ex) {\n             LOGGER.warn(\"Invalid URL \" + uri, ex);\n         } catch (final UnsupportedEncodingException uee) {\n",
+    "project": "logging-log4j2",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

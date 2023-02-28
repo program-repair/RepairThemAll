@@ -1,0 +1,24 @@
+{
+    "bug_id": 7,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "f98ac676",
+    "failing_tests": [
+        "org.apache.camel.processor.RoutingSlipNoSuchEndpointExceptionTest"
+    ],
+    "files": 1,
+    "jira_id": "4486",
+    "linesAdd": 3,
+    "linesRem": 3,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 3847,
+    "patch": "diff --git a/camel-core/src/main/java/org/apache/camel/processor/RoutingSlip.java b/camel-core/src/main/java/org/apache/camel/processor/RoutingSlip.java\nindex 2c994257fc..24bcf3600f 100644\n--- a/camel-core/src/main/java/org/apache/camel/processor/RoutingSlip.java\n+++ b/camel-core/src/main/java/org/apache/camel/processor/RoutingSlip.java\n@@ -170,7 +170,7 @@ public Object next(Exchange exchange) {\n         };\n     }\n \n-    private boolean doRoutingSlip(Exchange exchange, AsyncCallback callback) {\n+    private boolean doRoutingSlip(final Exchange exchange, final AsyncCallback callback) {\n         Exchange current = exchange;\n         RoutingSlipIterator iter;\n         try {\n@@ -196,8 +196,8 @@ private boolean doRoutingSlip(Exchange exchange, AsyncCallback callback) {\n                 }\n             } catch (Exception e) {\n                 // error resolving endpoint so we should break out\n-                exchange.setException(e);\n-                return true;\n+                current.setException(e);\n+                break;\n             }\n \n             // prepare and process the routing slip\n",
+    "project": "camel",
+    "buggy_compile_success": false,
+    "buggy_test_success": false,
+    "fixed_compile_success": false,
+    "fixed_test_success": false
+}

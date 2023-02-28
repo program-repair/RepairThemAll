@@ -1,0 +1,24 @@
+{
+    "bug_id": 41,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "25cf3ccd",
+    "failing_tests": [
+        "org.apache.accumulo.core.util.shell.ShellTest"
+    ],
+    "files": 1,
+    "jira_id": "1051",
+    "linesAdd": 2,
+    "linesRem": 6,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 0,
+    "nb_test": 362,
+    "patch": "diff --git a/core/src/main/java/org/apache/accumulo/core/security/Authorizations.java b/core/src/main/java/org/apache/accumulo/core/security/Authorizations.java\nindex 5933325b1..a677f3f13 100644\n--- a/core/src/main/java/org/apache/accumulo/core/security/Authorizations.java\n+++ b/core/src/main/java/org/apache/accumulo/core/security/Authorizations.java\n@@ -23,10 +23,9 @@\n import java.util.ArrayList;\n import java.util.Collection;\n import java.util.Collections;\n+import java.util.HashSet;\n import java.util.Iterator;\n import java.util.List;\n-import java.util.Set;\n-import java.util.TreeSet;\n \n import org.apache.accumulo.core.data.ArrayByteSequence;\n import org.apache.accumulo.core.data.ByteSequence;\n@@ -38,7 +37,7 @@\n   \n   private static final long serialVersionUID = 1L;\n   \n-  private Set<ByteSequence> auths = new TreeSet<ByteSequence>();\n+  private HashSet<ByteSequence> auths = new HashSet<ByteSequence>();\n   private List<byte[]> authsList = new ArrayList<byte[]>();\n   private List<byte[]> immutableList = Collections.unmodifiableList(authsList);\n   \n@@ -177,7 +176,6 @@ private void setAuthorizations(Charset charset, String... authorizations) {\n     return ByteBufferUtil.toByteBuffers(immutableList);\n   }\n   \n-  @Override\n   public String toString() {\n     StringBuilder sb = new StringBuilder();\n     String sep = \"\";\n@@ -198,7 +196,6 @@ public boolean contains(ByteSequence auth) {\n     return auths.contains(auth);\n   }\n   \n-  @Override\n   public boolean equals(Object o) {\n     if (o == null) {\n       return false;\n@@ -213,7 +210,6 @@ public boolean equals(Object o) {\n     return false;\n   }\n   \n-  @Override\n   public int hashCode() {\n     int result = 0;\n     for (ByteSequence b : auths)\n",
+    "project": "accumulo",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}

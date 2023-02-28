@@ -1,0 +1,24 @@
+{
+    "bug_id": 185,
+    "classification": {
+        "singleLine": false
+    },
+    "commit": "9b268da0",
+    "failing_tests": [
+        "org.apache.jackrabbit.mongomk.impl.model.MongoNodeTest"
+    ],
+    "files": 1,
+    "jira_id": "596",
+    "linesAdd": 6,
+    "linesRem": 0,
+    "nb_error": 0,
+    "nb_failure": 1,
+    "nb_skipped": 3,
+    "nb_test": 57,
+    "patch": "diff --git a/oak-mongomk/src/main/java/org/apache/jackrabbit/mongomk/impl/model/MongoNode.java b/oak-mongomk/src/main/java/org/apache/jackrabbit/mongomk/impl/model/MongoNode.java\nindex f58a597051..4bbd8dc65d 100644\n--- a/oak-mongomk/src/main/java/org/apache/jackrabbit/mongomk/impl/model/MongoNode.java\n+++ b/oak-mongomk/src/main/java/org/apache/jackrabbit/mongomk/impl/model/MongoNode.java\n@@ -16,6 +16,7 @@\n  */\n package org.apache.jackrabbit.mongomk.impl.model;\n \n+import java.util.ArrayList;\n import java.util.HashMap;\n import java.util.LinkedList;\n import java.util.List;\n@@ -148,6 +149,11 @@ public void setRevisionId(long revisionId) {\n     public MongoNode copy() {\n         MongoNode copy = new MongoNode();\n         copy.putAll((Map) super.copy());\n+        List<String> children = getChildren();\n+        if (children != null) {\n+            copy.put(KEY_CHILDREN, new ArrayList<String>(children));\n+        }\n+        copy.put(KEY_PROPERTIES, new HashMap<String, Object>(getProperties()));\n         return copy;\n     }\n \n",
+    "project": "jackrabbit-oak",
+    "buggy_compile_success": true,
+    "buggy_test_success": false,
+    "fixed_compile_success": true,
+    "fixed_test_success": false
+}
