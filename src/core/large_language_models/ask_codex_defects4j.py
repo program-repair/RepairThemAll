@@ -333,14 +333,14 @@ def ask_codex_for_single_bug(args, bug_id, fixa_config):
                 if 'Rate limit reached for' in str(e):
                     # this bug can not be solved by Codex due to rate limit
                     printlog('Rate limit reached for this bug, will skip', str(e))
-                    time.sleep(30)
+                    time.sleep(60)
                 elif 'Error communicating with OpenAI' in str(e):
                     # sometimes OpenAI will return error, we will retry
                     printlog('OpenAI server error, will retry', str(e))
-                    time.sleep(30)
+                    time.sleep(60)
                 else:
                     printlog('Something went wrong when requesting codex', str(e))
-                    time.sleep(30)
+                    time.sleep(60)
                 openai_error_counter += 1
                 if openai_error_counter >= max_openai_error_counter:
                     raise e
