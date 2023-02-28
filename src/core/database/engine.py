@@ -56,3 +56,10 @@ def update_result_by_id(id, obj):
                                                           'respond_test_output': obj.respond_test_output, 'result_type': obj.result_type, 'error_message': obj.error_message})
     print('Update result: {}'.format(obj.result_type))
     session.commit()
+
+
+def find_all_success():
+    session = get_session()
+    results = session.query(Result).filter(
+        Result.result_type == 'TEST_SUCCESS', Result.temperature == 0.8).all()
+    return results
