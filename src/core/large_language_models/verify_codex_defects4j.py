@@ -23,8 +23,6 @@ STOP_SIGN = "###"
 
 
 def apply_text_to_buggy_version(buggy_bug_path, record):
-    printlog('fixed_bug_path: ', buggy_bug_path)
-    printlog('response_text:\n ', record.respond_clean_code_chunk)
     try:
         response_text_lines = record.respond_clean_code_chunk.split("\n")
         with open(buggy_bug_path, 'r') as file:

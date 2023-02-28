@@ -23,7 +23,7 @@ class CountableDiff:
 def is_line_contain_statement(line):
     striped_line = line.strip()
     is_comment = re.match(r'^(//|/\*|\*|\*/)', striped_line)
-    has_multi_chars = len(striped_line) > 1
+    has_multi_chars = len(striped_line) > 0
     return not is_comment and has_multi_chars
 
 
