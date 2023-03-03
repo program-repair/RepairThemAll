@@ -48,7 +48,7 @@ def load_ast_nodes(file_path):
     return ast_nodes
 
 
-def load_fixed_code_node(file_path, line_numbers):
+def load_origin_code_node(file_path, line_numbers):
     origin_ast_nodes = load_ast_nodes(file_path)
     ast_nodes = copy.deepcopy(origin_ast_nodes)
 

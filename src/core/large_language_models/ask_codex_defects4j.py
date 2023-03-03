@@ -7,7 +7,7 @@ from dotenv import dotenv_values
 import openai
 from core.database.engine import count_collected_samples_by_conditions, save
 from core.database.schema import Result
-from core.tools.java_lang import get_node_by_position, load_ast_nodes, load_fixed_code_node
+from core.tools.java_lang import get_node_by_position, load_ast_nodes, load_origin_code_node
 from core.tools.log import printlog
 from core.tools.patch import load_patch_file, read_patch_file
 from core.tools.persist import write_to_file
@@ -30,7 +30,7 @@ STOP_SIGN = "###"
 
 
 def load_code_node(fixed_file_path, buggy_file_path, countable_diffs):
-    fixed_node, i = load_fixed_code_node(
+    fixed_node, i = load_origin_code_node(
         fixed_file_path, countable_diffs[0].sorted_changes())
     buggy_nodes = load_ast_nodes(buggy_file_path)
     buggy_node = get_node_by_position(buggy_nodes, fixed_node, i)
