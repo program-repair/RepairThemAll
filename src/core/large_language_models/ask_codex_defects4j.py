@@ -1,10 +1,11 @@
 import copy
+import math
 import os
 import shutil
 import time
 from dotenv import dotenv_values
 import openai
-from core.database.engine import save
+from core.database.engine import count_collected_samples_by_conditions, save
 from core.database.schema import Result
 from core.tools.java_lang import get_node_by_position, load_ast_nodes, load_fixed_code_node
 from core.tools.log import printlog
@@ -223,14 +224,21 @@ def build_prompt(result_template, fixed_bug, buggy_node, fixa_config, bug_dir):
 
 
 def build_request_params(result_template, fixa_config):
+    temperature = float(config.get('CODEX_TEMPERATURE') or 0.8)
+    finished_sample_counter = count_collected_samples_by_conditions(
+        result_template.project, result_template.bug_id, temperature)
+    real_sample_counter = max(
+        fixa_config['sample'] - finished_sample_counter, 0)
+    printlog('Project {} bug {} finished_sample_counter: {}, need to request {} more'.format(
+        result_template.project, result_template.bug_id, finished_sample_counter, real_sample_counter))
     request_counter, n_value, max_completion_size = calculate_request_counter(
-        fixa_config['sample'], fixa_config['completion_ratio'], result_template.prompt_size, result_template.buggy_code_token)
+        real_sample_counter, fixa_config['completion_ratio'], result_template.prompt_size, result_template.buggy_code_token)
     printlog('request_counter: ', request_counter)
     printlog('n_value: ', n_value)
     printlog('max_completion_size: ', max_completion_size)
     request_params = {
         'model': CODEX_MODEL,
-        'temperature': float(config.get('CODEX_TEMPERATURE') or 0.8),
+        'temperature': temperature,
         'max_tokens': max_completion_size,
         'top_p': 0.95,
         'frequency_penalty': 0.0,
@@ -329,6 +337,7 @@ def ask_codex_for_single_bug(args, bug_id, fixa_config):
                     result_template.prompt_text, result_template.request_params)
                 curr_request_counter += 1
                 current_time = int(time.time())
+                openai_error_counter = 0  # reset the error counter
             except Exception as e:
                 if 'Rate limit reached for' in str(e):
                     # this bug can not be solved by Codex due to rate limit
