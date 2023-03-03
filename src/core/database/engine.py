@@ -1,4 +1,5 @@
 import copy
+import datetime
 from dotenv import dotenv_values
 from sqlalchemy import create_engine
 from sqlalchemy.engine import URL
@@ -70,3 +71,12 @@ def find_samples_by_conditions(project, bug_id, result_type, temperature):
     results = session.query(Result).filter(
         Result.project == project, Result.bug_id == bug_id, Result.result_type == result_type, Result.temperature == temperature).order_by(Result.created_on).all()
     return results
+
+
+def count_collected_samples_by_conditions(project, bug_id, temperature):
+    if temperature == 0:
+        return 0
+    session = get_session()
+    count = session.query(Result).filter(
+        Result.project == project, Result.bug_id == bug_id, Result.created_on >= '2023-03-01', Result.temperature == temperature).count()
+    return count
