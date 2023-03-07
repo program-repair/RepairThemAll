@@ -25,6 +25,7 @@ RUN apt-get update && \
     apt-get install -y libdbi-perl && \
     apt-get install -y software-properties-common gcc && \
     apt-get install -y cpanminus && \
+    apt-get install -y maven && \
     add-apt-repository -y ppa:deadsnakes/ppa
 
 # Fix certificate issues
@@ -71,8 +72,10 @@ RUN cd /plm-repair-them-all/benchmarks/defects4j && cpanm --installdeps . && ./i
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/plm-repair-them-all/benchmarks/defects4j/framework/bin
 RUN export PATH
 
-# Install pipenv
 RUN cd /plm-repair-them-all && python3.9 -m pip install pipenv
+
+# !!! Do this inside docker container
+# Install pipenv
 # RUN cd /plm-repair-them-all && pipenv install
 
 ENTRYPOINT ["/bin/bash"]

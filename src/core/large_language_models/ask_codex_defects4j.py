@@ -368,7 +368,12 @@ def ask_codex_for_single_bug(args, bug_id, fixa_config):
                     response_text = sanitize_choice_text(choice.text)
                     sample_result.respond_origin_code_chunk = choice.text
                     sample_result.respond_clean_code_chunk = response_text
-                    # No need this line, this line pops up token error : sample_result.respond_code_token = number_of_tokens(response_text)
+                else:
+                    # finish_reason is None, save it, have the choice text anyway
+                    sample_result.result_type = 'RESPONDED_NULL'
+                    response_text = sanitize_choice_text(choice.text)
+                    sample_result.respond_origin_code_chunk = choice.text
+                    sample_result.respond_clean_code_chunk = response_text
                 save(sample_result)
                 time.sleep(1)  # prevent postgres error
             time_gap = int(time.time()) - current_time
