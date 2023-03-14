@@ -11,8 +11,8 @@ def test_is_line_contain_statement():
     assert is_line_contain_statement("* comment") == False
     assert is_line_contain_statement("*/") == False
     assert is_line_contain_statement("// comment") == False
-    assert is_line_contain_statement("    {") == False
-    assert is_line_contain_statement("    }") == False
+    assert is_line_contain_statement("    {") == True
+    assert is_line_contain_statement("    }") == True
 
 
 def test_load_patch_file():
@@ -21,7 +21,7 @@ def test_load_patch_file():
         mock_result, 'src/fixtures/Defects4J_Closure_01.patch')
     assert len(patch_data) == 1
     assert patch_data[0].file_path == 'src/com/google/javascript/jscomp/RemoveUnusedVars.java'
-    assert patch_data[0].sorted_changes() == [379, 380]
+    assert patch_data[0].sorted_changes() == [379, 380, 381]
 
 
 def test_load_patch_file_with_multi_files():
@@ -32,4 +32,5 @@ def test_load_patch_file_with_multi_files():
     assert patch_data[0].file_path == 'src/com/google/javascript/jscomp/FlowSensitiveInlineVariables.java'
     assert patch_data[0].sorted_changes() == [157]
     assert patch_data[1].file_path == 'src/com/google/javascript/jscomp/MustBeReachingVariableDef.java'
-    assert patch_data[1].sorted_changes() == [71, 397, 399, 400, 401, 435, 436]
+    assert patch_data[1].sorted_changes() == [71, 397, 399,
+                                              400, 401, 403, 435, 436, 437]
