@@ -66,9 +66,19 @@ if __name__ == "__main__":
             subprocess.call(mkdir, shell=True)
             with open(result_dir + '/prompt.txt', 'w') as f:
                 f.write(success_samples[0].prompt_text)
+            with open(result_dir + '/fixed_code_chunk.txt', 'w') as f:
+                f.write(success_samples[0].fixed_code_chunk)
+            with open(result_dir + '/buggy_code_chunk.txt', 'w') as f:
+                f.write(success_samples[0].buggy_code_chunk)
+            with open(result_dir + '/correct.patch', 'w') as f:
+                f.write(success_samples[0].patch)
             print('total samples: {}'.format(len(success_samples)))
             for i in range(len(success_samples)):
                 sample = success_samples[i]
+                with open(result_dir + '/sample_{}_respond_origin_code_chunk.txt'.format(i + 1), 'w') as f:
+                    f.write(sample.respond_origin_code_chunk)
+                with open(result_dir + '/sample_{}_respond_clean_code_chunk.txt'.format(i + 1), 'w') as f:
+                    f.write(sample.respond_clean_code_chunk)
                 match_type = 'plausible'
                 is_exact_match = find_exact_match(sample)
                 print('try javalang...', is_exact_match)

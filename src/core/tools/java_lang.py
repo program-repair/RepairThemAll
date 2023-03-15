@@ -103,9 +103,12 @@ def find_exact_match(sample):
             fixed_tokens)
 
         respond_tokens = javalang.tokenizer.tokenize(
-            sample.respond_origin_code_chunk)
+            sample.respond_clean_code_chunk)
         reformed_respond_tokens = javalang.tokenizer.reformat_tokens(
             respond_tokens)
+
+        # fixed_parser = javalang.parser.Parser(reformed_fixed_tokens)
+        # respond_parser = javalang.parser.Parser(reformed_respond_tokens)
 
         if len(reformed_fixed_tokens) == 0 or len(reformed_respond_tokens) == 0:
             return False
