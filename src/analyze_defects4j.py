@@ -4,6 +4,7 @@ import subprocess
 import javalang
 from core.database.engine import find_all_success, find_samples_by_conditions
 from core.large_language_models.verify_codex_defects4j import apply_text_to_buggy_version
+from core.tools.java_lang import find_exact_match
 from core.tools.patch import is_line_contain_statement
 from core.utils import get_benchmark
 
@@ -40,27 +41,6 @@ def sanitize_code_chunk(code_chunk):
         if is_line_contain_statement(line):
             lines.append(line.strip())
     return lines
-
-
-def find_exact_match(sample):
-    try:
-        fixed_tokens = javalang.tokenizer.tokenize(sample.fixed_code_chunk)
-        reformed_fixed_tokens = javalang.tokenizer.reformat_tokens(
-            fixed_tokens)
-
-        respond_tokens = javalang.tokenizer.tokenize(
-            sample.respond_origin_code_chunk)
-        reformed_respond_tokens = javalang.tokenizer.reformat_tokens(
-            respond_tokens)
-
-        if len(reformed_fixed_tokens) == 0 or len(reformed_respond_tokens) == 0:
-            return False
-        if len(reformed_fixed_tokens) != len(reformed_respond_tokens):
-            return False
-
-        return reformed_fixed_tokens == reformed_respond_tokens
-    except Exception:
-        return False
 
 
 if __name__ == "__main__":
