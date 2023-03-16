@@ -28,7 +28,7 @@ DEFECTS4J_BUG_SIZE = {
     'Time': 27,
 }
 
-DEFECTS4J_PROJECTS = ['Chart', 'Cli', 'Closure', 'Codec', 'Collections', 'Compress', 'Csv', 'Gson',
+DEFECTS4J_PROJECTS = ['Cli', 'Closure', 'Codec', 'Collections', 'Compress', 'Csv', 'Gson',
                       'JacksonCore', 'JacksonDatabind', 'JacksonXml', 'Jsoup', 'JxPath', 'Lang', 'Math', 'Mockito', 'Time']
 
 
@@ -95,6 +95,6 @@ if __name__ == "__main__":
                 patch_path = result_dir + '/{}-{}_sample-{}_{}_{}.patch'.format(
                     project, bug_id, i + 1, sample.result_type, match_type)
                 cmd = """
-                    cd %s; git diff --ignore-space-at-eol > %s; git checkout .;
+                    cd %s; git diff --ignore-space-at-eol > %s; git checkout -f .;
                 """ % (buggy_bug_path, patch_path)
                 subprocess.call(cmd, shell=True)
