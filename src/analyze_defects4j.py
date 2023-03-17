@@ -31,7 +31,6 @@ DEFECTS4J_BUG_SIZE = {
 DEFECTS4J_PROJECTS = ['Cli', 'Closure', 'Codec', 'Collections', 'Compress', 'Csv', 'Gson',
                       'JacksonCore', 'JacksonDatabind', 'JacksonXml', 'Jsoup', 'JxPath', 'Lang', 'Math', 'Mockito', 'Time']
 
-
 def sanitize_code_chunk(code_chunk):
     lines = []
     for line in code_chunk.split('\n'):
@@ -70,7 +69,7 @@ if __name__ == "__main__":
                 f.write(success_samples[0].fixed_code_chunk)
             with open(result_dir + '/buggy_code_chunk.txt', 'w') as f:
                 f.write(success_samples[0].buggy_code_chunk)
-            with open(result_dir + '/correct.patch', 'w') as f:
+            with open(result_dir + '/reversed-correct.patch', 'w') as f:
                 f.write(success_samples[0].patch)
             print('total samples: {}'.format(len(success_samples)))
             for i in range(len(success_samples)):
@@ -95,6 +94,6 @@ if __name__ == "__main__":
                 patch_path = result_dir + '/{}-{}_sample-{}_{}_{}.patch'.format(
                     project, bug_id, i + 1, sample.result_type, match_type)
                 cmd = """
-                    cd %s; git diff --ignore-space-at-eol > %s; git checkout -f .;
+                    cd %s; git diff --ignore-blank-lines --ignore-cr-at-eol --ignore-space-at-eol > %s; git checkout -f .;
                 """ % (buggy_bug_path, patch_path)
                 subprocess.call(cmd, shell=True)
