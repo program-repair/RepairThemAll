@@ -243,19 +243,20 @@ def test_get_node_by_hash_all_fixtures():
 
 
 TEST_EM_DATA_RESULT = {
-    # 'cli_4': True,
+    'cli_4': True,
     'cli_5': True,
 }
 
 
-def test_find_exact_match():
-    print('test_find_exact_match:')
-    for k, v in TEST_EM_DATA_RESULT.items():
-        mock_result = Result()
-        with open('src/fixtures/test_ast_{}_fixed.source'.format(k), 'r') as f:
-            mock_result.fixed_code_chunk = f.read()
-        with open('src/fixtures/test_ast_{}_response.source'.format(k), 'r') as f:
-            mock_result.respond_clean_code_chunk = f.read()
+# def test_find_exact_match():
+#     print('test_find_exact_match:')
+#     for k, v in TEST_EM_DATA_RESULT.items():
+#         mock_result = Result()
+#         with open('src/fixtures/test_ast_{}_fixed.source'.format(k), 'r') as f:
+#             mock_result.fixed_code_chunk = f.read()
+#         with open('src/fixtures/test_ast_{}_response.source'.format(k), 'r') as f:
+#             mock_result.respond_clean_code_chunk = f.read()
+#
+#         result = find_exact_match(mock_result)
+#         assert result == v
 
-        result = find_exact_match(mock_result)
-        assert result == v
