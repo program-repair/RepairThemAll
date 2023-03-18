@@ -1,5 +1,6 @@
 
 from core.database.engine import find_all_success
+from core.tools.java_lang import find_exact_match
 from core.tools.patch import is_line_contain_statement
 
 
@@ -12,18 +13,6 @@ def sanitize_code_chunk(code_chunk):
         if is_line_contain_statement(line):
             lines.append(line)
     return lines
-
-
-def find_exact_match(sample):
-    fixed_code_lines = sanitize_code_chunk(sample.fixed_code_chunk)
-    respond_clean_code_lines = sanitize_code_chunk(
-        sample.respond_clean_code_chunk)
-    if len(fixed_code_lines) == len(respond_clean_code_lines):
-        for i in range(len(fixed_code_lines)):
-            if fixed_code_lines[i] != respond_clean_code_lines[i]:
-                return False
-        return True
-    return False
 
 
 if __name__ == "__main__":

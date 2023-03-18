@@ -94,3 +94,27 @@ def get_node_by_position(ast_nodes, fixed_node, position):
             return node
     raise NodeNotFoundException(
         'Node with name {} not found'.format(fixed_node.name))
+
+
+def find_exact_match(sample):
+    try:
+        fixed_tokens = javalang.tokenizer.tokenize(sample.fixed_code_chunk)
+        reformed_fixed_tokens = javalang.tokenizer.reformat_tokens(
+            fixed_tokens)
+
+        respond_tokens = javalang.tokenizer.tokenize(
+            sample.respond_clean_code_chunk)
+        reformed_respond_tokens = javalang.tokenizer.reformat_tokens(
+            respond_tokens)
+
+        # fixed_parser = javalang.parser.Parser(reformed_fixed_tokens)
+        # respond_parser = javalang.parser.Parser(reformed_respond_tokens)
+
+        if len(reformed_fixed_tokens) == 0 or len(reformed_respond_tokens) == 0:
+            return False
+        if len(reformed_fixed_tokens) != len(reformed_respond_tokens):
+            return False
+
+        return reformed_fixed_tokens == reformed_respond_tokens
+    except Exception:
+        return False

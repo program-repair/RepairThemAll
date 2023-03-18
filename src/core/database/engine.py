@@ -69,7 +69,7 @@ def find_all_success():
 def find_samples_by_conditions(project, bug_id, result_type, temperature):
     session = get_session()
     results = session.query(Result).filter(
-        Result.project == project, Result.bug_id == bug_id, Result.result_type == result_type, Result.temperature == temperature).order_by(Result.created_on).all()
+        Result.project == project, Result.bug_id == bug_id, Result.result_type == result_type, Result.created_on >= '2023-03-01', Result.temperature == temperature).order_by(Result.created_on).all()
     return results
 
 

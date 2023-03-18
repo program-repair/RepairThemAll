@@ -4,6 +4,7 @@ import subprocess
 import javalang
 from core.database.engine import find_all_success, find_samples_by_conditions
 from core.large_language_models.verify_codex_defects4j import apply_text_to_buggy_version
+from core.tools.java_lang import find_exact_match
 from core.tools.patch import is_line_contain_statement
 from core.utils import get_benchmark
 
@@ -27,9 +28,8 @@ DEFECTS4J_BUG_SIZE = {
     'Time': 27,
 }
 
-DEFECTS4J_PROJECTS = ['Chart', 'Cli', 'Closure', 'Codec', 'Collections', 'Compress', 'Csv', 'Gson',
+DEFECTS4J_PROJECTS = ['Cli', 'Closure', 'Codec', 'Collections', 'Compress', 'Csv', 'Gson',
                       'JacksonCore', 'JacksonDatabind', 'JacksonXml', 'Jsoup', 'JxPath', 'Lang', 'Math', 'Mockito', 'Time']
-
 
 def sanitize_code_chunk(code_chunk):
     lines = []
@@ -40,27 +40,6 @@ def sanitize_code_chunk(code_chunk):
         if is_line_contain_statement(line):
             lines.append(line.strip())
     return lines
-
-
-def find_exact_match(sample):
-    try:
-        fixed_tokens = javalang.tokenizer.tokenize(sample.fixed_code_chunk)
-        reformed_fixed_tokens = javalang.tokenizer.reformat_tokens(
-            fixed_tokens)
-
-        respond_tokens = javalang.tokenizer.tokenize(
-            sample.respond_origin_code_chunk)
-        reformed_respond_tokens = javalang.tokenizer.reformat_tokens(
-            respond_tokens)
-
-        if len(reformed_fixed_tokens) == 0 or len(reformed_respond_tokens) == 0:
-            return False
-        if len(reformed_fixed_tokens) != len(reformed_respond_tokens):
-            return False
-
-        return reformed_fixed_tokens == reformed_respond_tokens
-    except Exception:
-        return False
 
 
 if __name__ == "__main__":
@@ -86,9 +65,19 @@ if __name__ == "__main__":
             subprocess.call(mkdir, shell=True)
             with open(result_dir + '/prompt.txt', 'w') as f:
                 f.write(success_samples[0].prompt_text)
+            with open(result_dir + '/fixed_code_chunk.txt', 'w') as f:
+                f.write(success_samples[0].fixed_code_chunk)
+            with open(result_dir + '/buggy_code_chunk.txt', 'w') as f:
+                f.write(success_samples[0].buggy_code_chunk)
+            with open(result_dir + '/reversed-correct.patch', 'w') as f:
+                f.write(success_samples[0].patch)
             print('total samples: {}'.format(len(success_samples)))
             for i in range(len(success_samples)):
                 sample = success_samples[i]
+                with open(result_dir + '/sample_{}_respond_origin_code_chunk.txt'.format(i + 1), 'w') as f:
+                    f.write(sample.respond_origin_code_chunk)
+                with open(result_dir + '/sample_{}_respond_clean_code_chunk.txt'.format(i + 1), 'w') as f:
+                    f.write(sample.respond_clean_code_chunk)
                 match_type = 'plausible'
                 is_exact_match = find_exact_match(sample)
                 print('try javalang...', is_exact_match)
@@ -105,6 +94,6 @@ if __name__ == "__main__":
                 patch_path = result_dir + '/{}-{}_sample-{}_{}_{}.patch'.format(
                     project, bug_id, i + 1, sample.result_type, match_type)
                 cmd = """
-                    cd %s; git diff --ignore-space-at-eol > %s; git checkout .;
+                    cd %s; git diff --ignore-blank-lines --ignore-cr-at-eol --ignore-space-at-eol > %s; git checkout -f .;
                 """ % (buggy_bug_path, patch_path)
                 subprocess.call(cmd, shell=True)

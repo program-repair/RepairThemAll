@@ -4,20 +4,20 @@ from core.tools.java_lang import *
 from core.tools.patch import load_patch_file
 
 FIXTURES_FIXED_NODES = {
-    "Closure_01": JavaAstNode(name='removeUnreferencedFunctionArgs', type='MethodDeclaration', start_pos=369, end_pos=409, highlight_line_numbers=[379, 380]),
-    "Closure_05": JavaAstNode(name='isInlinableObject', type='MethodDeclaration', start_pos=155, end_pos=256, highlight_line_numbers=[176, 177]),
+    "Closure_01": JavaAstNode(name='removeUnreferencedFunctionArgs', type='MethodDeclaration', start_pos=369, end_pos=409, highlight_line_numbers=[379, 380, 381]),
+    "Closure_05": JavaAstNode(name='isInlinableObject', type='MethodDeclaration', start_pos=155, end_pos=256, highlight_line_numbers=[176, 177, 178]),
     "Closure_10": JavaAstNode(name='mayBeString', type='MethodDeclaration', start_pos=1415, end_pos=1421, highlight_line_numbers=[1417]),
-    "Closure_15": JavaAstNode(name='apply', type='MethodDeclaration', start_pos=84, end_pos=112, highlight_line_numbers=[102, 103]),
+    "Closure_15": JavaAstNode(name='apply', type='MethodDeclaration', start_pos=84, end_pos=112, highlight_line_numbers=[102, 103, 104]),
     "Closure_20": JavaAstNode(name='tryFoldSimpleFunctionCall', type='MethodDeclaration', start_pos=208, end_pos=231, highlight_line_numbers=[220, 221]),
     "Closure_25": JavaAstNode(name='traverseNew', type='MethodDeclaration', start_pos=1035, end_pos=1061, highlight_line_numbers=[1036, 1055]),
     "Closure_30_1": JavaAstNode(name='process', type='MethodDeclaration', start_pos=156, end_pos=158, highlight_line_numbers=[157]),
-    "Closure_30_2": JavaAstNode(name='MustBeReachingVariableDef', type='ClassDeclaration', start_pos=45, end_pos=446, highlight_line_numbers=[71, 397, 399, 400, 401, 435, 436]),
-    "Mockito_01": JavaAstNode(name='captureArgumentsFrom', type='MethodDeclaration', start_pos=120, end_pos=161, highlight_line_numbers=[123, 124, 125, 126, 129, 130, 131, 132]),
+    "Closure_30_2": JavaAstNode(name='MustBeReachingVariableDef', type='ClassDeclaration', start_pos=45, end_pos=446, highlight_line_numbers=[71, 397, 399, 400, 401, 403, 435, 436, 437]),
+    "Mockito_01": JavaAstNode(name='captureArgumentsFrom', type='MethodDeclaration', start_pos=120, end_pos=161, highlight_line_numbers=[123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134]),
     "Mockito_05": JavaAstNode(name='verify', type='MethodDeclaration', start_pos=75, end_pos=99, highlight_line_numbers=[91]),
-    "Mockito_10": JavaAstNode(name='ReturnsDeepStubs', type='ClassDeclaration', start_pos=43, end_pos=167, highlight_line_numbers=[72, 88, 89, 92, 96, 101, 105, 106]),
-    "Mockito_15": JavaAstNode(name='thenInject', type='MethodDeclaration', start_pos=24, end_pos=33, highlight_line_numbers=[26]),
+    "Mockito_10": JavaAstNode(name='ReturnsDeepStubs', type='ClassDeclaration', start_pos=43, end_pos=167, highlight_line_numbers=[72, 88, 89, 92, 96, 101, 105, 106, 107]),
+    "Mockito_15": JavaAstNode(name='thenInject', type='MethodDeclaration', start_pos=24, end_pos=33, highlight_line_numbers=[26, 28]),
     "Mockito_20": JavaAstNode(name='createMock', type='MethodDeclaration', start_pos=24, end_pos=54, highlight_line_numbers=[32, 35, 46]),
-    "Mockito_25": JavaAstNode(name='ReturnsDeepStubs', type='ClassDeclaration', start_pos=41, end_pos=121, highlight_line_numbers=[56, 59, 71, 80, 81, 82, 83, 84, 87, 88, 89, 90, 91, 93, 94, 97, 98, 99, 100, 101, 103, 106]),
+    "Mockito_25": JavaAstNode(name='ReturnsDeepStubs', type='ClassDeclaration', start_pos=41, end_pos=121, highlight_line_numbers=[56, 59, 71, 80, 81, 82, 83, 84, 85, 87, 88, 89, 90, 91, 93, 94, 95, 97, 98, 99, 100, 101, 102, 103, 104, 106]),
     "Mockito_30_1": JavaAstNode(name='smartNullPointerException', type='MethodDeclaration', start_pos=438, end_pos=447, highlight_line_numbers=[438, 442]),
     "Mockito_30_2": JavaAstNode(name='intercept', type='MethodDeclaration', start_pos=51, end_pos=58, highlight_line_numbers=[56])
 }
@@ -116,11 +116,11 @@ def test_load_fixed_code_node():
     countable_diffs, mock_result = load_patch_file(
         mock_result, "src/fixtures/Defects4J_Closure_01.patch")
     file_path = "src/fixtures/Defects4J_Closure_01_fixed.source"
-    result, i = load_fixed_code_node(
+    result, i = load_origin_code_node(
         file_path, countable_diffs[0].sorted_changes())
     expect = JavaAstNode(name='removeUnreferencedFunctionArgs',
                          type='MethodDeclaration', start_pos=369, end_pos=409)
-    expect.highlight_line_numbers = [379, 380]
+    expect.highlight_line_numbers = [379, 380, 381]
     assert result.__eq__(expect)
 
 
@@ -141,17 +141,19 @@ def test_load_fixed_code_node_all_fixtures():
             if len(countable_diffs) == 1:
                 fixed_file_path = os.path.join(
                     fixture_path, "Defects4J_{}_{}_fixed.source".format(project, example))
-                result, _ = load_fixed_code_node(
+                result, _ = load_origin_code_node(
                     fixed_file_path, countable_diffs[0].sorted_changes())
                 print('fixed node for {}_{}: {}'.format(
                     project, example, result))
                 expect = FIXTURES_FIXED_NODES["{}_{}".format(project, example)]
+                print('expect: {}'.format(expect))
+                print('result: {}'.format(result))
                 assert result.__eq__(expect)
             elif len(countable_diffs) > 1:
                 for i in range(len(countable_diffs)):
                     fixed_file_path = os.path.join(
                         fixture_path, "Defects4J_{}_{}_{}_fixed.source".format(project, example, i + 1))
-                    result, _ = load_fixed_code_node(
+                    result, _ = load_origin_code_node(
                         fixed_file_path, countable_diffs[i].sorted_changes())
                     print('fixed node for {}_{}_{}: {}'.format(
                         project, example, i + 1, result))
@@ -164,7 +166,7 @@ def assert_get_single_node_by_hash(fixed_file_path, buggy_file_path, patch_file_
     mock_result = Result()
     countable_diffs, mock_result = load_patch_file(
         mock_result, patch_file_path)
-    fixed_node, _ = load_fixed_code_node(
+    fixed_node, _ = load_origin_code_node(
         fixed_file_path, countable_diffs[0].sorted_changes())
     buggy_nodes = load_ast_nodes(buggy_file_path)
     buggy_node = get_node_by_hash(buggy_nodes, fixed_node.hash)
@@ -208,7 +210,7 @@ def test_get_node_by_hash_all_fixtures():
                     fixture_path, "Defects4J_{}_{}_fixed.source".format(project, example))
                 buggy_file_path = os.path.join(
                     fixture_path, "Defects4J_{}_{}_buggy.source".format(project, example))
-                fixed_node, _ = load_fixed_code_node(
+                fixed_node, _ = load_origin_code_node(
                     fixed_file_path, countable_diffs[0].sorted_changes())
                 buggy_nodes = load_ast_nodes(buggy_file_path)
                 buggy_node = get_node_by_hash(buggy_nodes, fixed_node.hash)
@@ -222,7 +224,7 @@ def test_get_node_by_hash_all_fixtures():
                     buggy_file_path = os.path.join(
                         fixture_path, "Defects4J_{}_{}_{}_buggy.source".format(project, example, i + 1))
                     try:
-                        fixed_node, _ = load_fixed_code_node(
+                        fixed_node, _ = load_origin_code_node(
                             fixed_file_path, countable_diffs[i].sorted_changes())
                         buggy_nodes = load_ast_nodes(buggy_file_path)
                         buggy_node = get_node_by_hash(
@@ -238,3 +240,23 @@ def test_get_node_by_hash_all_fixtures():
                             print(
                                 'NodeNotFoundException: {}-{}'.format(project, example), e)
                             continue
+
+
+TEST_EM_DATA_RESULT = {
+    'cli_4': True,
+    'cli_5': True,
+}
+
+
+# def test_find_exact_match():
+#     print('test_find_exact_match:')
+#     for k, v in TEST_EM_DATA_RESULT.items():
+#         mock_result = Result()
+#         with open('src/fixtures/test_ast_{}_fixed.source'.format(k), 'r') as f:
+#             mock_result.fixed_code_chunk = f.read()
+#         with open('src/fixtures/test_ast_{}_response.source'.format(k), 'r') as f:
+#             mock_result.respond_clean_code_chunk = f.read()
+#
+#         result = find_exact_match(mock_result)
+#         assert result == v
+

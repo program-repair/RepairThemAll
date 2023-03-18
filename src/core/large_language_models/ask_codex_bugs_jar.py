@@ -88,6 +88,7 @@ def handle_buggy_version(working_directory, project, bug_id, benchmark):
     # True for buggy version, False for fixed version
     bug.checkout(buggy_bug_path, True)
     printlog('--run test on the buggy version--')
+    bug.compile()
     buggy_test_output = bug.run_test()
     printlog('--test result of the buggy version--', buggy_test_output)
     return bug, buggy_test_output
@@ -106,6 +107,7 @@ def handle_fixed_version(working_directory, project, bug_id, benchmark):
     # True for buggy version, False for fixed version
     bug.checkout(fixed_bug_path, False)
     printlog('--run test on the fixed version--')
+    bug.compile()
     fixed_test_output = bug.run_test()
     printlog('--test result of the fixed version--', fixed_test_output)
     return bug, fixed_test_output
