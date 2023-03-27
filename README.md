@@ -58,4 +58,23 @@ Running parameters and settings should be configured in two different places.\
 `src/verify_defects4j.py` can verify codex response by running unit tests.
 * Verify codex response by a given range of database IDs: `python3 src/verify_defects4j.py -i 100-200  -w /repair`
 
+## Internal enumerations of codex response:
+* `RESPONDED`: This type represents a response received from Codex but the verification phase has not yet begun. The choice within the Codex response matches `finish_reason=="stop"`. This type of choice is eligible and will be verified in later phases.
 
+* `EXCEED_MAX_LENGTH`: This type indicates that a response has been received from Codex, but the choice has `finish_reason=="length"`, which indicates that Codex is attempting to generate more tokens than allowed. This means the code block in the choice is not closed properly, and further action will not be taken with this choice.
+
+* `RESPONDED_NULL`: This type signifies that a response has been received from Codex, but the choice has `finish_reason==null`. This reason has not been specified in the Codex API documentation. The choices have been examined, and only a portion of the response code chunks are closed properly. Therefore, these choices will not be included in the study.
+
+* `TEMPLATE_ERROR`: This type is assigned when the Codex API times out or when the token limit is exceeded after several attempts. The related data will still be saved in the database, even though no response is received.
+
+* `TEST_SUCCESS`: This type indicates that all unit tests for the verifying choice have passed for the choice with the "RESPONDED" state. This is the only case that will be considered a successfully verified choice.
+
+* `TEST_TIMEOUT`: This type represents a time-out condition when the execution time for running unit tests exceeds 10 minutes.
+
+* `TEST_FAILED_BUT_MATCHED_REDUCED`: This type indicates that the unit tests for the verifying choice have not been fully passed. The number of failed unit tests for the current verifying choice equals the number of failing tests for the original fixed code but is smaller than the number of failing tests for the original buggy code. This means that the original fixed code has not passed all unit tests.
+
+* `TEST_FAILED_BUT_REDUCED`: This type indicates that the unit tests for the verifying choice have not been fully passed. The number of failed unit tests for the current verifying choice is smaller than the number of failing tests for the original buggy code, and the original fixed code has passed all unit tests.
+
+* `TEST_FAILED`: This type indicates that the unit tests for the verifying choice have not been fully passed. The number of failed unit tests for the current verifying choice is greater than or equal to the number of failing tests for the original buggy code.
+
+* `SAMPLE_ERROR`: This type represents an error that occurs during compilation or while running unit tests. Typically, this means that the choice response is unable to make the project fully compile.
