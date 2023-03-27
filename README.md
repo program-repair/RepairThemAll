@@ -39,6 +39,8 @@ After creating an empty database `plm`. The database structure can be created by
 
 Ensure to exam if the database structure is created after running command above.
 
+A PostgreSQL GUI application is recommended to install.
+
 ## Configuration
 Running parameters and settings should be configured in two different places.\
 * `.env`: Here you can setup Codex parameters, database connection, Java home path.\
@@ -46,8 +48,14 @@ Running parameters and settings should be configured in two different places.\
 
 # Process
 ## Send Request
+`src/ask_defects4j.py` can send the request to Codex and save the response in the Database.
+* Send request to Codex for by a given project and bug_id: `python3 src/ask_defects4j.py -m Codex -b Defects4J -p Cli -i 1  -w /YOU_REPAIR_DATA_DIR`
+* Send request to Codex for the whole project: `python3 src/ask_defects4j.py -m Codex -b Defects4J -p Cli  -w /YOU_REPAIR_DATA_DIR`
+* Send request to Codex by a given project and starts from bug_id: `python3 src/ask_defects4j.py -m Codex -b Defects4J -p Cli -s 5  -w /YOU_REPAIR_DATA_DIR`
+* Send request to Codex for all bugs in Defects4J: `python3 src/ask_defects4j.py -m Codex -b Defects4J -w /YOU_REPAIR_DATA_DIR`
 
 ## Verify Response
-
+`src/verify_defects4j.py` can verify codex response by running unit tests.
+* Verify codex response by a given range of database IDs: `python3 src/verify_defects4j.py -i 100-200  -w /repair`
 
 
