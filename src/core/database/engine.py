@@ -69,7 +69,7 @@ def find_all_success():
 def find_samples_by_conditions(project, bug_id, result_type, temperature):
     session = get_session()
     results = session.query(Result).filter(
-        Result.project == project, Result.bug_id == bug_id, Result.result_type == result_type, Result.created_on >= '2023-03-01', Result.temperature == temperature).order_by(Result.created_on).all()
+        Result.project == project, Result.bug_id == bug_id, Result.result_type != 'TEMPLATE_ERROR', Result.temperature == temperature).order_by(Result.created_on).limit(1).all()
     return results
 
 
@@ -78,5 +78,5 @@ def count_collected_samples_by_conditions(project, bug_id, temperature):
         return 0
     session = get_session()
     count = session.query(Result).filter(
-        Result.project == project, Result.bug_id == bug_id, Result.created_on >= '2023-03-01', Result.temperature == temperature).count()
+        Result.project == project, Result.bug_id == bug_id, Result.temperature == temperature).count()
     return count
