@@ -32,9 +32,17 @@ Running llm-repair-them-all on a Docker container is feasible, and various proce
 * Inside docker bash: `pipenv install`
 
 ## Database
+The data are saved in PostgreSQL. A database name with `plm` should be created manually. PostgreSQL can be either installed locally or use AWS RDS or other cloud native services.
 
+After creating an empty database `plm`. The database structure can be created by running:\
+`bin/bash> python3 src/database.py`
+
+Ensure to exam if the database structure is created after running command above.
 
 ## Configuration
+Running parameters and settings should be configured in two different places.\
+* `.env`: Here you can setup Codex parameters, database connection, Java home path.\
+* `src/config.py`: This is a legacy file where you can configure Java params, working directory etc. Some of parameters can be moved to `.env` since the envfile has been loaded at the beginning of this file.
 
 # Process
 ## Send Request
