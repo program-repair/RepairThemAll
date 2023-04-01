@@ -5,7 +5,7 @@ import re
 import subprocess
 # from sets import Set
 
-from config import DATA_PATH, JAVA8_HOME, JAVA8_HOME, TEST_TIMEOUT
+from config import DATA_PATH, JAVA7_HOME, JAVA8_HOME, TEST_TIMEOUT
 from config import REPAIR_ROOT
 from core.Benchmark import Benchmark
 from core.Bug import Bug
