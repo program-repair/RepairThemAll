@@ -1,1 +1,2 @@
-This is a file show how to use ChatGPT for APR.
+We suppose you finish the basic configuration in the [README.md]().
+
