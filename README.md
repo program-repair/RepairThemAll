@@ -1,7 +1,7 @@
 # Setup
 
 ## Overview
-This repo extends from [RepairThemAll](https://github.com/program-repair/RepairThemAll), focuses on using LLMs solving APR tasks. Currently this repo only supports Codex and Defects4J benchmark. If want to use ChatGPT for APR, you can refer the [README.md]().
+This repo extends from [RepairThemAll](https://github.com/program-repair/RepairThemAll), focuses on using LLMs solving APR tasks. Currently this repo only supports Codex and Defects4J benchmark. If want to use ChatGPT for APR, you can refer the [README.md](https://github.com/ASSERT-KTH/llm-repair-them-all/blob/chatgpt/src/core/chatgpt/README.md).
 
 ## Prerequisite
   * git
