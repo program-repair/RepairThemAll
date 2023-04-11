@@ -38,14 +38,16 @@ class AttrDict(dict):
         self.fixed_code_token: int = None
         self.respond_origin_code_chunk: str = None
         self.respond_clean_code_chunk: str = None
-        self.respond_code_token: int = None
+        self.respond_original_text: dict = {}
+        self.respond_code_token: dict = {}
         self.respond_compiled_output: str = None
         self.respond_test_output: str = None
+        self.respond_type: str = None
         self.buggy_test_output: str = None
         self.fixed_test_output: str = None
         self.prompt_params: dict = None
         self.request_params: dict = None
-        self.result_type: str = None
+        self.result_type: dict = {}
         self.error_message: str = None
         self.defects4j_bug_size: dict = {
                                             'Chart': 26,

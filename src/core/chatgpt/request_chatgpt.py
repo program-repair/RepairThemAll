@@ -8,7 +8,6 @@ from dotenv import dotenv_values
 import openai
 
 # from core.database.engine import count_collected_samples_by_conditions, save
-from core.database.schema import Result
 from core.tools.java_lang import get_node_by_position, load_ast_nodes, load_origin_code_node
 from core.tools.log import printlog
 from core.tools.patch import load_patch_file, read_patch_file
@@ -240,11 +239,14 @@ def sanitize_choice_text(choice_text):
 
 def extract_code(choice_text):
     code = []
+    cnt = 0
     for l in choice_text.split('\n'):
         if l.startswith('```'):
-            continue
-        if len(l.strip()) == 0:
-            continue
+            if cnt == 0:
+                cnt += 1
+                continue
+            else:
+                break
         code.append(l)
     return '\n'.join(code)
 
@@ -254,7 +256,7 @@ def write_to_file(file_path, content):
         f.write(content)
 
 
-def ask_chatgpt(args, bug_id, defects4j_config, fixa_config):
+def ask_chatgpt(args, defects4j_config, fixa_config):
     # Only support Codex with Defects4J for now
     if args.benchmark != 'Defects4J':
         printlog('Only support Defects4J now')
@@ -267,43 +269,53 @@ def ask_chatgpt(args, bug_id, defects4j_config, fixa_config):
 
     # Run fixed version to get the test output
     defects4j_config, fixed_bug = checkout_fixed_version(
-        defects4j_config, benchmark, args.working_directory, args.project, bug_id)
+        defects4j_config, benchmark, args.working_directory, args.project, args.bug_id)
     if fixed_bug is None:
         return
 
     # Run buggy version to get the test output
     defects4j_config, buggy_bug = checkout_buggy_version(
-        defects4j_config, benchmark, args.working_directory, args.project, bug_id)
+        defects4j_config, benchmark, args.working_directory, args.project, args.bug_id)
+
     if buggy_bug is None:
         return
+    
+    target_path = args.working_directory + '/' + args.benchmark + '/' + args.project + '/' + str(args.bug_id)
+    if not os.path.exists(target_path):
+        os.makedirs(target_path)
 
     try:
         # read patch file
-        patch_file_path = DEFS4J_HOME + '/projects/{}/patches/{}.src.patch'.format(
-            args.project, bug_id)
+        patch_file_path = DEFS4J_HOME + '/framework' + '/projects/{}/patches/{}.src.patch'.format(
+            args.project, args.bug_id)
         # print('patch_file_path: ', patch_file_path)
         countable_diffs, patch_text = read_patch_file(patch_file_path)
         # print("countable_diffs: ", countable_diffs[0])
         # print("countable_diffs: ", len(countable_diffs))
         # print("patch_text: ", patch_text)      
         defects4j_config.patch = patch_text
+
         if len(countable_diffs) > 1:
-            defects4j_config.result_type = 'ERROR'
+            defects4j_config.respond_type = 'UNRESPONDED'
             defects4j_config.error_message = str(
                 "Skip, more than one file changed")
-            # save(defects4j_config)
-            return
+            response = "Skip, more than one file changed."
+            printlog(response)
+            output_file_path = os.path.join(target_path, "response.txt")
+            with open(output_file_path, 'w') as f:
+                f.write(response)
+            return defects4j_config
 
         defects4j_config.buggy_file_path = countable_diffs[0].file_path
 
         # location of checkout bug dir
         bug_dir = os.path.join(args.working_directory, "%s_%s_%s" %
-                               (fixed_bug.benchmark, fixed_bug.project, bug_id))
+                               (fixed_bug.benchmark, fixed_bug.project, args.bug_id))
         # prepare fixed and buggy code ast node
         # run original fixed version unit tests
         # run buggy code against fixed unit tests, then revert the source to the fixed code
         defects4j_config, fixed_node, buggy_node = load_buggy_fixed_code_nodes(
-            defects4j_config, args.working_directory, countable_diffs, fixed_bug, bug_id)
+            defects4j_config, args.working_directory, countable_diffs, fixed_bug, args.bug_id)
 
         # build prompt
         # print("Start to build prompt...")
@@ -318,20 +330,14 @@ def ask_chatgpt(args, bug_id, defects4j_config, fixa_config):
         sample_number = 0
         curr_request_counter = 0
         openai_error_counter = 0
-        target_path = args.working_directory + '/' + defects4j_config.benchmark + '/' + defects4j_config.project + '/' + str(defects4j_config.bug_id)
-  
-        if not os.path.exists(target_path):
-            os.makedirs(target_path)
-        chatgpt_response = 'response{}.txt'
+
         max_openai_error_counter = int(
             config.get('MAX_OPENAI_ERROR_COUNTER') or 2)
-        # save some related files
-        write_to_file(os.path.join(target_path, 'prompt.txt'), defects4j_config.prompt_text)
-        write_to_file(os.path.join(target_path, 'buggy_code.txt'), buggy_node.code_lines_str(fixa_config['include_comments']))
-        write_to_file(os.path.join(target_path, 'fixed_code.txt'), fixed_node.code_lines_str(fixa_config['include_comments']))
-        write_to_file(os.path.join(target_path, 'patch'), defects4j_config.patch)
-        with open(os.path.join(target_path, 'defects4j_config.json'), 'w') as f:
-            json.dump(defects4j_config, f, indent=4)
+        # # save some related files
+        # write_to_file(os.path.join(target_path, 'prompt.txt'), defects4j_config.prompt_text)
+        # write_to_file(os.path.join(target_path, 'buggy_code.txt'), buggy_node.code_lines_str(fixa_config['include_comments']))
+        # write_to_file(os.path.join(target_path, 'fixed_code.txt'), fixed_node.code_lines_str(fixa_config['include_comments']))
+        # write_to_file(os.path.join(target_path, 'patch'), defects4j_config.patch)
 
         if args.num_requests > 10:
             printlog('request_counter is too large, will reset to 10')
@@ -345,7 +351,8 @@ def ask_chatgpt(args, bug_id, defects4j_config, fixa_config):
                 output_file_path = os.path.join(target_path, output_file_name)
                 with open(output_file_path, 'w') as f:
                     f.write(response)
-                break
+                defects4j_config.respond_type = 'UNRESPONDED'
+                return defects4j_config
             try:
                 response = request_chatgpt_pr(
                     defects4j_config.prompt_text, defects4j_config.request_params)
@@ -370,12 +377,24 @@ def ask_chatgpt(args, bug_id, defects4j_config, fixa_config):
                 continue
 
             fixed_code = response['choices'][0]['message']['content']
+            defects4j_config.respond_original_text[str(curr_request_counter)] = fixed_code
             fixed_code = extract_code(fixed_code)
-            output_file_path = os.path.join(target_path, chatgpt_response.format(str(curr_request_counter)))
-            with open(output_file_path, 'w') as f:
-                f.write(fixed_code)
+            defects4j_config.respond_code_token[str(curr_request_counter)] = fixed_code
+            # output_file_path = os.path.join(target_path, chatgpt_response.format(str(curr_request_counter)))
+            # with open(output_file_path, 'w') as f:
+            #     f.write(fixed_code)
+
+        defects4j_config.respond_type = 'RESPONDED'
+        if args.only_request:
+            with open(os.path.join(target_path, 'defects4j_config.json'), 'w') as f:
+                json.dump(defects4j_config, f, indent=4)
+            return
+        return defects4j_config
     except Exception as e:
-        defects4j_config.result_type = 'TEMPLATE_ERROR'
+        defects4j_config.respond_type = 'UNRESPONDED'
         defects4j_config.error_message = str(e)
-        printlog('Error when processing bug: ', bug_id, str(e))
-        time.sleep(12)
+        printlog('Error when processing bug: ', args.bug_id, str(e))
+        output_file_path = os.path.join(target_path, "response.txt")
+        with open(output_file_path, 'w') as f:
+            f.write(str(e))
+        return defects4j_config
