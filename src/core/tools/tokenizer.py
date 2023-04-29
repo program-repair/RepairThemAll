@@ -1,6 +1,7 @@
 from math import ceil, floor
 from transformers import GPT2TokenizerFast
 import os
+import tiktoken
 
 MAX_TOKEN_LENGTH = 8000
 MAX_COMPLETION_TOKEN_LENGTH = 4000
@@ -29,3 +30,9 @@ def calculate_request_counter(total_samples, completion_ratio, prompt_size, bug_
         n_value = total_samples
     total_request = ceil(total_samples / n_value)
     return total_request, n_value, completion_size
+
+
+def chatgpt_tokenize(text, model_name):
+    if text is None:
+        return 0
+    return len(tiktoken.encoding_for_model(model_name).encode(text))

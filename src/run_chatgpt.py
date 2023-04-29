@@ -38,6 +38,7 @@ def ask_chatgpt_for_single_bug(args, defects4j_config, fixa_config):
                            (args.benchmark, args.project, args.bug_id)) + "_buggy"
     fixed_dir = os.path.join(args.working_directory, "%s_%s_%s" %
                            (args.benchmark, args.project, args.bug_id)) + "_fixed"
+
     if args.only_request:
         ask_chatgpt(args, defects4j_config, fixa_config)
     elif args.only_verify:
@@ -45,9 +46,9 @@ def ask_chatgpt_for_single_bug(args, defects4j_config, fixa_config):
         dir_path = os.path.join(args.working_directory, args.benchmark, args.project, args.bug_id)
         with open(os.path.join(dir_path, "defects4j_config.json"), "r") as f:
             defects4j_config = json.load(f)
-        response_dict = defects4j_config["respond_code_token"]
+        response_dict = defects4j_config["respond_code_chunk"]
         for res_id in range(1, args.num_requests+1):
-            defects4j_config["respond_code_token"] = response_dict[str(res_id)]
+            defects4j_config["respond_code_chunk"] = response_dict[str(res_id)]
             try:
                 print(f"Verify chatgpt reponse with id: {res_id}...")
                 verify_single_sample(args, defects4j_config, res_id)
@@ -55,7 +56,7 @@ def ask_chatgpt_for_single_bug(args, defects4j_config, fixa_config):
                 print("Error when verifying chatgpt response with id: ", args.bug_id, e)
                 time.sleep(3)
         
-        defects4j_config["respond_code_token"] = response_dict
+        defects4j_config["respond_code_chunk"] = response_dict
         # Rewrite the defects4j_config.json file
         with open(os.path.join(dir_path, "defects4j_config.json"), "w") as f:
             json.dump(defects4j_config, f, indent=4)
@@ -69,26 +70,28 @@ def ask_chatgpt_for_single_bug(args, defects4j_config, fixa_config):
                 delete_dir(buggy_dir)
                 delete_dir(fixed_dir)
                 return
+            elif defects4j_config.respond_type == None:
+                return
         except Exception as e:
             print("Error when asking chatgpt response with id: ", args.bug_id, e)
-            return
             time.sleep(3)
         # verify the patch
         dir_path = os.path.join(args.working_directory, args.benchmark, args.project, args.bug_id)
-        response_dict = defects4j_config["respond_code_token"]
+        response_dict = defects4j_config["respond_code_chunk"]
         for res_id in range(1, args.num_requests+1):
-            defects4j_config["respond_code_token"] = response_dict[str(res_id)]
+            defects4j_config["respond_code_chunk"] = response_dict[str(res_id)]
             try:
                 print(f"Verify chatgpt reponse with id: {res_id}...")
                 verify_single_sample(args, defects4j_config, res_id)
             except Exception as e:
                 print("Error when verifying chatgpt response with id: ", args.bug_id, e)
-        defects4j_config["respond_code_token"] = response_dict
+        defects4j_config["respond_code_chunk"] = response_dict
         # Rewrite the defects4j_config.json file
         with open(os.path.join(dir_path, "defects4j_config.json"), "w") as f:
             json.dump(defects4j_config, f, indent=4)
         delete_dir(buggy_dir)
         delete_dir(fixed_dir)
+        defects4j_config.respond_type = None
 
 
 def main():
@@ -114,7 +117,7 @@ def main():
     parser.add_argument("--top_p", "-tp", type=float, default=1., help="The top_p used to generate the patch.")
     parser.add_argument("--presence_penalty", "-pp", type=float, default=0.0, help="The presence_penalty used to generate the patch.")
     parser.add_argument("--frequency_penalty", "-fp", type=float, default=0.0, help="The frequency_penalty used to generate the patch.")
-    parser.add_argument("--prompt_level", "-pml", type=str, default="easy", choices=["easy", "adavanced", "actor", "domain"], help="The prompt used to generate the patch.")
+    parser.add_argument("--prompt_level", "-pml", type=str, default="easy", choices=["easy", "advanced", "domain"], help="The prompt used to generate the patch.")
     parser.add_argument("--prompt", "-pm", type=str, default=None, help="The prompt used to generate the patch.")
     parser.add_argument("--pl", "-pl", type=str, default="java", help="The programming language want to fix.")
 
@@ -133,7 +136,7 @@ def main():
     assert args.project in defects4j_projects or args.project == None, "The project name is not valid, please check!"
     
     if args.prompt == None:
-        args.prompt = PROMPT[args.prompt_level].format(args.pl)
+        args.prompt = PROMPT[args.prompt_level].replace("{}", args.pl)
     
     fixa_config['sample'] = args.num_samples
 

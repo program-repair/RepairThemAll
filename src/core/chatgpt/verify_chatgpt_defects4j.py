@@ -3,7 +3,6 @@ import shutil
 import time
 from dotenv import dotenv_values
 import openai
-from core.database.engine import get_result_by_id, update_result_by_id
 from core.tools.log import printlog
 from core.tools.persist import write_to_file
 from core.utils import get_benchmark
@@ -15,7 +14,7 @@ openai.api_key = config.get('OPENAI_API_KEY')
 
 def apply_text_to_buggy_version(buggy_bug_path, defects4j_config):
     try:
-        response_text_lines = defects4j_config["respond_code_token"].split("\n")
+        response_text_lines = defects4j_config["respond_code_chunk"].split("\n")
         with open(buggy_bug_path, 'r') as file:
             buggy_bug_lines = file.readlines()
         new_buggy_bug_file = "".join(buggy_bug_lines[0:defects4j_config["bug_start_pos"] - 1]) + \
