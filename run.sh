@@ -3,7 +3,9 @@ python3 src/run_chatgpt.py \
 -s 1 \
 -b Defects4J \
 -p Lang \
+-bi 1 \
 -ns 1 \
 -nr 1 \
--pml easy \
+-pl Java \
+-pml advanced \
 -w test

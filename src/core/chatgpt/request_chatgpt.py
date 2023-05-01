@@ -14,7 +14,9 @@ from core.tools.patch import load_patch_file, read_patch_file
 from core.tools.persist import write_to_file
 from core.tools.tokenizer import chatgpt_tokenize
 from core.tools.prompt import chatgpt_prompt_generation
+from core.tools.extract_code import extract_code
 from core.utils import get_benchmark
+from core.chatgpt.chat import request_chatgpt_pr
 
 
 config = dotenv_values(".env")
@@ -30,30 +32,30 @@ def load_code_node(fixed_file_path, buggy_file_path, countable_diffs):
     return fixed_node, buggy_node
 
 
-def request_chatgpt_pr(prompt, request_params, args):
-    # https://beta.openai.com/docs/api-reference/completions/create
-    if args.prompt_level == 'easy':
-        response = openai.ChatCompletion.create(
-            model=request_params['model'],
-            messages=[{"role": "user", "content": prompt}],
-            temperature=request_params['temperature'],
-            top_p=request_params['top_p'],
-            frequency_penalty=request_params['frequency_penalty'],
-            presence_penalty=request_params['presence_penalty'],
-        )
-    elif args.prompt_level == 'advanced':
-        response = openai.ChatCompletion.create(
-            model=request_params['model'],
-            messages=[{'role': 'system', 'content': prompt[0]},
-                    {"role": "user", "content": prompt[1]}],
-            temperature=request_params['temperature'],
-            top_p=request_params['top_p'],
-            frequency_penalty=request_params['frequency_penalty'],
-            presence_penalty=request_params['presence_penalty'],
-        )
-    # TODO: add more domain prompt
-    printlog('--->', response)
-    return response
+# def request_chatgpt_pr(prompt, request_params, args):
+#     # https://beta.openai.com/docs/api-reference/completions/create
+#     if args.prompt_level == 'easy':
+#         response = openai.ChatCompletion.create(
+#             model=request_params['model'],
+#             messages=[{"role": "user", "content": prompt}],
+#             temperature=request_params['temperature'],
+#             top_p=request_params['top_p'],
+#             frequency_penalty=request_params['frequency_penalty'],
+#             presence_penalty=request_params['presence_penalty'],
+#         )
+#     elif args.prompt_level == 'advanced':
+#         response = openai.ChatCompletion.create(
+#             model=request_params['model'],
+#             messages=[{'role': 'system', 'content': prompt[0]},
+#                     {"role": "user", "content": prompt[1]}],
+#             temperature=request_params['temperature'],
+#             top_p=request_params['top_p'],
+#             frequency_penalty=request_params['frequency_penalty'],
+#             presence_penalty=request_params['presence_penalty'],
+#         )
+#     # TODO: add more domain prompt
+#     printlog('--->', response)
+#     return response
 
 
 def apply_text_to_buggy_version(buggy_bug_path, response_text, buggy_node):
@@ -208,18 +210,18 @@ def sanitize_choice_text(choice_text):
     return '\n'.join(cleaned_text)
 
 
-def extract_code(choice_text):
-    code = []
-    cnt = 0
-    for l in choice_text.split('\n'):
-        if l.startswith('```'):
-            if cnt == 0:
-                cnt += 1
-                continue
-            else:
-                break
-        code.append(l)
-    return '\n'.join(code)
+# def extract_code(choice_text):
+#     code = []
+#     cnt = 0
+#     for l in choice_text.split('\n'):
+#         if l.startswith('```'):
+#             if cnt == 0:
+#                 cnt += 1
+#                 continue
+#             else:
+#                 break
+#         code.append(l)
+#     return '\n'.join(code)
 
 
 def ask_chatgpt(args, defects4j_config, fixa_config):
@@ -298,7 +300,7 @@ def ask_chatgpt(args, defects4j_config, fixa_config):
             args.num_requests = 10
         while curr_request_counter < args.num_requests and openai_error_counter < max_openai_error_counter:
             current_time = int(time.time())
-            if defects4j_config.prompt_size > args.max_tokens and args.meta_learning == 'False':
+            if defects4j_config.prompt_size > args.max_tokens:
                 response = "Prompt size is too large, will skip"
                 printlog(response)
                 output_file_name = "response.txt"
@@ -307,15 +309,6 @@ def ask_chatgpt(args, defects4j_config, fixa_config):
                     f.write(response)
                 defects4j_config.respond_type = 'UNRESPONDED'
                 return defects4j_config
-            elif defects4j_config.buggy_code_size > args.max_tokens and args.meta_learning == 'True':
-                    response = "Prompt size is too large, will skip"
-                    printlog(response)
-                    output_file_name = "response.txt"
-                    output_file_path = os.path.join(target_path, output_file_name)
-                    with open(output_file_path, 'w') as f:
-                        f.write(response)
-                    defects4j_config.respond_type = 'UNRESPONDED'
-                    return defects4j_config
             try:
                 response = request_chatgpt_pr(
                     defects4j_config.prompt_text, defects4j_config.request_params, args)

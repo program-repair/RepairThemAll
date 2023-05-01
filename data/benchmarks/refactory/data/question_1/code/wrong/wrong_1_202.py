@@ -1,0 +1,12 @@
+def search(x, seq):
+    l=len(seq)
+    if x<=seq[0]:
+        return 0
+    elif x>=seq[l-1]:
+        return l+1
+    else:
+        for i in range (l):
+            if x>=seq[i] and x<=seq[i+1]:
+                return i+1
+            else:   
+                continue
